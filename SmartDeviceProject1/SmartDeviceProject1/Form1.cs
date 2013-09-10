@@ -18,7 +18,11 @@ namespace SmartDeviceProject1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.label1.Text = "Hello Kathryn.";
+            this.label1.Text = "Hello world!";
+            
+            // position and size the form
+            this.Location = new Point(0, 0);
+            this.Size = Screen.PrimaryScreen.WorkingArea.Size;
         }
     }
 }
