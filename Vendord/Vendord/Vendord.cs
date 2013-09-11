@@ -29,10 +29,11 @@ namespace Vendord
         // 
         // Controls
         //
-        private System.Windows.Forms.Button btnOrders;
-        private System.Windows.Forms.Button btnReports;
-        private System.Windows.Forms.Button btnInventory;
-        private System.Windows.Forms.Button btnExit;
+        private Button btnOrders;
+        private Button btnReports;
+        private Button btnInventory;
+        private Button btnExit;
+
 
         private void InitializeComponent()
         {
@@ -44,10 +45,10 @@ namespace Vendord
             //
             // Buttons
             //
-            this.btnOrders = new System.Windows.Forms.Button();
-            this.btnReports = new System.Windows.Forms.Button();
-            this.btnInventory = new System.Windows.Forms.Button();
-            this.btnExit = new System.Windows.Forms.Button();  
+            this.btnOrders = new Button();
+            this.btnReports = new Button();
+            this.btnInventory = new Button();
+            this.btnExit = new Button();  
 
             this.btnOrders = CreateButtonWithEventHandler(ORDERS, 0, this.btn_Click);
             this.btnReports = CreateButtonWithEventHandler(REPORTS, 1, this.btn_Click);
