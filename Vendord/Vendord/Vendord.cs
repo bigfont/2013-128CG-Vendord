@@ -12,11 +12,11 @@ namespace Vendord
     public class Vendord : ResponsiveForm
     {        
         public Vendord()
-        {
+        {            
             InitializeComponent();
         }
 
-        #region User Interface
+        #region User Interface                
 
         //
         // String constants
@@ -32,11 +32,10 @@ namespace Vendord
         private Button btnOrders;
         private Button btnReports;
         private Button btnInventory;
-        private Button btnExit;
-
+        private Button btnExit;                                
 
         private void InitializeComponent()
-        {
+        {            
             //
             // Avoid the layout system repeatedly reactity to changes
             //
@@ -65,10 +64,10 @@ namespace Vendord
             // 
             // Vendord
             // 
-
             this.Name = "Vendord";
-            this.Text = "Vendord";
-            this.Load += new System.EventHandler(this.Vendord_Load);
+            this.Text = "Vendord";            
+            this.Load += new EventHandler(this.Vendord_Load);
+            this.Paint += new PaintEventHandler(this.Vendord_Paint);
 
             SetFormSizeAndLocation();
 
@@ -93,15 +92,37 @@ namespace Vendord
             this.Controls.Clear();
         }
 
-        private void loadOrdersView()
+        private ColumnHeader CreateColumnHeader(string text)
         {
-            
+            ColumnHeader columnHeader;
+            columnHeader = new ColumnHeader();
+            columnHeader.Text = text;
+            return columnHeader;
+        }        
+
+        private void loadOrdersView()
+        {            
+            ListView listView;
+            ListViewItem listViewItem;                        
+
+            listView = new ListView();
+
+            ColumnHeader name = new ColumnHeader();
+            name.Text = "Name";
+            listView.Columns.Add(name);
+
+            listViewItem = new ListViewItem();
+            listViewItem.Text = "foo";            
+
+            listView.Items.Add(listViewItem);
+
+            this.Controls.Add(listView);
         }
 
         private void Vendord_Load(object sender, EventArgs e)
         {
             ChangeFormTextProperty("Home");
-        }        
+        }
 
         private void btn_Click(object sender, EventArgs e)
         {

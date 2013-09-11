@@ -33,7 +33,7 @@ namespace CS_Barcode2Sample1
     /// Class MainForm.
     /// </summary>
     public class MainForm : System.Windows.Forms.Form
-    {
+    {                      
         // The column headers for the list view.
         private ColumnHeader numberColumn = null;
         private ColumnHeader itemColumn = null;

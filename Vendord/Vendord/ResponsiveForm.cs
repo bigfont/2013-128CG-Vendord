@@ -9,10 +9,34 @@ namespace Vendord
 {
     public class ResponsiveForm : Form
     {
-        private int BUTTONS_PER_ROW = 2;
-        private int BUTTONS_PER_COLUMN = 2;
+        private const int BUTTONS_PER_ROW = 2;
+        private const int BUTTONS_PER_COLUMN = 2;
+        private const int emSizeLarge = 20;
+        private const int emSizeMedium = 16;
+        private const int emSizeSmall = 12;
+        protected Font smallFont;
+        protected Font mediumFont;
+        protected Font largeFont;
 
-        internal Button CreateButtonWithEventHandler(string text, int tabIndex, EventHandler eventHandler)
+        public ResponsiveForm()
+        {
+            SetFonts();
+        }
+
+        private void SetFonts()
+        {
+            FontFamily family;
+            FontStyle style;                        
+
+            family = FontFamily.GenericSansSerif;
+            style = FontStyle.Regular;
+
+            this.largeFont = new Font(family, emSizeLarge, style);
+            this.mediumFont = new Font(family, emSizeMedium, style);
+            this.smallFont = new Font(family, emSizeSmall, style);
+        }
+
+        protected Button CreateButtonWithEventHandler(string text, int tabIndex, EventHandler eventHandler)
         {
             Button b = new Button();
             b.Name = "btn" + text;
@@ -21,13 +45,13 @@ namespace Vendord
             return b;
         }
 
-        internal void SetFormSizeAndLocation()
+        protected void SetFormSizeAndLocation()
         {
             this.Location = new Point(0, 0);
             this.Size = Screen.PrimaryScreen.WorkingArea.Size;
         }
 
-        internal void SetButtonSizesAndLocations(Button[] buttons)
+        protected void SetButtonSizesAndLocations(Button[] buttons)
         {
             int width;
             int height;
@@ -45,6 +69,7 @@ namespace Vendord
 
             for (int i = 0; i < buttons.Length; ++i)
             {
+                // set the size
                 b = buttons[i];
 
                 b.Size = size;
@@ -56,9 +81,12 @@ namespace Vendord
                 }
                 else
                 {
-                    x = 0;                    
+                    x = 0;
                     y += height;
                 }
+
+                // set the font
+                b.Font = largeFont;
             }
         }
     }
