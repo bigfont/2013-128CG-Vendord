@@ -68,9 +68,6 @@
     <Compile Include="Vendord.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Vendord.Designer.cs">
-      <DependentUpon>Vendord.cs</DependentUpon>
-    </Compile>
     <Compile Include="MyDatabaseDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

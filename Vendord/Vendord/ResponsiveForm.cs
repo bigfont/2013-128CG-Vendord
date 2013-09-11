@@ -12,6 +12,15 @@ namespace Vendord
         private int BUTTONS_PER_ROW = 2;
         private int BUTTONS_PER_COLUMN = 2;
 
+        internal Button CreateButtonWithEventHandler(string text, int tabIndex, EventHandler eventHandler)
+        {
+            Button b = new Button();
+            b.Name = "btn" + text;
+            b.Text = text;
+            b.Click += eventHandler;            
+            return b;
+        }
+
         internal void SetFormSizeAndLocation()
         {
             this.Location = new Point(0, 0);
