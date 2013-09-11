@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartDeviceProject1", "SmartDeviceProject1\SmartDeviceProject1.csproj", "{3DE4015A-666F-48A3-ABB1-96038A6C860D}"
-EndProject
-Project("{B900F1C2-3D47-4FEC-85B3-04AAF18C3634}") = "SmartDeviceCab1", "SmartDeviceCab1\SmartDeviceCab1.vddproj", "{548987C3-B648-407B-8187-9CD7995C56D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord", "SmartDeviceProject1\Vendord.csproj", "{3DE4015A-666F-48A3-ABB1-96038A6C860D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,8 +15,6 @@ Global
 		{3DE4015A-666F-48A3-ABB1-96038A6C860D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DE4015A-666F-48A3-ABB1-96038A6C860D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3DE4015A-666F-48A3-ABB1-96038A6C860D}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{548987C3-B648-407B-8187-9CD7995C56D3}.Debug|Any CPU.ActiveCfg = Debug
-		{548987C3-B648-407B-8187-9CD7995C56D3}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

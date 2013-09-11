@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace SmartDeviceProject1
+namespace Vendord
 {
     static class Program
     {
@@ -13,7 +13,8 @@ namespace SmartDeviceProject1
         [MTAThread]
         static void Main()
         {
-            Application.Run(new Form1());
+            DataUtilities.SeedDB();
+            Application.Run(new Vendord());
         }
     }
 }
