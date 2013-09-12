@@ -205,7 +205,7 @@ namespace Vendord
 
                 case EXIT:
                     this.Close();
-                    return; // return because we want to avoid making calls after we close the form.  
+                    return; // return because we want to avoid executing code after we close the form.  
 
                 default:
                     unloadCurrentView();
