@@ -77,11 +77,11 @@ namespace Vendord
             return action;
         }
 
-        private Button CreateButtonWithEventHandler(string text, int tabIndex, string action, EventHandler eventHandler)
+        private Button CreateButtonWithEventHandler(string action, int tabIndex, EventHandler eventHandler)
         {
             Button b = new Button();
-            b.Name = BUTTON_PREFIX + text;
-            b.Text = text;
+            b.Name = BUTTON_PREFIX + action;
+            b.Text = action;
             b.Tag = action;
             b.Click += eventHandler;
             return b;
@@ -102,7 +102,7 @@ namespace Vendord
 
             panel = new Panel();            
 
-            btnBack = CreateButtonWithEventHandler(BACK, 0, BACK, handleEvent);            
+            btnBack = CreateButtonWithEventHandler(BACK, 0, handleEvent);            
 
             panel.Controls.Add(btnBack);
 
@@ -128,10 +128,10 @@ namespace Vendord
             btnInventory = new Button();
             btnExit = new Button();
 
-            btnOrders = CreateButtonWithEventHandler(ORDERS, 0, ORDERS, this.handleEvent);
-            btnReports = CreateButtonWithEventHandler(REPORTS, 1, REPORTS, this.handleEvent);
-            btnInventory = CreateButtonWithEventHandler(INVENTORY, 2, REPORTS, this.handleEvent);
-            btnExit = CreateButtonWithEventHandler(EXIT, 3, REPORTS, this.handleEvent);
+            btnOrders = CreateButtonWithEventHandler(ORDERS, 0, this.handleEvent);
+            btnReports = CreateButtonWithEventHandler(REPORTS, 1, this.handleEvent);
+            btnInventory = CreateButtonWithEventHandler(INVENTORY, 2, this.handleEvent);
+            btnExit = CreateButtonWithEventHandler(EXIT, 3, this.handleEvent);
 
             this.Controls.Add(btnExit);
             this.Controls.Add(btnInventory);
