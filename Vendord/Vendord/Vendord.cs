@@ -24,7 +24,7 @@ namespace Vendord
         private const string EXIT = "Close";
         private const string BACK = "Back";
         private const string BUTTON_PREFIX = "btn";
-        private const string PANEL_PREFIX = "pnl";   
+        private const string PANEL_PREFIX = "pnl";
 
         //
         // Workflow
@@ -47,9 +47,9 @@ namespace Vendord
 
         private string GetUpstreamAction()
         {
-            string upstreamAction; 
+            string upstreamAction;
             upstreamAction = null;
-            if(UpstreamActionDictionary.Keys.Contains<string>(this.LastAction))
+            if (UpstreamActionDictionary.Keys.Contains<string>(this.LastAction))
             {
                 upstreamAction = UpstreamActionDictionary[this.LastAction];
             }
@@ -73,7 +73,7 @@ namespace Vendord
                     action = GetUpstreamAction();
                 }
             }
-            
+
             return action;
         }
 
@@ -89,7 +89,7 @@ namespace Vendord
 
         public VendordForm()
         {
-            LastAction = null;            
+            LastAction = null;
             this.Load += handleEvent;
         }
 
@@ -100,9 +100,9 @@ namespace Vendord
             Panel panel;
             Button btnBack;
 
-            panel = new Panel();            
+            panel = new Panel();
 
-            btnBack = CreateButtonWithEventHandler(BACK, 0, handleEvent);            
+            btnBack = CreateButtonWithEventHandler(BACK, 0, handleEvent);
 
             panel.Controls.Add(btnBack);
 
@@ -137,12 +137,12 @@ namespace Vendord
             this.Controls.Add(btnInventory);
             this.Controls.Add(btnReports);
             this.Controls.Add(btnOrders);
-            
+
             StyleHomeViewButtons(new Button[] { btnOrders, btnReports, btnInventory, btnExit });
         }
 
         private void loadOrdersView()
-        {            
+        {
             ListView listView;
             ListViewItem listViewItem;
 
@@ -156,7 +156,7 @@ namespace Vendord
             // TODO Get this from the data source
             #region TODO
             ColumnHeader name = new ColumnHeader();
-            name.Text = "Name"; 
+            name.Text = "Name";
             listView.Columns.Add(name);
 
             for (int i = 0; i < 15; ++i)
@@ -169,7 +169,7 @@ namespace Vendord
             #endregion
 
             this.Controls.Add(listView);
-            
+
             StyleListView(listView);
         }
 
@@ -183,17 +183,16 @@ namespace Vendord
         #region Event Handlers
 
         private void handleEvent(object sender, EventArgs e)
-        {   
+        {
             // get the action                    
             this.LastAction = ParseActionFromEvent(sender);
+
+            // set the name of the form
+            this.Text = String.Format("{0} {1}", this.Name, this.LastAction);
 
             // act based on the aciton
             switch (this.LastAction)
             {
-                case EXIT:
-                    this.Close();
-                    break;
-
                 case ORDERS:
                     unloadCurrentView();
                     loadOrdersView();
@@ -202,16 +201,17 @@ namespace Vendord
                 case ORDER_SESSION:
                     unloadCurrentView();
                     loadOrderSessionView();
-                    break;                                   
+                    break;
+
+                case EXIT:
+                    this.Close();
+                    return; // return because we want to avoid making calls after we close the form.  
 
                 default:
                     unloadCurrentView();
                     loadHomeView();
                     break;
             }
-
-            // update navigation
-            this.Text = String.Format("{0} {1}", this.Name, this.LastAction);            
         }
 
         #endregion
