@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Vendord
 {
-    public partial class VendordForm : ResponsiveForm
+    public partial class VendordForm : VendordFormStyles
     {
         #region Fields
 

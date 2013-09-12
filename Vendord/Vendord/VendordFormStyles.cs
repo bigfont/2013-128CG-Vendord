@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Vendord
 {
-    public class ResponsiveForm : Form
+    public class VendordFormStyles : Form
     {
         private const int NAVIGATION_PANELS_PER_ROW = 5;
         private const int BUTTONS_PER_ROW = 2;
@@ -39,7 +39,7 @@ namespace Vendord
             this.fontSmall = new Font(family, emSizeSmall, style);
         }
 
-        public ResponsiveForm()
+        public VendordFormStyles()
         {
             SetFonts();
         }
@@ -57,7 +57,7 @@ namespace Vendord
             Size buttonSize;
 
             panelSize = new Size(this.ClientSize.Width, NavigationPanelHeight);
-            buttonSize = new Size(this.ClientSize.Width / panel.Controls.Count, NavigationPanelHeight);
+            buttonSize = new Size(this.ClientSize.Width / BUTTONS_PER_ROW, NavigationPanelHeight);
 
             panel.Size = panelSize;            
 

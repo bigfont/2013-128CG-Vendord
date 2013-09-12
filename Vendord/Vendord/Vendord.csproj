@@ -62,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataUtilities.cs" />
-    <Compile Include="ResponsiveForm.cs">
+    <Compile Include="VendordFormStyles.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Vendord.cs">
