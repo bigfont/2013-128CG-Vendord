@@ -14,7 +14,7 @@ namespace Vendord
         static void Main()
         {
             DataUtilities.SeedDB();
-            Application.Run(new Vendord());
+            Application.Run(new VendordForm());
         }
     }
 }

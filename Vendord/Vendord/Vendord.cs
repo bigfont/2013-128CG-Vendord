@@ -9,82 +9,106 @@ using System.Windows.Forms;
 
 namespace Vendord
 {
-    public class Vendord : ResponsiveForm
-    {        
-        public Vendord()
-        {            
-            InitializeComponent();
-        }
-
-        #region User Interface                
+    public partial class VendordForm : ResponsiveForm
+    {
+        #region Fields
 
         //
         // String constants
-        //
-        private const string EXIT = "Close";
+        //        
+        private const string HOME = null;
         private const string ORDERS = "Orders";
         private const string REPORTS = "Reports";
         private const string INVENTORY = "Inventory";
+        private const string ORDER_SESSION = "Order Session";
+        private const string EXIT = "Close";
+        private const string BACK = "Back";
+        private const string BUTTON_PREFIX = "btn";
+        private const string PANEL_PREFIX = "pnl";   
 
-        // 
-        // Controls
         //
-        private Button btnOrders;
-        private Button btnReports;
-        private Button btnInventory;
-        private Button btnExit;                                
+        // Workflow
+        // 
 
-        private void InitializeComponent()
-        {            
-            //
-            // Avoid the layout system repeatedly reactity to changes
-            //
-            this.SuspendLayout();
-          
-            //
-            // Buttons
-            //
-            this.btnOrders = new Button();
-            this.btnReports = new Button();
-            this.btnInventory = new Button();
-            this.btnExit = new Button();  
+        private Dictionary<string, string> UpstreamActionDictionary = new Dictionary<string, string>() { 
+            { ORDERS, HOME },
+            { REPORTS, HOME }, 
+            { INVENTORY, HOME },
+            { ORDER_SESSION, ORDERS }
 
-            this.btnOrders = CreateButtonWithEventHandler(ORDERS, 0, this.btn_Click);
-            this.btnReports = CreateButtonWithEventHandler(REPORTS, 1, this.btn_Click);
-            this.btnInventory = CreateButtonWithEventHandler(INVENTORY, 2, this.btn_Click);
-            this.btnExit = CreateButtonWithEventHandler(EXIT, 3, this.btn_Click);
+        };
 
-            this.Controls.Add(this.btnExit);
-            this.Controls.Add(this.btnInventory);
-            this.Controls.Add(this.btnReports);
-            this.Controls.Add(this.btnOrders);
-            
-            SetButtonSizesAndLocations(new Button[] { btnOrders, btnReports, btnInventory, btnExit });
-
-            // 
-            // Vendord
-            // 
-            this.Name = "Vendord";
-            this.Text = "Vendord";            
-            this.Load += new EventHandler(this.Vendord_Load);
-            this.Paint += new PaintEventHandler(this.Vendord_Paint);
-
-            SetFormSizeAndLocation();
-
-            //
-            // Layout
-            //
-            this.ResumeLayout(false);
-
-        }       
+        //
+        // State
+        // 
+        private string LastAction;
 
         #endregion
 
-        #region Event Handlers
-
-        private void ChangeFormTextProperty(string area)
+        private string GetUpstreamAction()
         {
-            this.Text = String.Format("{0} {1}", this.Name, area);
+            string upstreamAction; 
+            upstreamAction = null;
+            if(UpstreamActionDictionary.Keys.Contains<string>(this.LastAction))
+            {
+                upstreamAction = UpstreamActionDictionary[this.LastAction];
+            }
+            return upstreamAction;
+        }
+
+        private string ParseActionFromEvent(object sender)
+        {
+            string action;
+            Control control;
+
+            control = sender as Control;
+
+            action = null;
+            if (control.Tag != null)
+            {
+                action = control.Tag.ToString();
+
+                if (action.Equals(BACK))
+                {
+                    action = GetUpstreamAction();
+                }
+            }
+            
+            return action;
+        }
+
+        private Button CreateButtonWithEventHandler(string text, int tabIndex, string action, EventHandler eventHandler)
+        {
+            Button b = new Button();
+            b.Name = BUTTON_PREFIX + text;
+            b.Text = text;
+            b.Tag = action;
+            b.Click += eventHandler;
+            return b;
+        }
+
+        public VendordForm()
+        {
+            LastAction = null;            
+            this.Load += handleEvent;
+        }
+
+        #region Views
+
+        private void AddNavigationPanel()
+        {
+            Panel panel;
+            Button btnBack;
+
+            panel = new Panel();            
+
+            btnBack = CreateButtonWithEventHandler(BACK, 0, BACK, handleEvent);            
+
+            panel.Controls.Add(btnBack);
+
+            StyleNavigationPanel(panel);
+
+            this.Controls.Add(panel);
         }
 
         private void unloadCurrentView()
@@ -92,44 +116,79 @@ namespace Vendord
             this.Controls.Clear();
         }
 
-        private ColumnHeader CreateColumnHeader(string text)
+        private void loadHomeView()
         {
-            ColumnHeader columnHeader;
-            columnHeader = new ColumnHeader();
-            columnHeader.Text = text;
-            return columnHeader;
-        }        
+            Button btnOrders;
+            Button btnReports;
+            Button btnInventory;
+            Button btnExit;
+
+            btnOrders = new Button();
+            btnReports = new Button();
+            btnInventory = new Button();
+            btnExit = new Button();
+
+            btnOrders = CreateButtonWithEventHandler(ORDERS, 0, ORDERS, this.handleEvent);
+            btnReports = CreateButtonWithEventHandler(REPORTS, 1, REPORTS, this.handleEvent);
+            btnInventory = CreateButtonWithEventHandler(INVENTORY, 2, REPORTS, this.handleEvent);
+            btnExit = CreateButtonWithEventHandler(EXIT, 3, REPORTS, this.handleEvent);
+
+            this.Controls.Add(btnExit);
+            this.Controls.Add(btnInventory);
+            this.Controls.Add(btnReports);
+            this.Controls.Add(btnOrders);
+            
+            StyleHomeViewButtons(new Button[] { btnOrders, btnReports, btnInventory, btnExit });
+        }
 
         private void loadOrdersView()
         {            
             ListView listView;
-            ListViewItem listViewItem;                        
+            ListViewItem listViewItem;
+
+            AddNavigationPanel();
 
             listView = new ListView();
+            listView.Activation = ItemActivation.OneClick;
+            listView.FullRowSelect = true;
+            listView.ItemActivate += handleEvent;
 
+            // TODO Get this from the data source
+            #region TODO
             ColumnHeader name = new ColumnHeader();
-            name.Text = "Name";
+            name.Text = "Name"; 
             listView.Columns.Add(name);
 
-            listViewItem = new ListViewItem();
-            listViewItem.Text = "foo";            
-
-            listView.Items.Add(listViewItem);
+            for (int i = 0; i < 15; ++i)
+            {
+                listViewItem = new ListViewItem();
+                listViewItem.Text = "Foo" + i.ToString();
+                listView.Items.Add(listViewItem);
+                listView.Tag = ORDER_SESSION;
+            }
+            #endregion
 
             this.Controls.Add(listView);
-        }
-
-        private void Vendord_Load(object sender, EventArgs e)
-        {
-            ChangeFormTextProperty("Home");
-        }
-
-        private void btn_Click(object sender, EventArgs e)
-        {
-            string btnText;
             
-            btnText = (sender as Button).Text;
-            switch(btnText)
+            StyleListView(listView);
+        }
+
+        private void loadOrderSessionView()
+        {
+            AddNavigationPanel();
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        private void handleEvent(object sender, EventArgs e)
+        {   
+            // get the action                    
+            this.LastAction = ParseActionFromEvent(sender);
+
+            // act based on the aciton
+            switch (this.LastAction)
             {
                 case EXIT:
                     this.Close();
@@ -140,21 +199,21 @@ namespace Vendord
                     loadOrdersView();
                     break;
 
+                case ORDER_SESSION:
+                    unloadCurrentView();
+                    loadOrderSessionView();
+                    break;                                   
+
                 default:
+                    unloadCurrentView();
+                    loadHomeView();
                     break;
             }
 
-            ChangeFormTextProperty(btnText);
+            // update navigation
+            this.Text = String.Format("{0} {1}", this.Name, this.LastAction);            
         }
 
         #endregion
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
     }
 }

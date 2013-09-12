@@ -9,49 +9,66 @@ namespace Vendord
 {
     public class ResponsiveForm : Form
     {
+        private const int NAVIGATION_PANELS_PER_ROW = 5;
         private const int BUTTONS_PER_ROW = 2;
         private const int BUTTONS_PER_COLUMN = 2;
         private const int emSizeLarge = 20;
         private const int emSizeMedium = 16;
         private const int emSizeSmall = 12;
-        protected Font smallFont;
-        protected Font mediumFont;
-        protected Font largeFont;
+        private Font fontSmall;
+        private Font fontDefault;
+        private Font fontLarge;
+        public int NavigationPanelHeight 
+        { 
+            get 
+            {
+                return this.ClientSize.Height / NAVIGATION_PANELS_PER_ROW;
+            } 
+        }
+
+        private void SetFonts()
+        {
+            FontFamily family;
+            FontStyle style;
+
+            family = FontFamily.GenericSansSerif;
+            style = FontStyle.Regular;
+
+            this.fontLarge = new Font(family, emSizeLarge, style);
+            this.fontDefault = new Font(family, emSizeMedium, style);
+            this.fontSmall = new Font(family, emSizeSmall, style);
+        }
 
         public ResponsiveForm()
         {
             SetFonts();
         }
 
-        private void SetFonts()
-        {
-            FontFamily family;
-            FontStyle style;                        
-
-            family = FontFamily.GenericSansSerif;
-            style = FontStyle.Regular;
-
-            this.largeFont = new Font(family, emSizeLarge, style);
-            this.mediumFont = new Font(family, emSizeMedium, style);
-            this.smallFont = new Font(family, emSizeSmall, style);
-        }
-
-        protected Button CreateButtonWithEventHandler(string text, int tabIndex, EventHandler eventHandler)
-        {
-            Button b = new Button();
-            b.Name = "btn" + text;
-            b.Text = text;
-            b.Click += eventHandler;            
-            return b;
-        }
-
-        protected void SetFormSizeAndLocation()
+        protected void StyleForm()
         {
             this.Location = new Point(0, 0);
             this.Size = Screen.PrimaryScreen.WorkingArea.Size;
+            this.Font = fontDefault;
         }
 
-        protected void SetButtonSizesAndLocations(Button[] buttons)
+        protected void StyleNavigationPanel(Panel panel)
+        {
+            Size panelSize;
+            Size buttonSize;
+
+            panelSize = new Size(this.ClientSize.Width, NavigationPanelHeight);
+            buttonSize = new Size(this.ClientSize.Width / panel.Controls.Count, NavigationPanelHeight);
+
+            panel.Size = panelSize;            
+
+            foreach (Button b in panel.Controls)
+            {
+                b.Size = buttonSize;
+                b.Font = fontDefault;
+            }
+        }
+
+        protected void StyleHomeViewButtons(Button[] buttons)
         {
             int width;
             int height;
@@ -86,8 +103,30 @@ namespace Vendord
                 }
 
                 // set the font
-                b.Font = largeFont;
+                b.Font = fontLarge;
             }
+        }
+
+        protected void StyleListView(ListView listView)
+        {
+            listView.Location = new System.Drawing.Point(0, NavigationPanelHeight);
+            listView.Size = this.ClientSize;
+            listView.View = View.Details; // displays column headers
+            listView.Font = fontDefault;
+            listView.FullRowSelect = true;
+            listView.HeaderStyle = ColumnHeaderStyle.None;
+            for (int i = 0; i < listView.Columns.Count; ++i)
+            {
+                listView.Columns[i].Width = listView.ClientSize.Width;
+            }
+        }        
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
         }
     }
 }
