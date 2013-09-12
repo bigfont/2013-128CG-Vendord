@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Symbol.Barcode2;
 
 namespace Vendord
 {
@@ -90,7 +91,7 @@ namespace Vendord
         public VendordForm()
         {
             LastAction = null;
-            this.Load += handleEvent;
+            this.Load += handleFormControlEvents;            
         }
 
         #region Views
@@ -102,7 +103,7 @@ namespace Vendord
 
             panel = new Panel();
 
-            btnBack = CreateButtonWithEventHandler(BACK, 0, handleEvent);
+            btnBack = CreateButtonWithEventHandler(BACK, 0, handleFormControlEvents);
 
             panel.Controls.Add(btnBack);
 
@@ -128,10 +129,10 @@ namespace Vendord
             btnInventory = new Button();
             btnExit = new Button();
 
-            btnOrders = CreateButtonWithEventHandler(ORDERS, 0, this.handleEvent);
-            btnReports = CreateButtonWithEventHandler(REPORTS, 1, this.handleEvent);
-            btnInventory = CreateButtonWithEventHandler(INVENTORY, 2, this.handleEvent);
-            btnExit = CreateButtonWithEventHandler(EXIT, 3, this.handleEvent);
+            btnOrders = CreateButtonWithEventHandler(ORDERS, 0, this.handleFormControlEvents);
+            btnReports = CreateButtonWithEventHandler(REPORTS, 1, this.handleFormControlEvents);
+            btnInventory = CreateButtonWithEventHandler(INVENTORY, 2, this.handleFormControlEvents);
+            btnExit = CreateButtonWithEventHandler(EXIT, 3, this.handleFormControlEvents);
 
             this.Controls.Add(btnExit);
             this.Controls.Add(btnInventory);
@@ -151,7 +152,7 @@ namespace Vendord
             listView = new ListView();
             listView.Activation = ItemActivation.OneClick;
             listView.FullRowSelect = true;
-            listView.ItemActivate += handleEvent;
+            listView.ItemActivate += handleFormControlEvents;
 
             // TODO Get this from the data source
             #region TODO
@@ -176,13 +177,15 @@ namespace Vendord
         private void loadOrderSessionView()
         {
             AddNavigationPanel();
+
+            BarcodeScanner scanner = new BarcodeScanner(barcodeScanner_OnStatus, barcodeScanner_OnScan);            
         }
 
         #endregion
 
         #region Event Handlers
 
-        private void handleEvent(object sender, EventArgs e)
+        private void handleFormControlEvents(object sender, EventArgs e)
         {
             // get the action                    
             this.LastAction = ParseActionFromEvent(sender);
@@ -212,6 +215,18 @@ namespace Vendord
                     loadHomeView();
                     break;
             }
+        }
+
+        private void barcodeScanner_OnScan(ScanDataCollection scanDataCollection)
+        {
+            int i = 0;
+            i++;
+        }
+
+        private void barcodeScanner_OnStatus(StatusData statusData)
+        {
+            int i = 0;
+            i++;
         }
 
         #endregion
