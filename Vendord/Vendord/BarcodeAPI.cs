@@ -6,13 +6,13 @@ using Symbol.Barcode2;
 
 namespace Vendord.SmartDeviceApp
 {
-    public class BarcodeScanner
+    public class BarcodeAPI
     {
         private const int SCAN_TIMEOUT_MILLISECONDS = 5 * 60 * 1000; // five minutes in milliseconds.
 
         private Barcode2 myScannerAPI = null;
 
-        public BarcodeScanner(Barcode2.OnStatusHandler statusHandler, Barcode2.OnScanHandler scanHandler)
+        public BarcodeAPI(Barcode2.OnStatusHandler statusHandler, Barcode2.OnScanHandler scanHandler)
         {
             InstantiateScannerAPI();
             ConfigureTheScannerAPI();                        

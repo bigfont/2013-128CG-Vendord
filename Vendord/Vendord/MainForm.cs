@@ -10,7 +10,7 @@ using Symbol.Barcode2;
 
 namespace Vendord.SmartDeviceApp
 {
-    public partial class VendordForm : VendordFormStyles
+    public partial class MainForm : VendordFormStyles
     {
         #region Fields
 
@@ -88,7 +88,7 @@ namespace Vendord.SmartDeviceApp
             return b;
         }
 
-        public VendordForm()
+        public MainForm()
         {
             LastAction = null;
             this.Load += handleFormControlEvents;            
@@ -178,7 +178,7 @@ namespace Vendord.SmartDeviceApp
         {
             AddNavigationPanel();
 
-            BarcodeScanner scanner = new BarcodeScanner(barcodeScanner_OnStatus, barcodeScanner_OnScan);            
+            BarcodeAPI scanner = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);            
         }
 
         #endregion

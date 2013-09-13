@@ -14,7 +14,7 @@ namespace Vendord.SmartDeviceApp
         static void Main()
         {
             DataUtilities.SeedDB();
-            Application.Run(new VendordForm());
+            Application.Run(new MainForm());
         }
     }
 }
