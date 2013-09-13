@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
-using Vendord.MyDatabaseDataSetTableAdapters;
+using Vendord.SmartDeviceApp.MyDatabaseDataSetTableAdapters;
 
-namespace Vendord
+namespace Vendord.SmartDeviceApp
 {
     internal static class DataUtilities
     {

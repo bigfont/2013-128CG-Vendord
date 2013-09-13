@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using Symbol.Barcode2;
 
-namespace Vendord
+namespace Vendord.SmartDeviceApp
 {
     public partial class VendordForm : VendordFormStyles
     {

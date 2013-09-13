@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord", "Vendord\Vendord.csproj", "{3DE4015A-666F-48A3-ABB1-96038A6C860D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDeviceApp", "Vendord\Vendord.SmartDeviceApp.csproj", "{3DE4015A-666F-48A3-ABB1-96038A6C860D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_Barcode2Sample1", "..\Samples\CS_Barcode2Sample1\CS_Barcode2Sample1.csproj", "{7F24FB45-382E-47A6-B3D0-98B472E16FBF}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.Desktop.Communication", "OpenNETCF.Desktop.Communication.68585\OpenNETCF.Desktop.Communication.csproj", "{60FD337B-8EB5-4E20-A951-6EBB09CCE442}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VendordConsole", "VendordConsole\VendordConsole.csproj", "{F5E640FA-420B-4283-8F58-5DCB231A8433}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Practice", "Practice", "{FD365514-FD9C-4DA2-AE33-1614A9C70122}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{4D375FC2-B283-4E8F-A150-49C071118185}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,5 +98,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B45A275D-0307-4043-BA69-4AD69E0A5FF1} = {FD365514-FD9C-4DA2-AE33-1614A9C70122}
+		{F5E640FA-420B-4283-8F58-5DCB231A8433} = {FD365514-FD9C-4DA2-AE33-1614A9C70122}
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF} = {FD365514-FD9C-4DA2-AE33-1614A9C70122}
+		{60FD337B-8EB5-4E20-A951-6EBB09CCE442} = {4D375FC2-B283-4E8F-A150-49C071118185}
 	EndGlobalSection
 EndGlobal

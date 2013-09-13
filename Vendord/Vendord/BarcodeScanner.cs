@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Symbol.Barcode2;
 
-namespace Vendord
+namespace Vendord.SmartDeviceApp
 {
     public class BarcodeScanner
     {
