@@ -8,8 +8,8 @@
     <ProjectGuid>{F5E640FA-420B-4283-8F58-5DCB231A8433}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VendordConsole</RootNamespace>
-    <AssemblyName>VendordConsole</AssemblyName>
+    <RootNamespace>VendordConsoleApp</RootNamespace>
+    <AssemblyName>VendordConsoleApp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

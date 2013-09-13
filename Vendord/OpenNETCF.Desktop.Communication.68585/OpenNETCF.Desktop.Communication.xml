@@ -4,5 +4,1778 @@
         <name>OpenNETCF.Desktop.Communication</name>
     </assembly>
     <members>
+        <member name="T:OpenNETCF.Desktop.Communication.IRAPI">
+            <summary>
+            Windows CE Remote API functions
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.Connect">
+            <summary>
+            Connects synchronously to the remote device
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.Connect(System.Boolean)">
+            <summary>
+            Connect asynchronously to the remote device with a timeout of 0 seconds
+            </summary>
+            <param name="WaitForInit">If true the method blocks until RAPI Initializes or throws an error. If false the contructor does not block and the RAPIConnected event signals successful device connection.</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.Connect(System.Boolean,System.Int32)">
+            <summary>
+            Connect asynchronously to the remote device with a timeout of 0 seconds
+            </summary>
+            <param name="WaitForInit">If true the method blocks until RAPI Initializes or throws an error. If false the contructor does not block and the RAPIConnected event signals successful device connection.</param>
+            <param name="TimeoutSeconds">Asynchronous connections can be set to timeout after a set number of seconds. Synchronous connection wait infinitely by default (and underlying RAPI design). For asynchronous connections, a timeout value of <b>-1</b> is infinite.</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CopyFileFromDevice(System.String,System.String)">
+            <summary>
+            Copy a device file to the connected PC
+            </summary>
+            <param name="LocalFileName">Name of destination file on PC</param>
+            <param name="RemoteFileName">Name of source file on device</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CopyFileFromDevice(System.String,System.String,System.Boolean)">
+            <summary>
+            Copy a device file to the connected PC
+            </summary>
+            <param name="LocalFileName">Name of destination file on PC</param>
+            <param name="RemoteFileName">Name of source file on device</param>
+            <param name="Overwrite">Overwrites existing file on the device if <b>true</b>, fails if <b>false</b></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CopyFileOnDevice(System.String,System.String,System.Boolean)">
+            <summary>
+            This function copies an existing device file to a new device file.
+            </summary>
+            <param name="ExistingFileName"></param>
+            <param name="NewFileName"></param>
+            <param name="Overwrite">Overwrites existing file on the device if <b>true</b>, fails if <b>false</b></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CopyFileOnDevice(System.String,System.String)">
+            <summary>
+            This function copies an existing device file to a new device file.
+            </summary>
+            <param name="SourceFile">Name of source file to copy</param>
+            <param name="DestinationFile">Name of new, destination file</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CopyFileToDevice(System.String,System.String,System.Boolean)">
+            <summary>
+            Copy a device file to the connected PC
+            </summary>
+            <param name="LocalFileName">Name of destination file on PC</param>
+            <param name="RemoteFileName">Name of source file on device</param>
+            <param name="Overwrite">Overwrites existing file on the device if <b>true</b>, fails if <b>false</b></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CopyFileToDevice(System.String,System.String)">
+            <summary>
+            Copy a PC file to a connected device
+            </summary>
+            <param name="LocalFileName">Name of source file on PC</param>
+            <param name="RemoteFileName">Name of destination file on device</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CreateDeviceDirectory(System.String)">
+            <summary>
+            Creates a directory on the connected device
+            </summary>
+            <param name="PathName"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CreateDeviceShortcut(System.String,System.String)">
+            <summary>
+            Creates a shortcut
+            </summary>
+            <param name="ShortcutName">The fully qualifed path name, including the .lnk extension, of the shortcut to create</param>
+            <param name="Target">Target path of the shortcut limited to 256 characters (use quoted string when target includes spaces)</param>
+            <example>The following statement creates a shortcut on the remote desktop for the Smart Device Authentication Utility:
+            <code>CreateDeviceShortcut("\\windows\\desktop\\.Net Debug.lnk", "\\windows\\sdauthutildevice.exe");</code>
+            </example>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CreateProcess(System.String,System.String)">
+            <summary>
+            Launch a process of the connected device
+            </summary>
+            <param name="FileName">Name of application to launch</param>
+            <param name="CommandLine">Command line parameters to pass to application</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.CreateProcess(System.String)">
+            <summary>
+            Launch a process of the connected device
+            </summary>
+            <param name="FileName">Name of application to launch</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.DeleteDeviceFile(System.String)">
+            <summary>
+            Delete a file on the connected device
+            </summary>
+            <param name="FileName">File to delete</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.DeviceFileExists(System.String)">
+            <summary>
+            Determines whether a file exists on the connected remote device
+            </summary>
+            <param name="RemoteFileName">Fully qualified path to the file or path on the device to test</param>
+            <returns><b>true</b> if the file or directory exists, <b>false</b> if it does not</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.DeviceProcessConfigXml(System.String,System.String@)">
+            <summary>
+            Desktop equivalent of DMProcessConfigXML. Works similar to RapiConfig
+            </summary>
+            <param name="configXml">XML provisioning document</param>
+            <param name="result">Resulting configuration document. Might contain error information</param>
+            <returns>0 - success, or an HRESULT on error</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.Disconnect">
+            <summary>
+            Disconnect from device
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.EnumFiles(System.String)">
+            <summary>
+            Provides an ArrayList of FileInformation classes matching the criteria provided in the FileName parameter
+            </summary>
+            <param name="FileName">Long pointer to a null-terminated string that specifies a valid directory or path and filename, which can contain wildcard characters (* and ?).</param>
+            <returns>An array of FileInformation objects</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceCapabilities(OpenNETCF.Desktop.Communication.DeviceCaps)">
+            <summary>
+            This function retrieves device-specific information about a connected device.
+            </summary>
+            <param name="CapabiltyToGet">Capabilty to query</param>
+            <returns>Value reported for capability</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceFileAttributes(System.String)">
+            <summary>
+            Get the attributes of a file on the connected device
+            </summary>
+            <param name="FileName">Name of file to retrieve attributes of</param>
+            <returns>Attributes for given file name</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceFileSize(System.String)">
+            <summary>
+            Get the size, in bytes, of a file on the connected device
+            </summary>
+            <param name="FileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceFileTime(System.String,OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime)">
+            <summary>
+            Get a RAPIFileTime structure for the specified file
+            </summary>
+            <param name="FileName">Name of the file to check</param>
+            <param name="DesiredTime">A RAPIFileTime</param>
+            <returns>The DateTime for the specified value</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceMemoryStatus(OpenNETCF.Desktop.Communication.MEMORYSTATUS@)">
+            <summary>
+            Retrieves the memory status of the connected device
+            </summary>
+            <param name="ms"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceShortcutTarget(System.String)">
+            <summary>
+            Given a path to a shortcut, returns the full path to the shortcut's target
+            </summary>
+            <param name="shortcutPath">Path to the shortcut</param>
+            <returns>Path to the target</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceStoreInformation(OpenNETCF.Desktop.Communication.STORE_INFORMATION@)">
+            <summary>
+            This function fills in a STORE_INFORMATION structure with the size of the object store and the amount of free space currently in the object store
+            </summary>
+            <param name="StoreInfo"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceSystemFolderPath(OpenNETCF.Desktop.Communication.SystemFolders)">
+            <summary>
+            Gets the path to a system folder
+            </summary>
+            <param name="Folder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceSystemInfo(OpenNETCF.Desktop.Communication.SYSTEM_INFO@)">
+            <summary>
+            Gets info about the connected device
+            </summary>
+            <param name="pSI">SYSTEM_INFO structure populated by the call</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceSystemPowerStatus(OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX@)">
+            <summary>
+            This function fills in a SYSTEM_POWER_STATUS_EX structure
+            </summary>
+            <param name="PowerStatus"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.GetDeviceVersion(OpenNETCF.Desktop.Communication.OSVERSIONINFO@)">
+            <summary>
+            This function obtains extended information about the version of the operating system of the connected device.
+            </summary>
+            <param name="VersionInfo"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.Invoke(System.String,System.String,System.Byte[],System.Byte[]@)">
+            <summary>
+            Method for calling non-stream-interface custom RAPI functions
+            </summary>
+            <param name="DLLPath">Device path to custom RAPI library</param>
+            <param name="FunctionName">Exported name of custom RAPI function</param>
+            <param name="InputData">Data to send to the custom RAPI function</param>
+            <param name="OutputData">Data received from the custom RAPI function</param>
+            <returns>The hresult from the invoked dll function</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.MoveDeviceFile(System.String,System.String)">
+            <summary>
+            Moves/renames an existing device file
+            </summary>
+            <param name="ExistingFileName">Name of existing file</param>
+            <param name="NewFileName">New name to use for file</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.RemoveDeviceDirectory(System.String,System.Boolean)">
+            <summary>
+            Removes a directory from the connected device.
+            </summary>
+            <param name="PathName">Directory to remove</param>
+            <param name="Recurse">If <b>true</b> the call will recursively delete any subfolders and files as well, including hidden, read-only and system files</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.RemoveDeviceDirectory(System.String)">
+            <summary>
+            Removes an empty directory from the connected device
+            </summary>
+            <param name="PathName">Directory to remove</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.SetDeviceFileAttributes(System.String,OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes)">
+            <summary>
+            Set the attributes for a file on the connected device
+            </summary>
+            <param name="FileName"></param>
+            <param name="Attributes"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.SetDeviceFileTime(System.String,OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime,System.DateTime)">
+            <summary>
+            Modified a FileTime for the specified file
+            </summary>
+            <param name="FileName">File to modify</param>
+            <param name="DesiredTime">Time to modify</param>
+            <param name="NewTime">New time to set</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.IRAPI.EnumerateFiles(System.String)">
+            <summary>
+            Provides an IEnumerable of FileInformation classes matching the criteria provided in the FileName parameter
+            </summary>
+            <param name="fileName">Long pointer to a null-terminated string that specifies a valid directory or path and filename, which can contain wildcard characters (* and ?).</param>
+            <returns>An IEnumerable FileInformation objects</returns>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.IRAPI.ActiveSync">
+            <summary>
+            Exposes access to MicroSoft ActiveSync methods and events
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.IRAPI.CFPerformanceMonitor">
+            <summary>
+            Used to get performance statistics for a .NET Compact Framework application on a connected device
+            <seealso cref="P:OpenNETCF.Desktop.Communication.IRAPI.CFPerformanceMonitor"/><seealso cref="T:OpenNETCF.Desktop.Communication.PerformanceStatistics"/>
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.IRAPI.Connected">
+            <summary>
+            Connected Property
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.IRAPI.DevicePresent">
+            <summary>
+            Indicates whether ActiveSync currently has a connected device or not
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.IRAPI.RAPIConnected">
+            <summary>
+            Event fired when a connection is made in asynchronous mode
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.IRAPI.RAPIDisconnected">
+            <summary>
+            Event fired when a connection is lost
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.AutoStartApps">
+            <summary>
+            Summary description for AutoStart.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.AutoStartApps.Add(System.String)">
+            <summary>
+            Add a new application to the list of apps to AutoStart
+            </summary>
+            <param name="AppPath">Fully qualified path to app</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.AutoStartApps.Remove(System.String)">
+            <summary>
+            Remove an application from the list of apps to AutoStart
+            </summary>
+            <param name="AppPath">Fully qualified path to app</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.AutoStartApps.Clear">
+            <summary>
+            Clear all AutoStart apps
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.AutoStartApps.RemoveAt(System.Int32)">
+            <summary>
+            Remove an application from the list of apps to AutoStart
+            </summary>
+            <param name="Index">Index of item to remove</param>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.AutoStartApps.Item(System.Int32)">
+            <summary>
+            Indexer
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.PerformanceStatistics">
+            <summary>
+            A collection of performance statistics for managed applications
+            <seealso cref="T:OpenNETCF.Desktop.Communication.CFPerformanceMonitor"/>
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.PerformanceStatistics.GetEnumerator">
+            <summary>
+             Gets an enumerator for iterating the PerformanceStatistics collection
+             <seealso cref="T:OpenNETCF.Desktop.Communication.PerformanceStatistics.StatisticEnumerator"/>
+            </summary>
+            <returns>A StatisticEnumerator</returns>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistics.Count">
+            <summary>
+            Number of statistices in the collection
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.PerformanceStatistics.StatisticEnumerator">
+            <summary>
+            The enumerator for the PerformanceStatistics class
+            <seealso cref="T:OpenNETCF.Desktop.Communication.PerformanceStatistics"/> 
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.PerformanceStatistics.StatisticEnumerator.Reset">
+            <summary>
+            Reset
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.PerformanceStatistics.StatisticEnumerator.MoveNext">
+            <summary>
+            MoveNext
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistics.StatisticEnumerator.Current">
+            <summary>
+            The current PerformanceStatistic pointed to
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.PerformanceStatistic">
+            <summary>
+            A single statistic for a profiled application
+            <seealso cref="T:OpenNETCF.Desktop.Communication.CFPerformanceMonitor"/>
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistic.Name">
+            <summary>
+            The statistic name
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistic.Value">
+            <summary>
+            The statistic value
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistic.SampleCount">
+            <summary>
+            The number of samples used to determine the Min, Max and Mean
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistic.Mean">
+            <summary>
+            Average statistic value
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistic.Min">
+            <summary>
+            Minimum statistic value
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.PerformanceStatistic.Max">
+            <summary>
+            Maximum statistic value
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.SYSTEMTIME.#ctor(System.UInt16,System.UInt16,System.UInt16,System.UInt16,System.UInt16,System.UInt16)">
+            <summary>
+            Initializes a new SYSTEMTIME object with the specified parameters.
+            </summary>
+            <param name="year">Year</param>
+            <param name="month">Month</param>
+            <param name="day">Day</param>
+            <param name="hour">Hour</param>
+            <param name="minute">Minute</param>
+            <param name="second">Second</param>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.CERegistry">
+            <summary>
+            Supplies the base registry keys that access values and subkeys in the registry on the attached device.
+            </summary>
+            <remarks>This class was renamed from its previous name of "Registry" to avoid naming clashes with the desktop equivalent.</remarks>
+            <seealso cref="T:Microsoft.Win32.Registry">Desktop Registry Class</seealso>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.CERegistry.LocalMachine">
+            <summary>
+            Contains the configuration data for the local machine. This field reads the Windows registry base key HKEY_LOCAL_MACHINE.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.CERegistry.CurrentUser">
+            <summary>
+            Contains information about the current user preferences. This field reads the Windows registry base key HKEY_CURRENT_USER.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.CERegistry.ClassesRoot">
+            <summary>
+             Defines the types (or classes) of documents and the properties associated with those types. This field reads the Windows registry base key HKEY_CLASSES_ROOT.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.CERegistry.Users">
+            <summary>
+            Contains information about the default user configuration. This field reads the Windows registry base key HKEY_USERS.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.CERegistryKey">
+            <summary>
+            Represents a key level node in the device-side Windows registry.
+            This class is a registry encapsulation.
+            </summary>
+            <remarks>This class was renamed from its previous name of "RegistryKey" to avoid naming clashes with the desktop equivalent.
+            </remarks>
+            <seealso cref="T:Microsoft.Win32.RegistryKey">Desktop RegistryKey Class</seealso>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.ToString">
+            <summary>
+            Retrieves a string representation of this key.
+            </summary>
+            <returns>A string representing the key. If the specified key is invalid (cannot be found) then a null value is returned.</returns>
+            <exception cref="T:System.ObjectDisposedException"> The RegistryKey being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.Close">
+            <summary>
+            Closes the key and flushes it to storage if the contents have been modified.
+            </summary>
+            <remarks>Calling this method on system keys will have no effect, since system keys should never be closed.
+            This method does nothing if you call it on an instance of <b>RegistryKey</b> that is already closed.</remarks>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.CreateSubKey(System.String)">
+            <summary>
+             Creates a new subkey or opens an existing subkey.
+             The string subKey is not case-sensitive.
+            </summary>
+            <remarks>This class was renamed from its previous name of "RegistryKey" to avoid naming clashes with the desktop equivalent, therefore the return type of this method has also been changed to <see cref="T:OpenNETCF.Desktop.Communication.CERegistryKey"/>.</remarks>
+            <param name="subkey">Name or path of subkey to create or open.</param>
+            <returns>Returns the subkey, or null if the operation failed.</returns>
+            <exception cref="T:System.ArgumentNullException">The specified subkey is null.</exception>
+            <exception cref="T:System.ArgumentException">The length of the specified subkey is longer than the maximum length allowed (255 characters).</exception>
+            <exception cref="T:System.ObjectDisposedException">The <see cref="T:OpenNETCF.Desktop.Communication.CERegistryKey"/> on which this method is being invoked is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.OpenSubKey(System.String)">
+            <summary>
+            Retrieves a subkey as read-only.
+            </summary>
+            <remarks>This class was renamed from its previous name of "RegistryKey" to avoid naming clashes with the desktop equivalent, therefore the return type of this method has also been changed to <see cref="T:OpenNETCF.Desktop.Communication.CERegistryKey"/>.</remarks>
+            <param name="name">Name or path of subkey to open.</param>
+            <returns>The subkey requested, or null if the operation failed.</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.OpenSubKey(System.String,System.Boolean)">
+            <summary>
+            Retrieves a specified subkey.
+            </summary>
+            <remarks>This class was renamed from its previous name of "RegistryKey" to avoid naming clashes with the desktop equivalent, therefore the return type of this method has also been changed to <see cref="T:OpenNETCF.Desktop.Communication.CERegistryKey"/>.</remarks>
+            <param name="name">Name or path of subkey to open.</param>
+            <param name="writable">Set to true if you need write access to the key.</param>
+            <returns>The subkey requested, or null if the operation failed.</returns>
+            <exception cref="T:System.ArgumentNullException">name is null.</exception>
+            <exception cref="T:System.ArgumentException">The length of the specified subkey is longer than the maximum length allowed (255 characters).</exception>
+            <exception cref="T:System.ObjectDisposedException">The <see cref="T:OpenNETCF.Desktop.Communication.CERegistryKey"/> being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.DeleteSubKey(System.String)">
+            <summary>
+            Deletes the specified subkey. The string subkey is not case-sensitive.
+            </summary>
+            <param name="subkey">Name of the subkey to delete.</param>
+            <exception cref="T:System.ArgumentException">The specified subkey is not a valid reference to a registry key.</exception>
+            <exception cref="T:System.ArgumentNullException">The subkey is null.</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.DeleteSubKey(System.String,System.Boolean)">
+            <summary>
+            Deletes the specified subkey. The string subkey is not case-sensitive.
+            </summary>
+            <param name="subkey">Name of the subkey to delete.</param>
+            <param name="throwOnMissingSubKey">Indicates whether an exception should be raised if the specified subkey cannot be found.
+            If this argument is true and the specified subkey does not exist then an exception is raised.
+            If this argument is false and the specified subkey does not exist, then no action is taken</param>
+            <exception cref="T:System.ArgumentException">The specified subkey is not a valid reference to a registry key (and throwOnMissingSubKey is true).</exception>
+            <exception cref="T:System.ArgumentNullException">The subkey is null.</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.DeleteSubKeyTree(System.String)">
+            <summary>
+             Deletes a subkey and any child subkeys recursively.
+             The string subKey is not case-sensitive.
+            </summary>
+            <param name="subkey">Subkey to delete.</param>
+            <exception cref="T:System.ArgumentNullException">The subkey parameter is null.</exception>
+            <exception cref="T:System.ArgumentException">Deletion of a root hive is attempted. 
+            The subkey parameter does not match a valid registry subkey.</exception>
+            <exception cref="T:System.ObjectDisposedException">The <see cref="T:OpenNETCF.Desktop.Communication.CERegistryKey"/> being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.GetSubKeyNames">
+            <summary>
+            Retrieves an array of strings that contains all the subkey names.
+            </summary>
+            <returns>An array of strings that contains the names of the subkeys for the current key.</returns>
+            <exception cref="T:System.ObjectDisposedException">The <see cref="T:OpenNETCF.Desktop.Communication.CERegistryKey"/> being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.GetValue(System.String)">
+            <summary>
+            Retrieves the data associated with the specified value, or null if the value does not exist.
+            </summary>
+            <param name="name">Name of the value to retrieve.</param>
+            <returns>The data associated with name , or null if the value does not exist.</returns>
+            <exception cref="T:System.ArgumentException">The RegistryKey being manipulated does not exist.</exception>
+            <exception cref="T:System.ObjectDisposedException">The RegistryKey being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.GetValue(System.String,System.Object)">
+            <summary>
+            Retrieves the specified value, or the default value you provide if the specified value is not found. 
+            </summary>
+            <param name="name">Name of the value to retrieve.</param>
+            <param name="defaultValue">Value to return if name does not exist.</param>
+            <returns>The data associated with name, or defaultValue if name is not found.</returns>
+            <exception cref="T:System.ArgumentException">The RegistryKey being manipulated does not exist.</exception>
+            <exception cref="T:System.ObjectDisposedException">The RegistryKey being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.SetValue(System.String,System.Object)">
+            <summary>
+            Sets the specified value.
+            </summary>
+            <param name="name">Name of value to store data in.</param>
+            <param name="value">Data to store.</param>
+            <exception cref="T:System.ArgumentException">The length of the specified value is longer than the maximum length allowed (255 characters).</exception>
+            <exception cref="T:System.ArgumentNullException">value is null.</exception>
+            <exception cref="T:System.ObjectDisposedException">The RegistryKey being set is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.DeleteValue(System.String)">
+            <summary>
+            Deletes the specified value from this key.
+            </summary>
+            <param name="name">Name of the value to delete.</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.DeleteValue(System.String,System.Boolean)">
+            <summary>
+            Deletes the specified value from this key.
+            </summary>
+            <param name="name">Name of the value to delete.</param>
+            <param name="throwOnMissingValue">Indicates whether an exception should be raised if the specified value cannot be found.
+            If this argument is true and the specified value does not exist then an exception is raised.
+            If this argument is false and the specified value does not exist, then no action is taken</param>
+            <exception cref="T:System.ArgumentException">name is not a valid reference to a value (and throwOnMissingValue is true) or name is null</exception>
+            <exception cref="T:System.ObjectDisposedException">The RegistryKey being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.GetValueNames">
+            <summary>
+            Retrieves an array of strings that contains all the value names associated with this key.
+            </summary>
+            <returns>An array of strings that contains the value names for the current key.</returns>
+            <exception cref="T:System.ObjectDisposedException">The RegistryKey being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CERegistryKey.Dispose">
+            <summary>
+            Dispose method
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.CERegistryKey.Name">
+            <summary>
+            Retrieves the name of the key.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.CERegistryKey.SubKeyCount">
+            <summary>
+            Retrieves the count of subkeys at the base level, for the current key.
+            </summary>
+            <exception cref="T:System.ObjectDisposedException"> The RegistryKey being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.CERegistryKey.ValueCount">
+            <summary>
+            Retrieves the count of values in the key.
+            </summary>
+            <exception cref="T:System.ObjectDisposedException"> The RegistryKey being manipulated is closed (closed keys cannot be accessed).</exception>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.CERegistryKey.KeyDisposition">
+            <summary>
+            Key disposition for RegCreateKey(Ex)
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.CERegistryKey.KeyType">
+            <summary>
+            Key type for RegCreateKey(Ex)
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.CFPerformanceMonitor">
+            <summary>
+            This class can be used to generate and capture performance statistics
+            from .NET Compact Framework applications run on a connected device.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CFPerformanceMonitor.EnableProfiling">
+            <summary>
+            This method informs the device to begin profiling all managed applications
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CFPerformanceMonitor.DisableProfiling">
+            <summary>
+            This method informs the device to stop profiling all managed applications
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.CFPerformanceMonitor.GetCurrentStatistics">
+            <summary>
+            Retrieves the statistics for the last profiled managed application
+            <seealso cref="T:OpenNETCF.Desktop.Communication.PerformanceStatistics"/>
+            </summary>
+            <returns>Profile statistics</returns>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.ActiveHandler">
+            <summary>
+            ActiveHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.AnswerHandler">
+            <summary>
+            AnswerHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.DisconnectHandler">
+            <summary>
+            DisconnectHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.ErrorHandler">
+            <summary>
+            ErrorHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.InactiveHandler">
+            <summary>
+            InactiveHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.IPAddrHandler">
+            <summary>
+            IPAddrHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.ListenHandler">
+            <summary>
+            ListenHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.TerminatedHandler">
+            <summary>
+            TerminatedHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.ActiveSync">
+            <summary>
+            This class wraps functions exposed by Microsoft ActiveSync
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.ActiveSync.ShowCommSettings">
+            <summary>
+            Display the ActiveSync Settings dialog
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.ActiveSync.ConnectNow">
+            <summary>
+            Force an ActiveSync connection.  Autoconnect must be disabled.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.ActiveSync.DisconnectNow">
+            <summary>
+            Force an ActiveSync disconnect.  Autoconnect must be disabled.
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.ActiveSync.IntToDottedIP(System.Int32)">
+            <summary>
+            Converts an integer into a dotted-string-notation IP address
+            </summary>
+            <param name="IP">innteger IP</param>
+            <returns>Dotted string IP</returns>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.Active">
+            <summary>
+            Indicates that a connection is established between the client application and the connection manager.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.Answer">
+            <summary>
+            Indicates that the Windows CE connection manager has detected the communications interface.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.Disconnect">
+            <summary>
+            Indicates that the connection manager has terminated the connection between the desktop computer and the Windows CE–based device
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.Error">
+            <summary>
+            Indicates that the connection manager failed to start communications between the desktop computer and the Windows CE–based device.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.Inactive">
+            <summary>
+            Indicates a disconnection, or disconnected state, between the desktop computer and the Windows CE–based device. 
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.IPChange">
+            <summary>
+            Indicates that an Internet Protocol (IP) address has been established for communication between the desktop computer and the Windows CE–based device.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.Listen">
+            <summary>
+            Indicates that a connection is waiting to be established between the desktop computer and the Windows CE–based device.
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.ActiveSync.Terminated">
+            <summary>
+            Indicates that the Windows CE connection manager has been shut down.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.ActiveSync.ConnectAsGuestOnly">
+            <summary>
+            When true, all CE devices connecting to the host will connect as guest without prompting for a partnership
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.ActiveSync.AutoStartOnConnect">
+            <summary>
+            Gets or Sets an array of paths for applications that will be automatically run on the PC when a CE device is connected to the host PC
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.ActiveSync.AutoStartOnDisconnect">
+            <summary>
+            Gets or Sets an array of paths for applications that will be automatically run on the PC when a CE device is connected to the host PC
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.ActiveSync.Icon">
+            <summary>
+            Sets the ActiveSync icon
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.ActiveSync.AutoConnect">
+            <summary>
+            Sets whether ActiveSync should automatically connect or not
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.ActiveSync.Version">
+            <summary>
+            Returns the version of Microsoft ActiveSync currently running
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.ActiveSync.ActiveSyncIcon">
+            <summary>
+            ActiveSync Icon
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ActiveSync.ActiveSyncIcon.DataTransferring">
+            <summary>
+            Shown when data is transferring
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ActiveSync.ActiveSyncIcon.NoDataTransferring">
+            <summary>
+            Shown when no data is transferring (idle)
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ActiveSync.ActiveSyncIcon.Error">
+            <summary>
+            Shown when an ActiveSync error occurs
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.RAPIConnectedHandler">
+            <summary>
+            RapiConnectedHandler delegate
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.RAPI">
+            <summary>
+            Windows CE Remote API functions
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.#ctor">
+            <summary>
+            RAPI object constructor
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Finalize">
+            <summary>
+            Object destructor
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Dispose(System.Boolean)">
+            <summary>
+            Dispose code handling that properly handles 
+            finalization code (implementation according to MSDN)
+            </summary>
+            <param name="disposing">
+            <c>true</c> to release both managed and unmanaged resources; 
+            <c>false</c> to release only unmanaged resources.
+            </param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Connect">
+            <summary>
+            Connects synchronously to the remote device
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Connect(System.Boolean)">
+            <summary>
+            Connect asynchronously to the remote device with a timeout of 0 seconds
+            </summary>
+            <param name="WaitForInit">If true the method blocks until RAPI Initializes or throws an error. If false the contructor does not block and the RAPIConnected event signals successful device connection.</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Connect(System.Boolean,System.Int32)">
+            <summary>
+            Connect asynchronously to the remote device with a timeout of 0 seconds
+            </summary>
+            <param name="WaitForInit">If true the method blocks until RAPI Initializes or throws an error. If false the contructor does not block and the RAPIConnected event signals successful device connection.</param>
+            <param name="TimeoutSeconds">Asynchronous connections can be set to timeout after a set number of seconds. Synchronous connection wait infinitely by default (and underlying RAPI design). For asynchronous connections, a timeout value of <b>-1</b> is infinite.</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Disconnect">
+            <summary>
+            Disconnect from device
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.DeviceFileExists(System.String)">
+            <summary>
+            Determines whether a file exists on the connected remote device
+            </summary>
+            <param name="RemoteFileName">Fully qualified path to the file or path on the device to test</param>
+            <returns><b>true</b> if the file or directory exists, <b>false</b> if it does not</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CopyFileFromDevice(System.String,System.String)">
+            <summary>
+            Copy a device file to the connected PC
+            </summary>
+            <param name="LocalFileName">Name of destination file on PC</param>
+            <param name="RemoteFileName">Name of source file on device</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CopyFileFromDevice(System.String,System.String,System.Boolean)">
+            <summary>
+            Copy a device file to the connected PC
+            </summary>
+            <param name="LocalFileName">Name of destination file on PC</param>
+            <param name="RemoteFileName">Name of source file on device</param>
+            <param name="Overwrite">Overwrites existing file on the device if <b>true</b>, fails if <b>false</b></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CopyFileToDevice(System.String,System.String)">
+            <summary>
+            Copy a PC file to a connected device
+            </summary>
+            <param name="LocalFileName">Name of source file on PC</param>
+            <param name="RemoteFileName">Name of destination file on device</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CopyFileToDevice(System.String,System.String,System.Boolean)">
+            <summary>
+            Copy a PC file to a connected device
+            </summary>
+            <param name="LocalFileName">Name of source file on PC</param>
+            <param name="RemoteFileName">Name of destination file on device</param>
+            <param name="Overwrite">Overwrites existing file on the device if <b>true</b>, fails if <b>false</b></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CopyFileOnDevice(System.String,System.String)">
+            <summary>
+            This function copies an existing device file to a new device file.
+            </summary>
+            <param name="SourceFile">Name of source file to copy</param>
+            <param name="DestinationFile">Name of new, destination file</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CopyFileOnDevice(System.String,System.String,System.Boolean)">
+            <summary>
+            This function copies an existing device file to a new device file.
+            </summary>
+            <param name="ExistingFileName"></param>
+            <param name="NewFileName"></param>
+            <param name="Overwrite">Overwrites existing file on the device if <b>true</b>, fails if <b>false</b></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.DeleteDeviceFile(System.String)">
+            <summary>
+            Delete a file on the connected device
+            </summary>
+            <param name="FileName">File to delete</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.MoveDeviceFile(System.String,System.String)">
+            <summary>
+            Moves/renames an existing device file
+            </summary>
+            <param name="ExistingFileName">Name of existing file</param>
+            <param name="NewFileName">New name to use for file</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceFileAttributes(System.String)">
+            <summary>
+            Get the attributes of a file on the connected device
+            </summary>
+            <param name="FileName">Name of file to retrieve attributes of</param>
+            <returns>Attributes for given file name</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.SetDeviceFileAttributes(System.String,OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes)">
+            <summary>
+            Set the attributes for a file on the connected device
+            </summary>
+            <param name="FileName"></param>
+            <param name="Attributes"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.RemoveDeviceDirectory(System.String,System.Boolean)">
+            <summary>
+            Removes a directory from the connected device.
+            </summary>
+            <param name="PathName">Directory to remove</param>
+            <param name="Recurse">If <b>true</b> the call will recursively delete any subfolders and files as well, including hidden, read-only and system files</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceShortcutTarget(System.String)">
+            <summary>
+            Given a path to a shortcut, returns the full path to the shortcut's target
+            </summary>
+            <param name="shortcutPath">Path to the shortcut</param>
+            <returns>Path to the target</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CreateDeviceShortcut(System.String,System.String)">
+            <summary>
+            Creates a shortcut
+            </summary>
+            <param name="ShortcutName">The fully qualifed path name, including the .lnk extension, of the shortcut to create</param>
+            <param name="Target">Target path of the shortcut limited to 256 characters (use quoted string when target includes spaces)</param>
+            <example>The following statement creates a shortcut on the remote desktop for the Smart Device Authentication Utility:
+            <code>CreateDeviceShortcut("\\windows\\desktop\\.Net Debug.lnk", "\\windows\\sdauthutildevice.exe");</code>
+            </example>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.RemoveDeviceDirectory(System.String)">
+            <summary>
+            Removes an empty directory from the connected device
+            </summary>
+            <param name="PathName">Directory to remove</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CreateDeviceDirectory(System.String)">
+            <summary>
+            Creates a directory on the connected device
+            </summary>
+            <param name="PathName"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceFileSize(System.String)">
+            <summary>
+            Get the size, in bytes, of a file on the connected device
+            </summary>
+            <param name="FileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceFileTime(System.String,OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime)">
+            <summary>
+            Get a RAPIFileTime structure for the specified file
+            </summary>
+            <param name="FileName">Name of the file to check</param>
+            <param name="DesiredTime">A RAPIFileTime</param>
+            <returns>The DateTime for the specified value</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.SetDeviceFileTime(System.String,OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime,System.DateTime)">
+            <summary>
+            Modified a FileTime for the specified file
+            </summary>
+            <param name="FileName">File to modify</param>
+            <param name="DesiredTime">Time to modify</param>
+            <param name="NewTime">New time to set</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CreateProcess(System.String,System.String)">
+            <summary>
+            Launch a process of the connected device
+            </summary>
+            <param name="FileName">Name of application to launch</param>
+            <param name="CommandLine">Command line parameters to pass to application</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.CreateProcess(System.String)">
+            <summary>
+            Launch a process of the connected device
+            </summary>
+            <param name="FileName">Name of application to launch</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Invoke(System.String,System.String,System.Byte[],System.Byte[]@)">
+            <summary>
+            Method for calling non-stream-interface custom RAPI functions
+            </summary>
+            <param name="DLLPath">Device path to custom RAPI library</param>
+            <param name="FunctionName">Exported name of custom RAPI function</param>
+            <param name="InputData">Data to send to the custom RAPI function</param>
+            <param name="OutputData">Data received from the custom RAPI function</param>
+            <returns>The hresult from the invoked dll function</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.EnumFiles(System.String)">
+            <summary>
+            Provides an ArrayList of FileInformation classes matching the criteria provided in the FileName parameter
+            </summary>
+            <param name="FileName">Long pointer to a null-terminated string that specifies a valid directory or path and filename, which can contain wildcard characters (* and ?).</param>
+            <returns>An array of FileInformation objects</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.EnumerateFiles(System.String)">
+            <summary>
+            Provides an IEnumerable of FileInformation classes matching the criteria provided in the FileName parameter
+            </summary>
+            <param name="fileName">Long pointer to a null-terminated string that specifies a valid directory or path and filename, which can contain wildcard characters (* and ?).</param>
+            <returns>An IEnumerable FileInformation objects</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceSystemInfo(OpenNETCF.Desktop.Communication.SYSTEM_INFO@)">
+            <summary>
+            Gets info about the connected device
+            </summary>
+            <param name="pSI">SYSTEM_INFO structure populated by the call</param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceSystemFolderPath(OpenNETCF.Desktop.Communication.SystemFolders)">
+            <summary>
+            Gets the path to a system folder
+            </summary>
+            <param name="Folder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceSystemPowerStatus(OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX@)">
+            <summary>
+            This function fills in a SYSTEM_POWER_STATUS_EX structure
+            </summary>
+            <param name="PowerStatus"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceStoreInformation(OpenNETCF.Desktop.Communication.STORE_INFORMATION@)">
+            <summary>
+            This function fills in a STORE_INFORMATION structure with the size of the object store and the amount of free space currently in the object store
+            </summary>
+            <param name="StoreInfo"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceVersion(OpenNETCF.Desktop.Communication.OSVERSIONINFO@)">
+            <summary>
+            This function obtains extended information about the version of the operating system of the connected device.
+            </summary>
+            <param name="VersionInfo"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceMemoryStatus(OpenNETCF.Desktop.Communication.MEMORYSTATUS@)">
+            <summary>
+            Retrieves the memory status of the connected device
+            </summary>
+            <param name="ms"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.GetDeviceCapabilities(OpenNETCF.Desktop.Communication.DeviceCaps)">
+            <summary>
+            This function retrieves device-specific information about a connected device.
+            </summary>
+            <param name="CapabiltyToGet">Capabilty to query</param>
+            <returns>Value reported for capability</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.DeviceProcessConfigXml(System.String,System.String@)">
+            <summary>
+            Desktop equivalent of DMProcessConfigXML. Works similar to RapiConfig
+            </summary>
+            <param name="configXml">XML provisioning document</param>
+            <param name="result">Resulting configuration document. Might contain error information</param>
+            <returns>0 - success, or an HRESULT on error</returns>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPI.Dispose">
+            <summary>
+            Dispose method
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.RAPI.RAPIConnected">
+            <summary>
+            Event fired when a connection is made in asynchronous mode
+            </summary>
+        </member>
+        <member name="E:OpenNETCF.Desktop.Communication.RAPI.RAPIDisconnected">
+            <summary>
+            Event fired when a connection is lost
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.RAPI.ActiveSync">
+            <summary>
+            Exposes access to MicroSoft ActiveSync methods and events
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.RAPI.CFPerformanceMonitor">
+            <summary>
+            Used to get performance statistics for a .NET Compact Framework application on a connected device
+            <seealso cref="P:OpenNETCF.Desktop.Communication.RAPI.CFPerformanceMonitor"/><seealso cref="T:OpenNETCF.Desktop.Communication.PerformanceStatistics"/>
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.RAPI.Connected">
+            <summary>
+            Connected Property
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.RAPI.DevicePresent">
+            <summary>
+            Indicates whether ActiveSync currently has a connected device or not
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.RAPI.FileCopyBufferSize">
+            <summary>
+            Indicates the buffer size to use for file copying - default is 4K
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize">
+            <summary>
+            Used to determine the buffer size to use for file copying - default is 4K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_4K">
+            <summary>
+            Maximum Slice is 4K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_8K">
+            <summary>
+            Maximum Slice is 8K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_16K">
+            <summary>
+            Maximum Slice is 16K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_32K">
+            <summary>
+            Maximum Slice is 32K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_64K">
+            <summary>
+            Maximum Slice is 64K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_128K">
+            <summary>
+            Maximum Slice is 128K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_256K">
+            <summary>
+            Maximum Slice is 256K
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.EFileCopyBufferSize.MaxSlice_512K">
+            <summary>
+            Maximum Slice is 512K
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes">
+            <summary>
+            File Attributes
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.ReadOnly">
+            <summary>
+            File is read only
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.Hidden">
+            <summary>
+            Hidden File
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.System">
+            <summary>
+            System File
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.Directory">
+            <summary>
+            Directory
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.Archive">
+            <summary>
+            Archive file
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.InROM">
+            <summary>
+            File is in ROM
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.Normal">
+            <summary>
+            Normal file
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.Temporary">
+            <summary>
+            Temporary directory
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.Sparse">
+            <summary>
+            Sparse
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.ReparsePt">
+            <summary>
+            Reparse point
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.Compressed">
+            <summary>
+            Compressed file
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileAttributes.ROMModule">
+            <summary>
+            Part of ROM module
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime">
+            <summary>
+            Time enumeration for querying FileTime
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime.CreateTime">
+            <summary>
+            Time file was created
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime.LastModifiedTime">
+            <summary>
+            Time of last modification
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.RAPI.RAPIFileTime.LastAccessTime">
+            <summary>
+            Time of last access
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.RAPIException">
+            <summary>
+            Exceptions thrown by the OpenNETCF.Communications.RAPI class
+            </summary>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPIException.#ctor(System.String)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="Message"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPIException.#ctor(System.Exception)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="ex"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPIException.#ctor(System.String,System.Exception)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.RAPIException.#ctor(System.String,System.Int32)">
+            <summary>
+            Contructor
+            </summary>
+            <param name="Message"></param>
+            <param name="ErrorCode"></param>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.RAPIException.Win32Error">
+            <summary>
+            Win32 Error value
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.FileInformation">
+            <summary> 
+            This structure describes a file found by the FindFirstFile or FindNextFile. 
+            </summary> 
+            <seealso cref="M:OpenNETCF.Desktop.Communication.RAPI.EnumFiles(System.String@)"/> 
+        </member>
+        <member name="M:OpenNETCF.Desktop.Communication.FileInformation.op_Implicit(OpenNETCF.Desktop.Communication.FileInformation)~System.Byte[]">
+            <summary>
+            Byte representation of FileInformation
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.FileInformation.FileAttributes">
+            <summary>
+            File attributes of the file found.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.FileInformation.CreateTime">
+            <summary>
+            UTC time at which the file was created.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.FileInformation.LastAccessTime">
+            <summary>
+            UTC time at which the file was last accessed.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.FileInformation.LastWriteTime">
+            <summary>
+            UTC time at which the file was modified.
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.FileInformation.FileSize">
+            <summary>
+            Size, in bytes, of file
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.FileInformation.FileName">
+            <summary>
+            Full name of the file
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.STORE_INFORMATION">
+            <summary>
+            Describes the current status of the Object Store
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.STORE_INFORMATION.dwStoreSize">
+            <summary>
+            Size of the Object Store in Bytes
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.STORE_INFORMATION.dwFreeSize">
+            <summary>
+            Free space in the Object Store in Bytes
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.PlatformType">
+            <summary>
+            OSVERSIONINFO platform type
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.PlatformType.VER_PLATFORM_WIN32_CE">
+            <summary>
+            Win32 on Windows CE.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.OSVERSIONINFO">
+            <summary>
+            Version info for the connected device
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.OSVERSIONINFO.dwMajorVersion">
+            <summary>
+            Major
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.OSVERSIONINFO.dwMinorVersion">
+            <summary>
+            Minor
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.OSVERSIONINFO.dwBuildNumber">
+            <summary>
+            Build
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.OSVERSIONINFO.dwPlatformId">
+            <summary>
+            Platform type
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.OSVERSIONINFO.szCSDVersion">
+            <summary>
+            Provides arbitrary additional information about the operating system
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.DeviceCaps">
+            <summary>
+            Device Capability COnstants (GetDeviceCapabilities)
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.DeviceCaps.HorizontalSize">
+            <summary>
+            Screen width in mm
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.DeviceCaps.VerticalSize">
+            <summary>
+            Screen height in mm
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.DeviceCaps.HorizontalResolution">
+            <summary>
+            Screen width in pixels
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.DeviceCaps.VerticalResolution">
+            <summary>
+            Screen height in raster lines
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.DeviceCaps.BitsPerPixel">
+            <summary>
+            Number of adjacent color bits for each pixel
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.MEMORYSTATUS">
+            <summary>
+            Memory information for a remote device
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.MEMORYSTATUS.dwMemoryLoad">
+            <summary>
+            Current memory load (%)
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.MEMORYSTATUS.dwTotalPhys">
+            <summary>
+            Total physical memory
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.MEMORYSTATUS.dwAvailPhys">
+            <summary>
+            Available Physical Memory
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.MEMORYSTATUS.dwTotalPageFile">
+            <summary>
+            Total page files
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.MEMORYSTATUS.dwAvailPageFile">
+            <summary>
+            Available page files
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.MEMORYSTATUS.dwTotalVirtual">
+            <summary>
+            Totla virtual memory
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.MEMORYSTATUS.dwAvailVirtual">
+            <summary>
+            Available virtual memory
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX">
+            <summary>
+            Structure for power information of mobile device
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.ACLineStatus">
+            <summary>
+            AC Power status
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BatteryFlag">
+            <summary>
+            Battery flag
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BatteryLifePercent">
+            <summary>
+            Remaining battery life
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BatteryLifeTime">
+            <summary>
+            Total battery life
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BatteryFullLifeTime">
+            <summary>
+            Battery life remaining
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BackupBatteryFlag">
+            <summary>
+            Backup battery present
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BackupBatteryLifePercent">
+            <summary>
+            Life remaining
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BackupBatteryLifeTime">
+            <summary>
+            Life remaining
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_POWER_STATUS_EX.BackupBatteryFullLifeTime">
+            <summary>
+            Total life when fully charged
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.ProcessorArchitecture">
+            <summary>
+            Processor Architecture values (GetSystemInfo)
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.Intel">
+            <summary>
+            Intel
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.MIPS">
+            <summary>
+            MIPS
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.Alpha">
+            <summary>
+            Alpha
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.PPC">
+            <summary>
+            PowerPC
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.SHX">
+            <summary>
+            Hitachi SHx
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.ARM">
+            <summary>
+            ARM
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.IA64">
+            <summary>
+            IA64
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.Alpha64">
+            <summary>
+            Alpha 64
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorArchitecture.Unknown">
+            <summary>
+            Unknown
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.ProcessorType">
+            <summary>
+            Processor type values (GetSystemInfo)
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_INTEL_386">
+            <summary>
+            386
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_INTEL_486">
+            <summary>
+            486
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_INTEL_PENTIUM">
+            <summary>
+            Pentium
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_INTEL_PENTIUMII">
+            <summary>
+            P2
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_INTEL_IA64">
+            <summary>
+            IA 64
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_MIPS_R4000">
+            <summary>
+            MIPS 4000 series
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_ALPHA_21064">
+            <summary>
+            Alpha 21064
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_PPC_403">
+            <summary>
+            PowerPC 403
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_PPC_601">
+            <summary>
+            PowerPC 601
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_PPC_603">
+            <summary>
+            PowerPC 603
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_PPC_604">
+            <summary>
+            PowerPC 604
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_PPC_620">
+            <summary>
+            PowerPC 620
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_HITACHI_SH3">
+            <summary>
+            Hitachi SH3
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_HITACHI_SH3E">
+            <summary>
+            Hitachi SH3E
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_HITACHI_SH4">
+            <summary>
+            Hitachi SH4
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_MOTOROLA_821">
+            <summary>
+            Motorola 821
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_SHx_SH3">
+            <summary>
+            Hitachi SH3
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_SHx_SH4">
+            <summary>
+            Hitachi SH4
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_STRONGARM">
+            <summary>
+            Intel StrongARM
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_ARM720">
+            <summary>
+            ARM720
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_ARM820">
+            <summary>
+            ARM820
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_ARM920">
+            <summary>
+            ARM920
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.ProcessorType.PROCESSOR_ARM_7TDMI">
+            <summary>
+            ARM 7
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.SYSTEM_INFO">
+            <summary>
+            Data structure for GetSystemInfo
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.wProcessorArchitecture">
+            <summary>
+            Processor architecture
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.dwPageSize">
+            <summary>
+            Specifies the page size and the granularity of page protection and commitment.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.lpMinimumApplicationAddress">
+            <summary>
+            Pointer to the lowest memory address accessible to applications and dynamic-link libraries (DLLs). 
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.lpMaximumApplicationAddress">
+            <summary>
+            Pointer to the highest memory address accessible to applications and DLLs.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.dwActiveProcessorMask">
+            <summary>
+            Specifies a mask representing the set of processors configured into the system. Bit 0 is processor 0; bit 31 is processor 31. 
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.dwNumberOfProcessors">
+            <summary>
+            Specifies the number of processors in the system.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.dwProcessorType">
+            <summary>
+            Specifies the type of processor in the system.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.dwAllocationGranularity">
+            <summary>
+            Specifies the granularity with which virtual memory is allocated.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.wProcessorLevel">
+            <summary>
+            Specifies the system’s architecture-dependent processor level.
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SYSTEM_INFO.wProcessorRevision">
+            <summary>
+            Specifies an architecture-dependent processor revision.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.SystemFolders">
+            <summary>
+            Parameter for SHGetSpecialFolder
+            </summary>
+            <remarks>Not all platforms support all of these constants.</remarks>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.Personal">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.Programs">
+            <summary>
+            "\Windows\Program Files"
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.Favorites">
+            <summary>
+            "\Windows\Favorites"
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.StartUp">
+            <summary>
+            "\Windows\StartUp"
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.Recent">
+            <summary>
+            recent files
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.Desktop">
+            <summary>
+            "\Windows\Desktop"
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.Fonts">
+            <summary>
+            "\Windows\Fonts"
+            </summary>
+        </member>
+        <member name="F:OpenNETCF.Desktop.Communication.SystemFolders.AppData">
+            <summary>
+            File system directory that serves as a common repository for application-specific data.
+            </summary>
+        </member>
+        <member name="T:OpenNETCF.Desktop.Communication.FileList">
+            <summary>
+            Collection class of FileInformation classes
+            </summary>
+        </member>
+        <member name="P:OpenNETCF.Desktop.Communication.FileList.Item(System.Int32)">
+            <summary>
+            Returns the FileInformation at the specified index
+            </summary>
+        </member>
     </members>
 </doc>

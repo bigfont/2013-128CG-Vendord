@@ -5,7 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using AS = OpenNETCF.Desktop.Communication;
 
-namespace VendordConsole
+namespace Vendord.ConsoleApp
 {
 
     class Program
