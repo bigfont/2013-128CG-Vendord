@@ -12,6 +12,14 @@ public class FileSyncProviderSample
 {
     public static void Main(string[] args)
     {
+        bool result;
+        result = args.Length < 2;
+        result = string.IsNullOrEmpty(args[0]);
+        result = string.IsNullOrEmpty(args[1]);
+        result = !Directory.Exists(args[0]);
+        result = !Directory.Exists(args[1]);
+
+
         if (args.Length < 2 || 
             string.IsNullOrEmpty(args[0]) || string.IsNullOrEmpty(args[1]) ||
             !Directory.Exists(args[0]) || !Directory.Exists(args[1]))
