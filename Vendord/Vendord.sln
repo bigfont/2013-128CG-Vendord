@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_Barcode2Sample1", "..\Samples\CS_Barcode2Sample1\CS_Barcode2Sample1.csproj", "{7F24FB45-382E-47A6-B3D0-98B472E16FBF}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HelloCOM", "HelloCOM\HelloCOM.vcproj", "{B45A275D-0307-4043-BA69-4AD69E0A5FF1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenNETCF.Desktop.Communication", "OpenNETCF.Desktop.Communication.68585\OpenNETCF.Desktop.Communication.csproj", "{60FD337B-8EB5-4E20-A951-6EBB09CCE442}"
@@ -17,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.ConsoleApp", "Vendo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDeviceApp", "Vendord.SmartDeviceApp\Vendord.SmartDeviceApp.csproj", "{3DE4015A-666F-48A3-ABB1-96038A6C860D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CS_Barcode2Sample1", "..\Resources\CS_Barcode2Sample1\CS_Barcode2Sample1.csproj", "{7F24FB45-382E-47A6-B3D0-98B472E16FBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,22 +29,6 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Win32.ActiveCfg = Release|Any CPU
 		{B45A275D-0307-4043-BA69-4AD69E0A5FF1}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{B45A275D-0307-4043-BA69-4AD69E0A5FF1}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{B45A275D-0307-4043-BA69-4AD69E0A5FF1}.Debug|Mixed Platforms.Build.0 = Debug|Win32
@@ -109,14 +93,30 @@ Global
 		{3DE4015A-666F-48A3-ABB1-96038A6C860D}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{3DE4015A-666F-48A3-ABB1-96038A6C860D}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
 		{3DE4015A-666F-48A3-ABB1-96038A6C860D}.Release|Win32.ActiveCfg = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Mixed Platforms.Deploy.0 = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B45A275D-0307-4043-BA69-4AD69E0A5FF1} = {FD365514-FD9C-4DA2-AE33-1614A9C70122}
-		{7F24FB45-382E-47A6-B3D0-98B472E16FBF} = {FD365514-FD9C-4DA2-AE33-1614A9C70122}
 		{F5E640FA-420B-4283-8F58-5DCB231A8433} = {FD365514-FD9C-4DA2-AE33-1614A9C70122}
+		{7F24FB45-382E-47A6-B3D0-98B472E16FBF} = {FD365514-FD9C-4DA2-AE33-1614A9C70122}
 		{60FD337B-8EB5-4E20-A951-6EBB09CCE442} = {4D375FC2-B283-4E8F-A150-49C071118185}
 	EndGlobalSection
 EndGlobal
