@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Symbol.Barcode2;
+using System.IO;
 
 namespace Vendord.SmartDeviceApp
 {
@@ -91,7 +92,7 @@ namespace Vendord.SmartDeviceApp
         public MainForm()
         {
             LastAction = null;
-            this.Load += handleFormControlEvents;            
+            this.Load += handleFormControlEvents;
         }
 
         #region Views
@@ -178,7 +179,7 @@ namespace Vendord.SmartDeviceApp
         {
             AddNavigationPanel();
 
-            BarcodeAPI scanner = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);            
+            BarcodeAPI scanner = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
         }
 
         #endregion

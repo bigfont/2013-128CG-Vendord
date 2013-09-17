@@ -96,7 +96,7 @@ namespace Vendord.ConsoleApp
         {
             rapi = new ActiveSync.RAPI();
             if (rapi.DevicePresent)
-            {
+            {                
                 Console.WriteLine("\nDevicePresent\n");
                 if (!rapi.Connected)
                 {

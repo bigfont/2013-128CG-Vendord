@@ -1,0 +1,2219 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RAPI2</name>
+    </assembly>
+    <members>
+        <member name="T:System.Devices.RemoteFileSystemInfo">
+            <summary>
+            Provides the base class for both <see cref="T:System.Devices.RemoteFileInfo"/> and <see cref="T:System.Devices.RemoteDirectoryInfo"/> objects.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteFileSystemInfo.FullPath">
+            <summary>Represents the fully qualified path of the directory or file.</summary>
+        </member>
+        <member name="F:System.Devices.RemoteFileSystemInfo.Device">
+            <summary>The device on which to perform all file and directory operations.</summary>
+        </member>
+        <member name="M:System.Devices.RemoteFileSystemInfo.Delete">
+            <summary>
+            Deletes a file or directory.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteFileSystemInfo.Refresh">
+            <summary>
+            Refreshes the state of the object.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteFileSystemInfo.SetFileTimes(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Sets the file times.
+            </summary>
+            <param name="creationTime">The creation time.</param>
+            <param name="lastAccessTime">The last access time.</param>
+            <param name="lastWriteTime">The last write time.</param>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.Attributes">
+            <summary>
+            Gets or sets the <see cref="T:System.IO.FileAttributes"/> of the current <see cref="T:System.Devices.RemoteFileSystemInfo"/>.
+            </summary>
+            <value><see cref="T:System.IO.FileAttributes"/> of the current <see cref="T:System.Devices.RemoteFileSystemInfo"/>.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.CreationTime">
+            <summary>
+            Gets or sets the creation date and time of the current <see cref="T:System.Devices.RemoteFileSystemInfo"/> object.
+            </summary>
+            <value>The creation date and time of the current <see cref="T:System.Devices.RemoteFileSystemInfo"/> object.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.Exists">
+            <summary>
+            Gets a value indicating whether the file or directory exists. 
+            </summary>
+            <value><c>true</c> if the file or directory exists; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.Extension">
+            <summary>
+            Gets the string representing the extension part of the file.
+            </summary>
+            <value>A string containing file extension.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.FullName">
+            <summary>
+            Gets the full path of the directory or file.
+            </summary>
+            <value>A string containing the full path of the directory or file.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.LastAccessTime">
+            <summary>
+            Gets or sets the date and time the current file or directory was accessed.
+            </summary>
+            <value>The date and time the current file or directory was accessed.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.LastWriteTime">
+            <summary>
+            Gets or sets the date and time the current file or directory was written to.
+            </summary>
+            <value>The date and time the current file or directory was written to.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileSystemInfo.Name">
+            <summary>
+            For files, gets the name of the file. For directories, gets the name of the last directory in the hierarchy if a hierarchy exists. Otherwise, the <c>Name</c> property gets the name of the directory.
+            </summary>
+            <value>A string that is the name of the parent directory, the name of the last directory in the hierarchy, or the name of a file, including the file name extension.</value>
+        </member>
+        <member name="T:System.Devices.MemoryStatus">
+            <summary>
+            Contains information about current memory availability for a remote device.
+            </summary>
+        </member>
+        <member name="F:System.Devices.MemoryStatus.MemoryLoad">
+            <summary>
+            Specifies a number between zero and 100 that gives a general idea of current memory use, in which zero indicates no memory use and 100 indicates full memory use.
+            </summary>
+        </member>
+        <member name="F:System.Devices.MemoryStatus.TotalPhysical">
+            <summary>
+            Indicates the total number of bytes of physical memory.
+            </summary>
+        </member>
+        <member name="F:System.Devices.MemoryStatus.AvailPhysical">
+            <summary>
+            Indicates the number of bytes of physical memory available.
+            </summary>
+        </member>
+        <member name="F:System.Devices.MemoryStatus.TotalPageFile">
+            <summary>
+            Indicates the total number of bytes that can be stored in the paging file. This number does not represent the physical size of the paging file on disk.
+            </summary>
+        </member>
+        <member name="F:System.Devices.MemoryStatus.AvailablePageFile">
+            <summary>
+            Indicates the number of bytes available in the paging file.
+            </summary>
+        </member>
+        <member name="F:System.Devices.MemoryStatus.TotalVirtual">
+            <summary>
+            Indicates the total number of bytes that can be described in the user mode portion of the virtual address space of the calling process.
+            </summary>
+        </member>
+        <member name="F:System.Devices.MemoryStatus.AvailableVirtual">
+            <summary>
+            Indicates the number of bytes of unreserved and uncommitted memory in the user mode portion of the virtual address space of the calling process.
+            </summary>
+        </member>
+        <member name="T:System.Devices.StoreInfo">
+            <summary>
+            Describes the current status of the Object Store
+            </summary>
+        </member>
+        <member name="F:System.Devices.StoreInfo.StoreSize">
+            <summary>
+            Size of the Object Store in Bytes
+            </summary>
+        </member>
+        <member name="F:System.Devices.StoreInfo.FreeSize">
+            <summary>
+            Free space in the Object Store in Bytes
+            </summary>
+        </member>
+        <member name="T:System.Devices.PowerStatus">
+            <summary>
+            Structure for power information of mobile device
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.ACLineStatus">
+            <summary>
+            AC Power status
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BatteryFlag">
+            <summary>
+            Battery flag
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BatteryLifePercent">
+            <summary>
+            Remaining battery life
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BatteryLifeTime">
+            <summary>
+            Total battery life
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BatteryFullLifeTime">
+            <summary>
+            Battery life remaining
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BackupBatteryFlag">
+            <summary>
+            Backup battery present
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BackupBatteryLifePercent">
+            <summary>
+            Life remaining
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BackupBatteryLifeTime">
+            <summary>
+            Life remaining
+            </summary>
+        </member>
+        <member name="F:System.Devices.PowerStatus.BackupBatteryFullLifeTime">
+            <summary>
+            Total life when fully charged
+            </summary>
+        </member>
+        <member name="T:System.Devices.SystemInformation">
+            <summary>
+            Data structure for GetSystemInfo
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.ProcessorArchitecture">
+            <summary>
+            Processor architecture
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.PageSize">
+            <summary>
+            Specifies the page size and the granularity of page protection and commitment.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.MinimumApplicationAddress">
+            <summary>
+            Pointer to the lowest memory address accessible to applications and dynamic-link libraries (DLLs). 
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.MaximumApplicationAddress">
+            <summary>
+            Pointer to the highest memory address accessible to applications and DLLs.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.ActiveProcessorMask">
+            <summary>
+            Specifies a mask representing the set of processors configured into the system. Bit 0 is processor 0; bit 31 is processor 31. 
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.NumberOfProcessors">
+            <summary>
+            Specifies the number of processors in the system.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.dwProcessorType">
+            <summary>
+            Specifies the type of processor in the system.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.AllocationGranularity">
+            <summary>
+            Specifies the granularity with which virtual memory is allocated.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.ProcessorLevel">
+            <summary>
+            Specifies the system’s architecture-dependent processor level.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemInformation.ProcessorRevision">
+            <summary>
+            Specifies an architecture-dependent processor revision.
+            </summary>
+        </member>
+        <member name="T:System.Devices.ProcessorArchitecture">
+            <summary>
+            Processor Architecture values (GetSystemInfo)
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.Intel">
+            <summary>
+            Intel
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.MIPS">
+            <summary>
+            MIPS
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.Alpha">
+            <summary>
+            Alpha
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.PPC">
+            <summary>
+            PowerPC
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.SHX">
+            <summary>
+            Hitachi SHx
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.ARM">
+            <summary>
+            ARM
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.IA64">
+            <summary>
+            IA64
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.Alpha64">
+            <summary>
+            Alpha 64
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorArchitecture.Unknown">
+            <summary>
+            Unknown
+            </summary>
+        </member>
+        <member name="T:System.Devices.ProcessorType">
+            <summary>
+            Processor type values (GetSystemInfo)
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_INTEL_386">
+            <summary>
+            386
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_INTEL_486">
+            <summary>
+            486
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_INTEL_PENTIUM">
+            <summary>
+            Pentium
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_INTEL_PENTIUMII">
+            <summary>
+            P2
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_INTEL_IA64">
+            <summary>
+            IA 64
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_MIPS_R4000">
+            <summary>
+            MIPS 4000 series
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_ALPHA_21064">
+            <summary>
+            Alpha 21064
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_PPC_403">
+            <summary>
+            PowerPC 403
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_PPC_601">
+            <summary>
+            PowerPC 601
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_PPC_603">
+            <summary>
+            PowerPC 603
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_PPC_604">
+            <summary>
+            PowerPC 604
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_PPC_620">
+            <summary>
+            PowerPC 620
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_HITACHI_SH3">
+            <summary>
+            Hitachi SH3
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_HITACHI_SH3E">
+            <summary>
+            Hitachi SH3E
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_HITACHI_SH4">
+            <summary>
+            Hitachi SH4
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_MOTOROLA_821">
+            <summary>
+            Motorola 821
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_SHx_SH3">
+            <summary>
+            Hitachi SH3
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_SHx_SH4">
+            <summary>
+            Hitachi SH4
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_STRONGARM">
+            <summary>
+            Intel StrongARM
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_ARM720">
+            <summary>
+            ARM720
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_ARM820">
+            <summary>
+            ARM820
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_ARM920">
+            <summary>
+            ARM920
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessorType.PROCESSOR_ARM_7TDMI">
+            <summary>
+            ARM 7
+            </summary>
+        </member>
+        <member name="T:System.Devices.DeviceStatus">
+            <summary>
+            Connection status for a device.
+            </summary>
+        </member>
+        <member name="F:System.Devices.DeviceStatus.Disconnected">
+            <summary>Not connected.</summary>
+        </member>
+        <member name="F:System.Devices.DeviceStatus.Connected">
+            <summary>Connected.</summary>
+        </member>
+        <member name="T:System.Devices.ConnectionType">
+            <summary>
+            Mechanism used to connect to device.
+            </summary>
+        </member>
+        <member name="F:System.Devices.ConnectionType.USB">
+            <summary>A USB connection.</summary>
+        </member>
+        <member name="F:System.Devices.ConnectionType.IR">
+            <summary>An infrared connection.</summary>
+        </member>
+        <member name="F:System.Devices.ConnectionType.Serial">
+            <summary>A serial connection.</summary>
+        </member>
+        <member name="F:System.Devices.ConnectionType.Network">
+            <summary>A network connection.</summary>
+        </member>
+        <member name="T:System.Devices.ProcessCreationFlags">
+            <summary>
+            Flags that control the priority and the creation of the process. 
+            </summary>
+        </member>
+        <member name="F:System.Devices.ProcessCreationFlags.None">
+            <summary>No conditions are set on the created process.</summary>
+        </member>
+        <member name="F:System.Devices.ProcessCreationFlags.DebugProcess">
+            <summary>For Windows CE versions 2.0 and later. Calling process is treated as a debugger, and the new process is a process being debugged. Child processes of the new process are also debugged. The system notifies the debugger of all debug events that occur in the process being debugged.</summary>
+        </member>
+        <member name="F:System.Devices.ProcessCreationFlags.DebugOnlyThisProcess">
+            <summary>For Windows CE versions 2.0 and later. Calling process is treated as a debugger, and the new process is a process being debugged. No child processes of the new process are debugged. The system notifies the debugger of all debug events that occur in the process being debugged.</summary>
+        </member>
+        <member name="F:System.Devices.ProcessCreationFlags.CreateSuspended">
+            <summary>The primary thread of the new process is created in a suspended state.</summary>
+        </member>
+        <member name="F:System.Devices.ProcessCreationFlags.CreateNewConsole">
+            <summary>For Windows CE versions 3.0 and later. The new process has a new console, instead of inheriting the parent's console.</summary>
+        </member>
+        <member name="T:System.Devices.SpecialFolder">
+            <summary>
+            Special folder defined on the device.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.ApplicationData">
+            <summary>File system directory that serves as a common repository for application-specific data.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.Desktop">
+            <summary>File system directory used to physically store file objects on the desktop.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.Favorites">
+            <summary>File system directory that serves as a common repository for the user's favorite items.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.Fonts">
+            <summary>Virtual folder containing fonts.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.MyPictures">
+            <summary>The file system directory that serves as a common repository for image files. </summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.MyDocuments">
+            <summary>The file system directory used to physically store a user's common repository of documents.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.ProgramFiles">
+            <summary>Program files folder.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.StartMenu">
+            <summary>File system directory that contains Start menu items.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.Startup">
+            <summary>File system directory that corrsponds to the user's Startup program group. The system starts these programs when a device is powered on.</summary>
+        </member>
+        <member name="F:System.Devices.SpecialFolder.Windows">
+            <summary>Windows folder.</summary>
+        </member>
+        <member name="T:System.Devices.DeviceCapsItem">
+            <summary>
+            Items available in a call to RemoteDevice.GetDeviceCaps
+            </summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.DRIVERVERSION">
+            <summary>Device driver version</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.TECHNOLOGY">
+            <summary>Device classification</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.HORZSIZE">
+            <summary>Horizontal size in millimeters</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.VERTSIZE">
+            <summary>Vertical size in millimeters</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.HORZRES">
+            <summary>Horizontal width in pixels</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.VERTRES">
+            <summary>Vertical height in pixels</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.BITSPIXEL">
+            <summary>Number of bits per pixel</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.PLANES">
+            <summary>Number of planes</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.NUMBRUSHES">
+            <summary>Number of brushes the device has</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.NUMPENS">
+            <summary>Number of pens the device has</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.NUMMARKERS">
+            <summary>Number of markers the device has</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.NUMFONTS">
+            <summary>Number of fonts the device has</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.NUMCOLORS">
+            <summary>Number of colors the device supports</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.PDEVICESIZE">
+            <summary>Size required for device descriptor</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.CURVECAPS">
+            <summary>Curve capabilities</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.LINECAPS">
+            <summary>Line capabilities</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.POLYGONALCAPS">
+            <summary>Polygonal capabilities</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.TEXTCAPS">
+            <summary>Text capabilities</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.CLIPCAPS">
+            <summary>Clipping capabilities</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.RASTERCAPS">
+            <summary>Bitblt capabilities</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.ASPECTX">
+            <summary>Length of the X leg</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.ASPECTY">
+            <summary>Length of the Y leg</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.ASPECTXY">
+            <summary>Length of the hypotenuse</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.PHYSICALWIDTH">
+            <summary>Physical Width in device units</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.PHYSICALHEIGHT">
+            <summary>Physical Height in device units</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.PHYSICALOFFSETX">
+            <summary>Physical Printable Area x margin</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.PHYSICALOFFSETY">
+            <summary>Physical Printable Area y margin</summary>
+        </member>
+        <member name="F:System.Devices.DeviceCapsItem.SHADEBLENDCAPS">
+            <summary>Shading and blending caps</summary>
+        </member>
+        <member name="T:System.Devices.SystemMetricsItem">
+            <summary>
+            Items available in a call to RemoteDevice.GetSystemMetrics
+            </summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXVSCROLL">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYHSCROLL">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYCAPTION">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXBORDER">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYBORDER">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXDLGFRAME">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYDLGFRAME">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXICON">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYICON">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYMENU">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXFULLSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYFULLSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_MOUSEPRESENT">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYVSCROLL">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXHSCROLL">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_DEBUG">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXDOUBLECLK">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYDOUBLECLK">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXICONSPACING">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYICONSPACING">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXEDGE">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYEDGE">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXSMICON">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYSMICON">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_XVIRTUALSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_YVIRTUALSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CXVIRTUALSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CYVIRTUALSCREEN">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_CMONITORS">
+            <summary></summary>
+        </member>
+        <member name="F:System.Devices.SystemMetricsItem.SM_SAMEDISPLAYFORMAT">
+            <summary></summary>
+        </member>
+        <member name="T:System.Devices.ExetensionMethods">
+            <summary>
+            Methods to extend date classes.
+            </summary>
+        </member>
+        <member name="M:System.Devices.ExetensionMethods.ToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME)">
+            <summary>
+            Converts a FILETIME to a DateTime
+            </summary>
+            <param name="ft">FILETIME to convert.</param>
+            <returns>Equivalent DateTime.</returns>
+        </member>
+        <member name="M:System.Devices.ExetensionMethods.ToFILETIME(System.DateTime)">
+            <summary>
+            Converts a DateTime to a FILETIME
+            </summary>
+            <param name="dt">DateTime to convert.</param>
+            <returns>Equivalent FILETIME.</returns>
+        </member>
+        <member name="T:System.Devices.RapiException">
+            <summary>
+            An exception thrown by the RAPI2 set of interfaces.
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteDevice">
+            <summary>
+            Represents a remote device. This can only be accessed through <see cref="P:System.Devices.RemoteDeviceManager.Devices"/>.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.CheckPassword(System.String)">
+            <summary>
+            This method compares a specified string to the system password on a remote device.
+            </summary>
+            <param name="pwd">Password to compare with the system password.</param>
+            <returns>true if password matches. Otherwise false.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.CreateProcess(System.String,System.String,System.Devices.ProcessCreationFlags)">
+            <summary>
+            Runs a program on a remote device. It creates a new process and its primary thread. The new process executes the specified executable file.
+            </summary>
+            <param name="applicationName">String that specifies the module to execute. <para>The string can specify the full path and file name of the module to execute or it can specify just the module name. In the case of a partial name, the function uses the current drive and current directory to complete the specification.</para></param>
+            <param name="commandLine">String that specifies the command line arguments with which the application will be executed. 
+            <para>The commandLine parameter can be NULL. In that case, the method uses the string pointed to by applicationName as the command line.</para>
+            <para>If commandLine is non-NULL, applicationName specifies the module to execute, and commandLine specifies the command line arguments.</para></param>
+            <param name="creationFlags">Optional conditions for creating the process.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.CreateShortcut(System.String,System.String)">
+            <summary>
+            Creates a shortcut file on the device in the specified location.
+            </summary>
+            <param name="shortcutFileName">Name of the shortcut file.</param>
+            <param name="targetFileName">Name of the target file.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.GetDeviceCaps(System.Devices.DeviceCapsItem)">
+            <summary>
+            Retrieves device-specific information about a remote device.
+            </summary>
+            <param name="index">Item to retrieve information on.</param>
+            <returns>The return value of the specified item.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.GetDriveInfo(System.String)">
+            <summary>
+            Retrieves the amount of space on a disk volume on a remote device.
+            </summary>
+            <param name="drivePath">String that specifies a directory on a disk.</param>
+            <returns><see cref="T:System.Devices.RemoteDevice.DriveInfo"/> structure with information about specified disk.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.GetFolderPath(System.Devices.SpecialFolder)">
+            <summary>
+            Retrieves the path to a special shell folder on a remote device.
+            </summary>
+            <param name="folder">SpecialFolder enumeration.</param>
+            <returns>Path of special folder on device.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.GetShortcutTarget(System.String)">
+            <summary>
+            Gets the shortcut target.
+            </summary>
+            <param name="shortcutFileName">Name of the shortcut file.</param>
+            <returns>A <see cref="T:System.String"/> containing the path of the shortcut target.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.GetSystemMetrics(System.Devices.SystemMetricsItem)">
+            <summary>
+            This method retrieves the dimensions of display elements and system configuration settings of a remote device. All dimensions are in pixels.
+            </summary>
+            <param name="index">Item to retrieve information on.</param>
+            <returns>The return value of the specified item.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.GetTempPath">
+            <summary>
+            Gets the path to the directory designated for temporary files on a remote device.
+            </summary>
+            <returns>Temporary path.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.StartSync">
+            <summary>
+            Starts the synchronization process with the device.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.StopSync">
+            <summary>
+            Stops the synchronization process with the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.ConnectionType">
+            <summary>
+            Gets the means by which the device is connected.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.Databases">
+            <summary>
+            Gets an enumerated list of all the databases on the device.
+            </summary>
+            <value>The databases.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.DeviceId">
+            <summary>
+            Gets the unique identifier for the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.DeviceRegistryClassesRoot">
+            <summary>Reads the remote device's registry base key HKEY_CLASSES_ROOT.</summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.DeviceRegistryCurrentUser">
+            <summary>Reads the remote device's registry base key HKEY_CURRENT_USER.</summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.DeviceRegistryLocalMachine">
+            <summary>Reads the remote device's registry base key HKEY_LOCAL_MACHINE.</summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.DeviceRegistryUsers">
+            <summary>Reads the remote device's registry base key HKEY_USERS.</summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.HostAddress">
+            <summary>
+            Gets the host address of the connected desktop.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.IPAddress">
+            <summary>
+            Gets the assigned address for the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.LastError">
+            <summary>
+            Gets the last error raised by the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.MemoryStatus">
+            <summary>
+            Gets the <see cref="P:System.Devices.RemoteDevice.MemoryStatus"/> for the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.Name">
+            <summary>
+            Gets the name of the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.OSVersion">
+            <summary>
+            Gets the version of the device OS.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.Platform">
+            <summary>
+            Gets a string representation of the device platform.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.PowerStatus">
+            <summary>
+            Gets the <see cref="P:System.Devices.RemoteDevice.PowerStatus"/> for the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.Status">
+            <summary>
+            Gets the connection status of the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.StoreInfo">
+            <summary>
+            Gets the <see cref="P:System.Devices.RemoteDevice.StoreInfo"/> with information about the object store on the device.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.SystemInformation">
+            <summary>
+            Gets the <see cref="P:System.Devices.RemoteDevice.SystemInformation"/> for the device.
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteDevice.DriveInfo">
+            <summary>Information about a space on a disk.</summary>
+        </member>
+        <member name="F:System.Devices.RemoteDevice.DriveInfo.AvailableFreeSpace">
+            <summary>The total number of free bytes on a disk that are available to the user.</summary>
+        </member>
+        <member name="F:System.Devices.RemoteDevice.DriveInfo.TotalFreeSpace">
+            <summary>The total number of bytes on a disk that are available to the user.</summary>
+        </member>
+        <member name="F:System.Devices.RemoteDevice.DriveInfo.TotalSize">
+            <summary>The total number of free bytes on a disk</summary>
+        </member>
+        <member name="T:System.Devices.RemoteDevice.DeviceRegistryKey">
+            <summary>
+            Represents a key-level node in the remote device's registry. This class is a registry encapsulation.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.Close">
+            <summary>
+            Closes the key and flushes it to disk if its contents have been modified.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.CreateSubKey(System.String)">
+            <summary>
+            Creates a new subkey or opens an existing subkey.
+            </summary>
+            <param name="subkey">Name of key to create.</param>
+            <returns>A <see cref="T:System.Devices.RemoteDevice.DeviceRegistryKey"/> object that represents the newly created subkey, or <c>null</c> if the operation failed.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.DeleteSubKey(System.String,System.Boolean)">
+            <summary>
+            Deletes the specified subkey. 
+            </summary>
+            <param name="subkey">The name of the subkey to delete.</param>
+            <param name="recursive"></param>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.DeleteValue(System.String)">
+            <summary>
+            Deletes the specified value from this key.
+            </summary>
+            <param name="name">The name of the value to delete.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.Dispose">
+            <summary>
+            Performs a close on the current key.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.GetSubKeyNames">
+            <summary>
+            Retrieves an array of strings that contains all the subkey names.
+            </summary>
+            <returns>An array of strings that contains the names of the subkeys for the current key.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.GetValue(System.String,System.Object)">
+            <summary>
+            Retrieves the value associated with the specified name. If the name is not found, returns the default value that you provide.
+            </summary>
+            <param name="name">The name of the value to retrieve.</param>
+            <param name="defaultValue">The value to return if name does not exist.</param>
+            <returns>The value associated with name, with any embedded environment variables left unexpanded, or defaultValue if name is not found.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.GetValueKind(System.String)">
+            <summary>
+            Gets the type of value in a registry value.
+            </summary>
+            <param name="name">The name of the value whose registry data type is to be retrieved.</param>
+            <returns>A RegistryValueKind value representing the registry data type of the value associated with name.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.GetValueNames">
+            <summary>
+            Retrieves an array of strings that contains all the value names associated with this key.
+            </summary>
+            <returns>An array of strings that contains the value names for the current key.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.OpenSubKey(System.String)">
+            <summary>
+            Retrieves a subkey as read-only.
+            </summary>
+            <param name="name">The name or path of the subkey to open read-only.</param>
+            <returns>The subkey requested, or null if the operation failed.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.SetValue(System.String,System.Object)">
+            <summary>
+            Sets the specified name/value pair.
+            </summary>
+            <param name="name">The name of the value to store.</param>
+            <param name="value">The data to be stored.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.SetValue(System.String,System.Object,Microsoft.Win32.RegistryValueKind)">
+            <summary>
+            Sets the value of a name/value pair in the registry key, using the specified registry data type.
+            </summary>
+            <param name="name">The name of the value to store.</param>
+            <param name="value">The data to be stored.</param>
+            <param name="valueKind">The registry data type to use when storing the data.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceRegistryKey.ToString">
+            <summary>
+            Retrieves a string representation of this key.
+            </summary>
+            <returns>Key name.</returns>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.DeviceRegistryKey.Name">
+            <summary>
+            Gets the name of the registry key.
+            </summary>
+            <value>The name of the registry key.</value>
+        </member>
+        <member name="T:System.Devices.RemoteDevice.RemoteDatabaseList">
+            <summary>
+            Enumerates all connected devices. Access through <see cref="P:System.Devices.RemoteDeviceManager.Devices"/>.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.RemoteDatabaseList.Dispose">
+            <summary>
+            Cleans up all internal references.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.RemoteDatabaseList.GetEnumerator">
+            <summary>
+            Returns the strongly typed enumerator.
+            </summary>
+            <returns>Enumerator</returns>
+        </member>
+        <member name="T:System.Devices.RemoteDevice.RemoteDatabaseList.RemoteDatabaseEnum">
+            <summary>
+            Internal enumerator for databases on a remote device.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.RemoteDatabaseList.RemoteDatabaseEnum.Dispose">
+            <summary>
+            Frees all available resources.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.RemoteDatabaseList.RemoteDatabaseEnum.MoveNext">
+            <summary>
+            Moves to the next database.
+            </summary>
+            <returns>true if a database was found. Otherwise, false.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.RemoteDatabaseList.RemoteDatabaseEnum.Reset">
+            <summary>
+            Resets the enumeration.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDevice.RemoteDatabaseList.RemoteDatabaseEnum.Current">
+            <summary>
+            Gets the current item in the enumeration.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceFile.op_Implicit(System.Devices.RemoteDevice.DeviceFile)~System.IntPtr">
+            <summary>
+            Allows to use DeviceFile as IntPtr
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDevice.DeviceHandle.op_Implicit(System.Devices.RemoteDevice.DeviceHandle)~System.IntPtr">
+            <summary>
+            Allows to use DeviceHandle as IntPtr
+            </summary>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.ExtensionAttribute">
+            <summary>
+            Attribute allowing extenders to be used with .NET Framework 2.0.
+            </summary>
+        </member>
+        <member name="T:System.Devices.Interop.CEOSVERSIONINFO">
+            <summary>
+            Version info for the connected device
+            </summary>
+        </member>
+        <member name="F:System.Devices.Interop.CEOSVERSIONINFO.dwMajorVersion">
+            <summary>
+            Major
+            </summary>
+        </member>
+        <member name="F:System.Devices.Interop.CEOSVERSIONINFO.dwMinorVersion">
+            <summary>
+            Minor
+            </summary>
+        </member>
+        <member name="F:System.Devices.Interop.CEOSVERSIONINFO.dwBuildNumber">
+            <summary>
+            Build
+            </summary>
+        </member>
+        <member name="F:System.Devices.Interop.CEOSVERSIONINFO.dwPlatformId">
+            <summary>
+            Platform type
+            </summary>
+        </member>
+        <member name="F:System.Devices.Interop.CEOSVERSIONINFO.szCSDVersion">
+            <summary>
+            Null-terminated string that provides arbitrary additional information about the operating system.
+            </summary>
+        </member>
+        <member name="T:System.Devices.Interop.DeviceConnectEventArgs">
+            <summary>
+            Provides arguments for a device connect/disconnect event.
+            </summary>
+        </member>
+        <member name="M:System.Devices.Interop.DeviceConnectEventArgs.#ctor(System.Devices.Interop.IRAPIDevice)">
+            <summary>
+            Constructs a new instance of the <see cref="T:System.Devices.Interop.DeviceConnectEventArgs"/> class.
+            </summary>
+        </member>
+        <member name="P:System.Devices.Interop.DeviceConnectEventArgs.Device">
+            <summary>
+            Device involved in the connect or disconnect event.
+            </summary>
+        </member>
+        <member name="M:System.Devices.Interop.RAPISink.OnDeviceConnected(System.Devices.Interop.IRAPIDevice)">
+            <summary>Raises the <see cref="E:RAPISink.DeviceConnected"/> event.</summary>
+        </member>
+        <member name="M:System.Devices.Interop.RAPISink.OnDeviceDisconnected(System.Devices.Interop.IRAPIDevice)">
+            <summary>Raises the <see cref="E:RAPISink.DeviceDisconnected"/> event.</summary>
+        </member>
+        <member name="E:System.Devices.Interop.RAPISink.DeviceConnected">
+            <summary>Occurs when device connected.</summary>
+        </member>
+        <member name="E:System.Devices.Interop.RAPISink.DeviceDisconnected">
+            <summary>Occurs when device disconnected.</summary>
+        </member>
+        <member name="T:System.Runtime.InteropServices.HGlobalSafeHandle">
+            <summary>
+            IntPtr wrapper which can be used as result of
+            Marshal.AllocHGlobal operation.
+            Call Marshal.FreeHGlobal when disposed or finalized.
+            </summary>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.#ctor(System.IntPtr)">
+            <summary>
+            Creates new instance with given IntPtr value
+            </summary>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.#ctor">
+            <summary>
+            Creates new instance with zero IntPtr
+            </summary>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.#ctor(System.Int32)">
+            <summary>
+            Creates new instance which allocates unmanaged memory of given size
+            </summary>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.#ctor(System.Byte[])">
+            <summary>
+            Creates a new instance and copies the bytes into the allocated unmanaged memory.
+            </summary>
+            <param name="buffer">Bytes to copy</param>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.op_Implicit(System.IntPtr)~System.Runtime.InteropServices.HGlobalSafeHandle">
+            <summary>
+            Allows to assign IntPtr to HGlobalSafeHandle
+            </summary>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.op_Implicit(System.Runtime.InteropServices.HGlobalSafeHandle)~System.IntPtr">
+            <summary>
+            Allows to use HGlobalSafeHandle as IntPtr
+            </summary>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.op_Implicit(System.Runtime.InteropServices.HGlobalSafeHandle)~System.Byte[]">
+            <summary>
+            Allows safe extraction to an array of managed bytes.
+            </summary>
+            <param name="h">Reference to an HGlobalSafeHandle</param>
+            <returns>Managed array of bytes.</returns>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.ReleaseHandle">
+            <summary>
+            Called when object is disposed or finalized.
+            </summary>
+        </member>
+        <member name="M:System.Runtime.InteropServices.HGlobalSafeHandle.ToString">
+            <summary>
+            Returns the memory cast to a string.
+            </summary>
+            <returns>String value of memory.</returns>
+        </member>
+        <member name="P:System.Runtime.InteropServices.HGlobalSafeHandle.Length">
+            <summary>
+            Gets or sets the length of the unmanaged memory. Setting a new value will reallocate the local memory.
+            </summary>
+        </member>
+        <member name="P:System.Runtime.InteropServices.HGlobalSafeHandle.IsInvalid">
+            <summary>
+            Defines invalid (null) handle value.
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteDirectoryInfo">
+            <summary>
+            Exposes instance methods for creating, moving, and enumerating through directories and subdirectories. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.#ctor(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteDirectoryInfo"/> class on the specified path.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">A string specifying the path on which to create the <see cref="T:System.Devices.RemoteDirectoryInfo"/>.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.Create">
+            <summary>
+            Creates a directory.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.CreateSubdirectory(System.String)">
+            <summary>
+            Creates a subdirectory or subdirectories on the specified path. The specified path can be relative to this instance of the <see cref="T:System.Devices.RemoteDirectoryInfo"/> class. 
+            </summary>
+            <param name="path">The specified path.</param>
+            <returns>The last directory specified in path.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.Delete">
+            <summary>
+            Deletes the <see cref="T:System.Devices.RemoteDirectoryInfo"/> if it is empty.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.Delete(System.Boolean)">
+            <summary>
+            Deletes this instance of a <see cref="T:System.Devices.RemoteDirectoryInfo"/>, specifying whether to delete subdirectories and files.
+            </summary>
+            <param name="recursive"><c>true</c> to delete this directory, its subdirectories, and all files; otherwise <c>false</c>.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.GetDirectories">
+            <summary>
+            Returns the subdirectories of the current directory.
+            </summary>
+            <returns>An array of <see cref="T:System.Devices.RemoteDirectoryInfo"/> objects.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.GetDirectories(System.String)">
+            <summary>
+            Returns an array of directories in the current <see cref="T:System.Devices.RemoteDirectoryInfo"/> matching the given search criteria. 
+            </summary>
+            <param name="searchPattern">The search string, such as "System*", used to search for all directories beginning with the word "System".</param>
+            <returns>An array of type <see cref="T:System.Devices.RemoteDirectoryInfo"/> matching the <paramref name="searchPattern"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.GetFiles">
+            <summary>
+            Returns a file list from the current directory.
+            </summary>
+            <returns>An array of type <see cref="T:System.Devices.RemoteFileInfo"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.GetFiles(System.String)">
+            <summary>
+            Returns a file list from the current directory matching the given <paramref name="searchPattern"/>.
+            </summary>
+            <param name="searchPattern">The search string, such as "*.txt".</param>
+            <returns>An array of type <see cref="T:System.Devices.RemoteFileInfo"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.MoveTo(System.String)">
+            <summary>
+            Moves a <see cref="T:System.Devices.RemoteDirectoryInfo"/> instance and its contents to a new path.
+            </summary>
+            <param name="destDirName">The name and path to which to move this directory. The destination cannot be another disk volume or a directory with the identical name. It can be an existing directory to which you want to add this directory as a subdirectory.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDirectoryInfo.ToString">
+            <summary>
+            Returns the path that was passed by the user.
+            </summary>
+            <returns>
+            Returns the path that was passed by the user.
+            </returns>
+        </member>
+        <member name="P:System.Devices.RemoteDirectoryInfo.Name">
+            <summary>
+            Gets the name of this <see cref="T:System.Devices.RemoteDirectoryInfo"/> instance.
+            </summary>
+            <value>The directory name.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDirectoryInfo.Parent">
+            <summary>
+            Gets the parent directory of a specified subdirectory.
+            </summary>
+            <value>The parent directory, or <c>null</c> if the path is null or if the file path denotes a root (such as "\").</value>
+        </member>
+        <member name="P:System.Devices.RemoteDirectoryInfo.Root">
+            <summary>
+            Gets the root portion of a path.
+            </summary>
+            <value>A <see cref="T:System.Devices.RemoteDirectoryInfo"/> object representing the root of a path.</value>
+        </member>
+        <member name="T:System.Devices.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:System.Devices.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:System.Devices.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:System.Devices.Properties.Resources.ErrorDisconnectedDevice">
+            <summary>
+              Looks up a localized string similar to This operation cannot be completed on a disconnected device..
+            </summary>
+        </member>
+        <member name="P:System.Devices.Properties.Resources.ErrorNoActiveSync">
+            <summary>
+              Looks up a localized string similar to The RAPI2 COM library is not available. ActiveSync may not be installed..
+            </summary>
+        </member>
+        <member name="P:System.Devices.Properties.Resources.ErrorNoDeviceOnThread">
+            <summary>
+              Looks up a localized string similar to Unable to get an instance of the device on this thread..
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteFile">
+            <summary>
+            Provides static methods for the creation, copying, deletion, moving, and opening of files, and aids in the creation of <see cref="T:System.Devices.RemoteFileStream"/> objects. 
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Copy(System.Devices.RemoteDevice,System.String,System.String)">
+            <summary>
+            Copies an existing file to a new file. Overwriting a file of the same name is not allowed.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="sourceFileName">The file to copy.</param>
+            <param name="destFileName">The name of the destination file. This cannot be a directory or an existing file.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Copy(System.Devices.RemoteDevice,System.String,System.String,System.Boolean)">
+            <summary>
+            Copies an existing file to a new file. Overwriting a file of the same name is allowed.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="sourceFileName">The file to copy.</param>
+            <param name="destFileName">The name of the destination file. This cannot be a directory.</param>
+            <param name="overwrite"><c>true</c> if the destination file can be overwritten; otherwise <c>false</c>.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.CopyFileFromDevice(System.Devices.RemoteDevice,System.String,System.String,System.Boolean)">
+            <summary>
+            Copies a file from the remote device to the local system.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="deviceFileName">The name of the remote file to copy.</param>
+            <param name="desktopFileName">The name of the local destination file.</param>
+            <param name="overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.CopyFileToDevice(System.Devices.RemoteDevice,System.String,System.String,System.Boolean)">
+            <summary>
+            Copies a file from the local system to a remote device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="desktopFileName">The name of the local file to copy.</param>
+            <param name="deviceFileName">The name of the remote destination file.</param>
+            <param name="overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.CopyFileToDevice(System.Devices.RemoteDevice,System.String,System.String,System.Boolean,System.Action{System.Single})">
+            <summary>
+            Copies a file from the local system to a remote device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="desktopFileName">The name of the local file to copy.</param>
+            <param name="deviceFileName">The name of the remote destination file.</param>
+            <param name="overwrite"><see langword="true"/> if the destination file can be overwritten; otherwise, <see langword="false"/>.</param>
+            <param name="percentProgressCallback">A callback delegate to receive progress updates.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Create(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Creates or overwrites a file in the specified path.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The path and name of the file to create.</param>
+            <returns>A <see cref="T:System.Devices.RemoteFileStream"/> that provides read/write access to the file specified in <paramref name="path"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Create(System.Devices.RemoteDevice,System.String,System.Int32)">
+            <summary>
+            Creates or overwrites a file in the specified path.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The path and name of the file to create.</param>
+            <param name="bufferSize">The number of bytes buffered for reads and writes to the file.</param>
+            <returns>A <see cref="T:System.Devices.RemoteFileStream"/> with the specified buffer size that provides read/write access to the file specified in <paramref name="path"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Delete(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Deletes the specified file. An exception is not thrown if the specified file does not exist. 
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The name of the file to be deleted.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Exists(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Determines whether the specified file exists.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file to check.</param>
+            <returns><c>true</c> if the caller has the required permissions and <paramref name="path"/> contains the name of an existing file; otherwise, <c>false</c>. This method also returns <c>false</c> if <paramref name="path"/> is <c>null</c>, an invalid path, or a zero-length string. If the caller does not have sufficient permissions to read the specified file, no exception is thrown and the method returns <c>false</c> regardless of the existence of <paramref name="path"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.GetAttribtues(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Gets the <see cref="T:System.IO.FileAttributes"/> of the file on the path.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The path to the file.</param>
+            <returns>The <see cref="T:System.IO.FileAttributes"/> of the file on the path.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.GetCreationTime(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Gets the creation date and time of the specified file or directory.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file or directory for which to obtain creation date and time information.</param>
+            <returns>A <see cref="T:System.DateTime"/> structure set to the creation date and time for the specified file or directory. This value is expressed in local time.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.GetLastAccessTime(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Gets the date and time the specified file or directory was last accessed.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file or directory for which to obtain access date and time information.</param>
+            <returns>A <see cref="T:System.DateTime"/> structure set to the date and time that the specified file or directory was last accessed. This value is expressed in local time.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.GetLastWriteTime(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Gets the date and time the specified file or directory was last written to.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file or directory for which to obtain access date and time information.</param>
+            <returns>A <see cref="T:System.DateTime"/> structure set to the date and time that the specified file or directory was last written to. This value is expressed in local time.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Move(System.Devices.RemoteDevice,System.String,System.String)">
+            <summary>
+            Moves a specified file to a new location, providing the option to specify a new file name.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="sourceFileName">The name of the file to move.</param>
+            <param name="destFileName">The new path for the file.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Open(System.Devices.RemoteDevice,System.String,System.IO.FileMode)">
+            <summary>
+            Opens a <see cref="T:System.Devices.RemoteFileStream"/> on the specified path with read/write access.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file to open.</param>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+            <returns>A <see cref="T:System.Devices.RemoteFileStream"/> opened in the specified mode and path, with read/write access and not shared.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Open(System.Devices.RemoteDevice,System.String,System.IO.FileMode,System.IO.FileAccess)">
+            <summary>
+            Opens a <see cref="T:System.Devices.RemoteFileStream"/> on the specified path, with the specified mode and access.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file to open.</param>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+            <param name="access">A <see cref="T:System.IO.FileAccess"/> value that specifies the operations that can be performed on the file.</param>
+            <returns>An unshared <see cref="T:System.Devices.RemoteFileStream"/> that provides access to the specified file, with the specified mode and access.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.Open(System.Devices.RemoteDevice,System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)">
+            <summary>
+            Opens a <see cref="T:System.Devices.RemoteFileStream"/> on the specified path, having the specified mode with read, write, or read/write access and the specified sharing option.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file to open.</param>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+            <param name="access">A <see cref="T:System.IO.FileAccess"/> value that specifies the operations that can be performed on the file.</param>
+            <param name="share">A <see cref="T:System.IO.FileShare"/> value specifying the type of access other threads have to the file.</param>
+            <returns>A <see cref="T:System.Devices.RemoteFileStream"/> on the specified path, having the specified mode with read, write, or read/write access and the specified sharing option.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.OpenRead(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Opens an existing file for reading.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file to be opened for reading.</param>
+            <returns>A read-only <see cref="T:System.Devices.RemoteFileStream"/> on the specified path.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.OpenWrite(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Opens an existing file for writing.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file to be opened for writing.</param>
+            <returns>An unshared <see cref="T:System.Devices.RemoteFileStream"/> object on the specified path with <see cref="T:System.IO.FileAccess">Write</see> access.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.ReadAllBytes(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Reads the contents of a file on a remote device into a array of bytes.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">A file to open for reading.</param>
+            <returns>
+            A byte array containing the contents of the file.
+            </returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.ReadAllText(System.Devices.RemoteDevice,System.String,System.Text.Encoding)">
+            <summary>
+            Opens a text file on a remote device, reads all lines of the file into a string, and then closes the file.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">A file to open for reading.</param>
+            <param name="encoding">The encoding applied to the contents of the file.</param>
+            <returns>
+            A string containing all lines of the file.
+            </returns>
+        </member>
+        <member name="M:System.Devices.RemoteFile.SetAttributes(System.Devices.RemoteDevice,System.String,System.IO.FileAttributes)">
+            <summary>
+            Sets the specified <see cref="T:System.IO.FileAttributes"/> of a file or directory on a remote device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="fileName">The path to the file.</param>
+            <param name="attr">The desired <see cref="T:System.IO.FileAttributes"/>, such as <c>Hidden</c>, <c>ReadOnly</c>, <c>Normal</c>, and <c>Archive</c>.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFile.SetFileTimes(System.Devices.RemoteDevice,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Sets the date and time that a file was created, last accessed, or last modified for files on a remote device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="fileName">String that specifies the name of a file.</param>
+            <param name="creationTime">The date and time the file was created. This parameter can be NULL if the application does not need to set this information.</param>
+            <param name="lastAccessTime">The date and time the file was last accessed. This parameter can be NULL if the application does not need to set this information.</param>
+            <param name="lastWriteTime">The date and time the file was last modified. This parameter can be NULL if the application does not need to set this information.</param>
+        </member>
+        <member name="T:System.Devices.RemoteFileInfo">
+            <summary>
+            Provides instance methods for the creation, copying, deletion, moving, and opening of files, and aids in the creation of <see cref="T:System.Devices.RemoteFileStream"/> objects. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.#ctor(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteFileInfo"/> class, which acts as a wrapper for a file path.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="fileName">The fully qualified name of the new file, or the relative file name.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.CopyTo(System.String)">
+            <summary>
+            Copies an existing file to a new file, disallowing the overwriting of an existing file.
+            </summary>
+            <param name="destFileName">Name of the new file to copy to.</param>
+            <returns>A new file with a fully qualified path.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.CopyTo(System.String,System.Boolean)">
+            <summary>
+            Copies an existing file to a new file, allowing the overwriting of an existing file.
+            </summary>
+            <param name="destFileName">The name of the new file to copy to.</param>
+            <param name="overwrite"><c>true</c> to allow an existing file to be overwritten; otherwise <c>false</c>.</param>
+            <returns>A new file, or an overwrite of an existing file if overwrite is <c>true</c>. If the file exists and overwrite is <c>false</c>, an exception is thrown.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.Create">
+            <summary>
+            Creates a file.
+            </summary>
+            <returns>A new file.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.Delete">
+            <summary>
+            Deletes a file.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.MoveTo(System.String)">
+            <summary>
+            Moves a specified file to a new location, providing the option to specify a new file name.
+            </summary>
+            <param name="destFileName">The path to move the file to, which can specify a different file name.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.Open(System.IO.FileMode)">
+            <summary>
+            Opens a file in the specified mode. 
+            </summary>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> constant specifying the mode (for example, <c>Open</c> or <c>Append</c>) in which to open the file. </param>
+            <returns>A <see cref="T:System.Devices.RemoteFileStream"/> opened with the specified mode, with read/write access and unshared.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.Open(System.IO.FileMode,System.IO.FileAccess)">
+            <summary>
+            Opens a file in the specified mode with read, write, or read/write access.
+            </summary>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> constant specifying the mode (for example, <c>Open</c> or <c>Append</c>) in which to open the file. </param>
+            <param name="access">A <see cref="T:System.IO.FileAccess"/> constant specifying whether to open the file with <c>Read</c>, <c>Write</c>, or <c>ReadWrite</c> file access.</param>
+            <returns>A <see cref="T:System.Devices.RemoteFileStream"/> object opened in the specified mode and access, and unshared.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.Open(System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)">
+            <summary>
+            Opens a file in the specified mode with read, write, or read/write access and the specified sharing option. 
+            </summary>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> constant specifying the mode (for example, <c>Open</c> or <c>Append</c>) in which to open the file. </param>
+            <param name="access">A <see cref="T:System.IO.FileAccess"/> constant specifying whether to open the file with <c>Read</c>, <c>Write</c>, or <c>ReadWrite</c> file access.</param>
+            <param name="share">A <see cref="T:System.IO.FileShare"/> constant specifying the type of access other <see cref="T:System.Devices.RemoteFileStream"/> objects have to this file. </param>
+            <returns>A <see cref="T:System.Devices.RemoteFileStream"/> object opened with the specified mode, access, and sharing options.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.OpenRead">
+            <summary>
+            Creates a read-only <see cref="T:System.Devices.RemoteFileStream"/>.
+            </summary>
+            <returns>A new read-only <see cref="T:System.Devices.RemoteFileStream"/> object.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.OpenWrite">
+            <summary>
+            Creates a write-only <see cref="T:System.Devices.RemoteFileStream"/>.
+            </summary>
+            <returns>A new write-only <see cref="T:System.Devices.RemoteFileStream"/> object.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.ToString">
+            <summary>
+            Returns the path as a string.
+            </summary>
+            <returns>
+            A string representing the path.
+            </returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileInfo.CheckValidFileName(System.String)">
+            <summary>
+            Validates the supplied file name and throws exceptions if invalid.
+            </summary>
+            <param name="fileName">Name of the file to validate.</param>
+        </member>
+        <member name="P:System.Devices.RemoteFileInfo.Directory">
+            <summary>
+            Gets an instance of the parent directory.
+            </summary>
+            <value>A <see cref="T:System.Devices.RemoteDirectoryInfo"/> object representing the parent directory of this file.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileInfo.DirectoryName">
+            <summary>
+            Gets a string representing the directory's full path.
+            </summary>
+            <value>A string representing the directory's full path.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileInfo.Length">
+            <summary>
+            Gets the size, in bytes, of the current file.
+            </summary>
+            <value>The size of the current file in bytes.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileInfo.Name">
+            <summary>
+            Gets the name of the file.
+            </summary>
+            <value>The name of the file.</value>
+        </member>
+        <member name="T:System.Devices.RemoteDeviceConnectEventArgs">
+            <summary>
+            Provides arguments for a device connection event.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceConnectEventArgs.#ctor(System.Devices.RemoteDevice)">
+            <summary>
+            Constructs a new instance of the <see cref="T:System.Devices.RemoteDeviceConnectEventArgs"/> class.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDeviceConnectEventArgs.Device">
+            <summary>
+            Gets the device that has been connected.
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteDeviceManager">
+             <summary>
+             Manages connection status and availability of remote devices.
+             </summary>
+             <example>
+             RemoteDeviceManager r = new RemoteDeviceManager();
+            	r.DeviceDisconnected += r_DeviceDisconnected;
+            	RemoteDevice dev = r.Devices.FirstConnectedDevice;
+            	if (dev == null)
+            		return;
+            
+            	Console.WriteLine(dev.Name + ":" + dev.Platform);
+             </example>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.#ctor">
+            <summary>
+            Creates a new instance of <c>RemoteDeviceManager</c>.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.Dispose">
+            <summary>
+            Cleans up all internal references.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.OnDeviceConnected(System.Devices.RemoteDevice)">
+            <summary>Raises the <see cref="E:RemoteDeviceManager.DeviceConnected"/> event.</summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.OnDeviceDisconnected(System.Devices.RemoteDevice)">
+            <summary>Raises the <see cref="E:RemoteDeviceManager.DeviceDisconnected"/> event.</summary>
+        </member>
+        <member name="E:System.Devices.RemoteDeviceManager.DeviceConnected">
+            <summary>Occurs when a device connects.</summary>
+        </member>
+        <member name="E:System.Devices.RemoteDeviceManager.DeviceDisconnected">
+            <summary>Occurs when a device disconnects.</summary>
+        </member>
+        <member name="E:System.Devices.RemoteDeviceManager.UnsafeThreadDeviceConnectedNotice">
+            <summary>Thread unsafe notice that a device has connected.</summary>
+            <remarks>
+            This event will always be called from a different thread than the primary thread which holds the instance of <see cref="T:System.Devices.RemoteDeviceManager"/>.
+            If you have a reference to a <see cref="T:System.Devices.RemoteDeviceManager"/> or <see cref="T:System.Devices.RemoteDevice"/> instance, it will be invalid in the handler 
+            method for this event. You will need to create a new instance of <see cref="T:System.Devices.RemoteDeviceManager"/> and get a <see cref="T:System.Devices.RemoteDevice"/>
+            instance from it in order to assure that instance is valid. This event is typically only useful in console applications. For Windows Forms
+            applications, you should use the <see cref="E:System.Devices.RemoteDeviceManager.DeviceConnected"/> event.
+            </remarks>
+        </member>
+        <member name="E:System.Devices.RemoteDeviceManager.UnsafeThreadDeviceDisconnectedNotice">
+            <summary>Thread unsafe notice that a device has disconnected.</summary>
+            <remarks>
+            This event will always be called from a different thread than the primary thread which holds the instance of <see cref="T:System.Devices.RemoteDeviceManager"/>.
+            If you have a reference to a <see cref="T:System.Devices.RemoteDeviceManager"/> or <see cref="T:System.Devices.RemoteDevice"/> instance, it will be invalid in the handler 
+            method for this event. You will need to create a new instance of <see cref="T:System.Devices.RemoteDeviceManager"/> and get a <see cref="T:System.Devices.RemoteDevice"/>
+            instance from it in order to assure that instance is valid. This event is typically only useful in console applications. For Windows Forms
+            applications, you should use the <see cref="E:System.Devices.RemoteDeviceManager.DeviceDisconnected"/> event.
+            </remarks>
+        </member>
+        <member name="P:System.Devices.RemoteDeviceManager.Devices">
+            <summary>
+            Gets a list of connected <see cref="T:System.Devices.RemoteDevice"/>.
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteDeviceManager.RAPIDeviceList">
+            <summary>
+            Enumerates all connected devices. Access through <see cref="P:System.Devices.RemoteDeviceManager.Devices"/>.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.RAPIDeviceList.Dispose">
+            <summary>
+            Cleans up all internal references.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.RAPIDeviceList.GetEnumerator">
+            <summary>
+            Returns the strongly typed enumerator.
+            </summary>
+            <returns>Enumerator</returns>
+        </member>
+        <member name="P:System.Devices.RemoteDeviceManager.RAPIDeviceList.FirstConnectedDevice">
+            <summary>
+            Gets the first connected device. Returns null if no devices are connected.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDeviceManager.RAPIDeviceList.Item(System.Guid)">
+            <summary>
+            Gets the <see cref="T:System.Devices.RemoteDevice"/> with the specified id.
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteDeviceManager.RAPIDeviceList.RAPIDeviceEnum">
+            <summary>
+            Internal enumerator for connected devices.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.RAPIDeviceList.RAPIDeviceEnum.Dispose">
+            <summary>
+            Frees all available resources.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.RAPIDeviceList.RAPIDeviceEnum.MoveNext">
+            <summary>
+            Moves to the next device. Under all systems as of 2008, there can only be one connected device.
+            </summary>
+            <returns>true if a device was found. Otherwise, false.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDeviceManager.RAPIDeviceList.RAPIDeviceEnum.Reset">
+            <summary>
+            Resets the enumeration.
+            </summary>
+        </member>
+        <member name="P:System.Devices.RemoteDeviceManager.RAPIDeviceList.RAPIDeviceEnum.Current">
+            <summary>
+            Gets the current item in the enumeration.
+            </summary>
+        </member>
+        <member name="T:System.Devices.SortOrderFlags">
+            <summary>
+            Sort flags. The default is ascending order and case-sensitive. Records that do not contain the sort property are placed after all other records.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.Default">
+            <summary>
+            Default sort order.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.Descending">
+            <summary>
+            Causes the sort to be in descending order. By default, the sort is done in ascending order.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.CaseInsensitive">
+            <summary>
+            Causes thee sort operation to be case-insensitive. This value is valid only for strings.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.UnknownFirst">
+            <summary>
+            Causes the sort opperation to place records that do not contain the sort property before all the other records.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.IgnorenOnSpace">
+            <summary>
+            Specifies that this sort ignores nonspacing characters, such as accents, diacritics, and vowel marks. This value is valid only for strings.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.IgnoreSymbols">
+            <summary>
+            Causes the sort operation to not recognize symbol values. This value is valid only for strings.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.IgnoreKanaType">
+            <summary>
+            The sort does not differentiate between Hiragana and Katakana characters. This value is valid only for strings.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.IgnoreWidth">
+            <summary>
+            Prevents the sort operation from differentiating between a single-byte character and the same character as a double-byte character. This value is valid only for strings.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.Unique">
+            <summary>
+            Requires the key to be unique across all records in the database. This constraint also requires the sort property to be present in all records.
+            </summary>
+        </member>
+        <member name="F:System.Devices.SortOrderFlags.NonNull">
+            <summary>
+            Requires the sort property to be present in all records.
+            </summary>
+        </member>
+        <member name="T:System.Devices.SortOrderDescriptor">
+            <summary>
+            This structure contains information about a sort order in a database.
+            </summary>
+        </member>
+        <member name="M:System.Devices.SortOrderDescriptor.#ctor(System.UInt32,System.Devices.SortOrderFlags)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.SortOrderDescriptor"/> struct.
+            </summary>
+            <param name="pid">Identifier of the property to be sorted on. Sorts on binary properties are not allowed.</param>
+            <param name="flgs">Sort flags. See <see cref="T:System.Devices.SortOrderFlags"/> for more detail.</param>
+        </member>
+        <member name="T:System.Devices.RemoteDatabase">
+            <summary>
+            Represents a database on a device connected through RAPI2 (ActiveSync)
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.#ctor(System.Devices.RemoteDevice,System.String,System.Boolean,System.UInt32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteDatabase"/> class and opens an existing database in the object store on a remote Microsoft® Windows® CE–based device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="name">Contains the name of the database to be opened.</param>
+            <param name="autoIncr">If set to <c>true</c> current seek position is automatically incremented with each call to the ReadRecordProps method.</param>
+            <param name="sortId">Property identifier of the primary key for the sort order in which the database is to be traversed. Subsequent calls to Seek assume this sort order. This parameter can be zero if the sort order is not important.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.#ctor(System.Devices.RemoteDevice,System.UInt32,System.Boolean,System.UInt32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteDatabase"/> class and opens an existing database in the object store on a remote Microsoft® Windows® CE–based device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="objId">The object identifier of the database to be opened.</param>
+            <param name="autoIncr">If set to <c>true</c> current seek position is automatically incremented with each call to the ReadRecordProps method.</param>
+            <param name="sortId">Property identifier of the primary key for the sort order in which the database is to be traversed. Subsequent calls to Seek assume this sort order. This parameter can be zero if the sort order is not important.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.Create(System.Devices.RemoteDevice,System.String,System.UInt32,System.Devices.SortOrderDescriptor[])">
+            <summary>
+            Creates the specified database on the device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="name"><para>Specifies the name for the new database. The name can have up to 31 characters. If the name is too long, it is truncated and the databases is created. Do not use an empty string as the database name.</para>
+            <para>Note: Do not create a database name that ends with a backslash character "\".</para></param>
+            <param name="identifier">Specifies the type identifier for the database. This is an application-defined value that can be used for any application-defined purpose. For example, an application can use the type identifier to distinguish address book data from to-do list data or use the identifier during a database enumeration sequence. The type identifier is not meant to be a unique identifier for the database. The system does not use this value.</param>
+            <param name="sortDesc">An array of sort order descriptions.</param>
+            <returns>The object identifier of the newly created database.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.Delete(System.Devices.RemoteDevice,System.UInt32)">
+            <summary>
+            Removes a database from the object store on a remote Microsoft® Windows® CE–based device.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="objId">Object identifier of the database to be deleted.</param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.DeleteRecord(System.UInt32)">
+            <summary>
+            Deletes a record from a database on a remote Microsoft® Windows® CE–based device.
+            </summary>
+            <param name="recordId">Object identifier of the record to be deleted. This identifier can be obtained by calling the <see cref="M:System.Devices.RemoteDatabase.ReadRecordProps(System.UInt32[])"/> method.</param>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.ReadRecordProps(System.UInt32[])">
+            <summary>
+            Reads properties from the current record of a database on a remote Microsoft® Windows® CE–based device.
+            </summary>
+            <param name="propIds">An array specifying the identifiers of the properties to read.</param>
+            <returns>An array of <see cref="T:System.Devices.RemoteDatabase.PropertyValue"/> structures with the values of the specified properties.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.Seek(System.Devices.RemoteDatabase.DatabaseSeekType,System.UInt32)">
+            <summary>
+            Seeks the specified seek type.
+            </summary>
+            <param name="seekType">Specifies the type of seek operation to perform. See <see cref="T:System.Devices.RemoteDatabase.DatabaseSeekType"/> for more information.</param>
+            <param name="value">The value corresponding to the <c>seekType</c>. See <see cref="T:System.Devices.RemoteDatabase.DatabaseSeekType"/> for more information.</param>
+            <returns>The current record id.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.WriteRecordProps(System.UInt32,System.Devices.RemoteDatabase.PropertyValue[])">
+            <summary>
+            Writes a set of properties to a single database record on a remote Microsoft® Windows® CE–based device.
+            </summary>
+            <param name="recId">The id of the record to read. If this parameter is zero, a new record is created and filled in with the specified properties.</param>
+            <param name="props">an array of <see cref="T:System.Devices.RemoteDatabase.PropertyValue"/> structures that specify the property values to be written to the specified record.</param>
+            <returns>The current record id.</returns>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.CurrentRecordId">
+            <summary>
+            Gets the current record id.
+            </summary>
+            <value>The current record id.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.LastWriteTime">
+            <summary>
+            Gets the date and time of the last time the database was written to.
+            </summary>
+            <value>The the date and time of the last time the database was written to.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.Name">
+            <summary>
+            Gets the name of the database.
+            </summary>
+            <value>The database name.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.ObjectId">
+            <summary>
+            Gets the object identifier of the database.
+            </summary>
+            <value>The object id.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.RecordCount">
+            <summary>
+            Gets the number of the records in the database.
+            </summary>
+            <value>The number of the records in the database.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.Size">
+            <summary>
+            Gets the size of the database.
+            </summary>
+            <value>The database size in bytes.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.Item(System.UInt32)">
+            <summary>
+            Gets or sets the values of a specified record.
+            </summary>
+            <value>Array of <see cref="T:System.Devices.RemoteDatabase.PropertyValue"/> structures representing the ordered properties of the record.</value>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.Item(System.Int32,System.UInt32)">
+            <summary>
+            Gets the value of a property for the specified record.
+            </summary>
+            <value>Value of the specified property.</value>
+        </member>
+        <member name="T:System.Devices.RemoteDatabase.DatabaseSeekType">
+            <summary>
+            Specifies the type of seek operation to perform on a <see cref="M:System.Devices.RemoteDatabase.Seek(System.Devices.RemoteDatabase.DatabaseSeekType,System.UInt32)"/> method call.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.CEOID">
+            <summary>
+            Seeks until finding an object that has the specified object identifier. The dwValue parameter specifies the object identifier. This type of seek operation is very efficient.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.Beginning">
+            <summary>
+            Seeks until finding the record at the specified position from the beginning of the database. The dwValue parameter specifies the number of records to seek from the beginning.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.End">
+            <summary>
+            Seeks backward for the specified number of records from the end of the database. The dwValue parameter specifies the number of records to seek from the end.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.Current">
+            <summary>
+            Seeks backward or forward from the current position of the seek pointer for the specified number of records. The dwValue parameter specifies the number of records to seek from the current position. The function seeks forward if dwValue is a positive value, or backward if it is negative.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.ValueSmaller">
+            <summary>
+            Starting from the current position, seeks backward toward the start of the sort. Always seeks backward, regardless of sort order. In ascending order, this finds the largest value smaller than the specified value; in descending order, this finds the smallest value larger than the specified value. If none of the previous records has a value that meets the search criteria, the seek pointer is left at the end of the database and the function returns 0. The dwValue parameter is a pointer to a CEPROPVAL structure.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.ValueFirstEqual">
+            <summary>
+            Begins at the start of the sort and seeks forward until finding the first value that is equal to the specified value. Always seeks forward, regardless of sort order. If the seek operation fails, the seek pointer is left at the end of the database, and the function returns 0. The dwValue parameter is a pointer to a CEPROPVAL structure.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.ValueGreater">
+            <summary>
+            Starting from the current position, seeks backward toward the start of the sort. Always seeks forward, regardless of sort order. In ascending order this finds the smallest value greater than the specified value; in descending order this finds the largest value smaller than the specified value. If none of the following records has a value that meets the search criteria, the seek pointer is left at the end of the database and the function returns 0. The dwValue parameter is a pointer to a CEPROPVAL structure.
+            </summary>
+        </member>
+        <member name="F:System.Devices.RemoteDatabase.DatabaseSeekType.ValueNextEqual">
+            <summary>
+            Starting from the current seek position, seeks exactly one position forward in the sorted order and checks if the next record is equal in value to the specified value. If so, returns the object identifier of this next record; otherwise, returns 0 and leaves the seek pointer at the end of the database. This operation can be used in conjunction with the CEDB_SEEK_VALUEFIRSTEQUAL operation to enumerate all records with an equal value. The dwValue parameter is a pointer to a CEPROPVAL structure.
+            </summary>
+        </member>
+        <member name="T:System.Devices.RemoteDatabase.PropertyValue">
+            <summary>
+            This structure contains a property value.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDatabase.PropertyValue.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteDatabase.PropertyValue"/> struct.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="P:System.Devices.RemoteDatabase.PropertyValue.Value">
+            <summary>
+            Gets or sets the value.
+            </summary>
+            <value>The value.</value>
+        </member>
+        <member name="T:System.Devices.RemoteDirectory">
+            <summary>
+            Exposes static methods for creating, moving, and enumerating through directories and subdirectories on a remote Windows CE device. This class cannot be inherited.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.CreateDirectory(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Creates all directories and subdirectories as specified by path.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The directory path to create.</param>
+            <returns>A <see cref="T:System.Devices.RemoteDirectoryInfo"/> as specified by <paramref name="path"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.Delete(System.Devices.RemoteDevice,System.String,System.Boolean)">
+            <summary>
+            Deletes an empty directory from a specified path.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The name of the empty directory to remove. This directory must be writable or empty.</param>
+            <param name="recursive"><c>true</c> to remove directories, subdirectories, and files in path; otherwise, <c>false</c>. </param>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.Exists(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Determines whether the given path refers to an existing directory on disk.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The path to test.</param>
+            <returns><c>true</c> if <paramref name="path"/> refers to an existing directory; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.GetCreationTime(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Gets the creation date and time of a directory.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The path of the directory.</param>
+            <returns>A <see cref="T:System.DateTime"/> structure set to the creation date and time for the specified directory. This value is expressed in local time.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.GetDirectories(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Gets the names of subdirectories in the specified directory. 
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The path to search.</param>
+            <returns>A <see cref="T:System.String"/> array containing the names of subdirectories in <paramref name="path"/>.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.GetDirectories(System.Devices.RemoteDevice,System.String,System.String)">
+            <summary>
+            Gets an array of directories matching the specified search pattern from the current directory.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The path to search.</param>
+            <param name="searchPattern">The search string to match against the names of files in path. The parameter cannot end in two periods ("..") or contain two periods ("..") followed by <see cref="F:System.IO.Path.DirectorySeparatorChar"/> or <see cref="F:System.IO.Path.AltDirectorySeparatorChar"/>, nor can it contain any of the characters in <see cref="F:System.IO.Path.InvalidPathChars"/>.</param>
+            <returns>A <see cref="T:System.String"/> array of directories matching the search pattern.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.GetFiles(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Returns the names of files in the specified directory.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The directory from which to retrieve the files.</param>
+            <returns>A <see cref="T:System.String"/> array of file names in the specified directory.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.GetFiles(System.Devices.RemoteDevice,System.String,System.String)">
+            <summary>
+            Returns the names of files in the specified directory that match the specified search pattern.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The directory from which to retrieve the files.</param>
+            <param name="searchPattern">The search string to match against the names of files in path. The parameter cannot end in two periods ("..") or contain two periods ("..") followed by <see cref="F:System.IO.Path.DirectorySeparatorChar"/> or <see cref="F:System.IO.Path.AltDirectorySeparatorChar"/>, nor can it contain any of the characters in <see cref="F:System.IO.Path.InvalidPathChars"/>.</param>
+            <returns>A <see cref="T:System.String"/> array containing the names of files in the specified directory that match the specified search pattern.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.GetLastAccessTime(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Returns the date and time the specified file or directory was last accessed.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file or directory for which to obtain access date and time information.</param>
+            <returns>A <see cref="T:System.DateTime"/> structure set to the date and time the specified file or directory was last accessed. This value is expressed in local time.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.GetLastWriteTime(System.Devices.RemoteDevice,System.String)">
+            <summary>
+            Returns the date and time the specified file or directory was last written to.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">The file or directory for which to obtain access date and time information.</param>
+            <returns>A <see cref="T:System.DateTime"/> structure set to the date and time the specified file or directory was last written to. This value is expressed in local time.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteDirectory.Move(System.Devices.RemoteDevice,System.String,System.String)">
+            <summary>
+            Moves a file or a directory and its contents to a new location.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="sourceDirName">The path of the file or directory to move.</param>
+            <param name="destDirName">The path to the new location for <paramref name="sourceDirName"/>. If <paramref name="sourceDirName"/> is a file, then <paramref name="destDirName"/> must also be a file name.</param>
+        </member>
+        <member name="T:System.Devices.RemoteFileStream">
+            <summary>
+            Exposes a Stream around a remote file, supporting synchronous read and write operations. 
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.#ctor(System.Devices.RemoteDevice,System.String,System.IO.FileMode)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteFileStream"/> class with the specified path and creation mode.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">A relative or absolute path for the file that the current <see cref="T:System.Devices.RemoteFileStream"/> object will encapsulate.</param>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.#ctor(System.Devices.RemoteDevice,System.String,System.IO.FileMode,System.IO.FileAccess)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteFileStream"/> class with the specified path, creation mode, and read/write permission.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">A relative or absolute path for the file that the current <see cref="T:System.Devices.RemoteFileStream"/> object will encapsulate.</param>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+            <param name="access">A <see cref="T:System.IO.FileAccess"/> value that specifies the operations that can be performed on the file.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.#ctor(System.Devices.RemoteDevice,System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteFileStream"/> class with the specified path, creation mode, read/write permission, and sharing permission.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">A relative or absolute path for the file that the current <see cref="T:System.Devices.RemoteFileStream"/> object will encapsulate.</param>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+            <param name="access">A <see cref="T:System.IO.FileAccess"/> value that specifies the operations that can be performed on the file.</param>
+            <param name="share">A <see cref="T:System.IO.FileShare"/> value specifying the type of access other threads have to the file.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.#ctor(System.Devices.RemoteDevice,System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.FileAttributes)">
+            <summary>
+            Initializes a new instance of the <see cref="T:System.Devices.RemoteFileStream"/> class with the specified path, creation mode, read/write permission, sharing permission, and attributes.
+            </summary>
+            <param name="device">The device.</param>
+            <param name="path">A relative or absolute path for the file that the current <see cref="T:System.Devices.RemoteFileStream"/> object will encapsulate.</param>
+            <param name="mode">A <see cref="T:System.IO.FileMode"/> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+            <param name="access">A <see cref="T:System.IO.FileAccess"/> value that specifies the operations that can be performed on the file.</param>
+            <param name="share">A <see cref="T:System.IO.FileShare"/> value specifying the type of access other threads have to the file.</param>
+            <param name="attributes">The <see cref="T:System.IO.FileAttributes"/> to set on the new file.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.Flush">
+            <summary>
+            Clears all buffers for this stream and causes any buffered data to be written to the underlying device.
+            </summary>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.Read(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Reads a block of bytes from the stream and writes the data in a given buffer.
+            </summary>
+            <param name="array">When this method returns, contains the specified byte array with the values between <paramref name="offset"/> and (<paramref name="offset"/> + <paramref name="count"/> - 1) replaced by the bytes read from the current source. </param>
+            <param name="offset">The byte offset in <paramref name="array"/> at which the read bytes will be placed.</param>
+            <param name="count">The maximum number of bytes to read.</param>
+            <returns>The total number of bytes read into the buffer. This might be less than the number of bytes requested if that number of bytes are not currently available, or zero if the end of the stream is reached.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.Seek(System.Int64,System.IO.SeekOrigin)">
+            <summary>
+            Sets the current position of this stream to the given value.
+            </summary>
+            <param name="offset">The point relative to <paramref name="origin"/> from which to begin seeking.</param>
+            <param name="origin">A value of type <see cref="T:System.IO.SeekOrigin"/> indicating the reference point used to obtain the new position.</param>
+            <returns>The new position within the current stream.</returns>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.SetLength(System.Int64)">
+            <summary>
+            Sets the length of the current stream.
+            </summary>
+            <param name="value">The desired length of the current stream in bytes.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes a block of bytes to this stream using data from a buffer. 
+            </summary>
+            <param name="array">The buffer containing data to write to the stream.</param>
+            <param name="offset">The zero-based byte offset in <paramref name="array"/> at which to begin copying bytes to the current stream.</param>
+            <param name="count">The number of bytes to be written to the current stream.</param>
+        </member>
+        <member name="M:System.Devices.RemoteFileStream.Dispose(System.Boolean)">
+            <summary>
+            Releases the unmanaged resources used by the <see cref="T:System.Devices.RemoteFileStream"/> and optionally releases the managed resources.
+            </summary>
+            <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
+        </member>
+        <member name="P:System.Devices.RemoteFileStream.CanRead">
+            <summary>
+            Gets a value indicating whether the current stream supports reading.
+            </summary>
+            <value></value>
+            <returns><c>true</c> if the stream supports reading; <c>false</c> if the stream is closed or was opened with write-only permissions.</returns>
+        </member>
+        <member name="P:System.Devices.RemoteFileStream.CanSeek">
+            <summary>
+            Gets a value indicating whether the current stream supports seeking.
+            </summary>
+            <value></value>
+            <returns><c>true</c> if the stream supports seeking; <c>false</c> if the stream is closed or if the <see cref="T:System.Devices.RemoteFileStream"/> was constructed from an operating-system handle such as a pipe or output to the console.</returns>
+        </member>
+        <member name="P:System.Devices.RemoteFileStream.CanWrite">
+            <summary>
+            Gets a value indicating whether the current stream supports writing.
+            </summary>
+            <value></value>
+            <returns><c>true</c> if the stream supports writing; <c>false</c> if the stream is closed or was opened with read-only access.</returns>
+        </member>
+        <member name="P:System.Devices.RemoteFileStream.Length">
+            <summary>
+            Gets the length in bytes of the stream.
+            </summary>
+            <value></value>
+            <returns>A long value representing the length of the stream in bytes.</returns>
+        </member>
+        <member name="P:System.Devices.RemoteFileStream.Name">
+            <summary>
+            Gets the name of the file that was passed to the constructor.
+            </summary>
+            <value>The name of the file passed to the constructor.</value>
+        </member>
+        <member name="P:System.Devices.RemoteFileStream.Position">
+            <summary>
+            Gets or sets the position within the current stream.
+            </summary>
+            <value></value>
+            <returns>The current position within the stream.</returns>
+        </member>
+    </members>
+</doc>
