@@ -33,8 +33,7 @@ namespace Vendord.ConsoleApp2
             Console.WriteLine(sdfPath_remote);
             Console.WriteLine(sdfPath_local);            
 
-            RemoteFile.CopyFileFromDevice(dev, sdfPath_remote, sdfPath_local, true);
-            RemoteFile.
+            RemoteFile.CopyFileFromDevice(dev, sdfPath_remote, sdfPath_local, true);            
 
             string connString = @"Data Source=" + sdfPath_local;
             SqlCeConnection conn =
