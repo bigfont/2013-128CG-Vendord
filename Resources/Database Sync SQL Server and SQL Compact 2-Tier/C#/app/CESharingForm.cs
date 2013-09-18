@@ -12,7 +12,7 @@ using System.Data.Common;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Data.SqlServerCe;
 using Microsoft.Synchronization.Data;
-using Microsoft.Synchronization.Data.Server;
+using Microsoft.Synchronization.Data.SqlServer;
 
 namespace SyncApplication
 {

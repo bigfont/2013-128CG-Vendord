@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Data.SqlServerCe;
 using Microsoft.Synchronization.Data;
-using Microsoft.Synchronization.Data.Server;
+using Microsoft.Synchronization.Data.SqlServer;
 
 
 namespace SyncApplication
