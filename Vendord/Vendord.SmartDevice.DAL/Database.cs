@@ -92,7 +92,7 @@
 
         private void CreateTables()
         {
-            ExecuteNonQuery(@"CREATE TABLE OrderSession (ID int IDENTITY(1,1), Name nvarchar(100))");
+            ExecuteNonQuery(@"CREATE TABLE OrderSession (ID int IDENTITY(1,1) PRIMARY KEY, Name nvarchar(100))");
         }
 
         private void InstantiateAndOpenConnection()

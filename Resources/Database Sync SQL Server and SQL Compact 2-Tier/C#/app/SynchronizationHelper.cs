@@ -59,11 +59,13 @@ namespace SyncApplication
             if (localProvider != null)
             {
                 SqlCeConnection ceConn = (SqlCeConnection)localProvider.Connection;
-		SqlCeSyncScopeProvisioning ceConfig = new SqlCeSyncScopeProvisioning(ceConn );
+		        SqlCeSyncScopeProvisioning ceConfig = new SqlCeSyncScopeProvisioning(ceConn );
                 string scopeName = localProvider.ScopeName;
                 if (!ceConfig.ScopeExists(scopeName))
                 {
-                    DbSyncScopeDescription scopeDesc = SqlSyncDescriptionBuilder.GetDescriptionForScope(SyncUtils.ScopeName, (System.Data.SqlClient.SqlConnection)(ceSharingForm.providersCollection["Server"]).Connection);
+                    DbSyncScopeDescription scopeDesc 
+                        = SqlSyncDescriptionBuilder.GetDescriptionForScope(SyncUtils.ScopeName, 
+                        (System.Data.SqlClient.SqlConnection)(ceSharingForm.providersCollection["Server"]).Connection);
                     ceConfig.PopulateFromScopeDescription(scopeDesc);
                     ceConfig.Apply();
                 }

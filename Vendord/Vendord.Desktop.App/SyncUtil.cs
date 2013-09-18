@@ -7,57 +7,123 @@
     using RAPI = System.Devices; // Remote API Managed Code Wrapper
     using System.IO;
     using Vendord.SmartDevice.DAL;
+    using Microsoft.Synchronization;
+    using Microsoft.Synchronization.Data.SqlServerCe;
+    using System.Data.SqlServerCe;
+    using Microsoft.Synchronization.Data;
 
-    public class SyncUtil
-    {                
+    public class DatabaseSync
+    {
         private RAPI.RemoteDeviceManager mgr;
-        private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
+        private string Device_AppData_DirectoryName;
+        private string Device_RemoteDatabase_FileName;
+        private string Desktop_AppData_DirectoryName;
+        private string Desktop_RemoteDatabase_Copy_FileName;
+        private string Desktop_LocalDatabase_FileName;
+
+        private void SetDatabaseFileNames(RAPI.RemoteDevice remoteDevice)
         {
-            string deviceAppDataDirectoryName;     
-            string deviceFileName;
-            string desktopAppDataDirectoryName;            
-            string desktopDatabaseName;
-            string desktopFileName;
+            //
+            // device
+            //
+            Device_AppData_DirectoryName
+                = Path.Combine(remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);
 
-            // device file name
-            deviceAppDataDirectoryName
-                = Path.Combine(remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);                       
+            Device_RemoteDatabase_FileName
+                = Path.Combine(Device_AppData_DirectoryName, Constants.DATABASE_NAME);
 
-            deviceFileName
-                = Path.Combine(deviceAppDataDirectoryName, Constants.DATABASE_NAME);
-
-            // desktop file name
-            desktopAppDataDirectoryName
+            //
+            // desktop
+            //
+            Desktop_AppData_DirectoryName
                 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);
 
-            desktopDatabaseName
+            // remote copy
+            Desktop_RemoteDatabase_Copy_FileName
                 = Constants.DATABASE_NAME.Insert(Constants.DATABASE_NAME.LastIndexOf('.'), Constants.REMOTE_FLAG);
 
-            desktopFileName
-                = Path.Combine(desktopAppDataDirectoryName, desktopDatabaseName);
+            Desktop_RemoteDatabase_Copy_FileName
+                = Path.Combine(Desktop_AppData_DirectoryName, Desktop_RemoteDatabase_Copy_FileName);
 
-            // does the device have the file
-            if (RAPI.RemoteFile.Exists(remoteDevice, deviceFileName))
+            // local copy
+            Desktop_LocalDatabase_FileName
+                = Path.Combine(Desktop_AppData_DirectoryName, Constants.DATABASE_NAME);
+
+        }
+
+        private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
+        {
+            // does the device have a database
+            if (RAPI.RemoteFile.Exists(remoteDevice, Device_RemoteDatabase_FileName))
             {
                 // yup, so copy it to the desktop
-                RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, deviceFileName, desktopFileName, true);
+                RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, Device_RemoteDatabase_FileName, Desktop_RemoteDatabase_Copy_FileName, true);
             }
         }
 
         private void SyncSqlCeDatabases()
         {
-            
+            DbSyncScopeDescription scopeDesc;
+            DbSyncTableDescription item;
+
+            SyncOrchestrator orchestrator;
+
+            string localConnString;
+            SqlCeConnection localConnection;            
+            SqlCeSyncProvider localProvider;
+            SqlCeSyncScopeProvisioning localConfig;
+
+            string remoteCopyConnString;
+            SqlCeConnection remoteCopyConnection;
+            SqlCeSyncProvider remoteCopyProvider;
+            SqlCeSyncScopeProvisioning remoteConfig;
+
+            // scope the sync
+            scopeDesc = new DbSyncScopeDescription("sync_scope");
+
+            // setup the local provider
+            localConnString = String.Format(@"Data Source={0}", Desktop_LocalDatabase_FileName);
+            localConnection = new SqlCeConnection(localConnString);
+   
+            // scope based on its schema
+            DbSyncTableDescription orderSession
+                = SqlCeSyncDescriptionBuilder.GetDescriptionForTable("OrderSession", localConnection);
+            scopeDesc.Tables.Add(orderSession);
+
+            // continue to setup the local provider
+            localProvider = new SqlCeSyncProvider("sync_scope", localConnection);
+            localConfig = new SqlCeSyncScopeProvisioning(localConnection);
+            localConfig.PopulateFromScopeDescription(scopeDesc);
+            localConfig.Apply();
+
+            // setup the remote copy provider
+            remoteCopyConnString = String.Format(@"Data Source={0}", Desktop_RemoteDatabase_Copy_FileName);
+            remoteCopyConnection = new SqlCeConnection(remoteCopyConnString);
+            remoteCopyProvider = new SqlCeSyncProvider("sync_scope", remoteCopyConnection);
+            remoteConfig = new SqlCeSyncScopeProvisioning(remoteCopyConnection);
+            remoteConfig.PopulateFromScopeDescription(scopeDesc);
+            remoteConfig.Apply();
+
+            // setup the orchestrator
+            orchestrator = new SyncOrchestrator();
+            orchestrator.LocalProvider = localProvider;
+            orchestrator.RemoteProvider = remoteCopyProvider;
+            orchestrator.Direction = SyncDirectionOrder.UploadAndDownload;
+
+            // giver
+            orchestrator.Synchronize();
         }
 
         private void CopyDatabaseToDevice()
-        { 
-            
+        {
+
         }
 
         public void SyncDesktopAndDeviceDatabases()
         {
             mgr = new RAPI.RemoteDeviceManager();
             RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
+            SetDatabaseFileNames(remoteDevice);
             CopyDatabaseFromDeviceToDesktop(remoteDevice);
             SyncSqlCeDatabases();
         }

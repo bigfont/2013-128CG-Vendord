@@ -114,7 +114,7 @@
 
         private void syncHandheld()
         {
-            SyncUtil sync = new SyncUtil();
+            DatabaseSync sync = new DatabaseSync();
             sync.SyncDesktopAndDeviceDatabases();
 
         }
