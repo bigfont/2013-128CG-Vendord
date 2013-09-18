@@ -18,6 +18,7 @@
         private Font fontSmall;
         private Font fontDefault;
         private Font fontLarge;
+
         public int NavigationPanelHeight
         {
             get
@@ -48,6 +49,7 @@
         public MainFormStyles()
         {
             SetFonts();
+                       
             StyleForm();
         }
 
@@ -61,14 +63,18 @@
 
             panel.Size = panelSize;
 
+            int x = 0;
+            int y = 0; 
             foreach (Button b in panel.Controls)
             {
                 b.Size = buttonSize;
                 b.Font = fontDefault;
+                b.Location = new Point(x, y);
+                x += b.Width;
             }
         }
 
-        protected void StyleHomeViewButtons(Button[] buttons)
+        protected void StyleLargeButtons(Button[] buttons)
         {
             int width;
             int height;
@@ -82,7 +88,7 @@
             size = new System.Drawing.Size(width, height);
 
             x = 0;
-            y = 0;
+            y = NavigationPanelHeight;            
 
             for (int i = 0; i < buttons.Length; ++i)
             {
@@ -121,6 +127,9 @@
             
             // Heights
             view.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            // Position
+            view.Location = new Point(0, NavigationPanelHeight);
 
             // Widths
             view.Width = this.ClientSize.Width;

@@ -68,7 +68,7 @@ namespace Vendord.SmartDevice.App
             }
         }
 
-        protected void StyleHomeViewButtons(Button[] buttons)
+        protected void StyleLargeButtons(Button[] buttons)
         {
             int width;
             int height;

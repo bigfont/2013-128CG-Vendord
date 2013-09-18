@@ -135,7 +135,7 @@ namespace Vendord.SmartDevice.App
             this.Controls.Add(btnReports);
             this.Controls.Add(btnOrders);
 
-            StyleHomeViewButtons(new Button[] { btnOrders, btnReports, btnInventory, btnExit });
+            StyleLargeButtons(new Button[] { btnOrders, btnReports, btnInventory, btnExit });
         }
 
         private void loadOrdersView()

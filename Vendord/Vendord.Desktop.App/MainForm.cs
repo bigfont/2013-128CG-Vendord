@@ -9,7 +9,7 @@
     using System.Text;
     using System.Windows.Forms;
     using Vendord.SmartDevice.DAL;
-    using System.Collections.ObjectModel;    
+    using System.Collections.ObjectModel;
 
     public class MainForm : MainFormStyles
     {
@@ -17,9 +17,11 @@
         // String constants
         //        
         private const string HOME = null;
+        private const string ORDERS = "Orders";
         private const string SYNC_HANDHELD = "Sync Handheld";
-        private const string DISPLAY_PRODUCTS = "Display Products";
-        private const string EXIT = "Close";
+        private const string REPORTS = "Reports";
+        private const string PRODUCTS_REPORT = "Products";
+        private const string CLOSE = "Close";
         private const string BACK = "Back";
         private const string BUTTON_PREFIX = "btn";
         private const string PANEL_PREFIX = "pnl";
@@ -27,22 +29,28 @@
         //
         // State
         // 
-        private string LastAction;
+        private string lastAction;
 
-        private Dictionary<string, string> UpstreamActionDictionary = new Dictionary<string, string>() { };
+        private Dictionary<string, string> upstreamActionDictionary = new Dictionary<string, string>()
+        {
+            { ORDERS, HOME },
+            { REPORTS, HOME },
+            { PRODUCTS_REPORT, REPORTS }
 
-        private string GetUpstreamAction()
+        };
+
+        private string getUpstreamAction()
         {
             string upstreamAction;
             upstreamAction = null;
-            if (UpstreamActionDictionary.Keys.Contains<string>(this.LastAction))
+            if (upstreamActionDictionary.Keys.Contains<string>(this.lastAction))
             {
-                upstreamAction = UpstreamActionDictionary[this.LastAction];
+                upstreamAction = upstreamActionDictionary[this.lastAction];
             }
             return upstreamAction;
         }
 
-        private string ParseActionFromEvent(object sender)
+        private string parseActionFromEvent(object sender)
         {
             string action;
             Control control;
@@ -56,14 +64,14 @@
 
                 if (action.Equals(BACK))
                 {
-                    action = GetUpstreamAction();
+                    action = getUpstreamAction();
                 }
             }
 
             return action;
         }
 
-        private Button CreateButtonWithEventHandler(string action, int tabIndex, EventHandler eventHandler)
+        private Button createButtonWithEventHandler(string action, int tabIndex, EventHandler eventHandler)
         {
             Button b = new Button();
             b.Name = BUTTON_PREFIX + action;
@@ -74,9 +82,28 @@
         }
 
         public MainForm()
-        {                        
-            LastAction = null;
+        {
+            lastAction = null;
             this.Load += handleFormControlEvents;
+        }
+
+        private void addNavigationPanel()
+        {
+            Panel panel;
+            Button btnBack;
+            Button btnClose;
+
+            panel = new Panel();
+
+            btnBack = createButtonWithEventHandler(BACK, 0, handleFormControlEvents);
+            btnClose = createButtonWithEventHandler(CLOSE, 1, handleFormControlEvents);
+
+            panel.Controls.Add(btnBack);
+            panel.Controls.Add(btnClose);
+
+            this.Controls.Add(panel);
+            
+            StyleNavigationPanel(panel);
         }
 
         private void unloadCurrentView()
@@ -84,7 +111,7 @@
             this.Controls.Clear();
         }
 
-        private void displayProducts()
+        private void loadProductsReport()
         {
             Database db = new Database(Constants.DATABASE_NAME);
             IEnumerable<Product> products = db.Products;
@@ -97,45 +124,81 @@
             StyleDataGridView(dataGridView);
         }
 
+        private void loadReportsView()
+        {
+            Button btnProductsReport;
+            btnProductsReport = createButtonWithEventHandler(PRODUCTS_REPORT, 0, handleFormControlEvents);
+            this.Controls.Add(btnProductsReport);
+            StyleLargeButtons(new Button[] { btnProductsReport });
+        }
+
         private void syncHandheld()
         {
             DatabaseSync sync = new DatabaseSync();
             sync.SyncDesktopAndDeviceDatabases();
         }
 
-        private void loadHomeView()
+        private void loadOrdersView()
         {
             Button btnSyncHandheld;
-            Button btnDisplayProducts;
 
-            btnSyncHandheld = CreateButtonWithEventHandler(SYNC_HANDHELD, 0, handleFormControlEvents);
-            btnDisplayProducts = CreateButtonWithEventHandler(DISPLAY_PRODUCTS, 1, handleFormControlEvents);
+            btnSyncHandheld = createButtonWithEventHandler(SYNC_HANDHELD, 0, handleFormControlEvents);
 
             this.Controls.Add(btnSyncHandheld);
-            this.Controls.Add(btnDisplayProducts);
 
-            StyleHomeViewButtons(new Button [] { btnSyncHandheld, btnDisplayProducts });
+            StyleLargeButtons(new Button[] { btnSyncHandheld });
+        }
+
+        private void loadHomeView()
+        {
+            Button btnOrders;
+            Button btnReports;
+
+            btnOrders = createButtonWithEventHandler(ORDERS, 0, handleFormControlEvents);
+            btnReports = createButtonWithEventHandler(REPORTS, 1, handleFormControlEvents);
+
+            this.Controls.Add(btnOrders);
+            this.Controls.Add(btnReports);
+
+            StyleLargeButtons(new Button[] { btnOrders, btnReports });
         }
 
         private void handleFormControlEvents(object sender, EventArgs e)
         {
             // get the action                    
-            this.LastAction = ParseActionFromEvent(sender);
+            this.lastAction = parseActionFromEvent(sender);
 
             // set the name of the form
-            this.Text = String.Format("{0} {1}", this.Name, this.LastAction);
+            this.Text = String.Format("{0} {1}", this.Name, this.lastAction);
 
             // act based on the aciton
-            switch (this.LastAction)
+            switch (this.lastAction)
             {
+                case ORDERS:
+                    unloadCurrentView();
+                    addNavigationPanel();
+                    loadOrdersView();
+                    break;
+
                 case SYNC_HANDHELD:
                     syncHandheld();
                     break;
 
-                case DISPLAY_PRODUCTS:
+                case REPORTS:
                     unloadCurrentView();
-                    displayProducts();
+                    addNavigationPanel();
+                    loadReportsView();
                     break;
+
+                case PRODUCTS_REPORT:
+                    unloadCurrentView();
+                    addNavigationPanel();
+                    loadProductsReport();
+                    break;
+
+                case CLOSE:
+                    this.Close();
+                    return;
 
                 default:
                     unloadCurrentView();
@@ -143,7 +206,5 @@
                     break;
             }
         }
-
-
     }
 }
