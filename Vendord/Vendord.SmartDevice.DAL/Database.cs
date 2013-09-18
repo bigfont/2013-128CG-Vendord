@@ -6,8 +6,8 @@
     using System.Linq;
     using System.Text;
     using System.IO;
-    using System.Collections.ObjectModel;    
-    
+    using System.Collections.ObjectModel;
+
     public class Database
     {
         private string dataSource;
@@ -24,7 +24,7 @@
 
                 cmd = @"SELECT * FROM OrderSession";
                 reader = ExecuteReader(cmd);
-                
+
                 while (reader.Read())
                 {
                     OrderSession item = new OrderSession()
@@ -76,7 +76,7 @@
             }
 
             return rowsAffected;
-        }       
+        }
 
         private void SeedDB()
         {
@@ -84,10 +84,10 @@
 
             for (int i = 0; i < 20; ++i)
             {
-                cmd = String.Format(@"INSERT INTO OrderSession (Name) VALUES ('Test{0}')", i.ToString());
+                cmd = String.Format(@"INSERT INTO OrderSession (Name) VALUES ('{0}')", DateTime.Now.Ticks.ToString());
                 ExecuteNonQuery(cmd);
             }
-            
+
         }
 
         private void CreateTables()
@@ -105,13 +105,13 @@
         {
             SqlCeEngine engine;
 
-            if (File.Exists(dataSource))
+            if (!File.Exists(dataSource))
             {
-                File.Delete(dataSource);
+                engine = new SqlCeEngine(connString);
+                engine.CreateDatabase();
+                engine.Dispose();
             }
-            engine = new SqlCeEngine(connString);
-            engine.CreateDatabase();
-            engine.Dispose();            
+
         }
 
         private void InstantiateConnString(string databaseName)
@@ -119,10 +119,10 @@
             string applicationDataStore;
 
             applicationDataStore
-                = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);                
+                = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);
 
             dataSource
-                = Path.Combine(applicationDataStore, databaseName);                
+                = Path.Combine(applicationDataStore, databaseName);
 
             connString
                 = String.Format("Data Source={0};Persist Security Info=False;", dataSource);
@@ -135,7 +135,7 @@
             applicationDataSubdirectory
                 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);
 
-            if(!Directory.Exists(applicationDataSubdirectory))
+            if (!Directory.Exists(applicationDataSubdirectory))
             {
                 Directory.CreateDirectory(applicationDataSubdirectory);
             }

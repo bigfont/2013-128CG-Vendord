@@ -61,48 +61,47 @@
             }
         }
 
+        private const string SCOPE_NAME = "sync_scope";
+
+        private SqlCeSyncProvider CreateProvider(string databaseFileName)
+        {
+            string connString;
+            SqlCeConnection connection;
+            SqlCeSyncProvider provider;
+            DbSyncScopeDescription scopeDesc;
+            DbSyncTableDescription tableDesc;
+            DbSyncTableDescription item;
+            SqlCeSyncScopeProvisioning config;
+
+            connString = String.Format(@"Data Source={0}", databaseFileName);
+            connection = new SqlCeConnection(connString);
+            config = new SqlCeSyncScopeProvisioning(connection);
+            provider = new SqlCeSyncProvider(SCOPE_NAME, connection);
+
+            if (!config.ScopeExists(SCOPE_NAME))
+            {
+                // add the OrderSession table to the scope
+                scopeDesc = new DbSyncScopeDescription(SCOPE_NAME);
+                tableDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForTable("OrderSession", connection);
+                scopeDesc.Tables.Add(tableDesc);
+
+                // TODO add additional tables to the scope
+
+                config.PopulateFromScopeDescription(scopeDesc);
+                config.Apply();
+            }
+
+            return provider;
+        }
+
         private void SyncSqlCeDatabases()
         {
-            DbSyncScopeDescription scopeDesc;
-            DbSyncTableDescription item;
-
             SyncOrchestrator orchestrator;
-
-            string localConnString;
-            SqlCeConnection localConnection;            
             SqlCeSyncProvider localProvider;
-            SqlCeSyncScopeProvisioning localConfig;
-
-            string remoteCopyConnString;
-            SqlCeConnection remoteCopyConnection;
             SqlCeSyncProvider remoteCopyProvider;
-            SqlCeSyncScopeProvisioning remoteConfig;
 
-            // scope the sync
-            scopeDesc = new DbSyncScopeDescription("sync_scope");
-
-            // setup the local provider
-            localConnString = String.Format(@"Data Source={0}", Desktop_LocalDatabase_FileName);
-            localConnection = new SqlCeConnection(localConnString);
-   
-            // scope based on its schema
-            DbSyncTableDescription orderSession
-                = SqlCeSyncDescriptionBuilder.GetDescriptionForTable("OrderSession", localConnection);
-            scopeDesc.Tables.Add(orderSession);
-
-            // continue to setup the local provider
-            localProvider = new SqlCeSyncProvider("sync_scope", localConnection);
-            localConfig = new SqlCeSyncScopeProvisioning(localConnection);
-            localConfig.PopulateFromScopeDescription(scopeDesc);
-            localConfig.Apply();
-
-            // setup the remote copy provider
-            remoteCopyConnString = String.Format(@"Data Source={0}", Desktop_RemoteDatabase_Copy_FileName);
-            remoteCopyConnection = new SqlCeConnection(remoteCopyConnString);
-            remoteCopyProvider = new SqlCeSyncProvider("sync_scope", remoteCopyConnection);
-            remoteConfig = new SqlCeSyncScopeProvisioning(remoteCopyConnection);
-            remoteConfig.PopulateFromScopeDescription(scopeDesc);
-            remoteConfig.Apply();
+            localProvider = CreateProvider(Desktop_LocalDatabase_FileName);
+            remoteCopyProvider = CreateProvider(Desktop_RemoteDatabase_Copy_FileName);
 
             // setup the orchestrator
             orchestrator = new SyncOrchestrator();
