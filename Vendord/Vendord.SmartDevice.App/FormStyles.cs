@@ -1,13 +1,13 @@
-﻿namespace Vendord.Desktop.App
-{
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Windows.Forms;
-    using System.Drawing;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text;
+using System.Drawing;
+using System.Windows.Forms;
 
-    public class MainFormStyles : Form
+namespace Vendord.SmartDevice.App
+{
+    internal class FormStyles
     {
         private const int NAVIGATION_PANELS_PER_ROW = 5;
         private const int BUTTONS_PER_ROW = 2;
@@ -18,16 +18,23 @@
         private Font fontSmall;
         private Font fontDefault;
         private Font fontLarge;
+        private Form form;
 
         public int NavigationPanelHeight
         {
             get
             {
-                return this.ClientSize.Height / NAVIGATION_PANELS_PER_ROW;
+                return form.ClientSize.Height / NAVIGATION_PANELS_PER_ROW;
             }
         }
 
-        private void SetFonts()
+        public FormStyles(Form form)
+        {
+            this.form = form;
+            SetFonts();
+        }
+
+        internal void SetFonts()
         {
             FontFamily family;
             FontStyle style;
@@ -40,26 +47,19 @@
             this.fontSmall = new Font(family, emSizeSmall, style);
         }
 
-        private void StyleForm()
+        internal void StyleForm()
         {
-            this.WindowState = FormWindowState.Maximized;
-            this.Font = fontDefault;
+            form.WindowState = FormWindowState.Maximized;            
+            form.Font = fontDefault;
         }
 
-        public MainFormStyles()
-        {
-            SetFonts();
-                       
-            StyleForm();
-        }
-
-        protected void StyleNavigationPanel(Panel panel)
+        internal void StyleNavigationPanel(Panel panel)
         {
             Size panelSize;
             Size buttonSize;
 
-            panelSize = new Size(this.ClientSize.Width, NavigationPanelHeight);
-            buttonSize = new Size(this.ClientSize.Width / BUTTONS_PER_ROW, NavigationPanelHeight);
+            panelSize = new Size(form.ClientSize.Width, NavigationPanelHeight);
+            buttonSize = new Size(form.ClientSize.Width / BUTTONS_PER_ROW, NavigationPanelHeight);
 
             panel.Size = panelSize;
 
@@ -74,7 +74,7 @@
             }
         }
 
-        protected void StyleLargeButtons(Button[] buttons)
+        internal void StyleLargeButtons(Button[] buttons)
         {
             int width;
             int height;
@@ -83,8 +83,8 @@
             System.Drawing.Size size;
             Button b;
 
-            height = this.ClientSize.Height / BUTTONS_PER_COLUMN;
-            width = this.ClientSize.Width / BUTTONS_PER_ROW;
+            height = form.ClientSize.Height / BUTTONS_PER_COLUMN;
+            width = form.ClientSize.Width / BUTTONS_PER_ROW;
             size = new System.Drawing.Size(width, height);
 
             x = 0;
@@ -113,7 +113,7 @@
             }
         }
 
-        protected void StyleDataGridView(DataGridView view)
+        internal void StyleDataGridView(DataGridView view)
         {            
             // Change the Border and Gridline Styles
             view.GridColor = Color.Blue;
@@ -132,18 +132,18 @@
             view.Location = new Point(0, NavigationPanelHeight);
 
             // Widths
-            view.Width = this.ClientSize.Width;
-            view.Height = this.ClientSize.Height;
+            view.Width = form.ClientSize.Width;
+            view.Height = form.ClientSize.Height;
             for (int i = 0; i < view.Columns.Count; ++i)
             {
                 view.Columns[i].Width = view.ClientSize.Width / view.Columns.Count;
             }
         }
 
-        protected void StyleListView(ListView listView)
+        internal void StyleListView(ListView listView)
         {
             listView.Location = new System.Drawing.Point(0, NavigationPanelHeight);
-            listView.Size = this.ClientSize;
+            listView.Size = form.ClientSize;
             listView.View = View.Details; // displays column headers
             listView.Font = fontDefault;
             listView.FullRowSelect = true;
@@ -152,14 +152,6 @@
             {
                 listView.Columns[i].Width = listView.ClientSize.Width;
             }
-        }
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
         }
     }
 }
