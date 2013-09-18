@@ -11,7 +11,7 @@ using System.IO;
 
 namespace Vendord.SmartDevice.App
 {
-    public partial class MainForm : VendordFormStyles
+    public partial class MainForm : MainFormStyles
     {
         #region Fields
 

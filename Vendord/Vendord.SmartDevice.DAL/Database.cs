@@ -14,17 +14,23 @@
         private string connString;
         private SqlCeConnection conn;
 
+        private SqlCeDataReader SelectAllFromDatabase(string tableName)
+        {                        
+            string cmd;            
+            SqlCeDataReader reader;            
+            cmd = String.Format(@"SELECT * FROM {0}", tableName);
+            reader = ExecuteReader(cmd);
+            return reader;
+        }
+
         public IEnumerable<OrderSession> OrderSessions
         {
             get
             {
+                Collection<OrderSession> result;
                 SqlCeDataReader reader;
-                string cmd;
-                Collection<OrderSession> result = new Collection<OrderSession>();
-
-                cmd = @"SELECT * FROM OrderSession";
-                reader = ExecuteReader(cmd);
-
+                result = new Collection<OrderSession>();
+                reader = SelectAllFromDatabase("OrderSession");
                 while (reader.Read())
                 {
                     OrderSession item = new OrderSession()
@@ -34,7 +40,28 @@
                     };
                     result.Add(item);
                 }
+                return result;
+            }
+        }
+        public IEnumerable<Product> Products
+        {
+            get
+            {
+                Collection<Product> result;
+                SqlCeDataReader reader;
+                result = new Collection<Product>();
+                reader = SelectAllFromDatabase("Product");
+                while (reader.Read())
+                {
+                    Product item = new Product()
+                    {
+                        ID = Convert.ToInt32(reader["ID"]),
+                        Name = Convert.ToString(reader["Name"]),
+                        UPC = Convert.ToInt32(reader["UPC"])
 
+                    };
+                    result.Add(item);
+                }
                 return result;
             }
         }
@@ -88,11 +115,18 @@
                 ExecuteNonQuery(cmd);
             }
 
+            for (int i = 0; i < Int16.MaxValue; ++i)
+            {
+                cmd = String.Format(@"INSERT INTO Product (Name, UPC) VALUES ({0},{1})", DateTime.Now.Ticks.ToString(), i);
+                ExecuteNonQuery(cmd);
+            }
+
         }
 
         private void CreateTables()
         {
             ExecuteNonQuery(@"CREATE TABLE OrderSession (ID int IDENTITY(1,1) PRIMARY KEY, Name nvarchar(100))");
+            ExecuteNonQuery(@"CREATE TABLE Product (ID int IDENTITY(1,1) PRIMARY KEY, Name nvarchar(100), UPC int)");
         }
 
         private void InstantiateAndOpenConnection()
@@ -157,5 +191,12 @@
     {
         public int ID { get; set; }
         public string Name { get; set; }
+    }
+
+    public class Product
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public int UPC { get; set; }
     }
 }

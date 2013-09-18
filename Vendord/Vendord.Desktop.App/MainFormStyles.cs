@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Drawing;
-
-namespace Vendord.SmartDevice.App
+﻿namespace Vendord.Desktop.App
 {
+    using System;
+    using System.Linq;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Windows.Forms;
+    using System.Drawing;
+
     public class MainFormStyles : Form
     {
         private const int NAVIGATION_PANELS_PER_ROW = 5;
@@ -18,12 +18,12 @@ namespace Vendord.SmartDevice.App
         private Font fontSmall;
         private Font fontDefault;
         private Font fontLarge;
-        public int NavigationPanelHeight 
-        { 
-            get 
+        public int NavigationPanelHeight
+        {
+            get
             {
                 return this.ClientSize.Height / NAVIGATION_PANELS_PER_ROW;
-            } 
+            }
         }
 
         private void SetFonts()
@@ -39,16 +39,16 @@ namespace Vendord.SmartDevice.App
             this.fontSmall = new Font(family, emSizeSmall, style);
         }
 
+        private void StyleForm()
+        {
+            this.WindowState = FormWindowState.Maximized;
+            this.Font = fontDefault;
+        }
+
         public MainFormStyles()
         {
             SetFonts();
-        }
-
-        protected void StyleForm()
-        {
-            this.Location = new Point(0, 0);
-            this.Size = Screen.PrimaryScreen.WorkingArea.Size;
-            this.Font = fontDefault;
+            StyleForm();
         }
 
         protected void StyleNavigationPanel(Panel panel)
@@ -59,7 +59,7 @@ namespace Vendord.SmartDevice.App
             panelSize = new Size(this.ClientSize.Width, NavigationPanelHeight);
             buttonSize = new Size(this.ClientSize.Width / BUTTONS_PER_ROW, NavigationPanelHeight);
 
-            panel.Size = panelSize;            
+            panel.Size = panelSize;
 
             foreach (Button b in panel.Controls)
             {
@@ -107,6 +107,30 @@ namespace Vendord.SmartDevice.App
             }
         }
 
+        protected void StyleDataGridView(DataGridView view)
+        {            
+            // Change the Border and Gridline Styles
+            view.GridColor = Color.Blue;
+            view.BorderStyle = BorderStyle.Fixed3D;
+            view.CellBorderStyle = DataGridViewCellBorderStyle.Raised;
+            view.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Sunken;
+            view.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+
+            // Cell Styles
+            view.DefaultCellStyle.BackColor = Color.AliceBlue;
+            
+            // Heights
+            view.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            // Widths
+            view.Width = this.ClientSize.Width;
+            view.Height = this.ClientSize.Height;
+            for (int i = 0; i < view.Columns.Count; ++i)
+            {
+                view.Columns[i].Width = view.ClientSize.Width / view.Columns.Count;
+            }
+        }
+
         protected void StyleListView(ListView listView)
         {
             listView.Location = new System.Drawing.Point(0, NavigationPanelHeight);
@@ -119,7 +143,7 @@ namespace Vendord.SmartDevice.App
             {
                 listView.Columns[i].Width = listView.ClientSize.Width;
             }
-        }        
+        }
 
         /// <summary>
         /// Clean up any resources being used.

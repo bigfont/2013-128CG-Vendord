@@ -7,15 +7,18 @@
     using System.Drawing;
     using System.Linq;
     using System.Text;
-    using System.Windows.Forms;    
+    using System.Windows.Forms;
+    using Vendord.SmartDevice.DAL;
+    using System.Collections.ObjectModel;    
 
-    public class MainForm : Form
+    public class MainForm : MainFormStyles
     {
         //
         // String constants
         //        
         private const string HOME = null;
         private const string SYNC_HANDHELD = "Sync Handheld";
+        private const string DISPLAY_PRODUCTS = "Display Products";
         private const string EXIT = "Close";
         private const string BACK = "Back";
         private const string BUTTON_PREFIX = "btn";
@@ -81,13 +84,37 @@
             this.Controls.Clear();
         }
 
+        private void displayProducts()
+        {
+            Database db = new Database(Constants.DATABASE_NAME);
+            IEnumerable<Product> products = db.Products;
+
+            DataGridView dataGridView = new DataGridView();
+            dataGridView.DataSource = products;
+
+            this.Controls.Add(dataGridView);
+
+            StyleDataGridView(dataGridView);
+        }
+
+        private void syncHandheld()
+        {
+            DatabaseSync sync = new DatabaseSync();
+            sync.SyncDesktopAndDeviceDatabases();
+        }
+
         private void loadHomeView()
         {
             Button btnSyncHandheld;
+            Button btnDisplayProducts;
 
             btnSyncHandheld = CreateButtonWithEventHandler(SYNC_HANDHELD, 0, handleFormControlEvents);
+            btnDisplayProducts = CreateButtonWithEventHandler(DISPLAY_PRODUCTS, 1, handleFormControlEvents);
 
             this.Controls.Add(btnSyncHandheld);
+            this.Controls.Add(btnDisplayProducts);
+
+            StyleHomeViewButtons(new Button [] { btnSyncHandheld, btnDisplayProducts });
         }
 
         private void handleFormControlEvents(object sender, EventArgs e)
@@ -105,6 +132,11 @@
                     syncHandheld();
                     break;
 
+                case DISPLAY_PRODUCTS:
+                    unloadCurrentView();
+                    displayProducts();
+                    break;
+
                 default:
                     unloadCurrentView();
                     loadHomeView();
@@ -112,11 +144,6 @@
             }
         }
 
-        private void syncHandheld()
-        {
-            DatabaseSync sync = new DatabaseSync();
-            sync.SyncDesktopAndDeviceDatabases();
 
-        }
     }
 }
