@@ -4,14 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using System.Devices;
+    using RAPI = System.Devices; // Remote API Managed Code Wrapper
     using System.IO;
     using Vendord.SmartDevice.DAL;
 
     public class SyncUtil
     {                
-        private RemoteDeviceManager mgr;
-        private void CopyDatabaseFromDeviceToDesktop(RemoteDevice remoteDevice)
+        private RAPI.RemoteDeviceManager mgr;
+        private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
         {
             string deviceAppDataDirectoryName;     
             string deviceFileName;
@@ -21,7 +21,7 @@
 
             // device file name
             deviceAppDataDirectoryName
-                = Path.Combine(remoteDevice.GetFolderPath(SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);                       
+                = Path.Combine(remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData), Constants.APPLICATION_NAME);                       
 
             deviceFileName
                 = Path.Combine(deviceAppDataDirectoryName, Constants.DATABASE_NAME);
@@ -37,10 +37,10 @@
                 = Path.Combine(desktopAppDataDirectoryName, desktopDatabaseName);
 
             // does the device have the file
-            if (RemoteFile.Exists(remoteDevice, deviceFileName))
+            if (RAPI.RemoteFile.Exists(remoteDevice, deviceFileName))
             {
                 // yup, so copy it to the desktop
-                RemoteFile.CopyFileFromDevice(remoteDevice, deviceFileName, desktopFileName, true);
+                RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, deviceFileName, desktopFileName, true);
             }
         }
 
@@ -54,10 +54,10 @@
             
         }
 
-        public void SyncLocalAndRemoteDatabases()
+        public void SyncDesktopAndDeviceDatabases()
         {
-            mgr = new RemoteDeviceManager();
-            RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
+            mgr = new RAPI.RemoteDeviceManager();
+            RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
             CopyDatabaseFromDeviceToDesktop(remoteDevice);
             SyncSqlCeDatabases();
         }
