@@ -13,12 +13,15 @@
     using Vendord.SmartDevice.App;
 
     public class MainForm : Form
-    {        
+    {
         FormNavigation nav;
         FormStyles styles;
+        Database db;
+
+        Database.Product product = new Database.Product();
 
         public MainForm()
-        {            
+        {
             this.Load += handleFormControlEvents;
             nav = new FormNavigation(this);
             styles = new FormStyles(this);
@@ -28,19 +31,59 @@
         private void unloadCurrentView()
         {
             this.Controls.Clear();
+            nav.AddNavigationPanel(this, handleFormControlEvents);
         }
 
-        private void loadProductsReport()
+        private void dataGridView_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
-            Database db = new Database(Constants.DATABASE_NAME);
-            IEnumerable<Product> products = db.Products;
+            DataGridView dataGridView;
+            string columnHeaderName;
+            
+            dataGridView = (sender as DataGridView);
+            columnHeaderName = dataGridView.Columns[e.ColumnIndex].Name;
 
-            DataGridView dataGridView = new DataGridView();
-            dataGridView.DataSource = products;
+            switch (columnHeaderName)
+            { 
+                case "ID":
+                    e.Value = db.Products[e.RowIndex].ID;
+                    break;
+
+                case "Name":
+                    e.Value = db.Products[e.RowIndex].Name;
+                    break;
+
+                default:
+                    e.Value = "Default";
+                    break;
+            }
+        }
+
+        private void loadProductsReportView()
+        {
+            db = new Database(Constants.DATABASE_NAME);
+            IEnumerable<Database.Product> products;
+            DataGridView dataGridView;
+
+            db = new Database(Constants.DATABASE_NAME);
+            products = db.Products;
+
+            dataGridView = new DataGridView();
+            dataGridView.VirtualMode = true;
+            dataGridView.AllowUserToDeleteRows = false;
+            dataGridView.AllowUserToAddRows = false;           
+
+            dataGridView.Columns.Add("ID", "ID");
+            dataGridView.Columns.Add("Name", "Name");
+
+            dataGridView.RowCount = products.Count();
+
+            dataGridView.CellValueNeeded += new DataGridViewCellValueEventHandler(dataGridView_CellValueNeeded);            
 
             this.Controls.Add(dataGridView);
 
             styles.StyleDataGridView(dataGridView);
+
+            nav.CurrentView = FormNavigation.PRODUCTS_REPORT;
         }
 
         private void loadReportsView()
@@ -49,12 +92,18 @@
             btnProductsReport = FormHelper.CreateButtonWithEventHandler(FormNavigation.PRODUCTS_REPORT, 0, handleFormControlEvents);
             this.Controls.Add(btnProductsReport);
             styles.StyleLargeButtons(new Button[] { btnProductsReport });
+            nav.CurrentView = FormNavigation.REPORTS;
         }
 
         private void syncHandheld()
         {
-            DatabaseSync sync = new DatabaseSync();
-            sync.SyncDesktopAndDeviceDatabases();
+            DatabaseSync sync;
+            DatabaseSync.SyncResultMessage syncResult;
+
+            sync = new DatabaseSync();
+            syncResult = sync.SyncDesktopAndDeviceDatabases();
+
+            MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         private void loadOrdersView()
@@ -66,6 +115,8 @@
             this.Controls.Add(btnSyncHandheld);
 
             styles.StyleLargeButtons(new Button[] { btnSyncHandheld });
+
+            nav.CurrentView = FormNavigation.ORDERS;
         }
 
         private void loadHomeView()
@@ -80,6 +131,8 @@
             this.Controls.Add(btnReports);
 
             styles.StyleLargeButtons(new Button[] { btnOrders, btnReports });
+
+            nav.CurrentView = FormNavigation.HOME;
         }
 
         private void handleFormControlEvents(object sender, EventArgs e)
@@ -95,7 +148,6 @@
             {
                 case FormNavigation.ORDERS:
                     unloadCurrentView();
-                    nav.AddNavigationPanel(this, handleFormControlEvents);
                     loadOrdersView();
                     break;
 
@@ -105,14 +157,12 @@
 
                 case FormNavigation.REPORTS:
                     unloadCurrentView();
-                    nav.AddNavigationPanel(this, handleFormControlEvents);
                     loadReportsView();
                     break;
 
                 case FormNavigation.PRODUCTS_REPORT:
                     unloadCurrentView();
-                    nav.AddNavigationPanel(this, handleFormControlEvents);
-                    loadProductsReport();
+                    loadProductsReportView();
                     break;
 
                 case FormNavigation.CLOSE:

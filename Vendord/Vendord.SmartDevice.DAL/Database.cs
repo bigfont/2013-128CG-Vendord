@@ -13,56 +13,75 @@
         private string dataSource;
         private string connString;
         private SqlCeConnection conn;
+        private List<Product> products;
+        private List<OrderSession> orderSessions;
+
+        public class OrderSession
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
+        }
+
+        public class Product
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
+            public int UPC { get; set; }
+        }
 
         private SqlCeDataReader SelectAllFromDatabase(string tableName)
-        {                        
-            string cmd;            
-            SqlCeDataReader reader;            
+        {
+            string cmd;
+            SqlCeDataReader reader;
             cmd = String.Format(@"SELECT * FROM {0}", tableName);
             reader = ExecuteReader(cmd);
             return reader;
         }
 
-        public IEnumerable<OrderSession> OrderSessions
+        public List<OrderSession> OrderSessions
         {
             get
-            {
-                Collection<OrderSession> result;
-                SqlCeDataReader reader;
-                result = new Collection<OrderSession>();
-                reader = SelectAllFromDatabase("OrderSession");
-                while (reader.Read())
+            {                
+                if (orderSessions == null)
                 {
-                    OrderSession item = new OrderSession()
+                    orderSessions = new List<OrderSession>();
+                    SqlCeDataReader reader;                    
+                    reader = SelectAllFromDatabase("OrderSession");
+                    while (reader.Read())
                     {
-                        ID = Convert.ToInt32(reader["ID"]),
-                        Name = Convert.ToString(reader["Name"])
-                    };
-                    result.Add(item);
+                        OrderSession item = new OrderSession()
+                        {
+                            ID = Convert.ToInt32(reader["ID"]),
+                            Name = Convert.ToString(reader["Name"])
+                        };
+                        orderSessions.Add(item);
+                    }                    
                 }
-                return result;
+                return orderSessions;
             }
         }
-        public IEnumerable<Product> Products
+
+        public List<Product> Products
         {
             get
             {
-                Collection<Product> result;
-                SqlCeDataReader reader;
-                result = new Collection<Product>();
-                reader = SelectAllFromDatabase("Product");
-                while (reader.Read())
+                if (products == null)
                 {
-                    Product item = new Product()
+                    products = new List<Product>();
+                    SqlCeDataReader reader;                    
+                    reader = SelectAllFromDatabase("Product");
+                    while (reader.Read())
                     {
-                        ID = Convert.ToInt32(reader["ID"]),
-                        Name = Convert.ToString(reader["Name"]),
-                        UPC = Convert.ToInt32(reader["UPC"])
-
-                    };
-                    result.Add(item);
+                        Product item = new Product()
+                        {
+                            ID = Convert.ToInt32(reader["ID"]),
+                            Name = Convert.ToString(reader["Name"]),
+                            UPC = Convert.ToInt32(reader["UPC"])
+                        };
+                        products.Add(item);
+                    }
                 }
-                return result;
+                return products;
             }
         }
 
@@ -115,7 +134,7 @@
                 ExecuteNonQuery(cmd);
             }
 
-            for (int i = 0; i < Int16.MaxValue; ++i)
+            for (int i = 0; i < 50; ++i)
             {
                 cmd = String.Format(@"INSERT INTO Product (Name, UPC) VALUES ({0},{1})", DateTime.Now.Ticks.ToString(), i);
                 ExecuteNonQuery(cmd);
@@ -185,18 +204,5 @@
             SeedDB();
         }
 
-    }
-
-    public class OrderSession
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class Product
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public int UPC { get; set; }
     }
 }

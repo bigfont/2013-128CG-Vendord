@@ -21,6 +21,26 @@
         private string Desktop_RemoteDatabase_Copy_FileName;
         private string Desktop_LocalDatabase_FileName;
 
+        public class SyncResultMessage
+        {
+            public string Caption;
+            public string Message;
+            public SyncResultMessage(string message, string caption)
+            {
+                this.Caption = caption;
+                this.Message = message;
+            }
+        }
+
+        public SyncResultMessage SyncDisconnected;
+        public SyncResultMessage SyncComplete;
+
+        public DatabaseSync()
+        {
+            SyncComplete = new SyncResultMessage("Success", "The sync is complete.");
+            SyncDisconnected = new SyncResultMessage("Disconnected","The device is disconnected. Please connect it and try again.");
+        }
+
         private void SetDatabaseFileNames(RAPI.RemoteDevice remoteDevice)
         {
             //
@@ -69,8 +89,7 @@
             SqlCeConnection connection;
             SqlCeSyncProvider provider;
             DbSyncScopeDescription scopeDesc;
-            DbSyncTableDescription tableDesc;
-            DbSyncTableDescription item;
+            DbSyncTableDescription tableDesc;            
             SqlCeSyncScopeProvisioning config;
 
             connString = String.Format(@"Data Source={0}", databaseFileName);
@@ -118,13 +137,21 @@
 
         }
 
-        public void SyncDesktopAndDeviceDatabases()
+        public SyncResultMessage SyncDesktopAndDeviceDatabases()
         {
             mgr = new RAPI.RemoteDeviceManager();
             RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
-            SetDatabaseFileNames(remoteDevice);
-            CopyDatabaseFromDeviceToDesktop(remoteDevice);
-            SyncSqlCeDatabases();
+            if (remoteDevice != null && remoteDevice.Status == RAPI.DeviceStatus.Connected)
+            {
+                SetDatabaseFileNames(remoteDevice);
+                CopyDatabaseFromDeviceToDesktop(remoteDevice);
+                SyncSqlCeDatabases();
+                return SyncComplete;
+            }
+            else
+            {
+                return SyncDisconnected;
+            }
         }
     }
 }

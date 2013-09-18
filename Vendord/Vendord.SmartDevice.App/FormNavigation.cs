@@ -22,6 +22,7 @@ namespace Vendord.SmartDevice.App
         internal const string PANEL_PREFIX = "pnl";
 
         internal string LastAction;
+        internal string CurrentView;
         private Form form;
         private FormStyles styles;
 
@@ -50,6 +51,11 @@ namespace Vendord.SmartDevice.App
             btnBack = FormHelper.CreateButtonWithEventHandler(FormNavigation.BACK, 0, handler);
             btnClose = FormHelper.CreateButtonWithEventHandler(FormNavigation.CLOSE, 1, handler);
 
+            if (LastAction == null)
+            {
+                btnBack.Enabled = false;
+            }
+
             panel.Controls.Add(btnBack);
             panel.Controls.Add(btnClose);
 
@@ -60,13 +66,13 @@ namespace Vendord.SmartDevice.App
 
         internal string GetUpstreamView()
         {
-            string upstreamAction;
-            upstreamAction = null;
+            string upstreamView;
+            upstreamView = null;
             if (UpstreamViewDictionary.Keys.Contains<string>(this.LastAction))
             {
-                upstreamAction = UpstreamViewDictionary[this.LastAction];
+                upstreamView = UpstreamViewDictionary[this.LastAction];
             }
-            return upstreamAction;
+            return upstreamView;
         }
 
         internal void ParseActionFromEventSender(object sender)
