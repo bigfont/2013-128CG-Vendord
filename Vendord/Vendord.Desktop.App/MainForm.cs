@@ -14,11 +14,21 @@
 
     public class MainForm : Form
     {
-        FormNavigation nav;
-        FormStyles styles;
-        Database db;
+        internal FormNavigation nav;
+        internal FormStyles styles;
 
-        Database.Product product = new Database.Product();
+        private Database _db;
+        private Database db
+        {
+            get
+            {
+                if (_db == null)
+                {
+                    _db = new Database(Constants.DATABASE_NAME);
+                }
+                return _db;
+            }
+        }
 
         public MainForm()
         {
@@ -38,12 +48,12 @@
         {
             DataGridView dataGridView;
             string columnHeaderName;
-            
+
             dataGridView = (sender as DataGridView);
             columnHeaderName = dataGridView.Columns[e.ColumnIndex].Name;
 
             switch (columnHeaderName)
-            { 
+            {
                 case "ID":
                     e.Value = db.Products[e.RowIndex].ID;
                     break;
@@ -60,24 +70,12 @@
 
         private void loadProductsReportView()
         {
-            db = new Database(Constants.DATABASE_NAME);
-            IEnumerable<Database.Product> products;
-            DataGridView dataGridView;
-
-            db = new Database(Constants.DATABASE_NAME);
-            products = db.Products;
-
-            dataGridView = new DataGridView();
-            dataGridView.VirtualMode = true;
-            dataGridView.AllowUserToDeleteRows = false;
-            dataGridView.AllowUserToAddRows = false;           
+            DataGridView dataGridView = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_CellValueNeeded);
 
             dataGridView.Columns.Add("ID", "ID");
             dataGridView.Columns.Add("Name", "Name");
-
-            dataGridView.RowCount = products.Count();
-
-            dataGridView.CellValueNeeded += new DataGridViewCellValueEventHandler(dataGridView_CellValueNeeded);            
+            dataGridView.Columns.Add("UPC", "UPC");
+            dataGridView.RowCount = db.Products.Count(); // add RowCount after adding columns, lest we get an extra column
 
             this.Controls.Add(dataGridView);
 
@@ -89,10 +87,35 @@
         private void loadReportsView()
         {
             Button btnProductsReport;
-            btnProductsReport = FormHelper.CreateButtonWithEventHandler(FormNavigation.PRODUCTS_REPORT, 0, handleFormControlEvents);
+            btnProductsReport = FormHelper.CreateButton(FormNavigation.PRODUCTS_REPORT, handleFormControlEvents);
             this.Controls.Add(btnProductsReport);
             styles.StyleLargeButtons(new Button[] { btnProductsReport });
             nav.CurrentView = FormNavigation.REPORTS;
+        }
+
+        private void loadCompleteOrderView()
+        {
+            DataGridView dataGridView_orderSessions;
+            DataGridView dataGridView_orderSessionDetails;
+            int defaultOrderSessionID;
+
+            dataGridView_orderSessions = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_CellValueNeeded);
+            dataGridView_orderSessionDetails = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_CellValueNeeded);
+
+            dataGridView_orderSessions.Columns.Add("Name", "Order Session Name");
+            dataGridView_orderSessions.RowCount = db.OrderSessions.Count();
+
+            dataGridView_orderSessionDetails.Columns.Add("Name", "Product Name");
+            dataGridView_orderSessionDetails.Columns.Add("CasesToOrder", "Cases to Order");
+            dataGridView_orderSessionDetails.RowCount = db.OrderSession_Products.Count(r =>
+                r.OrderSessionID == db.OrderSessions.FirstOrDefault().ID);
+
+            this.Controls.Add(dataGridView_orderSessions);
+            this.Controls.Add(dataGridView_orderSessionDetails);
+
+            styles.StyleDataGridViews(new DataGridView[] { dataGridView_orderSessions, dataGridView_orderSessionDetails });
+
+            nav.CurrentView = FormNavigation.COMPLETE_ORDER;
         }
 
         private void syncHandheld()
@@ -109,12 +132,15 @@
         private void loadOrdersView()
         {
             Button btnSyncHandheld;
+            Button btnCompleteOrder;
 
-            btnSyncHandheld = FormHelper.CreateButtonWithEventHandler(FormNavigation.SYNC_HANDHELD, 0, handleFormControlEvents);
+            btnSyncHandheld = FormHelper.CreateButton(FormNavigation.SYNC_HANDHELD, handleFormControlEvents);
+            btnCompleteOrder = FormHelper.CreateButton(FormNavigation.COMPLETE_ORDER, handleFormControlEvents);
 
             this.Controls.Add(btnSyncHandheld);
+            this.Controls.Add(btnCompleteOrder);
 
-            styles.StyleLargeButtons(new Button[] { btnSyncHandheld });
+            styles.StyleLargeButtons(new Button[] { btnSyncHandheld, btnCompleteOrder });
 
             nav.CurrentView = FormNavigation.ORDERS;
         }
@@ -124,8 +150,8 @@
             Button btnOrders;
             Button btnReports;
 
-            btnOrders = FormHelper.CreateButtonWithEventHandler(FormNavigation.ORDERS, 0, handleFormControlEvents);
-            btnReports = FormHelper.CreateButtonWithEventHandler(FormNavigation.REPORTS, 1, handleFormControlEvents);
+            btnOrders = FormHelper.CreateButton(FormNavigation.ORDERS, handleFormControlEvents);
+            btnReports = FormHelper.CreateButton(FormNavigation.REPORTS, handleFormControlEvents);
 
             this.Controls.Add(btnOrders);
             this.Controls.Add(btnReports);
@@ -153,6 +179,12 @@
 
                 case FormNavigation.SYNC_HANDHELD:
                     syncHandheld();
+                    break;
+
+                case FormNavigation.COMPLETE_ORDER:
+                    unloadCurrentView();
+                    syncHandheld();
+                    loadCompleteOrderView();
                     break;
 
                 case FormNavigation.REPORTS:

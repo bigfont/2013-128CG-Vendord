@@ -66,9 +66,9 @@ namespace Vendord.SmartDevice.App
             control = sender as Control;
 
             action = null;
-            if (control.Tag != null)
+            if (control.Name != null)
             {
-                action = control.Tag.ToString();
+                action = control.Name.ToString();
 
                 if (action.Equals(BACK))
                 {

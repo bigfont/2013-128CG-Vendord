@@ -15,6 +15,7 @@
         private SqlCeConnection conn;
         private List<Product> products;
         private List<OrderSession> orderSessions;
+        private List<OrderSession_Product> orderSession_Products;
 
         public class OrderSession
         {
@@ -29,6 +30,13 @@
             public int UPC { get; set; }
         }
 
+        public class OrderSession_Product
+        {
+            public int OrderSessionID { get; set; }
+            public int ProductID { get; set; }
+            public int CasesToOrder { get; set; }
+        }
+
         private SqlCeDataReader SelectAllFromDatabase(string tableName)
         {
             string cmd;
@@ -41,11 +49,11 @@
         public List<OrderSession> OrderSessions
         {
             get
-            {                
+            {
                 if (orderSessions == null)
                 {
                     orderSessions = new List<OrderSession>();
-                    SqlCeDataReader reader;                    
+                    SqlCeDataReader reader;
                     reader = SelectAllFromDatabase("OrderSession");
                     while (reader.Read())
                     {
@@ -55,7 +63,7 @@
                             Name = Convert.ToString(reader["Name"])
                         };
                         orderSessions.Add(item);
-                    }                    
+                    }
                 }
                 return orderSessions;
             }
@@ -68,7 +76,7 @@
                 if (products == null)
                 {
                     products = new List<Product>();
-                    SqlCeDataReader reader;                    
+                    SqlCeDataReader reader;
                     reader = SelectAllFromDatabase("Product");
                     while (reader.Read())
                     {
@@ -82,6 +90,30 @@
                     }
                 }
                 return products;
+            }
+        }
+
+        public List<OrderSession_Product> OrderSession_Products
+        {
+            get
+            {
+                if (orderSession_Products == null)
+                {
+                    orderSession_Products = new List<OrderSession_Product>();
+                    SqlCeDataReader reader;
+                    reader = SelectAllFromDatabase("OrderSession_Product");
+                    while (reader.Read())
+                    {
+                        OrderSession_Product item = new OrderSession_Product()
+                        {
+                            ProductID = Convert.ToInt32(reader["ProductID"]),
+                            OrderSessionID = Convert.ToInt32(reader["OrderSessionID"]),
+                            CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
+                        };
+                        orderSession_Products.Add(item);
+                    }
+                }
+                return orderSession_Products;
             }
         }
 
@@ -127,8 +159,12 @@
         private void SeedDB()
         {
             string cmd;
+            
+            ExecuteNonQuery(@"DELETE OrderSession");
+            ExecuteNonQuery(@"DELETE Product");
+            ExecuteNonQuery(@"DELETE OrderSession_Product");
 
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < 5; ++i)
             {
                 cmd = String.Format(@"INSERT INTO OrderSession (Name) VALUES ('{0}')", DateTime.Now.Ticks.ToString());
                 ExecuteNonQuery(cmd);
@@ -140,12 +176,24 @@
                 ExecuteNonQuery(cmd);
             }
 
+            int casesToOrder = 0;
+            foreach (OrderSession orderSession in OrderSessions)
+            {
+                foreach (Product product in Products)
+                {
+                    cmd = String.Format(@"INSERT INTO OrderSession_Product (OrderSessionID, ProductID, CasesToOrder) VALUES ({0},{1},{2})", 
+                        orderSession.ID, product.ID, ++casesToOrder);
+                    ExecuteNonQuery(cmd);
+                }
+            }
+
         }
 
         private void CreateTables()
         {
-            ExecuteNonQuery(@"CREATE TABLE OrderSession (ID int IDENTITY(1,1) PRIMARY KEY, Name nvarchar(100))");
-            ExecuteNonQuery(@"CREATE TABLE Product (ID int IDENTITY(1,1) PRIMARY KEY, Name nvarchar(100), UPC int)");
+            ExecuteNonQuery(@"CREATE TABLE OrderSession (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100))");
+            ExecuteNonQuery(@"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC INTEGER)");
+            ExecuteNonQuery(@"CREATE TABLE OrderSession_Product (OrderSessionID INTEGER, ProductID INTEGER, CasesToOrder INTEGER, CONSTRAINT PK_OrderSession_Product PRIMARY KEY (OrderSessionID, ProductID))");
         }
 
         private void InstantiateAndOpenConnection()

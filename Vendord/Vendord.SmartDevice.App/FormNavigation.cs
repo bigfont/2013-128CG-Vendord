@@ -14,12 +14,11 @@ namespace Vendord.SmartDevice.App
         internal const string HOME = "Home";
         internal const string ORDERS = "Orders";
         internal const string SYNC_HANDHELD = "Sync Handheld";
+        internal const string COMPLETE_ORDER = "Complete Order";
         internal const string REPORTS = "Reports";
         internal const string PRODUCTS_REPORT = "Products";
         internal const string CLOSE = "Close";
         internal const string BACK = "Back";
-        internal const string BUTTON_PREFIX = "btn";
-        internal const string PANEL_PREFIX = "pnl";
 
         internal string LastAction;
         internal string CurrentView;
@@ -48,8 +47,8 @@ namespace Vendord.SmartDevice.App
 
             panel = new Panel();
 
-            btnBack = FormHelper.CreateButtonWithEventHandler(FormNavigation.BACK, 0, handler);
-            btnClose = FormHelper.CreateButtonWithEventHandler(FormNavigation.CLOSE, 1, handler);
+            btnBack = FormHelper.CreateButton(FormNavigation.BACK, handler);
+            btnClose = FormHelper.CreateButton(FormNavigation.CLOSE, handler);
 
             if (LastAction == null)
             {
@@ -83,9 +82,9 @@ namespace Vendord.SmartDevice.App
             control = sender as Control;
 
             action = null;
-            if (control.Tag != null)
+            if (control.Name != null)
             {
-                action = control.Tag.ToString();
+                action = control.Name.ToString();
 
                 if (action.Equals(BACK))
                 {

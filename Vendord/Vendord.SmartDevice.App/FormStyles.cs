@@ -9,6 +9,7 @@ namespace Vendord.SmartDevice.App
 {
     internal class FormStyles
     {
+        private const int DATA_GRID_VIEWS_PER_ROW = 2;
         private const int NAVIGATION_PANELS_PER_ROW = 5;
         private const int BUTTONS_PER_ROW = 2;
         private const int BUTTONS_PER_COLUMN = 2;
@@ -49,7 +50,7 @@ namespace Vendord.SmartDevice.App
 
         internal void StyleForm()
         {
-            form.WindowState = FormWindowState.Maximized;            
+            form.WindowState = FormWindowState.Maximized;
             form.Font = fontDefault;
         }
 
@@ -64,7 +65,7 @@ namespace Vendord.SmartDevice.App
             panel.Size = panelSize;
 
             int x = 0;
-            int y = 0; 
+            int y = 0;
             foreach (Button b in panel.Controls)
             {
                 b.Size = buttonSize;
@@ -88,7 +89,7 @@ namespace Vendord.SmartDevice.App
             size = new System.Drawing.Size(width, height);
 
             x = 0;
-            y = NavigationPanelHeight;            
+            y = NavigationPanelHeight;
 
             for (int i = 0; i < buttons.Length; ++i)
             {
@@ -113,31 +114,57 @@ namespace Vendord.SmartDevice.App
             }
         }
 
-        internal void StyleDataGridView(DataGridView view)
+        private void ThemeDataGridView(DataGridView dataGridView)
         {            
-            // Change the Border and Gridline Styles
-            view.GridColor = Color.Blue;
-            view.BorderStyle = BorderStyle.Fixed3D;
-            view.CellBorderStyle = DataGridViewCellBorderStyle.Raised;
-            view.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Sunken;
-            view.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridView.GridColor = Color.Blue;
+            dataGridView.BorderStyle = BorderStyle.Fixed3D;
+            dataGridView.CellBorderStyle = DataGridViewCellBorderStyle.Raised;
+            dataGridView.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Sunken;
+            dataGridView.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;         
+            dataGridView.DefaultCellStyle.BackColor = Color.AliceBlue;
+        }
 
-            // Cell Styles
-            view.DefaultCellStyle.BackColor = Color.AliceBlue;
-            
-            // Heights
-            view.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+        private void SetDataGridViewColumnsEqualWidth(DataGridView dataGridView)
+        {
+            for (int i = 0; i < dataGridView.Columns.Count; ++i)
+            {
+                dataGridView.Columns[i].Width = dataGridView.ClientSize.Width / dataGridView.Columns.Count;
+            }
+        }
+
+        internal void StyleDataGridViews(DataGridView[] dataGridViews)
+        {
+            int x;
+            int y;
+
+            x = 0;
+            y = NavigationPanelHeight;
+
+            for (int i = 0; i < dataGridViews.Length; ++i)
+            {
+                DataGridView dataGridView = dataGridViews[i];
+                ThemeDataGridView(dataGridView);
+                dataGridView.Width = form.ClientSize.Width / DATA_GRID_VIEWS_PER_ROW;
+                dataGridView.Height = form.ClientSize.Height - NavigationPanelHeight;
+                dataGridView.Location = new Point(x, y);
+                SetDataGridViewColumnsEqualWidth(dataGridView);
+
+                x += dataGridView.Width; // for the next one in the row
+            }
+        }
+
+        internal void StyleDataGridView(DataGridView dataGridView)
+        {
+            ThemeDataGridView(dataGridView);                        
 
             // Position
-            view.Location = new Point(0, NavigationPanelHeight);
+            dataGridView.Location = new Point(0, NavigationPanelHeight);
 
             // Widths
-            view.Width = form.ClientSize.Width;
-            view.Height = form.ClientSize.Height;
-            for (int i = 0; i < view.Columns.Count; ++i)
-            {
-                view.Columns[i].Width = view.ClientSize.Width / view.Columns.Count;
-            }
+            dataGridView.Width = form.ClientSize.Width;
+            dataGridView.Height = form.ClientSize.Height - NavigationPanelHeight;
+            SetDataGridViewColumnsEqualWidth(dataGridView);
         }
 
         internal void StyleListView(ListView listView)
