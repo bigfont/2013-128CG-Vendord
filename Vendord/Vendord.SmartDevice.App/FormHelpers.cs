@@ -17,6 +17,8 @@ namespace Vendord.SmartDevice.App
             return b;
         }
 
+#if FULL_FRAMEWORK
+
         internal static DataGridView CreateReadOnlyDataGridView(string name, DataGridViewCellValueEventHandler cellValueEventHandler)
         {
             DataGridView dataGridView;
@@ -31,5 +33,8 @@ namespace Vendord.SmartDevice.App
 
             return dataGridView;
         }
+
+#endif 
+
     }
 }

@@ -114,6 +114,8 @@ namespace Vendord.SmartDevice.App
             }
         }
 
+#if FULL_FRAMEWORK
+
         private void ThemeDataGridView(DataGridView dataGridView)
         {            
             dataGridView.GridColor = Color.Blue;
@@ -166,6 +168,8 @@ namespace Vendord.SmartDevice.App
             dataGridView.Height = form.ClientSize.Height - NavigationPanelHeight;
             SetDataGridViewColumnsEqualWidth(dataGridView);
         }
+
+#endif
 
         internal void StyleListView(ListView listView)
         {
