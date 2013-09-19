@@ -44,7 +44,61 @@
             nav.AddNavigationPanel(this, handleFormControlEvents);
         }
 
-        private void dataGridView_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+
+        private void dataGridView_OrderSessionDetails_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+        {
+            DataGridView dataGridView;
+            string columnHeaderName;
+
+            dataGridView = (sender as DataGridView);
+            columnHeaderName = dataGridView.Columns[e.ColumnIndex].Name;
+
+            switch (columnHeaderName)
+            {
+                case "OrderSessionID":
+                    e.Value = db.OrderSession_Products[e.RowIndex].OrderSessionID;
+                    break;
+
+                case "ProductID":
+                    e.Value = db.OrderSession_Products[e.RowIndex].ProductID;
+                    break;
+
+
+                case "CasesToOrder":
+                    e.Value = db.OrderSession_Products[e.RowIndex].CasesToOrder;
+                    break;
+
+                default:
+                    e.Value = "Default";
+                    break;
+            }
+        }
+
+        private void dataGridView_OrderSessions_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+        {
+            DataGridView dataGridView;
+            string columnHeaderName;
+
+            dataGridView = (sender as DataGridView);
+            columnHeaderName = dataGridView.Columns[e.ColumnIndex].Name;
+
+            switch (columnHeaderName)
+            {
+                case "ID":
+                    e.Value = db.OrderSessions[e.RowIndex].ID;
+                    break;
+
+                case "Name":
+                    e.Value = db.OrderSessions[e.RowIndex].Name;
+                    break;
+
+                default:
+                    e.Value = "Default";
+                    break;
+            }
+        }
+
+        private void dataGridView_Products_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
             DataGridView dataGridView;
             string columnHeaderName;
@@ -70,7 +124,7 @@
 
         private void loadProductsReportView()
         {
-            DataGridView dataGridView = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_CellValueNeeded);
+            DataGridView dataGridView = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_Products_CellValueNeeded);
 
             dataGridView.Columns.Add("ID", "ID");
             dataGridView.Columns.Add("Name", "Name");
@@ -97,10 +151,9 @@
         {
             DataGridView dataGridView_orderSessions;
             DataGridView dataGridView_orderSessionDetails;
-            int defaultOrderSessionID;
 
-            dataGridView_orderSessions = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_CellValueNeeded);
-            dataGridView_orderSessionDetails = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_CellValueNeeded);
+            dataGridView_orderSessions = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_OrderSessions_CellValueNeeded);
+            dataGridView_orderSessionDetails = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_OrderSessionDetails_CellValueNeeded);
 
             dataGridView_orderSessions.Columns.Add("Name", "Order Session Name");
             dataGridView_orderSessions.RowCount = db.OrderSessions.Count();
