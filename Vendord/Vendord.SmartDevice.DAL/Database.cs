@@ -12,7 +12,6 @@
     {
         private string dataSource;
         private string connString;
-        private SqlCeConnection conn;
         private List<Product> products;
         private List<OrderSession> orderSessions;
         private List<OrderSession_Product> orderSession_Products;
@@ -37,32 +36,30 @@
             public int CasesToOrder { get; set; }
         }
 
-        private SqlCeDataReader SelectAllFromDatabase(string tableName)
-        {
-            string cmd;
-            SqlCeDataReader reader;
-            cmd = String.Format(@"SELECT * FROM {0}", tableName);
-            reader = ExecuteReader(cmd);
-            return reader;
-        }
-
         public List<OrderSession> OrderSessions
         {
             get
             {
+                SqlCeDataReader reader;
+                SqlCeCommand command;
+
                 if (orderSessions == null)
                 {
                     orderSessions = new List<OrderSession>();
-                    SqlCeDataReader reader;
-                    reader = SelectAllFromDatabase("OrderSession");
-                    while (reader.Read())
+                    using (SqlCeConnection conn = new SqlCeConnection(connString))
                     {
-                        OrderSession item = new OrderSession()
+                        conn.Open();
+                        command = new SqlCeCommand(@"SELECT * FROM OrderSession", conn);
+                        reader = command.ExecuteReader();
+                        while (reader.Read())
                         {
-                            ID = Convert.ToInt32(reader["ID"]),
-                            Name = Convert.ToString(reader["Name"])
-                        };
-                        orderSessions.Add(item);
+                            OrderSession item = new OrderSession()
+                            {
+                                ID = Convert.ToInt32(reader["ID"]),
+                                Name = Convert.ToString(reader["Name"])
+                            };
+                            orderSessions.Add(item);
+                        }
                     }
                 }
                 return orderSessions;
@@ -73,20 +70,27 @@
         {
             get
             {
+                SqlCeDataReader reader;
+                SqlCeCommand command;
+
                 if (products == null)
                 {
                     products = new List<Product>();
-                    SqlCeDataReader reader;
-                    reader = SelectAllFromDatabase("Product");
-                    while (reader.Read())
+                    using (SqlCeConnection conn = new SqlCeConnection(connString))
                     {
-                        Product item = new Product()
+                        conn.Open();
+                        command = new SqlCeCommand(@"SELECT * FROM Product", conn);
+                        reader = command.ExecuteReader();
+                        while (reader.Read())
                         {
-                            ID = Convert.ToInt32(reader["ID"]),
-                            Name = Convert.ToString(reader["Name"]),
-                            UPC = Convert.ToInt32(reader["UPC"])
-                        };
-                        products.Add(item);
+                            Product item = new Product()
+                            {
+                                ID = Convert.ToInt32(reader["ID"]),
+                                Name = Convert.ToString(reader["Name"]),
+                                UPC = Convert.ToInt32(reader["UPC"])
+                            };
+                            products.Add(item);
+                        }
                     }
                 }
                 return products;
@@ -99,41 +103,29 @@
             {
                 if (orderSession_Products == null)
                 {
-                    orderSession_Products = new List<OrderSession_Product>();
                     SqlCeDataReader reader;
-                    reader = SelectAllFromDatabase("OrderSession_Product");
-                    while (reader.Read())
+                    SqlCeCommand command;
+
+                    orderSession_Products = new List<OrderSession_Product>();
+                    using (SqlCeConnection conn = new SqlCeConnection(connString))
                     {
-                        OrderSession_Product item = new OrderSession_Product()
+                        conn.Open();
+                        command = new SqlCeCommand(@"SELECT * FROM OrderSession_Product", conn);
+                        reader = command.ExecuteReader();
+                        while (reader.Read())
                         {
-                            ProductID = Convert.ToInt32(reader["ProductID"]),
-                            OrderSessionID = Convert.ToInt32(reader["OrderSessionID"]),
-                            CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
-                        };
-                        orderSession_Products.Add(item);
+                            OrderSession_Product item = new OrderSession_Product()
+                            {
+                                ProductID = Convert.ToInt32(reader["ProductID"]),
+                                OrderSessionID = Convert.ToInt32(reader["OrderSessionID"]),
+                                CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
+                            };
+                            orderSession_Products.Add(item);
+                        }
                     }
                 }
                 return orderSession_Products;
             }
-        }
-
-        private SqlCeDataReader ExecuteReader(string cmdText)
-        {
-            SqlCeDataReader reader = null;
-
-            try
-            {
-                SqlCeCommand cmd = conn.CreateCommand();
-                cmd.CommandText = cmdText;
-                reader = cmd.ExecuteReader();
-            }
-            catch (Exception ex)
-            {
-                int i = 0;
-                ++i;
-            }
-
-            return reader;
         }
 
         private int ExecuteNonQuery(string cmdText)
@@ -143,9 +135,13 @@
 
             try
             {
-                SqlCeCommand cmd = conn.CreateCommand();
-                cmd.CommandText = cmdText;
-                rowsAffected = cmd.ExecuteNonQuery();
+                using (SqlCeConnection conn = new SqlCeConnection(connString))
+                {
+                    SqlCeCommand cmd = conn.CreateCommand();
+                    cmd.CommandText = cmdText;
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+
             }
             catch (Exception ex)
             {
@@ -159,7 +155,7 @@
         private void SeedDB()
         {
             string cmd;
-            
+
             ExecuteNonQuery(@"DELETE OrderSession");
             ExecuteNonQuery(@"DELETE Product");
             ExecuteNonQuery(@"DELETE OrderSession_Product");
@@ -181,7 +177,7 @@
             {
                 foreach (Product product in Products)
                 {
-                    cmd = String.Format(@"INSERT INTO OrderSession_Product (OrderSessionID, ProductID, CasesToOrder) VALUES ({0},{1},{2})", 
+                    cmd = String.Format(@"INSERT INTO OrderSession_Product (OrderSessionID, ProductID, CasesToOrder) VALUES ({0},{1},{2})",
                         orderSession.ID, product.ID, ++casesToOrder);
                     ExecuteNonQuery(cmd);
                 }
@@ -194,12 +190,6 @@
             ExecuteNonQuery(@"CREATE TABLE OrderSession (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100))");
             ExecuteNonQuery(@"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC INTEGER)");
             ExecuteNonQuery(@"CREATE TABLE OrderSession_Product (OrderSessionID INTEGER, ProductID INTEGER, CasesToOrder INTEGER, CONSTRAINT PK_OrderSession_Product PRIMARY KEY (OrderSessionID, ProductID))");
-        }
-
-        private void InstantiateAndOpenConnection()
-        {
-            conn = new SqlCeConnection(connString);
-            conn.Open();
         }
 
         private void CreateDB()
@@ -247,7 +237,6 @@
             CreateApplicationDataSubDirectory();
             InstantiateConnString(databaseName);
             CreateDB();
-            InstantiateAndOpenConnection();
             CreateTables();
             SeedDB();
         }
