@@ -136,6 +136,16 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+    <BootstrapperPackage Include="SyncFX20Core%28x86%29">
+      <Visible>False</Visible>
+      <ProductName>SyncFX20Core %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="SyncFX20DatabaseProviders%28x86%29">
+      <Visible>False</Visible>
+      <ProductName>SyncFX20DatabaseProviders %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Resources\rapi2-86240\RAPI2\RAPI2\RAPI2.csproj">
