@@ -7,20 +7,27 @@
     using System.Text;
     using System.IO;
     using System.Collections.ObjectModel;
-    using Vendord.SmartDevice.Shared;
 
-    public class Database
+    public class VendordDatabase
     {
         private List<Product> products;
         private List<OrderSession> orderSessions;
         private List<OrderSession_Product> orderSession_Products;
+
+        private static string sqlCeConnectionStringTemplate = @"Data Source={0};Persist Security Info=False;";
+        public static string GenerateSqlCeConnString(string databaseFullPath)
+        {
+            string sqlCeConnString;
+            sqlCeConnString = String.Format(sqlCeConnectionStringTemplate, databaseFullPath);
+            return sqlCeConnString;
+        }
 
         public string ConnectionString
         {
             get
             {
                 string result;
-                result = String.Format("Data Source={0};Persist Security Info=False;", Constants.DatabaseFullPath);
+                result = GenerateSqlCeConnString(Constants.VendordDatabaseFullPath);
                 return result;
             }
         }
@@ -35,7 +42,18 @@
         {
             public int ID { get; set; }
             public string Name { get; set; }
-            public int UPC { get; set; }
+            public string UPC { get; set; }
+
+            public void InsertIntoDB()
+            {
+                string insertQuery;
+                insertQuery = String.Format(@"INSERT INTO Product (Name, UPC) VALUES ('{0}', '{1}');",
+                    this.Name,
+                    this.UPC);
+
+                VendordDatabase db = new VendordDatabase();
+                db.ExecuteNonQuery(insertQuery);
+            }
         }
 
         public class OrderSession_Product
@@ -96,7 +114,7 @@
                             {
                                 ID = Convert.ToInt32(reader["ID"]),
                                 Name = Convert.ToString(reader["Name"]),
-                                UPC = Convert.ToInt32(reader["UPC"])
+                                UPC = Convert.ToString(reader["UPC"])
                             };
                             products.Add(item);
                         }
@@ -137,7 +155,7 @@
             }
         }
 
-        private object ExecuteScalar(string cmdText)
+        public object ExecuteScalar(string cmdText)
         {
             object result = null;
             using (SqlCeConnection conn = new SqlCeConnection(ConnectionString))
@@ -150,7 +168,7 @@
             return result;
         }
 
-        private int ExecuteNonQuery(string cmdText)
+        public int ExecuteNonQuery(string cmdText)
         {
             int rowsAffected;
             rowsAffected = 0;
@@ -164,40 +182,6 @@
             }
 
             return rowsAffected;
-        }
-
-        private void SeedDB()
-        {
-            IOHelpers.LogSubroutine("SeedDB");
-
-            string cmd;
-
-            ExecuteNonQuery(@"DELETE OrderSession");
-            ExecuteNonQuery(@"DELETE Product");
-            ExecuteNonQuery(@"DELETE OrderSession_Product");
-
-            for (int i = 0; i < 5; ++i)
-            {
-                cmd = String.Format(@"INSERT INTO OrderSession (Name) VALUES ('{0}')", DateTime.Now.Ticks.ToString());
-                ExecuteNonQuery(cmd);
-            }
-
-            for (int i = 0; i < 50; ++i)
-            {
-                cmd = String.Format(@"INSERT INTO Product (Name, UPC) VALUES ({0},{1})", DateTime.Now.Ticks.ToString(), i);
-                ExecuteNonQuery(cmd);
-            }
-
-            int casesToOrder = 0;
-            foreach (OrderSession orderSession in OrderSessions)
-            {
-                foreach (Product product in Products)
-                {
-                    cmd = String.Format(@"INSERT INTO OrderSession_Product (OrderSessionID, ProductID, CasesToOrder) VALUES ({0},{1},{2})",
-                        orderSession.ID, product.ID, ++casesToOrder);
-                    ExecuteNonQuery(cmd);
-                }
-            }
         }
 
         private bool TableExists(string tableName)
@@ -223,20 +207,20 @@
         {
             IOHelpers.LogSubroutine("CreateTables");
 
-            string createTableQuery;    
+            string createTableQuery;
 
             // 
             if (!TableExists("OrderSession"))
             {
                 createTableQuery = @"CREATE TABLE OrderSession (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100))";
                 ExecuteNonQuery(createTableQuery);
-            }                        
+            }
 
             //
             if (!TableExists("Product"))
-            { 
-                createTableQuery = @"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC INTEGER)";
-                ExecuteNonQuery(createTableQuery);          
+            {
+                createTableQuery = @"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100))";
+                ExecuteNonQuery(createTableQuery);
             }
 
             //
@@ -248,27 +232,28 @@
 
         }
 
-        private void CreateDB()
+        public static void CreateCeDB(string databaseFullPath)
         {
             IOHelpers.LogSubroutine("CreateDB");
 
             SqlCeEngine engine;
+            string connString;
 
-            IOHelpers.CreateItemIfNotExists(Constants.ApplicationDataStoreFullPath);
+            IOHelpers.CreateDirectoryIfNotExists(Constants.ApplicationDataStoreFullPath);
 
-            if (!File.Exists(Constants.DatabaseFullPath))
+            if (!File.Exists(databaseFullPath))
             {
-                engine = new SqlCeEngine(ConnectionString);
+                connString = GenerateSqlCeConnString(databaseFullPath);
+                engine = new SqlCeEngine(connString);
                 engine.CreateDatabase();
                 engine.Dispose();
             }
         }
 
-        public Database(string databaseName)
+        public VendordDatabase()
         {
-            CreateDB();
+            CreateCeDB(Constants.VendordDatabaseFullPath);
             CreateTables();
-            SeedDB();
         }
 
     }

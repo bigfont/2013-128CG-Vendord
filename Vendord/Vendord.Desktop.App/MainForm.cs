@@ -16,14 +16,14 @@
         internal FormNavigation nav;
         internal FormStyles styles;
 
-        private Database _db;
-        private Database db
+        private VendordDatabase _db;
+        private VendordDatabase db
         {
             get
             {
                 if (_db == null)
                 {
-                    _db = new Database(Constants.DATABASE_NAME);
+                    _db = new VendordDatabase();
                 }
                 return _db;
             }
@@ -42,7 +42,6 @@
             this.Controls.Clear();
             nav.AddNavigationPanel(this, handleFormControlEvents);
         }
-
 
         private void dataGridView_OrderSessionDetails_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
@@ -140,7 +139,7 @@
         private void loadReportsView()
         {
             Button btnProductsReport;
-            btnProductsReport = FormHelper.CreateButton(FormNavigation.PRODUCTS_REPORT, handleFormControlEvents);
+            btnProductsReport = FormHelper.CreateButton(FormNavigation.PRODUCTS_REPORT, "TODO", handleFormControlEvents);
             this.Controls.Add(btnProductsReport);
             styles.StyleLargeButtons(new Button[] { btnProductsReport });
             nav.CurrentView = FormNavigation.REPORTS;
@@ -176,6 +175,7 @@
             DatabaseSync.SyncResultMessage syncResult;
 
             sync = new DatabaseSync();
+            syncResult = sync.SyncDesktopAndITRetailDatabase();
             syncResult = sync.SyncDesktopAndDeviceDatabases();
 
             MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -184,10 +184,10 @@
         private void loadOrdersView()
         {
             Button btnSyncHandheld;
-            Button btnCompleteOrder;
+            Button btnCompleteOrder;            
 
-            btnSyncHandheld = FormHelper.CreateButton(FormNavigation.SYNC_HANDHELD, handleFormControlEvents);
-            btnCompleteOrder = FormHelper.CreateButton(FormNavigation.COMPLETE_ORDER, handleFormControlEvents);
+            btnSyncHandheld = FormHelper.CreateButton(FormNavigation.SYNC_HANDHELD, FormNavigation.SYNC_HANDHELD_TOOLTIP, handleFormControlEvents);
+            btnCompleteOrder = FormHelper.CreateButton(FormNavigation.COMPLETE_ORDER, "TODO", handleFormControlEvents);
 
             this.Controls.Add(btnSyncHandheld);
             this.Controls.Add(btnCompleteOrder);
@@ -202,8 +202,8 @@
             Button btnOrders;
             Button btnReports;
 
-            btnOrders = FormHelper.CreateButton(FormNavigation.ORDERS, handleFormControlEvents);
-            btnReports = FormHelper.CreateButton(FormNavigation.REPORTS, handleFormControlEvents);
+            btnOrders = FormHelper.CreateButton(FormNavigation.ORDERS, "TODO", handleFormControlEvents);
+            btnReports = FormHelper.CreateButton(FormNavigation.REPORTS, "TODO", handleFormControlEvents);
 
             this.Controls.Add(btnOrders);
             this.Controls.Add(btnReports);

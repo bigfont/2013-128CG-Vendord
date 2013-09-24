@@ -14,7 +14,7 @@
         [MTAThread]
         static void Main()
         {            
-            Database db = new Database(Constants.DATABASE_NAME);
+            VendordDatabase db = new VendordDatabase();
             Application.Run(new MainForm());
         }
     }

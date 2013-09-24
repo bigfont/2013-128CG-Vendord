@@ -13,6 +13,7 @@
         internal const string HOME = "Home";
         internal const string ORDERS = "Orders";
         internal const string SYNC_HANDHELD = "Sync Handheld";
+        internal const string SYNC_HANDHELD_TOOLTIP = "Update the product list on the handheld with the product list from IT Retail Professional.";
         internal const string COMPLETE_ORDER = "Complete Order";
         internal const string REPORTS = "Reports";
         internal const string PRODUCTS_REPORT = "Products";
@@ -20,7 +21,7 @@
         internal const string BACK = "Back";
 
         internal string LastAction;
-        internal string CurrentView;
+        internal string CurrentView; // external code assigns to this
         private Form form;
         private FormStyles styles;
 
@@ -46,8 +47,8 @@
 
             panel = new Panel();
 
-            btnBack = FormHelper.CreateButton(FormNavigation.BACK, handler);
-            btnClose = FormHelper.CreateButton(FormNavigation.CLOSE, handler);
+            btnBack = FormHelper.CreateButton(FormNavigation.BACK, "TODO", handler);
+            btnClose = FormHelper.CreateButton(FormNavigation.CLOSE, "TODO", handler);
 
             if (LastAction == null)
             {

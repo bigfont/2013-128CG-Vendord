@@ -7,12 +7,24 @@
     using System.Windows.Forms;
     internal static class FormHelper
     {
-        internal static Button CreateButton(string name, EventHandler eventHandler)
+        internal static Button CreateButton(string name, string caption, EventHandler eventHandler)
         {
-            Button b = new Button();
+            Button b;
+            
+            b = new Button();
             b.Name = name;
             b.Text = name;            
             b.Click += eventHandler;
+
+
+#if FULL_FRAMEWORK
+
+            ToolTip t;
+            t = new ToolTip();
+            t.SetToolTip(b, caption);
+
+#endif
+
             return b;
         }
 

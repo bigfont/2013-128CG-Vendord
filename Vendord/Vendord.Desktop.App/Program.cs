@@ -25,7 +25,7 @@ namespace Vendord.Desktop.App
 
         static void CreateDatabase()
         {
-            Database db = new Database(Constants.DATABASE_NAME);
+            VendordDatabase db = new VendordDatabase();
         }
 
         static void SetupGlobalErrorHandling()

@@ -1,20 +1,31 @@
 ﻿namespace Vendord.SmartDevice.Shared
 {
-    using System.IO;
     using System;
-    public static class IOHelpers
+    using System.Linq;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.IO;
+
+    public class IOHelpers
     {
-        public static void CreateItemIfNotExists(string fullPath)
+        public static string AddSuffixToFilePath(string filePath, string suffix)
+        {
+            string result;
+            result = filePath.Insert(filePath.LastIndexOf('.'), suffix);
+            return result;            
+        }
+
+        public static void CreateDirectoryIfNotExists(string fullPath)
         {
             if (!Directory.Exists(fullPath))
             {
-                Directory.CreateDirectory(fullPath);                
+                Directory.CreateDirectory(fullPath);
             }
-        }        
+        }
 
         public static void LogException(Exception e)
-        {           
-            CreateItemIfNotExists(Constants.ApplicationDataStoreFullPath);
+        {
+            CreateDirectoryIfNotExists(Constants.ApplicationDataStoreFullPath);
 
             // write to the error log
             using (StreamWriter w = File.AppendText(Constants.ErrorLogFullPath))
@@ -34,8 +45,8 @@
         }
 
         public static void LogSubroutine(string message)
-        {            
-            CreateItemIfNotExists(Constants.ApplicationDataStoreFullPath);
+        {
+            CreateDirectoryIfNotExists(Constants.ApplicationDataStoreFullPath);
 
             using (StreamWriter w = File.AppendText(Constants.ApplicationLogFullPath))
             {

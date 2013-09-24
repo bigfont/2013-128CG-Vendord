@@ -8,9 +8,9 @@
 
     public class Constants
     {
-        public const string DATABASE_NAME = "VendordDB.sdf";
+        public const string APPLICATION_DATABASE_NAME = "VendordDB.sdf";
         public const string APPLICATION_NAME = "VENDORD";
-        public const string TEMPORARY_COPY_OF_REMOTE_FILE_FLAG = "_REMOTE";
+        public const string IT_RETAIL_DATABASE_CONNECTION_STRING = "Data Source=FONTY;Initial Catalog=ITRetail;Integrated Security=True";
 
         private const string ERROR_LOG_NAME = "error.log";
         private const string APPLICATION_LOG_NAME = "application.log";
@@ -45,14 +45,14 @@
             }
         }
 
-        public static string DatabaseFullPath
+        public static string VendordDatabaseFullPath
         {
             get
             {
                 string result;
-                result = Path.Combine(ApplicationDataStoreFullPath, DATABASE_NAME);
+                result = Path.Combine(ApplicationDataStoreFullPath, APPLICATION_DATABASE_NAME);
                 return result;
             }
-        }
+        }              
     }
 }

@@ -68,6 +68,9 @@
     <Compile Include="..\Vendord.SmartDevice.Shared\Database.cs">
       <Link>LinkedFiles\Database.cs</Link>
     </Compile>
+    <Compile Include="..\Vendord.SmartDevice.Shared\IOHelpers.cs">
+      <Link>LinkedFiles\IOHelpers.cs</Link>
+    </Compile>
     <Compile Include="BarcodeAPI.cs" />
     <Compile Include="MainFormStyles.cs">
       <SubType>Form</SubType>
