@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Vendord.SmartDevice.DAL;
+using System.IO;
+using Vendord.SmartDevice.Shared;
 
 namespace Vendord.Desktop.App
 {
@@ -14,8 +15,32 @@ namespace Vendord.Desktop.App
         [STAThread]
         static void Main()
         {
-            Database db = new Database(Constants.DATABASE_NAME);
+            IOHelpers.LogSubroutine("Main");
+            
+            SetupGlobalErrorHandling();
+            CreateDatabase();
+            
             Application.Run(new MainForm());
+        }
+
+        static void CreateDatabase()
+        {
+            Database db = new Database(Constants.DATABASE_NAME);
+        }
+
+        static void SetupGlobalErrorHandling()
+        {
+            IOHelpers.LogSubroutine("SetupGlobalErrorHandling");
+
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(currentDomain_UnhandledException);
+        }
+
+        static void currentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
+        {
+            Exception e;
+            e = (Exception)args.ExceptionObject;
+            IOHelpers.LogException(e);
         }
     }
 }

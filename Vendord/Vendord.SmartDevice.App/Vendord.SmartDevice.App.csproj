@@ -62,16 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Vendord.SmartDevice.DAL\Constants.cs">
+    <Compile Include="..\Vendord.SmartDevice.Shared\Constants.cs">
       <Link>LinkedFiles\Constants.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.DAL\Database.cs">
+    <Compile Include="..\Vendord.SmartDevice.Shared\Database.cs">
       <Link>LinkedFiles\Database.cs</Link>
     </Compile>
     <Compile Include="BarcodeAPI.cs" />
-    <Compile Include="FormHelpers.cs" />
-    <Compile Include="FormNavigation.cs" />
-    <Compile Include="FormStyles.cs" />
     <Compile Include="MainFormStyles.cs">
       <SubType>Form</SubType>
     </Compile>

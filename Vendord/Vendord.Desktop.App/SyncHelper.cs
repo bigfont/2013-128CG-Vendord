@@ -5,12 +5,12 @@
     using System.Linq;
     using System.Text;
     using RAPI = System.Devices; // Remote API Managed Code Wrapper
-    using System.IO;
-    using Vendord.SmartDevice.DAL;
+    using System.IO;    
     using Microsoft.Synchronization;
     using Microsoft.Synchronization.Data.SqlServerCe;
     using System.Data.SqlServerCe;
     using Microsoft.Synchronization.Data;
+    using Vendord.SmartDevice.Shared;
 
     public class DatabaseSync
     {
@@ -60,7 +60,7 @@
 
             // remote copy
             Desktop_RemoteDatabase_Copy_FileName
-                = Constants.DATABASE_NAME.Insert(Constants.DATABASE_NAME.LastIndexOf('.'), Constants.REMOTE_FLAG);
+                = Constants.DATABASE_NAME.Insert(Constants.DATABASE_NAME.LastIndexOf('.'), Constants.TEMPORARY_COPY_OF_REMOTE_FILE_FLAG);
 
             Desktop_RemoteDatabase_Copy_FileName
                 = Path.Combine(Desktop_AppData_DirectoryName, Desktop_RemoteDatabase_Copy_FileName);
