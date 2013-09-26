@@ -54,6 +54,15 @@
                 VendordDatabase db = new VendordDatabase();
                 db.ExecuteNonQuery(insertQuery);
             }
+
+            public void DeleteAll()
+            {
+                string deleteQuery;
+                deleteQuery = String.Format(@"DELETE Product");
+
+                VendordDatabase db = new VendordDatabase();
+                db.ExecuteNonQuery(deleteQuery);
+            }
         }
 
         public class OrderSession_Product

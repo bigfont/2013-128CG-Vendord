@@ -7,29 +7,35 @@
     using System.Windows.Forms;
     public class FormNavigation
     {
-        //
-        // String constants
-        //        
+        // main nav
         internal const string HOME = "Home";
+        internal const string CLOSE = "Close";
+        internal const string BACK = "Back";
+        // orders
         internal const string ORDERS = "Orders";
         internal const string SYNC_HANDHELD = "Sync Handheld";
         internal const string SYNC_HANDHELD_TOOLTIP = "Update the product list on the handheld with the product list from IT Retail Professional.";
         internal const string COMPLETE_ORDER = "Complete Order";
+        internal const string ORDER_SESSION = "Order Session";
+        internal const string SCAN_RESULT = "Scan Result";
+        // reports
         internal const string REPORTS = "Reports";
         internal const string PRODUCTS_REPORT = "Products";
-        internal const string CLOSE = "Close";
-        internal const string BACK = "Back";
-
+        // inventory
+        internal const string INVENTORY = "Inventory";
+        // state
         internal string LastAction;
         internal string CurrentView; // external code assigns to this
+        // dependencies
         private Form form;
         private FormStyles styles;
 
         internal Dictionary<string, string> UpstreamViewDictionary = new Dictionary<string, string>()
         {
             { ORDERS, HOME },
+            { ORDER_SESSION, ORDERS },
             { REPORTS, HOME },
-            { PRODUCTS_REPORT, REPORTS }
+            { PRODUCTS_REPORT, REPORTS },            
         };
 
         internal FormNavigation(Form form)

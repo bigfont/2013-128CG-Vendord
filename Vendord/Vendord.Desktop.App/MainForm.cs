@@ -114,6 +114,10 @@
                     e.Value = db.Products[e.RowIndex].Name;
                     break;
 
+                case "UPC":
+                    e.Value = db.Products[e.RowIndex].UPC;
+                    break;
+
                 default:
                     e.Value = "Default";
                     break;

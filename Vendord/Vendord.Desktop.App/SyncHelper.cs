@@ -49,7 +49,13 @@
         {
             SqlDataReader reader;
             SqlCommand command;
+            VendordDatabase.Product product;
 
+            // delete all existing products
+            product = new VendordDatabase.Product();
+            product.DeleteAll();
+
+            // insert all products from IT Retail
             using (SqlConnection conn = new SqlConnection(Constants.IT_RETAIL_DATABASE_CONNECTION_STRING))
             {
                 conn.Open();
@@ -57,12 +63,12 @@
                 reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    VendordDatabase.Product product = new VendordDatabase.Product()
+                    product = new VendordDatabase.Product()
                     {
                         Name = Convert.ToString(reader["Name"]),
                         UPC = Convert.ToString(reader["UPC"])
                     };
-
+                    
                     product.InsertIntoDB();
                 }
             }
