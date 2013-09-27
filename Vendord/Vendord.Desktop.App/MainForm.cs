@@ -15,6 +15,8 @@
     {
         internal FormNavigation nav;
         internal FormStyles styles;
+        internal Panel mainNavigation;
+        internal Panel mainContent;
 
         private VendordDatabase _db;
         private VendordDatabase db
@@ -32,15 +34,24 @@
         public MainForm()
         {
             this.Load += handleFormControlEvents;
+
             nav = new FormNavigation(this);
             styles = new FormStyles(this);
+
+            mainNavigation = nav.CreateMainNavigationPanel(handleFormControlEvents);
+            mainContent = new Panel();
+
+            this.Controls.Add(mainNavigation);
+            this.Controls.Add(mainContent);
+
             styles.StyleForm();
+            styles.StyleNavigationPanel(mainNavigation);
+            styles.StyleMainContentPanel(mainContent);
         }
 
         private void unloadCurrentView()
         {
-            this.Controls.Clear();
-            nav.AddNavigationPanel(this, handleFormControlEvents);
+            this.mainContent.Controls.Clear();            
         }
 
         private void dataGridView_OrderSessionDetails_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
@@ -133,7 +144,7 @@
             dataGridView.Columns.Add("UPC", "UPC");
             dataGridView.RowCount = db.Products.Count(); // add RowCount after adding columns, lest we get an extra column
 
-            this.Controls.Add(dataGridView);
+            this.mainContent.Controls.Add(dataGridView);
 
             styles.StyleDataGridView(dataGridView);
 
@@ -143,8 +154,8 @@
         private void loadReportsView()
         {
             Button btnProductsReport;
-            btnProductsReport = FormHelper.CreateButton(FormNavigation.PRODUCTS_REPORT, "TODO", handleFormControlEvents);
-            this.Controls.Add(btnProductsReport);
+            btnProductsReport = FormNavigation.CreateButton("Products", FormNavigation.PRODUCTS_REPORT, "TODO", handleFormControlEvents);
+            this.mainContent.Controls.Add(btnProductsReport);
             styles.StyleLargeButtons(new Button[] { btnProductsReport });
             nav.CurrentView = FormNavigation.REPORTS;
         }
@@ -165,8 +176,8 @@
             dataGridView_orderSessionDetails.RowCount = db.OrderSession_Products.Count(r =>
                 r.OrderSessionID == db.OrderSessions.FirstOrDefault().ID);
 
-            this.Controls.Add(dataGridView_orderSessions);
-            this.Controls.Add(dataGridView_orderSessionDetails);
+            this.mainContent.Controls.Add(dataGridView_orderSessions);
+            this.mainContent.Controls.Add(dataGridView_orderSessionDetails);
 
             styles.StyleDataGridViews(new DataGridView[] { dataGridView_orderSessions, dataGridView_orderSessionDetails });
 
@@ -188,13 +199,13 @@
         private void loadOrdersView()
         {
             Button btnSyncHandheld;
-            Button btnCompleteOrder;            
+            Button btnCompleteOrder;
 
-            btnSyncHandheld = FormHelper.CreateButton(FormNavigation.SYNC_HANDHELD, FormNavigation.SYNC_HANDHELD_TOOLTIP, handleFormControlEvents);
-            btnCompleteOrder = FormHelper.CreateButton(FormNavigation.COMPLETE_ORDER, "TODO", handleFormControlEvents);
+            btnSyncHandheld = FormNavigation.CreateButton("Sync with IT Retail", FormNavigation.SYNC_HANDHELD, "TODO", handleFormControlEvents);
+            btnCompleteOrder = FormNavigation.CreateButton("Complete Order", FormNavigation.COMPLETE_ORDER, "TODO", handleFormControlEvents);
 
-            this.Controls.Add(btnSyncHandheld);
-            this.Controls.Add(btnCompleteOrder);
+            this.mainContent.Controls.Add(btnSyncHandheld);
+            this.mainContent.Controls.Add(btnCompleteOrder);
 
             styles.StyleLargeButtons(new Button[] { btnSyncHandheld, btnCompleteOrder });
 
@@ -206,11 +217,11 @@
             Button btnOrders;
             Button btnReports;
 
-            btnOrders = FormHelper.CreateButton(FormNavigation.ORDERS, "TODO", handleFormControlEvents);
-            btnReports = FormHelper.CreateButton(FormNavigation.REPORTS, "TODO", handleFormControlEvents);
+            btnOrders = FormNavigation.CreateButton("Orders", FormNavigation.ORDERS, "TODO", handleFormControlEvents);
+            btnReports = FormNavigation.CreateButton("Reports", FormNavigation.REPORTS, "TODO", handleFormControlEvents);
 
-            this.Controls.Add(btnOrders);
-            this.Controls.Add(btnReports);
+            this.mainContent.Controls.Add(btnOrders);
+            this.mainContent.Controls.Add(btnReports);
 
             styles.StyleLargeButtons(new Button[] { btnOrders, btnReports });
 
@@ -220,13 +231,13 @@
         private void handleFormControlEvents(object sender, EventArgs e)
         {
             // set last action
-            nav.ParseActionFromEventSender(sender);
+            nav.ParseActionFromSender(sender);
 
             // set the name of the form
             this.Text = String.Format("{0} {1}", this.Name, "");
 
             // act based on the aciton
-            switch (nav.LastAction)
+            switch (nav.Action)
             {
                 case FormNavigation.ORDERS:
                     unloadCurrentView();

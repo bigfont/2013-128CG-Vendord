@@ -7,30 +7,10 @@
     using System.Windows.Forms;
     internal static class FormHelper
     {
-        internal static Button CreateButton(string name, string caption, EventHandler eventHandler)
-        {
-            Button b;
-            
-            b = new Button();
-            b.Name = name;
-            b.Text = name;            
-            b.Click += eventHandler;
-
 
 #if FULL_FRAMEWORK
 
-            ToolTip t;
-            t = new ToolTip();
-            t.SetToolTip(b, caption);
-
-#endif
-
-            return b;
-        }
-
-#if FULL_FRAMEWORK
-
-        internal static DataGridView CreateReadOnlyDataGridView(string name, DataGridViewCellValueEventHandler cellValueEventHandler)
+        internal static DataGridView CreateReadOnlyDataGridView(string action, DataGridViewCellValueEventHandler cellValueEventHandler)
         {
             DataGridView dataGridView;
            
@@ -40,12 +20,13 @@
             dataGridView.AllowUserToAddRows = false;
             dataGridView.CellValueNeeded += new DataGridViewCellValueEventHandler(cellValueEventHandler);
 
-            dataGridView.Name = name;
+            dataGridView.Name = action;
+            dataGridView.Tag = action;
 
             return dataGridView;
         }
 
-#endif 
+#endif
 
     }
 }

@@ -13,36 +13,51 @@
     using System.IO;
     using Vendord.SmartDevice.Shared;
 
-    public partial class MainForm : MainFormStyles
+    public class MainForm : Form
     {
         internal FormNavigation nav;
         internal FormStyles styles;
+        internal Panel mainNavigation;
+        internal Panel mainContent;
 
         public MainForm()
         {
             this.Load += handleFormControlEvents;
+
             nav = new FormNavigation(this);
             styles = new FormStyles(this);
+
+            mainNavigation = nav.CreateMainNavigationPanel(handleFormControlEvents);
+            mainContent = new Panel();
+
+            this.Controls.Add(mainNavigation);
+            this.Controls.Add(mainContent);
+
             styles.StyleForm();
+            styles.StyleNavigationPanel(mainNavigation);
+            styles.StyleMainContentPanel(mainContent);
         }
 
         #region Views
 
         private void unloadCurrentView()
         {
-            this.Controls.Clear();
-            nav.AddNavigationPanel(this, handleFormControlEvents);
+            mainContent.Controls.Clear();
         }
 
         private void loadHomeView()
         {
             Button btnOrders;
+            Button btnWhatever;
 
-            btnOrders = FormHelper.CreateButton(FormNavigation.ORDERS, "TODO", handleFormControlEvents);
+            btnOrders = FormNavigation.CreateButton("Orders", FormNavigation.ORDERS, "TODO", handleFormControlEvents);
+            btnWhatever = new Button();
+            btnWhatever.Text = "Whatever";
 
-            this.Controls.Add(btnOrders);
+            this.mainContent.Controls.Add(btnOrders);
+            this.mainContent.Controls.Add(btnWhatever);
 
-            styles.StyleLargeButtons(new Button[] { btnOrders });
+            styles.StyleLargeButtons(new Button[] { btnOrders, btnWhatever });
 
             nav.CurrentView = FormNavigation.HOME;
         }
@@ -50,36 +65,57 @@
         private void loadOrdersView()
         {
             ListView listView;
-            ListViewItem listViewItem;
+            listView = FormNavigation.CreateListView("Order Sessions", FormNavigation.START_OR_CONTINUE_SCANNING, "TODO", handleFormControlEvents);
 
-            listView = new ListView();
-            listView.Activation = ItemActivation.OneClick;
-            listView.FullRowSelect = true;
-            listView.ItemActivate += handleFormControlEvents;
-
-            // TODO Get the list of orders from the data source
-            #region TODO
             ColumnHeader name = new ColumnHeader();
-            name.Text = "Name";
+            name.Text = "Order Session Name";
             listView.Columns.Add(name);
 
+            listView.Items.Add(new ListViewItem()
+            {
+                Text = "<Add New>",
+                Tag = FormNavigation.CREATE_ORDER
+            });
+
+            #region TODO Get the list of orders from the data source
             for (int i = 0; i < 15; ++i)
             {
-                listViewItem = new ListViewItem();
-                listViewItem.Text = "Foo" + i.ToString();
-                listView.Items.Add(listViewItem);
-                listView.Name = FormNavigation.ORDER_SESSION;
+                listView.Items.Add(new ListViewItem()
+                {
+                    Text = i.ToString(),
+                    Tag = FormNavigation.START_OR_CONTINUE_SCANNING
+                });
             }
             #endregion
 
-            this.Controls.Add(listView);
+            this.mainContent.Controls.Add(listView);
 
-            StyleListView(listView);
+            styles.StyleListView(listView);
         }
 
-        private void loadOrderSessionView()
+        private void loadOrderScanningView()
         {
             BarcodeAPI scanner = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
+        }
+
+        private void loadCreateNewOrderView()
+        {
+            TextBox textBox;
+            Label label;
+            Button button;
+
+            textBox = new TextBox();
+            label = new Label();
+            label.Text = "Order Name";
+            button = FormNavigation.CreateButton("Save", FormNavigation.START_OR_CONTINUE_SCANNING, "TODO", handleFormControlEvents);
+
+            this.mainContent.Controls.Add(textBox);
+            this.mainContent.Controls.Add(label);
+            this.mainContent.Controls.Add(button);
+
+            textBox.Focus();
+
+            styles.StyleSimpleForm(textBox, label, button);
         }
 
         private void loadScanResultView(ScanData scanData)
@@ -96,10 +132,10 @@
                 listView.Columns.Add(new ColumnHeader() { Text = "Product" });
                 listView.Items.Add(new ListViewItem(product.UPC));
                 listView.Items.Add(new ListViewItem(product.Name));
-                this.Controls.Add(listView);
-                StyleListView(listView);
+                this.mainContent.Controls.Add(listView);
+                styles.StyleListView(listView);
             }
-            nav.CurrentView = FormNavigation.SCAN_RESULT;
+            nav.CurrentView = FormNavigation.VIEW_AND_EDIT_SCAN_RESULT;
         }
 
         #endregion
@@ -109,22 +145,28 @@
         private void handleFormControlEvents(object sender, EventArgs e)
         {
             // set last action
-            nav.ParseActionFromEventSender(sender);
+            nav.ParseActionFromSender(sender);
 
             // set the name of the form
             this.Text = String.Format("{0} {1}", this.Name, "");
 
             // act based on the aciton
-            switch (nav.LastAction)
+            switch (nav.Action)
             {
                 case FormNavigation.ORDERS:
                     unloadCurrentView();
                     loadOrdersView();
                     break;
 
-                case FormNavigation.ORDER_SESSION:
+                case FormNavigation.CREATE_ORDER:
                     unloadCurrentView();
-                    loadOrderSessionView();
+                    loadCreateNewOrderView();
+                    break;
+
+                case FormNavigation.START_OR_CONTINUE_SCANNING:
+                    unloadCurrentView();
+                    saveOrderSession();
+                    loadOrderScanningView();
                     break;
 
                 case FormNavigation.CLOSE:
@@ -136,6 +178,11 @@
                     loadHomeView();
                     break;
             }
+        }
+
+        private void saveOrderSession()
+        {
+
         }
 
         private void barcodeScanner_OnScan(ScanDataCollection scanDataCollection)

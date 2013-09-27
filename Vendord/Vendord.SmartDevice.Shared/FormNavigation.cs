@@ -13,18 +13,19 @@
         internal const string BACK = "Back";
         // orders
         internal const string ORDERS = "Orders";
-        internal const string SYNC_HANDHELD = "Sync Handheld";
-        internal const string SYNC_HANDHELD_TOOLTIP = "Update the product list on the handheld with the product list from IT Retail Professional.";
+        internal const string SYNC_HANDHELD = "Sync Handheld";                
+        internal const string CREATE_ORDER = "Create Order Session";
+        internal const string START_OR_CONTINUE_SCANNING = "Order Session";
+        internal const string VIEW_AND_EDIT_SCAN_RESULT = "Scan Result";
         internal const string COMPLETE_ORDER = "Complete Order";
-        internal const string ORDER_SESSION = "Order Session";
-        internal const string SCAN_RESULT = "Scan Result";
         // reports
         internal const string REPORTS = "Reports";
         internal const string PRODUCTS_REPORT = "Products";
         // inventory
         internal const string INVENTORY = "Inventory";
         // state
-        internal string LastAction;
+        internal string Action;
+        internal string ActionSpecifier;
         internal string CurrentView; // external code assigns to this
         // dependencies
         private Form form;
@@ -33,19 +34,19 @@
         internal Dictionary<string, string> UpstreamViewDictionary = new Dictionary<string, string>()
         {
             { ORDERS, HOME },
-            { ORDER_SESSION, ORDERS },
+            { START_OR_CONTINUE_SCANNING, ORDERS },
             { REPORTS, HOME },
             { PRODUCTS_REPORT, REPORTS },            
         };
 
         internal FormNavigation(Form form)
         {
-            LastAction = null;
+            Action = null;
             this.form = form;
             styles = new FormStyles(form);
         }
 
-        internal void AddNavigationPanel(Form form, EventHandler handler)
+        internal Panel CreateMainNavigationPanel(EventHandler handler)
         {
             Panel panel;
             Button btnBack;
@@ -53,52 +54,92 @@
 
             panel = new Panel();
 
-            btnBack = FormHelper.CreateButton(FormNavigation.BACK, "TODO", handler);
-            btnClose = FormHelper.CreateButton(FormNavigation.CLOSE, "TODO", handler);
-
-            if (LastAction == null)
-            {
-                btnBack.Enabled = false;
-            }
+            btnBack = FormNavigation.CreateButton("Back", FormNavigation.BACK, "TODO", handler);
+            btnClose = FormNavigation.CreateButton("Close", FormNavigation.CLOSE, "TODO", handler);
 
             panel.Controls.Add(btnBack);
-            panel.Controls.Add(btnClose);
+            panel.Controls.Add(btnClose);            
 
-            form.Controls.Add(panel);
-
-            styles.StyleNavigationPanel(panel);
+            return panel;
         }
 
         internal string GetUpstreamView()
         {
             string upstreamView;
             upstreamView = null;
-            if (UpstreamViewDictionary.Keys.Contains<string>(this.LastAction))
+            if (UpstreamViewDictionary.Keys.Contains<string>(this.Action))
             {
-                upstreamView = UpstreamViewDictionary[this.LastAction];
+                upstreamView = UpstreamViewDictionary[this.Action];
             }
             return upstreamView;
         }
 
-        internal void ParseActionFromEventSender(object sender)
+        private void UpdateAction(string action, string actionSpecifier)
         {
-            string action;
-            Control control;
+            this.Action = action;
+            this.ActionSpecifier = actionSpecifier;
+        }
 
-            control = sender as Control;
+        internal void ParseActionFromSender(object sender)
+        {            
+            Type controlType;
+            string action;
+            string actionSpecifier;
 
             action = null;
-            if (control.Name != null)
-            {
-                action = control.Name.ToString();
+            actionSpecifier = null;
 
-                if (action.Equals(BACK))
+            if (sender != null)
+            {
+                controlType = sender.GetType();
+                if (controlType == typeof(System.Windows.Forms.Button) ||
+                    controlType == typeof(System.Windows.Forms.Form))
+                {                    
+                    action = (sender as Control).Tag.ToString();
+                    UpdateAction(action, actionSpecifier);   
+                }
+                else if (controlType == typeof(System.Windows.Forms.ListView))
+                {
+                    ListView listView;
+                    int selectedIndex;
+                    ListViewItem selectedItem;
+                    listView = sender as ListView;
+                    selectedIndex = listView.SelectedIndices[0];
+                    selectedItem = listView.Items[selectedIndex];
+                    action = selectedItem.Tag.ToString();
+                    actionSpecifier = selectedItem.Text;
+                    UpdateAction(action, actionSpecifier);
+                }
+
+                if (this.Action != null && this.Action.Equals(BACK))
                 {
                     action = GetUpstreamView();
+                    UpdateAction(action, actionSpecifier);
                 }
-            }
+            }            
+        }
 
-            this.LastAction = action;
+        internal static ListView CreateListView(string name, string action, string caption, EventHandler eventHander)
+        {
+            ListView listView;
+            listView = new ListView();
+            listView.Activation = ItemActivation.OneClick;
+            listView.FullRowSelect = true;
+            listView.ItemActivate += eventHander;
+            listView.Name = name;
+            listView.Tag = action;
+            return listView;
+        }
+
+        internal static Button CreateButton(string name, string action, string caption, EventHandler eventHandler)
+        {
+            Button b;
+            b = new Button();
+            b.Name = name;            
+            b.Text = name;
+            b.Tag = action;
+            b.Click += eventHandler;
+            return b;
         }
     }
 }

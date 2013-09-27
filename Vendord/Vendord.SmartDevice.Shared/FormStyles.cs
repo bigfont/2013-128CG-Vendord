@@ -7,110 +7,84 @@
     using System.Drawing;
     using System.Windows.Forms;
 
+    // Resources
+    // http://stackoverflow.com/questions/6466129/dock-anchor-and-fluid-layouts-in-windows-forms-applications
+    // http://msdn.microsoft.com/en-us/library/ms951306.aspx (Windows Forms Layout)
     internal class FormStyles
     {
         private const int DATA_GRID_VIEWS_PER_ROW = 2;
-        private const int NAVIGATION_PANELS_PER_ROW = 5;
+        private const int NAVIGATION_PANEL_HEIGHT_RATIO = 1/5;
         private const int BUTTONS_PER_ROW = 2;
         private const int BUTTONS_PER_COLUMN = 2;
-        private const int emSizeLarge = 20;
-        private const int emSizeMedium = 16;
-        private const int emSizeSmall = 12;
-        private Font fontSmall;
-        private Font fontDefault;
-        private Font fontLarge;
         private Form form;
 
-        public int NavigationPanelHeight
+        private int NavigationPanelHeight
         {
             get
             {
-                return form.ClientSize.Height / NAVIGATION_PANELS_PER_ROW;
+                return form.ClientSize.Height * NAVIGATION_PANEL_HEIGHT_RATIO;
             }
         }
 
         public FormStyles(Form form)
         {
-            this.form = form;
-            SetFonts();
-        }
-
-        internal void SetFonts()
-        {
-            FontFamily family;
-            FontStyle style;
-
-            family = FontFamily.GenericSansSerif;
-            style = FontStyle.Regular;
-
-            this.fontLarge = new Font(family, emSizeLarge, style);
-            this.fontDefault = new Font(family, emSizeMedium, style);
-            this.fontSmall = new Font(family, emSizeSmall, style);
+            this.form = form;            
         }
 
         internal void StyleForm()
         {
             form.WindowState = FormWindowState.Maximized;
-            form.Font = fontDefault;
         }
 
         internal void StyleNavigationPanel(Panel panel)
         {
-            Size panelSize;
-            Size buttonSize;
-
-            panelSize = new Size(form.ClientSize.Width, NavigationPanelHeight);
-            buttonSize = new Size(form.ClientSize.Width / BUTTONS_PER_ROW, NavigationPanelHeight);
-
-            panel.Size = panelSize;
-
-            int x = 0;
-            int y = 0;
+            panel.BringToFront();
+            panel.Dock = DockStyle.Top;                     
             foreach (Button b in panel.Controls)
             {
-                b.Size = buttonSize;
-                b.Font = fontDefault;
-                b.Location = new Point(x, y);
-                x += b.Width;
+                b.BringToFront();
+                b.Dock = DockStyle.Left;
+                b.Width = panel.ClientSize.Width / 2;                
             }
         }
 
-        internal void StyleLargeButtons(Button[] buttons)
+        internal void StyleMainContentPanel(Panel panel)
         {
-            int width;
-            int height;
-            int x;
-            int y;
-            System.Drawing.Size size;
-            Button b;
+            panel.BringToFront();
+            panel.Dock = DockStyle.Fill;
+        }
 
-            height = form.ClientSize.Height / BUTTONS_PER_COLUMN;
-            width = form.ClientSize.Width / BUTTONS_PER_ROW;
-            size = new System.Drawing.Size(width, height);
-
-            x = 0;
-            y = NavigationPanelHeight;
-
-            for (int i = 0; i < buttons.Length; ++i)
+        internal void StyleLargeButtons(Button[] buttons)
+        {            
+            foreach (Button b in buttons)
             {
-                // set the size
-                b = buttons[i];
+                b.BringToFront();
+                b.Dock = DockStyle.Top;
+                b.Height = b.Parent.ClientSize.Height / buttons.Count();                
+            }
+        }
 
-                b.Size = size;
-                b.Location = new System.Drawing.Point(x, y);
+        internal void StyleListView(ListView listView)
+        {
+            listView.Location = new System.Drawing.Point(0, 0);
+            listView.Size = form.ClientSize;
+            listView.View = View.Details; // displays column headers            
+            listView.FullRowSelect = true;
+            listView.HeaderStyle = ColumnHeaderStyle.None;
+            for (int i = 0; i < listView.Columns.Count; ++i)
+            {
+                listView.Columns[i].Width = listView.ClientSize.Width;
+            }
+        }
 
-                if (i == 0 || i % BUTTONS_PER_ROW == 0)
-                {
-                    x += width;
-                }
-                else
-                {
-                    x = 0;
-                    y += height;
-                }
-
-                // set the font
-                b.Font = fontLarge;
+        internal void StyleSimpleForm(TextBox textBox, Label label, Button button)
+        {
+            Control[] controls = new Control[] { label, textBox, button };
+            foreach (Control c in controls)
+            {
+                c.BringToFront();
+                c.Dock = DockStyle.Top;
+                c.Height = c.Parent.ClientSize.Height / controls.Count();
             }
         }
 
@@ -171,18 +145,5 @@
 
 #endif
 
-        internal void StyleListView(ListView listView)
-        {
-            listView.Location = new System.Drawing.Point(0, NavigationPanelHeight);
-            listView.Size = form.ClientSize;
-            listView.View = View.Details; // displays column headers
-            listView.Font = fontDefault;
-            listView.FullRowSelect = true;
-            listView.HeaderStyle = ColumnHeaderStyle.None;
-            for (int i = 0; i < listView.Columns.Count; ++i)
-            {
-                listView.Columns[i].Width = listView.ClientSize.Width;
-            }
-        }
     }
 }
