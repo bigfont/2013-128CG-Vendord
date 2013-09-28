@@ -36,6 +36,16 @@
             styles.StyleForm();
             styles.StyleNavigationPanel(mainNavigation);
             styles.StyleMainContentPanel(mainContent);
+        }        
+
+        private void saveOrderSession()
+        {
+            List<TextBox> descendents = FormHelper.GetControlByName<TextBox>(this, "txtOrderSessionName", true);
+            VendordDatabase.OrderSession orderSession = new VendordDatabase.OrderSession()
+            {
+                Name = descendents.FirstOrDefault<TextBox>().Text
+            };
+            orderSession.InsertIntoDB();
         }
 
         #region Views
@@ -77,16 +87,15 @@
                 Tag = FormNavigation.CREATE_ORDER
             });
 
-            #region TODO Get the list of orders from the data source
-            for (int i = 0; i < 15; ++i)
+            VendordDatabase db = new VendordDatabase();            
+            foreach(VendordDatabase.OrderSession order in db.OrderSessions)
             {
                 listView.Items.Add(new ListViewItem()
                 {
-                    Text = i.ToString(),
+                    Text = order.Name,
                     Tag = FormNavigation.START_OR_CONTINUE_SCANNING
                 });
-            }
-            #endregion
+            }            
 
             this.mainContent.Controls.Add(listView);
 
@@ -105,6 +114,7 @@
             Button button;
 
             textBox = new TextBox();
+            textBox.Name = "txtOrderSessionName";
             label = new Label();
             label.Text = "Order Name";
             button = FormNavigation.CreateButton("Save", FormNavigation.START_OR_CONTINUE_SCANNING, "TODO", handleFormControlEvents);
@@ -163,9 +173,9 @@
                     loadCreateNewOrderView();
                     break;
 
-                case FormNavigation.START_OR_CONTINUE_SCANNING:
-                    unloadCurrentView();
+                case FormNavigation.START_OR_CONTINUE_SCANNING:                    
                     saveOrderSession();
+                    unloadCurrentView();
                     loadOrderScanningView();
                     break;
 
@@ -178,11 +188,6 @@
                     loadHomeView();
                     break;
             }
-        }
-
-        private void saveOrderSession()
-        {
-
         }
 
         private void barcodeScanner_OnScan(ScanDataCollection scanDataCollection)

@@ -8,6 +8,24 @@
     internal static class FormHelper
     {
 
+        internal static List<T> GetControlByName<T>(Control control, string name, bool searchDescendants) where T : class
+        {
+            List<T> result;
+            result = new List<T>();
+            foreach (Control c in control.Controls)
+            {
+                if (c.Name == name && c.GetType() == typeof(T))
+                {
+                    result.Add(c as T);
+                }
+                if (searchDescendants)
+                {
+                    result.AddRange(GetControlByName<T>(c, name, true));
+                }
+            }
+            return result;
+        }
+
 #if FULL_FRAMEWORK
 
         internal static DataGridView CreateReadOnlyDataGridView(string action, DataGridViewCellValueEventHandler cellValueEventHandler)

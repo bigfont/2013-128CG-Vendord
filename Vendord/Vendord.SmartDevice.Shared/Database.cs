@@ -36,6 +36,16 @@
         {
             public int ID { get; set; }
             public string Name { get; set; }
+
+            public void InsertIntoDB()
+            {
+                string insertQuery;
+                insertQuery = String.Format(@"INSERT INTO OrderSession (Name) VALUES ('{0}');",
+                    this.Name);
+
+                VendordDatabase db = new VendordDatabase();
+                db.ExecuteNonQuery(insertQuery);
+            }
         }
 
         public class Product
