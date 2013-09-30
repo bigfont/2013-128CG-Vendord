@@ -40,11 +40,15 @@
             public void InsertIntoDB()
             {
                 string insertQuery;
+
                 insertQuery = String.Format(@"INSERT INTO OrderSession (Name) VALUES ('{0}');",
                     this.Name);
 
                 VendordDatabase db = new VendordDatabase();
                 db.ExecuteNonQuery(insertQuery);
+
+                // set the ID to the newly generated ID
+                this.ID = db.OrderSessions.FirstOrDefault<OrderSession>(os => os.Name.Equals(this.Name)).ID;
             }
         }
 
@@ -80,6 +84,18 @@
             public int OrderSessionID { get; set; }
             public int ProductID { get; set; }
             public int CasesToOrder { get; set; }
+
+            public void InsertIntoDB()
+            {
+                string insertQuery;
+                insertQuery = String.Format(@"INSERT INTO OrderSession_Product (OrderSessionID, ProductID, CasesToOrder) VALUES ('{0}', '{1}', {2});",
+                    this.OrderSessionID,
+                    this.ProductID,
+                    this.CasesToOrder);
+
+                VendordDatabase db = new VendordDatabase();
+                db.ExecuteNonQuery(insertQuery);
+            }
         }
 
         public List<OrderSession> OrderSessions

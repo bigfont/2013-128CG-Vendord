@@ -8,25 +8,27 @@
     public class FormNavigation
     {
         // main nav
-        internal const string HOME = "Home";
-        internal const string CLOSE = "Close";
-        internal const string BACK = "Back";
+        internal const string HOME = "HOME";
+        internal const string CLOSE = "CLOSE";
+        internal const string BACK = "BACK";
         // orders
         internal const string ORDERS = "Orders";
-        internal const string SYNC_HANDHELD = "Sync Handheld";                
-        internal const string CREATE_ORDER = "Create Order Session";
-        internal const string START_OR_CONTINUE_SCANNING = "Order Session";
-        internal const string VIEW_AND_EDIT_SCAN_RESULT = "Scan Result";
-        internal const string COMPLETE_ORDER = "Complete Order";
+        internal const string SYNC_HANDHELD = "SYNC_HANDHELD";
+        internal const string CREATE_NEW_ORDER_SESSION = "CREATE_NEW_ORDER_SESSION";
+        internal const string SAVE_AND_START_NEW_ORDER_SESSION = "SAVE_AND_START_NEW_ORDER_SESSION";
+        internal const string CONTINUE_EXISTING_ORDER_SESSION = "CONTINUE_EXISTING_ORDER_SESSION";
+        internal const string SAVE_AND_STOP_SCANNING = "SAVE_AND_STOP_SCANNING";
+        internal const string VIEW_AND_EDIT_SCAN_RESULT = "VIEW_AND_EDIT_SCAN_RESULT";
+        internal const string COMPLETE_ORDER = "COMPLETE_ORDER";
         // reports
         internal const string REPORTS = "Reports";
-        internal const string PRODUCTS_REPORT = "Products";
+        internal const string PRODUCTS_REPORT = "PRODUCTS_REPORT";
         // inventory
-        internal const string INVENTORY = "Inventory";
+        internal const string INVENTORY = "INVENTORY";
         // state
         internal string Action;
         internal string ActionSpecifier;
-        internal string CurrentView; // external code assigns to this
+        internal string CurrentView; // external code assigns to this, that's why VS underlines it in green
         // dependencies
         private Form form;
         private FormStyles styles;
@@ -34,7 +36,7 @@
         internal Dictionary<string, string> UpstreamViewDictionary = new Dictionary<string, string>()
         {
             { ORDERS, HOME },
-            { START_OR_CONTINUE_SCANNING, ORDERS },
+            { CONTINUE_EXISTING_ORDER_SESSION, ORDERS },
             { REPORTS, HOME },
             { PRODUCTS_REPORT, REPORTS },            
         };

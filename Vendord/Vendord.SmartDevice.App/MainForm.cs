@@ -20,6 +20,17 @@
         internal Panel mainNavigation;
         internal Panel mainContent;
 
+        // scanning state
+        private VendordDatabase.OrderSession currentOrderSession = new VendordDatabase.OrderSession();
+        private VendordDatabase.Product currentProduct = new VendordDatabase.Product();
+        private VendordDatabase.OrderSession_Product currentOrderSession_Product = new VendordDatabase.OrderSession_Product();
+
+        private static class UserInputControlNames
+        {
+            internal const string ORDER_SESSION_NAME = "txtOrderSessionName";
+            internal const string ORDER_ITEM_AMOUNT = "txtOrderItemAmount";
+        }
+
         public MainForm()
         {
             this.Load += handleFormControlEvents;
@@ -38,16 +49,54 @@
             styles.StyleMainContentPanel(mainContent);
         }
 
-        private void saveOrderNewSessionIfNecessary()
+        private void continueExistingOrderSession()
         {
-            List<TextBox> descendents = FormHelper.GetControlByName<TextBox>(this, "txtOrderSessionName", true);
-            if (descendents != null && descendents.Count > 0)
+            ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
+            int orderSessionID;
+            string orderSessionName;
+            if (listView != null)
             {
-                VendordDatabase.OrderSession orderSession = new VendordDatabase.OrderSession()
+                // current order session id
+                orderSessionID = Convert.ToInt32(listView.FocusedItem.SubItems[0].Text.ToString());
+                currentOrderSession.ID = orderSessionID;
+
+                // current order session name
+                orderSessionName = listView.FocusedItem.Text;
+                currentOrderSession.Name = orderSessionName;                
+            }
+        }
+
+        private void saveNewOrderSession()
+        {
+            // start new order session
+            List<TextBox> descendents;            
+
+            descendents = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.ORDER_SESSION_NAME, true);
+            if (descendents != null && descendents.Count > 0)
+            {                
+                VendordDatabase.OrderSession newOrderSession = new VendordDatabase.OrderSession()
                 {
                     Name = descendents.FirstOrDefault<TextBox>().Text
                 };
-                orderSession.InsertIntoDB();
+                newOrderSession.InsertIntoDB();
+                currentOrderSession.ID = newOrderSession.ID;
+                currentOrderSession.Name = newOrderSession.Name;
+            }
+        }
+
+        private void saveCurrentScanningInput()
+        {
+            List<TextBox> textBoxes = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.ORDER_ITEM_AMOUNT, true);
+
+            if (textBoxes != null && textBoxes.Count > 0)
+            {
+                VendordDatabase.OrderSession_Product orderSessionProduct = new VendordDatabase.OrderSession_Product()
+                {
+                    OrderSessionID = 0,
+                    ProductID = 0,
+                    CasesToOrder = Convert.ToInt16(textBoxes.FirstOrDefault<TextBox>().Text)
+                };
+                orderSessionProduct.InsertIntoDB();
             }
         }
 
@@ -78,7 +127,8 @@
         private void loadOrdersView()
         {
             ListView listView;
-            listView = FormNavigation.CreateListView("Order Sessions", FormNavigation.START_OR_CONTINUE_SCANNING, "TODO", handleFormControlEvents);
+            ListViewItem listViewItem;
+            listView = FormNavigation.CreateListView("Order Sessions", FormNavigation.CONTINUE_EXISTING_ORDER_SESSION, "TODO", handleFormControlEvents);
 
             ColumnHeader name = new ColumnHeader();
             name.Text = "Order Session Name";
@@ -87,17 +137,19 @@
             listView.Items.Add(new ListViewItem()
             {
                 Text = "<Add New>",
-                Tag = FormNavigation.CREATE_ORDER
+                Tag = FormNavigation.CREATE_NEW_ORDER_SESSION
             });
 
             VendordDatabase db = new VendordDatabase();
             foreach (VendordDatabase.OrderSession order in db.OrderSessions)
             {
-                listView.Items.Add(new ListViewItem()
-                {
-                    Text = order.Name,
-                    Tag = FormNavigation.START_OR_CONTINUE_SCANNING
-                });
+                // create item
+                listViewItem = new ListViewItem();
+                listViewItem.Text = order.Name;
+                listViewItem.Tag = FormNavigation.CONTINUE_EXISTING_ORDER_SESSION;
+                listViewItem.SubItems.Add(order.ID.ToString());
+                // add to list view
+                listView.Items.Add(listViewItem);
             }
 
             this.mainContent.Controls.Add(listView);
@@ -107,6 +159,11 @@
 
         private void loadOrderScanningView()
         {
+            Label label = new Label();
+            label.Text = "Order: " + currentOrderSession.Name + "\n\n Start scanning.";
+
+            mainContent.Controls.Add(label);
+
             BarcodeAPI scanner = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
         }
 
@@ -117,10 +174,10 @@
             Button button;
 
             textBox = new TextBox();
-            textBox.Name = "txtOrderSessionName";
+            textBox.Name = UserInputControlNames.ORDER_SESSION_NAME;
             label = new Label();
             label.Text = "Order Name";
-            button = FormNavigation.CreateButton("Save", FormNavigation.START_OR_CONTINUE_SCANNING, "TODO", handleFormControlEvents);
+            button = FormNavigation.CreateButton("Save", FormNavigation.SAVE_AND_START_NEW_ORDER_SESSION, "TODO", handleFormControlEvents);
 
             this.mainContent.Controls.Add(textBox);
             this.mainContent.Controls.Add(label);
@@ -134,7 +191,10 @@
         private void loadScanResultView(ScanData scanData)
         {
             ListView listView;
+            TextBox textBox;
+            Label label;
             VendordDatabase db;
+            Button button;
             VendordDatabase.Product product;
 
             db = new VendordDatabase();
@@ -145,8 +205,23 @@
                 listView.Columns.Add(new ColumnHeader() { Text = "Product" });
                 listView.Items.Add(new ListViewItem(product.UPC));
                 listView.Items.Add(new ListViewItem(product.Name));
+
+                textBox = new TextBox();
+                textBox.Name = UserInputControlNames.ORDER_ITEM_AMOUNT;
+                label = new Label();
+                label.Text = "Amount";
+                button = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", handleFormControlEvents);
+
                 this.mainContent.Controls.Add(listView);
+                this.mainContent.Controls.Add(label);
+                this.mainContent.Controls.Add(textBox);
+                this.mainContent.Controls.Add(button);
+
+                textBox.Focus();
+
                 styles.StyleListView(listView);
+
+                styles.StyleSimpleForm(textBox, label, button);
             }
             nav.CurrentView = FormNavigation.VIEW_AND_EDIT_SCAN_RESULT;
         }
@@ -171,13 +246,25 @@
                     loadOrdersView();
                     break;
 
-                case FormNavigation.CREATE_ORDER:
+                case FormNavigation.CREATE_NEW_ORDER_SESSION:
                     unloadCurrentView();
                     loadCreateNewOrderView();
                     break;
 
-                case FormNavigation.START_OR_CONTINUE_SCANNING:
-                    saveOrderNewSessionIfNecessary();
+                case FormNavigation.SAVE_AND_START_NEW_ORDER_SESSION:
+                    saveNewOrderSession();
+                    unloadCurrentView();
+                    loadOrderScanningView();
+                    break;
+
+                case FormNavigation.CONTINUE_EXISTING_ORDER_SESSION:
+                    continueExistingOrderSession();
+                    unloadCurrentView();
+                    loadOrderScanningView();
+                    break;
+
+                case FormNavigation.SAVE_AND_STOP_SCANNING:
+                    saveCurrentScanningInput();
                     unloadCurrentView();
                     loadOrderScanningView();
                     break;
