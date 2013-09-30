@@ -36,16 +36,19 @@
             styles.StyleForm();
             styles.StyleNavigationPanel(mainNavigation);
             styles.StyleMainContentPanel(mainContent);
-        }        
+        }
 
-        private void saveOrderSession()
+        private void saveOrderNewSessionIfNecessary()
         {
             List<TextBox> descendents = FormHelper.GetControlByName<TextBox>(this, "txtOrderSessionName", true);
-            VendordDatabase.OrderSession orderSession = new VendordDatabase.OrderSession()
+            if (descendents != null && descendents.Count > 0)
             {
-                Name = descendents.FirstOrDefault<TextBox>().Text
-            };
-            orderSession.InsertIntoDB();
+                VendordDatabase.OrderSession orderSession = new VendordDatabase.OrderSession()
+                {
+                    Name = descendents.FirstOrDefault<TextBox>().Text
+                };
+                orderSession.InsertIntoDB();
+            }
         }
 
         #region Views
@@ -87,15 +90,15 @@
                 Tag = FormNavigation.CREATE_ORDER
             });
 
-            VendordDatabase db = new VendordDatabase();            
-            foreach(VendordDatabase.OrderSession order in db.OrderSessions)
+            VendordDatabase db = new VendordDatabase();
+            foreach (VendordDatabase.OrderSession order in db.OrderSessions)
             {
                 listView.Items.Add(new ListViewItem()
                 {
                     Text = order.Name,
                     Tag = FormNavigation.START_OR_CONTINUE_SCANNING
                 });
-            }            
+            }
 
             this.mainContent.Controls.Add(listView);
 
@@ -173,8 +176,8 @@
                     loadCreateNewOrderView();
                     break;
 
-                case FormNavigation.START_OR_CONTINUE_SCANNING:                    
-                    saveOrderSession();
+                case FormNavigation.START_OR_CONTINUE_SCANNING:
+                    saveOrderNewSessionIfNecessary();
                     unloadCurrentView();
                     loadOrderScanningView();
                     break;
