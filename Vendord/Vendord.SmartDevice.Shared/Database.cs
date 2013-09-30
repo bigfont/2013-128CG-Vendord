@@ -37,7 +37,7 @@
             public int ID { get; set; }
             public string Name { get; set; }
 
-            public void InsertIntoDB()
+            public void UpsertIntoDB()
             {
                 string insertQuery;
 
@@ -58,7 +58,7 @@
             public string Name { get; set; }
             public string UPC { get; set; }
 
-            public void InsertIntoDB()
+            public void UpsertIntoDB()
             {
                 string insertQuery;
                 insertQuery = String.Format(@"INSERT INTO Product (Name, UPC) VALUES ('{0}', '{1}');",
@@ -85,16 +85,36 @@
             public int ProductID { get; set; }
             public int CasesToOrder { get; set; }
 
-            public void InsertIntoDB()
+            public void UpsertIntoDB()
             {
+                string selectQuery;
                 string insertQuery;
+                string updateQuery;
+
+                selectQuery = String.Format(@"SELECT COUNT(*) FROM OrderSession_Product WHERE OrderSessionID = {0} AND ProductID = {1};",
+                    this.OrderSessionID,
+                    this.ProductID);
+
                 insertQuery = String.Format(@"INSERT INTO OrderSession_Product (OrderSessionID, ProductID, CasesToOrder) VALUES ('{0}', '{1}', {2});",
                     this.OrderSessionID,
                     this.ProductID,
                     this.CasesToOrder);
 
+                updateQuery = String.Format(@"UPDATE OrderSession_Product SET CasesToOrder = {2} WHERE OrderSessionID = {0} AND ProductID = {1};",
+                    this.OrderSessionID,
+                    this.ProductID,
+                    this.CasesToOrder);
+
                 VendordDatabase db = new VendordDatabase();
-                db.ExecuteNonQuery(insertQuery);
+
+                if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
+                {
+                    db.ExecuteNonQuery(insertQuery);
+                }
+                else
+                {
+                    db.ExecuteNonQuery(updateQuery);
+                }
             }
         }
 

@@ -19,6 +19,7 @@
         internal FormStyles styles;
         internal Panel mainNavigation;
         internal Panel mainContent;
+        internal BarcodeAPI barcodeAPI;
 
         // scanning state
         private VendordDatabase.OrderSession currentOrderSession = new VendordDatabase.OrderSession();
@@ -52,33 +53,27 @@
         private void continueExistingOrderSession()
         {
             ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
-            int orderSessionID;
-            string orderSessionName;
+
             if (listView != null)
             {
-                // current order session id
-                orderSessionID = Convert.ToInt32(listView.FocusedItem.SubItems[0].Text.ToString());
-                currentOrderSession.ID = orderSessionID;
-
-                // current order session name
-                orderSessionName = listView.FocusedItem.Text;
-                currentOrderSession.Name = orderSessionName;                
+                currentOrderSession.ID = Convert.ToInt32(listView.FocusedItem.SubItems[0].Text.ToString());
+                currentOrderSession.Name = listView.FocusedItem.Text;
             }
         }
 
         private void saveNewOrderSession()
         {
             // start new order session
-            List<TextBox> descendents;            
+            List<TextBox> descendents;
 
             descendents = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.ORDER_SESSION_NAME, true);
             if (descendents != null && descendents.Count > 0)
-            {                
+            {
                 VendordDatabase.OrderSession newOrderSession = new VendordDatabase.OrderSession()
                 {
                     Name = descendents.FirstOrDefault<TextBox>().Text
                 };
-                newOrderSession.InsertIntoDB();
+                newOrderSession.UpsertIntoDB();
                 currentOrderSession.ID = newOrderSession.ID;
                 currentOrderSession.Name = newOrderSession.Name;
             }
@@ -92,11 +87,11 @@
             {
                 VendordDatabase.OrderSession_Product orderSessionProduct = new VendordDatabase.OrderSession_Product()
                 {
-                    OrderSessionID = 0,
-                    ProductID = 0,
+                    OrderSessionID = currentOrderSession.ID,
+                    ProductID = currentProduct.ID,
                     CasesToOrder = Convert.ToInt16(textBoxes.FirstOrDefault<TextBox>().Text)
                 };
-                orderSessionProduct.InsertIntoDB();
+                orderSessionProduct.UpsertIntoDB();
             }
         }
 
@@ -164,7 +159,8 @@
 
             mainContent.Controls.Add(label);
 
-            BarcodeAPI scanner = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
+            barcodeAPI = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
+            barcodeAPI.Scan();
         }
 
         private void loadCreateNewOrderView()
@@ -188,42 +184,59 @@
             styles.StyleSimpleForm(textBox, label, button);
         }
 
-        private void loadScanResultView(ScanData scanData)
+        private void loadOrderProductInputView(ScanData scanData)
         {
-            ListView listView;
-            TextBox textBox;
-            Label label;
+            // declare 
+            Label lblProductUPC, lblProductName, lblProductAmount;
+            TextBox txtProductAmount;
+            Button btnSave;
+            Control[] controls;
             VendordDatabase db;
-            Button button;
-            VendordDatabase.Product product;
 
+            // select scanned product from DB
             db = new VendordDatabase();
-            product = db.Products.First<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
-            if (product != null)
-            {
-                listView = new ListView();
-                listView.Columns.Add(new ColumnHeader() { Text = "Product" });
-                listView.Items.Add(new ListViewItem(product.UPC));
-                listView.Items.Add(new ListViewItem(product.Name));
+            currentProduct = db.Products.First<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
+            
+            if (currentProduct != null)
+            {               
+                // instantiate the controls that will display
+                lblProductUPC = new Label() { Text = currentProduct.UPC };
+                lblProductName = new Label() { Text = currentProduct.Name };
+                lblProductAmount = new Label() { Text = "Cases to Order:" };
+                txtProductAmount = new TextBox() { Name = UserInputControlNames.ORDER_ITEM_AMOUNT };
+                btnSave = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", handleFormControlEvents);                
+                
+                // add the controls to an array in the order that we want them to display
+                controls = new Control[] { 
+                
+                    lblProductUPC, 
+                    lblProductName, 
+                    lblProductAmount,
+                    txtProductAmount,
+                    btnSave
+                
+                };
 
-                textBox = new TextBox();
-                textBox.Name = UserInputControlNames.ORDER_ITEM_AMOUNT;
-                label = new Label();
-                label.Text = "Amount";
-                button = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", handleFormControlEvents);
+                // reverse that order
+                controls = controls.Reverse<Control>().ToArray<Control>();
 
-                this.mainContent.Controls.Add(listView);
-                this.mainContent.Controls.Add(label);
-                this.mainContent.Controls.Add(textBox);
-                this.mainContent.Controls.Add(button);
+                // add the controls to the mainDisplay
+                // whilst choosing a dock style
+                foreach (Control c in controls)
+                {
+                    c.Dock = DockStyle.Top;
+                    this.mainContent.Controls.Add(c);
+                }
 
-                textBox.Focus();
-
-                styles.StyleListView(listView);
-
-                styles.StyleSimpleForm(textBox, label, button);
+                // set focus to the text box
+                txtProductAmount.Focus();
             }
+
+            // set the current view
             nav.CurrentView = FormNavigation.VIEW_AND_EDIT_SCAN_RESULT;
+
+            // get ready for another scan
+            barcodeAPI.Scan();
         }
 
         #endregion
@@ -266,7 +279,7 @@
                 case FormNavigation.SAVE_AND_STOP_SCANNING:
                     saveCurrentScanningInput();
                     unloadCurrentView();
-                    loadOrderScanningView();
+                    loadHomeView();
                     break;
 
                 case FormNavigation.CLOSE:
@@ -288,8 +301,9 @@
             switch (scanData.Result)
             {
                 case Results.SUCCESS:
+                    saveCurrentScanningInput();
                     unloadCurrentView();
-                    loadScanResultView(scanData);
+                    loadOrderProductInputView(scanData);
                     break;
 
                 default:

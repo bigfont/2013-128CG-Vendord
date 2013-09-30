@@ -69,7 +69,7 @@
                         UPC = Convert.ToString(reader["UPC"])
                     };
                     
-                    product.InsertIntoDB();
+                    product.UpsertIntoDB();
                 }
             }
         }

@@ -71,6 +71,8 @@
             listView.View = View.Details; // displays column headers            
             listView.FullRowSelect = true;
             listView.HeaderStyle = ColumnHeaderStyle.None;
+            listView.BringToFront();
+            listView.Dock = DockStyle.Top;
             for (int i = 0; i < listView.Columns.Count; ++i)
             {
                 listView.Columns[i].Width = listView.ClientSize.Width;

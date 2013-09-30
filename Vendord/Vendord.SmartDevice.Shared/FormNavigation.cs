@@ -17,6 +17,7 @@
         internal const string CREATE_NEW_ORDER_SESSION = "CREATE_NEW_ORDER_SESSION";
         internal const string SAVE_AND_START_NEW_ORDER_SESSION = "SAVE_AND_START_NEW_ORDER_SESSION";
         internal const string CONTINUE_EXISTING_ORDER_SESSION = "CONTINUE_EXISTING_ORDER_SESSION";
+        internal const string INPUT_PRODUCT_AMOUNT = "INPUT_PRODUCT_AMOUNT";
         internal const string SAVE_AND_STOP_SCANNING = "SAVE_AND_STOP_SCANNING";
         internal const string VIEW_AND_EDIT_SCAN_RESULT = "VIEW_AND_EDIT_SCAN_RESULT";
         internal const string COMPLETE_ORDER = "COMPLETE_ORDER";

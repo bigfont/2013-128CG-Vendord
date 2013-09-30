@@ -18,8 +18,7 @@ namespace Vendord.SmartDevice.App
             ConfigureTheScannerAPI();                        
             EnableTheReader();
             RegisterForStatusEvent(statusHandler);
-            RegisterForScanEvent(scanHandler);
-            Scan();
+            RegisterForScanEvent(scanHandler);            
         }
 
         public void Scan()
