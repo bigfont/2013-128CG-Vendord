@@ -56,8 +56,8 @@
 
             if (listView != null)
             {
-                currentOrderSession.ID = Convert.ToInt32(listView.FocusedItem.SubItems[0].Text.ToString());
-                currentOrderSession.Name = listView.FocusedItem.Text;
+                currentOrderSession.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                currentOrderSession.Name = listView.FocusedItem.SubItems[0].Text;
             }
         }
 
@@ -154,10 +154,22 @@
 
         private void loadOrderScanningView()
         {
-            Label label = new Label();
-            label.Text = "Order: " + currentOrderSession.Name + "\n\n Start scanning.";
+            Label lblOrderSessionName;
+            Label lblInstructions;
+            Control[] controls;
 
-            mainContent.Controls.Add(label);
+            lblOrderSessionName = new Label() { Text = "Order Name:" + currentOrderSession.Name };
+            lblInstructions = new Label() { Text = "Start scanning." };
+
+            controls = new Control[] { 
+                lblOrderSessionName, 
+                lblInstructions }.Reverse<Control>().ToArray<Control>();
+
+            foreach (Control c in controls)
+            {
+                c.Dock = DockStyle.Top;
+                mainContent.Controls.Add(c);
+            }            
 
             barcodeAPI = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
             barcodeAPI.Scan();
@@ -196,16 +208,16 @@
             // select scanned product from DB
             db = new VendordDatabase();
             currentProduct = db.Products.First<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
-            
+
             if (currentProduct != null)
-            {               
+            {
                 // instantiate the controls that will display
                 lblProductUPC = new Label() { Text = currentProduct.UPC };
                 lblProductName = new Label() { Text = currentProduct.Name };
                 lblProductAmount = new Label() { Text = "Cases to Order:" };
                 txtProductAmount = new TextBox() { Name = UserInputControlNames.ORDER_ITEM_AMOUNT };
-                btnSave = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", handleFormControlEvents);                
-                
+                btnSave = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", handleFormControlEvents);
+
                 // add the controls to an array in the order that we want them to display
                 controls = new Control[] { 
                 
