@@ -68,7 +68,7 @@
                         Name = Convert.ToString(reader["Name"]),
                         UPC = Convert.ToString(reader["UPC"])
                     };
-                    
+
                     product.UpsertIntoDB();
                 }
             }
@@ -102,29 +102,33 @@
             SqlCeSyncProvider provider;
             DbSyncScopeDescription scopeDesc;
             DbSyncTableDescription tableDesc;
-            SqlCeSyncScopeProvisioning config;
+            SqlCeSyncScopeProvisioning provisioning;
+            SqlCeSyncScopeDeprovisioning deprovisioning;
 
             connString = VendordDatabase.GenerateSqlCeConnString(sqlCeDatabaseFullPath);
             connection = new SqlCeConnection(connString);
-            config = new SqlCeSyncScopeProvisioning(connection);
+            provisioning = new SqlCeSyncScopeProvisioning(connection);
+            deprovisioning = new SqlCeSyncScopeDeprovisioning(connection);
+
             provider = new SqlCeSyncProvider(scopeName, connection);
 
-            // TODO
-            // Figure out how to handle updating the scope.
-            // E.g. Drop and recreate?
-            if (!config.ScopeExists(scopeName))
+            // delete the scope if it exists
+            // this might be a performance hit
+            if (provisioning.ScopeExists(scopeName))
             {
-                scopeDesc = new DbSyncScopeDescription(scopeName);
-
-                foreach (string tableName in tableNames)
-                {
-                    tableDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForTable(tableName, connection);
-                    scopeDesc.Tables.Add(tableDesc);
-                }
-
-                config.PopulateFromScopeDescription(scopeDesc);                
-                config.Apply();                
+                deprovisioning.DeprovisionScope(scopeName);
             }
+
+            // create the scope
+            scopeDesc = new DbSyncScopeDescription(scopeName);
+            foreach (string tableName in tableNames)
+            {
+                tableDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForTable(tableName, connection);
+                scopeDesc.Tables.Add(tableDesc);
+            }
+
+            provisioning.PopulateFromScopeDescription(scopeDesc);
+            provisioning.Apply();
 
             return provider;
         }
@@ -135,20 +139,24 @@
             SqlCeSyncProvider localProvider;
             SqlCeSyncProvider copyProvider;
 
-            localProvider = CreateProviderToSyncCeDatabases(Constants.VendordDatabaseFullPath, scopeName, tableNames);
-            copyProvider = CreateProviderToSyncCeDatabases(sqlCeDatabaseFullPath, scopeName, tableNames);
+            if (File.Exists(sqlCeDatabaseFullPath) && File.Exists(Constants.VendordDatabaseFullPath))
+            {
+                // setup providers 
+                localProvider = CreateProviderToSyncCeDatabases(Constants.VendordDatabaseFullPath, scopeName, tableNames);
+                copyProvider = CreateProviderToSyncCeDatabases(sqlCeDatabaseFullPath, scopeName, tableNames);
 
-            // setup the orchestrator
-            orchestrator = new SyncOrchestrator();
-            orchestrator.LocalProvider = localProvider;
-            orchestrator.RemoteProvider = copyProvider;
-            orchestrator.Direction = SyncDirectionOrder.UploadAndDownload;
+                // setup the orchestrator
+                orchestrator = new SyncOrchestrator();
+                orchestrator.LocalProvider = localProvider;
+                orchestrator.RemoteProvider = copyProvider;
+                orchestrator.Direction = SyncDirectionOrder.UploadAndDownload;
 
-            orchestrator.StateChanged += new EventHandler<SyncOrchestratorStateChangedEventArgs>(orchestrator_StateChanged);
-            orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(orchestrator_SessionProgress);
+                orchestrator.StateChanged += new EventHandler<SyncOrchestratorStateChangedEventArgs>(orchestrator_StateChanged);
+                orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(orchestrator_SessionProgress);
 
-            // giver
-            orchestrator.Synchronize();
+                // giver
+                orchestrator.Synchronize();
+            }
         }
 
         private void orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)

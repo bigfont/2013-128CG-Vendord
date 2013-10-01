@@ -7,9 +7,9 @@
     using System.Drawing;
     using System.Linq;
     using System.Text;
-    using System.Windows.Forms;    
+    using System.Windows.Forms;
     using System.Collections.ObjectModel;
-    using Vendord.SmartDevice.Shared;    
+    using Vendord.SmartDevice.Shared;
 
     public class MainForm : Form
     {
@@ -18,6 +18,12 @@
         internal Panel mainNavigation;
         internal Panel mainContent;
 
+        // order viewing state
+        private VendordDatabase.OrderSession currentOrderSession = new VendordDatabase.OrderSession();
+        private VendordDatabase.Product currentProduct = new VendordDatabase.Product();
+        private VendordDatabase.OrderSession_Product currentOrderSession_Product = new VendordDatabase.OrderSession_Product();
+
+        // database
         private VendordDatabase _db;
         private VendordDatabase db
         {
@@ -51,60 +57,7 @@
 
         private void unloadCurrentView()
         {
-            this.mainContent.Controls.Clear();            
-        }
-
-        private void dataGridView_OrderSessionDetails_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
-        {
-            DataGridView dataGridView;
-            string columnHeaderName;
-
-            dataGridView = (sender as DataGridView);
-            columnHeaderName = dataGridView.Columns[e.ColumnIndex].Name;
-
-            switch (columnHeaderName)
-            {
-                case "OrderSessionID":
-                    e.Value = db.OrderSession_Products[e.RowIndex].OrderSessionID;
-                    break;
-
-                case "ProductID":
-                    e.Value = db.OrderSession_Products[e.RowIndex].ProductID;
-                    break;
-
-
-                case "CasesToOrder":
-                    e.Value = db.OrderSession_Products[e.RowIndex].CasesToOrder;
-                    break;
-
-                default:
-                    e.Value = "Default";
-                    break;
-            }
-        }
-
-        private void dataGridView_OrderSessions_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
-        {
-            DataGridView dataGridView;
-            string columnHeaderName;
-
-            dataGridView = (sender as DataGridView);
-            columnHeaderName = dataGridView.Columns[e.ColumnIndex].Name;
-
-            switch (columnHeaderName)
-            {
-                case "ID":
-                    e.Value = db.OrderSessions[e.RowIndex].ID;
-                    break;
-
-                case "Name":
-                    e.Value = db.OrderSessions[e.RowIndex].Name;
-                    break;
-
-                default:
-                    e.Value = "Default";
-                    break;
-            }
+            this.mainContent.Controls.Clear();
         }
 
         private void dataGridView_Products_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
@@ -160,8 +113,75 @@
             nav.CurrentView = FormNavigation.REPORTS;
         }
 
-        private void loadCompleteOrderView()
+        private ListView createOrderSessionDetailsListView()
         {
+            ListView listViewDetails;
+            ListViewItem listViewItem;
+            VendordDatabase.Product product;
+
+            listViewDetails = new ListView();
+            listViewDetails.View = View.Details;
+
+            // columns are required in View.Details
+            listViewDetails.Columns.Add("Product");
+            listViewDetails.Columns.Add("Cases to Order");
+
+            foreach (VendordDatabase.OrderSession_Product order_product in db.OrderSession_Products.Where(i => i.OrderSessionID == currentOrderSession.ID))
+            {
+                product = db.Products.First(p => p.ID == order_product.ProductID);
+
+                listViewItem = new ListViewItem(product.Name);                
+                listViewItem.SubItems.Add(order_product.CasesToOrder.ToString());
+                listViewDetails.Items.Add(listViewItem);
+            }
+            return listViewDetails;
+        }
+
+        private ListView createOrderSessionMasterListView()
+        {
+            ListView listViewMaster;            
+            ListViewItem listViewItem;
+            bool isFirst;
+
+            listViewMaster = new ListView();
+            listViewMaster.View = View.Details;
+
+            // columns are required in View.Details
+            listViewMaster.Columns.Add("Order Session");
+
+            isFirst = true;
+            foreach (VendordDatabase.OrderSession orderSession in db.OrderSessions)
+            {
+                listViewItem = new ListViewItem(orderSession.Name);
+                listViewMaster.Items.Add(listViewItem);
+                if (isFirst)
+                {
+                    listViewItem.Selected = true;
+                    currentOrderSession = orderSession;
+                }
+            }                        
+
+            return listViewMaster;
+        }
+
+        private void loadCompleteOrderView()
+        {            
+            ListView listViewMaster;
+            ListView listViewDetails;            
+            Control[] controls;
+
+            listViewMaster = createOrderSessionMasterListView();
+            listViewDetails = createOrderSessionDetailsListView();
+
+            controls = new Control[] { listViewMaster, listViewDetails }.Reverse().ToArray();
+            foreach (Control c in controls)
+            {
+                c.Dock = DockStyle.Top;
+                mainContent.Controls.Add(c);
+            }                                              
+
+            /*
+            
             DataGridView dataGridView_orderSessions;
             DataGridView dataGridView_orderSessionDetails;
 
@@ -180,6 +200,8 @@
             this.mainContent.Controls.Add(dataGridView_orderSessionDetails);
 
             styles.StyleDataGridViews(new DataGridView[] { dataGridView_orderSessions, dataGridView_orderSessionDetails });
+            
+            */
 
             nav.CurrentView = FormNavigation.COMPLETE_ORDER;
         }
