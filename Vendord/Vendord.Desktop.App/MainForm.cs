@@ -117,14 +117,24 @@
 
         #region Utilities
 
-        private void syncHandheld()
+        private void sync_pullProductsFromITRetailDatabase()
         {
             DatabaseSync sync;
             DatabaseSync.SyncResultMessage syncResult;
 
             sync = new DatabaseSync();
-            syncResult = sync.SyncDesktopAndITRetailDatabase();
-            syncResult = sync.SyncDesktopAndDeviceDatabases();
+            syncResult = sync.PullProductsFromITRetailDatabase();            
+
+            MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void sync_mergeDesktopAndDeviceDatabases()
+        {
+            DatabaseSync sync;
+            DatabaseSync.SyncResultMessage syncResult;
+
+            sync = new DatabaseSync();            
+            syncResult = sync.MergeDesktopAndDeviceDatabases();
 
             MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -396,13 +406,13 @@
         private void btnCompleteOrder_Click(object sender, EventArgs e)
         {
             unloadCurrentView();
-            syncHandheld();
+            sync_mergeDesktopAndDeviceDatabases();
             loadCompleteOrderView();
         }
 
         private void btnSyncHandheldWithITRetail_Click(object sender, EventArgs e)
         {
-            syncHandheld();
+            sync_pullProductsFromITRetailDatabase();
         }
 
         #endregion

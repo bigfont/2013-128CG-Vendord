@@ -53,7 +53,6 @@
 
             // delete all existing products
             product = new VendordDatabase.Product();
-            product.DeleteAll();
 
             // insert all products from IT Retail
             using (SqlConnection conn = new SqlConnection(Constants.IT_RETAIL_DATABASE_CONNECTION_STRING))
@@ -188,7 +187,7 @@
             }
         }
 
-        public SyncResultMessage SyncDesktopAndDeviceDatabases()
+        public SyncResultMessage MergeDesktopAndDeviceDatabases()
         {
             mgr = new RAPI.RemoteDeviceManager();
             RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
@@ -206,7 +205,7 @@
             }
         }
 
-        public SyncResultMessage SyncDesktopAndITRetailDatabase()
+        public SyncResultMessage PullProductsFromITRetailDatabase()
         {
             CopyProductsFromITRetailDBToDesktopDB();
             return SyncComplete;

@@ -32,6 +32,9 @@
             }
         }
 
+        // TODO Use System.Reflection to make a DRY upsert method for OrderSession, Product, and Order_Product
+        // TODO Change OrderSession to Order, because the former is misleading
+
         public class OrderSession
         {
             public int ID { get; set; }
@@ -55,27 +58,36 @@
         public class Product
         {
             public int ID { get; set; }
+            public string UPC { get; set; } // TODO Change UPC into an INTEGER
             public string Name { get; set; }
-            public string UPC { get; set; }
-
+            
             public void UpsertIntoDB()
             {
+                string selectQuery;
                 string insertQuery;
-                insertQuery = String.Format(@"INSERT INTO Product (Name, UPC) VALUES ('{0}', '{1}');",
-                    this.Name,
+                string updateQuery;
+
+                selectQuery = String.Format(@"SELECT COUNT(*) FROM Product WHERE UPC = '{0}'", 
                     this.UPC);
 
-                VendordDatabase db = new VendordDatabase();
-                db.ExecuteNonQuery(insertQuery);
-            }
+                insertQuery = String.Format(@"INSERT INTO Product (UPC, Name) VALUES ('{0}', '{1}')",
+                    this.UPC,
+                    this.Name);
 
-            public void DeleteAll()
-            {
-                string deleteQuery;
-                deleteQuery = String.Format(@"DELETE Product");
+                updateQuery = String.Format(@"UPDATE Product SET Name = '{1}' WHERE UPC = '{0}'",
+                    this.UPC,
+                    this.Name);
 
                 VendordDatabase db = new VendordDatabase();
-                db.ExecuteNonQuery(deleteQuery);
+
+                if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
+                {
+                    db.ExecuteNonQuery(insertQuery);
+                }
+                else
+                {
+                    db.ExecuteNonQuery(updateQuery);
+                }
             }
         }
 
@@ -267,14 +279,14 @@
             // 
             if (!TableExists("OrderSession"))
             {
-                createTableQuery = @"CREATE TABLE OrderSession (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100))";
+                createTableQuery = @"CREATE TABLE OrderSession (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100) UNIQUE)";
                 ExecuteNonQuery(createTableQuery);
             }
 
             //
             if (!TableExists("Product"))
             {
-                createTableQuery = @"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100))";
+                createTableQuery = @"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE)";
                 ExecuteNonQuery(createTableQuery);
             }
 
