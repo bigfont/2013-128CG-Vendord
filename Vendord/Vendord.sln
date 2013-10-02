@@ -19,6 +19,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharingAppDemo-CEProviderEn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDevice.Shared", "Vendord.SmartDevice.Shared\Vendord.SmartDevice.Shared.csproj", "{BC2F25DC-1748-4EB8-94D8-DBE12FEB7716}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UseCases", "UseCases", "{20B71F4A-BA7B-4B90-BE30-BC6EE2AA2155}"
+	ProjectSection(SolutionItems) = preProject
+		01-Done.txt = 01-Done.txt
+		02-Done.txt = 02-Done.txt
+		03.txt = 03.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

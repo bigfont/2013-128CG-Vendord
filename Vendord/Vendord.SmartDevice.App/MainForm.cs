@@ -16,7 +16,6 @@
     public class MainForm : Form
     {
         internal FormNavigation nav;
-        internal FormStyles styles;
         internal Panel mainNavigation;
         internal Panel mainContent;
         internal BarcodeAPI barcodeAPI;
@@ -28,26 +27,59 @@
 
         private static class UserInputControlNames
         {
-            internal const string ORDER_SESSION_NAME = "txtOrderSessionName";
-            internal const string ORDER_ITEM_AMOUNT = "txtOrderItemAmount";
+            internal const string TXT_ORDER_SESSION_NAME = "txtOrderSessionName";
+            internal const string TXT_ORDER_ITEM_AMOUNT = "txtOrderItemAmount";
         }
 
         public MainForm()
         {
+            Control[] controls;
+
             this.Load += handleFormControlEvents;
+            this.WindowState = FormWindowState.Maximized;
+            this.BackColor = Color.White;
 
+            //
+            // create main navigation panel
+            //
             nav = new FormNavigation(this);
-            styles = new FormStyles(this);
+            mainNavigation = new Panel();
+            mainNavigation.Dock = DockStyle.Top;
 
-            mainNavigation = nav.CreateMainNavigationPanel(handleFormControlEvents);
+            //
+            // create main content panel
+            //
             mainContent = new Panel();
+            mainContent.Dock = DockStyle.Fill;
 
-            this.Controls.Add(mainNavigation);
-            this.Controls.Add(mainContent);
+            //
+            // add to form - this triggers its layout event 
+            // "The Layout event occurs [on a control] when child controls add added or removed... "
+            // see also http://msdn.microsoft.com/en-us/library/system.windows.forms.control.layout%28v=vs.90%29.aspx
+            //            
+            controls = new Control[] { mainNavigation, mainContent }.Reverse().ToArray();
+            foreach (Control c in controls)
+            {
+                this.Controls.Add(c);
+            }
 
-            styles.StyleForm();
-            styles.StyleNavigationPanel(mainNavigation);
-            styles.StyleMainContentPanel(mainContent);
+            //
+            // Create Buttons
+            //
+            controls = new Control[] { 
+                FormNavigation.CreateButton("Back", FormNavigation.BACK, "TODO", Color.LightGreen, handleFormControlEvents),
+                FormNavigation.CreateButton("Close", FormNavigation.CLOSE, "TODO", Color.Firebrick, handleFormControlEvents)                
+            }.Reverse().ToArray();
+
+            //
+            // add to panel - this triggers its layout event
+            //
+            foreach (Control c in controls)
+            {
+                c.Dock = DockStyle.Left;
+                c.Width = mainNavigation.ClientSize.Width / controls.Length;
+                mainNavigation.Controls.Add(c);
+            }
         }
 
         private void continueExistingOrderSession()
@@ -66,7 +98,7 @@
             // start new order session
             List<TextBox> descendents;
 
-            descendents = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.ORDER_SESSION_NAME, true);
+            descendents = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.TXT_ORDER_SESSION_NAME, true);
             if (descendents != null && descendents.Count > 0)
             {
                 VendordDatabase.OrderSession newOrderSession = new VendordDatabase.OrderSession()
@@ -81,9 +113,9 @@
 
         private void saveCurrentScanningInput()
         {
-            List<TextBox> textBoxes = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.ORDER_ITEM_AMOUNT, true);
+            List<TextBox> textBoxes = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.TXT_ORDER_ITEM_AMOUNT, true);
 
-            if (textBoxes != null && textBoxes.Count > 0)
+            if (textBoxes != null && textBoxes.Count > 0 && textBoxes.First<TextBox>().Text.Length > 0)
             {
                 VendordDatabase.OrderSession_Product orderSessionProduct = new VendordDatabase.OrderSession_Product()
                 {
@@ -104,17 +136,21 @@
 
         private void loadHomeView()
         {
-            Button btnOrders;
-            Button btnWhatever;
+            Button btnOrders;            
+            Button[] buttons;
 
-            btnOrders = FormNavigation.CreateButton("Orders", FormNavigation.ORDERS, "TODO", handleFormControlEvents);
-            btnWhatever = new Button();
-            btnWhatever.Text = "Whatever";
+            btnOrders = FormNavigation.CreateButton("Orders", FormNavigation.ORDERS, "TODO", Color.LightGreen, handleFormControlEvents);                     
 
             this.mainContent.Controls.Add(btnOrders);
-            this.mainContent.Controls.Add(btnWhatever);
 
-            styles.StyleLargeButtons(new Button[] { btnOrders, btnWhatever });
+            // style
+            buttons = new Button[] { btnOrders };
+            foreach (Button b in buttons)
+            {
+                b.BringToFront();                
+                b.Dock = DockStyle.Top;
+                b.Height = b.Parent.ClientSize.Height / buttons.Count();
+            }
 
             nav.CurrentView = FormNavigation.HOME;
         }
@@ -123,33 +159,59 @@
         {
             ListView listView;
             ListViewItem listViewItem;
-            listView = FormNavigation.CreateListView("Order Sessions", FormNavigation.CONTINUE_EXISTING_ORDER_SESSION, "TODO", handleFormControlEvents);
+            VendordDatabase db;
 
-            ColumnHeader name = new ColumnHeader();
-            name.Text = "Order Session Name";
-            listView.Columns.Add(name);
-
+            //
+            // create list view
+            listView = FormNavigation.CreateListView("Order Sessions", null, null, handleFormControlEvents);
             listView.Items.Add(new ListViewItem()
             {
                 Text = "<Add New>",
-                Tag = FormNavigation.CREATE_NEW_ORDER_SESSION
+                Tag = FormNavigation.CREATE_NEW_ORDER_SESSION,
+                ImageIndex = 0
             });
 
-            VendordDatabase db = new VendordDatabase();
+            // 
+            // populate list view
+            //
+            db = new VendordDatabase();
             foreach (VendordDatabase.OrderSession order in db.OrderSessions)
             {
-                // create item
-                listViewItem = new ListViewItem();
-                listViewItem.Text = order.Name;
-                listViewItem.Tag = FormNavigation.CONTINUE_EXISTING_ORDER_SESSION;
+                // create item and add it to the list view
+                listViewItem = new ListViewItem()
+                {
+                    Text = order.Name,
+                    Tag = FormNavigation.CONTINUE_EXISTING_ORDER_SESSION,
+                    ImageIndex = 0
+                };
                 listViewItem.SubItems.Add(order.ID.ToString());
-                // add to list view
                 listView.Items.Add(listViewItem);
             }
 
-            this.mainContent.Controls.Add(listView);
+            // set the listview's layout     
+            listView.View = View.SmallIcon;
+            listView.Dock = DockStyle.Top;
 
-            styles.StyleListView(listView);
+            //
+            // add icon
+            //
+            ImageList imageList;
+            SolidBrush brush;
+            Bitmap myBitmap;
+            Graphics myBitmapGraphics;
+            Size mySize = new Size(30, 30);
+
+            brush = new SolidBrush(Color.LightGreen);
+            myBitmap = new Bitmap(mySize.Width, mySize.Height);
+            myBitmapGraphics = Graphics.FromImage(myBitmap);
+            myBitmapGraphics.FillRectangle(brush, 0, 0, mySize.Width, mySize.Height);
+            imageList = new ImageList();
+            imageList.Images.Add(myBitmap);
+            imageList.ImageSize = mySize;
+            listView.SmallImageList = imageList;            
+
+            // add the list view to the main content - this triggers its layout event
+            this.mainContent.Controls.Add(listView);
         }
 
         private void loadOrderScanningView()
@@ -169,7 +231,7 @@
             {
                 c.Dock = DockStyle.Top;
                 mainContent.Controls.Add(c);
-            }            
+            }
 
             barcodeAPI = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
             barcodeAPI.Scan();
@@ -182,10 +244,12 @@
             Button button;
 
             textBox = new TextBox();
-            textBox.Name = UserInputControlNames.ORDER_SESSION_NAME;
+            textBox.Name = UserInputControlNames.TXT_ORDER_SESSION_NAME;
+
             label = new Label();
             label.Text = "Order Name";
-            button = FormNavigation.CreateButton("Save", FormNavigation.SAVE_AND_START_NEW_ORDER_SESSION, "TODO", handleFormControlEvents);
+
+            button = FormNavigation.CreateButton("Save", FormNavigation.SAVE_AND_START_NEW_ORDER_SESSION, "TODO", Color.LightGreen, handleFormControlEvents);
 
             this.mainContent.Controls.Add(textBox);
             this.mainContent.Controls.Add(label);
@@ -193,7 +257,13 @@
 
             textBox.Focus();
 
-            styles.StyleSimpleForm(textBox, label, button);
+            Control[] controls = new Control[] { label, textBox, button };
+            foreach (Control c in controls)
+            {
+                c.BringToFront();
+                c.Dock = DockStyle.Top;
+                c.Height = c.Parent.ClientSize.Height / controls.Count();
+            }
         }
 
         private void loadOrderProductInputView(ScanData scanData)
@@ -215,8 +285,11 @@
                 lblProductUPC = new Label() { Text = currentProduct.UPC };
                 lblProductName = new Label() { Text = currentProduct.Name };
                 lblProductAmount = new Label() { Text = "Cases to Order:" };
-                txtProductAmount = new TextBox() { Name = UserInputControlNames.ORDER_ITEM_AMOUNT };
-                btnSave = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", handleFormControlEvents);
+
+                txtProductAmount = new TextBox() { Name = UserInputControlNames.TXT_ORDER_ITEM_AMOUNT };
+                txtProductAmount.KeyPress += new KeyPressEventHandler(digitOnlyTextBox_KeyPress);
+
+                btnSave = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", Color.LightGreen, handleFormControlEvents);
 
                 // add the controls to an array in the order that we want them to display
                 controls = new Control[] { 
@@ -227,10 +300,7 @@
                     txtProductAmount,
                     btnSave
                 
-                };
-
-                // reverse that order
-                controls = controls.Reverse<Control>().ToArray<Control>();
+                }.Reverse<Control>().ToArray<Control>();
 
                 // add the controls to the mainDisplay
                 // whilst choosing a dock style
@@ -254,6 +324,14 @@
         #endregion
 
         #region Event Handlers
+
+        private void digitOnlyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
 
         private void handleFormControlEvents(object sender, EventArgs e)
         {

@@ -61,7 +61,6 @@
     <Compile Include="Database.cs" />
     <Compile Include="FormHelpers.cs" />
     <Compile Include="FormNavigation.cs" />
-    <Compile Include="FormStyles.cs" />
     <Compile Include="IOHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

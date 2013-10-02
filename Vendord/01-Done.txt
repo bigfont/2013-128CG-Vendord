@@ -1,0 +1,23 @@
+
+Mobile.
+
+1. Create order session. 
+
+2. Scan item. 
+
+3. Input amount. 
+
+4. Repeat once. 
+
+5. Save order. 
+
+Desktop.
+
+6. Complete order. 
+
+7. View amounts. 
+
+8. That's all. 
+
+
+

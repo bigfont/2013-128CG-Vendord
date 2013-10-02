@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Text;
     using System.Windows.Forms;
+    using System.Drawing;
     public class FormNavigation
     {
         // main nav
@@ -17,6 +18,7 @@
         internal const string CREATE_NEW_ORDER_SESSION = "CREATE_NEW_ORDER_SESSION";
         internal const string SAVE_AND_START_NEW_ORDER_SESSION = "SAVE_AND_START_NEW_ORDER_SESSION";
         internal const string CONTINUE_EXISTING_ORDER_SESSION = "CONTINUE_EXISTING_ORDER_SESSION";
+        internal const string VIEW_ORDER_DETAILS = "VIEW_ORDER_DETAILS";
         internal const string INPUT_PRODUCT_AMOUNT = "INPUT_PRODUCT_AMOUNT";
         internal const string SAVE_AND_STOP_SCANNING = "SAVE_AND_STOP_SCANNING";
         internal const string VIEW_AND_EDIT_SCAN_RESULT = "VIEW_AND_EDIT_SCAN_RESULT";
@@ -31,8 +33,7 @@
         internal string ActionSpecifier;
         internal string CurrentView; // external code assigns to this, that's why VS underlines it in green
         // dependencies
-        private Form form;
-        private FormStyles styles;
+        private Form form;        
 
         internal Dictionary<string, string> UpstreamViewDictionary = new Dictionary<string, string>()
         {
@@ -45,8 +46,7 @@
         internal FormNavigation(Form form)
         {
             Action = null;
-            this.form = form;
-            styles = new FormStyles(form);
+            this.form = form;            
         }
 
         internal Panel CreateMainNavigationPanel(EventHandler handler)
@@ -57,11 +57,11 @@
 
             panel = new Panel();
 
-            btnBack = FormNavigation.CreateButton("Back", FormNavigation.BACK, "TODO", handler);
-            btnClose = FormNavigation.CreateButton("Close", FormNavigation.CLOSE, "TODO", handler);
+            btnBack = FormNavigation.CreateButton("Back", FormNavigation.BACK, "TODO", Color.LightGreen, handler);
+            btnClose = FormNavigation.CreateButton("Close", FormNavigation.CLOSE, "TODO", Color.Firebrick, handler);
 
             panel.Controls.Add(btnBack);
-            panel.Controls.Add(btnClose);            
+            panel.Controls.Add(btnClose);
 
             return panel;
         }
@@ -84,7 +84,7 @@
         }
 
         internal void ParseActionFromSender(object sender)
-        {            
+        {
             Type controlType;
             string action;
             string actionSpecifier;
@@ -97,20 +97,28 @@
                 controlType = sender.GetType();
                 if (controlType == typeof(System.Windows.Forms.Button) ||
                     controlType == typeof(System.Windows.Forms.Form))
-                {                    
+                {
                     action = (sender as Control).Tag.ToString();
-                    UpdateAction(action, actionSpecifier);   
+                    UpdateAction(action, actionSpecifier);
                 }
                 else if (controlType == typeof(System.Windows.Forms.ListView))
-                {
+                {                    
                     ListView listView;
                     int selectedIndex;
                     ListViewItem selectedItem;
+
                     listView = sender as ListView;
                     selectedIndex = listView.SelectedIndices[0];
-                    selectedItem = listView.Items[selectedIndex];
-                    action = selectedItem.Tag.ToString();
-                    actionSpecifier = selectedItem.Text;
+                    selectedItem = listView.Items[selectedIndex];                                        
+                    if (listView.Tag == null)
+                    {
+                        action = selectedItem.Tag.ToString();
+                        actionSpecifier = selectedItem.Text;
+                    }
+                    else
+                    {
+                        action = listView.Tag.ToString();
+                    }
                     UpdateAction(action, actionSpecifier);
                 }
 
@@ -119,7 +127,7 @@
                     action = GetUpstreamView();
                     UpdateAction(action, actionSpecifier);
                 }
-            }            
+            }
         }
 
         internal static ListView CreateListView(string name, string action, string caption, EventHandler eventHander)
@@ -128,20 +136,33 @@
             listView = new ListView();
             listView.Activation = ItemActivation.OneClick;
             listView.FullRowSelect = true;
-            listView.ItemActivate += eventHander;
             listView.Name = name;
-            listView.Tag = action;
+
+            if (eventHander != null)
+            {
+                listView.ItemActivate += eventHander;
+            }
+            if (caption != null)
+            {
+                // set caption
+            }
+            if (action != null)
+            {
+                listView.Tag = action;
+            }
+
             return listView;
         }
 
-        internal static Button CreateButton(string name, string action, string caption, EventHandler eventHandler)
+        internal static Button CreateButton(string name, string action, string caption, Color backColor, EventHandler eventHandler)
         {
             Button b;
             b = new Button();
-            b.Name = name;            
+            b.Name = name;
             b.Text = name;
             b.Tag = action;
             b.Click += eventHandler;
+            b.BackColor = backColor;
             return b;
         }
     }

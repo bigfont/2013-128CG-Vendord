@@ -13,15 +13,15 @@
 
     public class MainForm : Form
     {
-        internal FormNavigation nav;
-        internal FormStyles styles;
+        internal FormNavigation nav;        
         internal Panel mainNavigation;
         internal Panel mainContent;
 
-        // order viewing state
-        private VendordDatabase.OrderSession currentOrderSession = new VendordDatabase.OrderSession();
-        private VendordDatabase.Product currentProduct = new VendordDatabase.Product();
-        private VendordDatabase.OrderSession_Product currentOrderSession_Product = new VendordDatabase.OrderSession_Product();
+        private static class UserInputControlNames
+        {
+            internal const string LV_MASTER = "lvMaster";
+            internal const string LV_DETAILS = "lvDetails";
+        }
 
         // database
         private VendordDatabase _db;
@@ -35,14 +35,13 @@
                 }
                 return _db;
             }
-        }
+        }        
 
         public MainForm()
         {
             this.Load += handleFormControlEvents;
 
-            nav = new FormNavigation(this);
-            styles = new FormStyles(this);
+            nav = new FormNavigation(this);            
 
             mainNavigation = nav.CreateMainNavigationPanel(handleFormControlEvents);
             mainContent = new Panel();
@@ -50,135 +49,164 @@
             this.Controls.Add(mainNavigation);
             this.Controls.Add(mainContent);
 
-            styles.StyleForm();
-            styles.StyleNavigationPanel(mainNavigation);
-            styles.StyleMainContentPanel(mainContent);
-        }
+            this.WindowState = FormWindowState.Maximized;
 
-        private void unloadCurrentView()
-        {
-            this.mainContent.Controls.Clear();
-        }
-
-        private void dataGridView_Products_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
-        {
-            DataGridView dataGridView;
-            string columnHeaderName;
-
-            dataGridView = (sender as DataGridView);
-            columnHeaderName = dataGridView.Columns[e.ColumnIndex].Name;
-
-            switch (columnHeaderName)
+            mainNavigation.BringToFront();
+            mainNavigation.Dock = DockStyle.Top;
+            foreach (Button b in mainNavigation.Controls)
             {
-                case "ID":
-                    e.Value = db.Products[e.RowIndex].ID;
-                    break;
+                b.BringToFront();
+                b.Dock = DockStyle.Left;
+                b.Width = mainNavigation.ClientSize.Width / 2;
+            }
 
-                case "Name":
-                    e.Value = db.Products[e.RowIndex].Name;
-                    break;
+            mainContent.BringToFront();
+            mainContent.Dock = DockStyle.Fill;
+        }
 
-                case "UPC":
-                    e.Value = db.Products[e.RowIndex].UPC;
-                    break;
+        #region Utilities
 
-                default:
-                    e.Value = "Default";
-                    break;
+        private void NotImplemented()
+        {
+            MessageBox.Show("Coming soon", "This feature is not complete.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void syncHandheld()
+        {
+            DatabaseSync sync;
+            DatabaseSync.SyncResultMessage syncResult;
+
+            sync = new DatabaseSync();
+            syncResult = sync.SyncDesktopAndITRetailDatabase();
+            syncResult = sync.SyncDesktopAndDeviceDatabases();
+
+            MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void addDataToListViewDetails(ListView listViewDetails, int orderSessionID)
+        {
+            ListViewItem listViewItem;
+            VendordDatabase.Product product;
+            listViewDetails.Items.Clear();
+            foreach (VendordDatabase.OrderSession_Product order_product in db.OrderSession_Products.Where(i => i.OrderSessionID == orderSessionID))
+            {
+                product = db.Products.First(p => p.ID == order_product.ProductID);
+
+                listViewItem = new ListViewItem(product.Name);
+                listViewItem.SubItems.Add(order_product.CasesToOrder.ToString());
+                listViewDetails.Items.Add(listViewItem);
             }
         }
 
-        private void loadProductsReportView()
-        {
-            DataGridView dataGridView = FormHelper.CreateReadOnlyDataGridView(null, dataGridView_Products_CellValueNeeded);
-
-            dataGridView.Columns.Add("ID", "ID");
-            dataGridView.Columns.Add("Name", "Name");
-            dataGridView.Columns.Add("UPC", "UPC");
-            dataGridView.RowCount = db.Products.Count(); // add RowCount after adding columns, lest we get an extra column
-
-            this.mainContent.Controls.Add(dataGridView);
-
-            styles.StyleDataGridView(dataGridView);
-
-            nav.CurrentView = FormNavigation.PRODUCTS_REPORT;
-        }
-
-        private void loadReportsView()
-        {
-            Button btnProductsReport;
-            btnProductsReport = FormNavigation.CreateButton("Products", FormNavigation.PRODUCTS_REPORT, "TODO", handleFormControlEvents);
-            this.mainContent.Controls.Add(btnProductsReport);
-            styles.StyleLargeButtons(new Button[] { btnProductsReport });
-            nav.CurrentView = FormNavigation.REPORTS;
-        }
-
-        private ListView createOrderSessionDetailsListView()
+        private ListView createOrderSessionDetailsListView(int orderSessionID)
         {
             ListView listViewDetails;
-            ListViewItem listViewItem;
-            VendordDatabase.Product product;
 
-            listViewDetails = new ListView();
+            listViewDetails = FormNavigation.CreateListView(UserInputControlNames.LV_DETAILS, null, null, null);
             listViewDetails.View = View.Details;
 
             // columns are required in View.Details
             listViewDetails.Columns.Add("Product");
             listViewDetails.Columns.Add("Cases to Order");
 
-            foreach (VendordDatabase.OrderSession_Product order_product in db.OrderSession_Products.Where(i => i.OrderSessionID == currentOrderSession.ID))
-            {
-                product = db.Products.First(p => p.ID == order_product.ProductID);
-
-                listViewItem = new ListViewItem(product.Name);                
-                listViewItem.SubItems.Add(order_product.CasesToOrder.ToString());
-                listViewDetails.Items.Add(listViewItem);
-            }
+            // return 
             return listViewDetails;
+        }
+
+        private void addDataToListViewMaster(ListView listViewMaster)
+        {
+            ListViewItem listViewItem;
+            // add list view items            
+            foreach (VendordDatabase.OrderSession orderSession in db.OrderSessions)
+            {
+                listViewItem = new ListViewItem(orderSession.Name);
+                listViewItem.SubItems.Add(orderSession.ID.ToString());
+                listViewMaster.Items.Add(listViewItem);
+            }
         }
 
         private ListView createOrderSessionMasterListView()
         {
-            ListView listViewMaster;            
-            ListViewItem listViewItem;
-            bool isFirst;
+            ListView listViewMaster;
 
-            listViewMaster = new ListView();
-            listViewMaster.View = View.Details;
+            listViewMaster = FormNavigation.CreateListView(UserInputControlNames.LV_MASTER, FormNavigation.VIEW_ORDER_DETAILS, "TODO", handleFormControlEvents);
+            listViewMaster.View = View.LargeIcon; // nice to have - tweak this
 
             // columns are required in View.Details
             listViewMaster.Columns.Add("Order Session");
 
-            isFirst = true;
-            foreach (VendordDatabase.OrderSession orderSession in db.OrderSessions)
-            {
-                listViewItem = new ListViewItem(orderSession.Name);
-                listViewMaster.Items.Add(listViewItem);
-                if (isFirst)
-                {
-                    listViewItem.Selected = true;
-                    currentOrderSession = orderSession;
-                }
-            }                        
+            // add data
+            addDataToListViewMaster(listViewMaster);
 
+            // return
             return listViewMaster;
         }
 
-        private void loadCompleteOrderView()
-        {            
+        #endregion
+
+        #region Views
+
+        private void unloadCurrentView()
+        {
+            this.mainContent.Controls.Clear();
+        }
+
+        private void loadProductsReportView()
+        {
+            NotImplemented();
+        }
+
+        private void loadReportsView()
+        {
+            Button btnProductsReport;
+            Button[] buttons; 
+
+            btnProductsReport = FormNavigation.CreateButton("Products", FormNavigation.PRODUCTS_REPORT, "TODO", Color.LightGreen, handleFormControlEvents);
+            this.mainContent.Controls.Add(btnProductsReport);
+            
+            
+            buttons = new Button[] { btnProductsReport };
+            foreach (Button b in buttons)
+            {
+                b.BringToFront();
+                b.Dock = DockStyle.Top;
+                b.Height = b.Parent.ClientSize.Height / buttons.Count();
+            }
+
+            nav.CurrentView = FormNavigation.REPORTS;
+        }
+
+        private void updateCompleteOrderView()
+        {
             ListView listViewMaster;
-            ListView listViewDetails;            
+            ListView listViewDetails;
+            int orderSessionID;
+
+            listViewMaster = FormHelper.GetControlsByName<ListView>(this, UserInputControlNames.LV_MASTER, true).First<ListView>();
+            orderSessionID = Convert.ToInt32(listViewMaster.SelectedItems[0].SubItems[1].Text);
+
+            listViewDetails = FormHelper.GetControlsByName<ListView>(this, UserInputControlNames.LV_DETAILS, true).First<ListView>();
+            addDataToListViewDetails(listViewDetails, orderSessionID);
+        }
+
+        private void loadCompleteOrderView()
+        {
+            ListView listViewMaster;
+            ListView listViewDetails;
+            int orderSessionID;
             Control[] controls;
 
             listViewMaster = createOrderSessionMasterListView();
-            listViewDetails = createOrderSessionDetailsListView();
+            orderSessionID = Convert.ToInt32(listViewMaster.Items[0].SubItems[1].Text);
+            listViewDetails = createOrderSessionDetailsListView(orderSessionID);
+            addDataToListViewDetails(listViewDetails, orderSessionID);
 
             controls = new Control[] { listViewMaster, listViewDetails }.Reverse().ToArray();
             foreach (Control c in controls)
             {
                 c.Dock = DockStyle.Top;
                 mainContent.Controls.Add(c);
-            }                                              
+            }
 
             /*
             
@@ -206,30 +234,25 @@
             nav.CurrentView = FormNavigation.COMPLETE_ORDER;
         }
 
-        private void syncHandheld()
-        {
-            DatabaseSync sync;
-            DatabaseSync.SyncResultMessage syncResult;
-
-            sync = new DatabaseSync();
-            syncResult = sync.SyncDesktopAndITRetailDatabase();
-            syncResult = sync.SyncDesktopAndDeviceDatabases();
-
-            MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        }
-
         private void loadOrdersView()
         {
             Button btnSyncHandheld;
             Button btnCompleteOrder;
+            Button[] buttons;
 
-            btnSyncHandheld = FormNavigation.CreateButton("Sync with IT Retail", FormNavigation.SYNC_HANDHELD, "TODO", handleFormControlEvents);
-            btnCompleteOrder = FormNavigation.CreateButton("Complete Order", FormNavigation.COMPLETE_ORDER, "TODO", handleFormControlEvents);
+            btnSyncHandheld = FormNavigation.CreateButton("Sync with IT Retail", FormNavigation.SYNC_HANDHELD, "TODO", Color.LightGreen, handleFormControlEvents);
+            btnCompleteOrder = FormNavigation.CreateButton("Complete Order", FormNavigation.COMPLETE_ORDER, "TODO", Color.LightGreen, handleFormControlEvents);
 
             this.mainContent.Controls.Add(btnSyncHandheld);
             this.mainContent.Controls.Add(btnCompleteOrder);
 
-            styles.StyleLargeButtons(new Button[] { btnSyncHandheld, btnCompleteOrder });
+            buttons = new Button[] { btnSyncHandheld, btnCompleteOrder };
+            foreach (Button b in buttons)
+            {
+                b.BringToFront();
+                b.Dock = DockStyle.Top;
+                b.Height = b.Parent.ClientSize.Height / buttons.Count();
+            }
 
             nav.CurrentView = FormNavigation.ORDERS;
         }
@@ -238,17 +261,28 @@
         {
             Button btnOrders;
             Button btnReports;
+            Button[] buttons;
 
-            btnOrders = FormNavigation.CreateButton("Orders", FormNavigation.ORDERS, "TODO", handleFormControlEvents);
-            btnReports = FormNavigation.CreateButton("Reports", FormNavigation.REPORTS, "TODO", handleFormControlEvents);
+            btnOrders = FormNavigation.CreateButton("Orders", FormNavigation.ORDERS, "TODO", Color.LightGreen, handleFormControlEvents);
+            btnReports = FormNavigation.CreateButton("Reports", FormNavigation.REPORTS, "TODO", Color.LightGreen, handleFormControlEvents);
 
             this.mainContent.Controls.Add(btnOrders);
             this.mainContent.Controls.Add(btnReports);
 
-            styles.StyleLargeButtons(new Button[] { btnOrders, btnReports });
+            buttons = new Button[] { btnOrders, btnReports };
+            foreach (Button b in buttons)
+            {
+                b.BringToFront();
+                b.Dock = DockStyle.Top;
+                b.Height = b.Parent.ClientSize.Height / buttons.Count();
+            }
 
             nav.CurrentView = FormNavigation.HOME;
         }
+
+        #endregion
+
+        #region Events
 
         private void handleFormControlEvents(object sender, EventArgs e)
         {
@@ -276,6 +310,10 @@
                     loadCompleteOrderView();
                     break;
 
+                case FormNavigation.VIEW_ORDER_DETAILS:
+                    updateCompleteOrderView();
+                    break;
+
                 case FormNavigation.REPORTS:
                     unloadCurrentView();
                     loadReportsView();
@@ -296,5 +334,7 @@
                     break;
             }
         }
+
+        #endregion
     }
 }

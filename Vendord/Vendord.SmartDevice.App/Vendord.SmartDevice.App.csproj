@@ -74,9 +74,6 @@
     <Compile Include="..\Vendord.SmartDevice.Shared\FormNavigation.cs">
       <Link>LinkedFiles\FormNavigation.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\FormStyles.cs">
-      <Link>LinkedFiles\FormStyles.cs</Link>
-    </Compile>
     <Compile Include="..\Vendord.SmartDevice.Shared\IOHelpers.cs">
       <Link>LinkedFiles\IOHelpers.cs</Link>
     </Compile>

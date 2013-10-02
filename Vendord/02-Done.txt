@@ -1,0 +1,8 @@
+
+Desktop.
+
+1. Complete order. Done.
+
+2. Switch between orders. Done.
+
+3. View products for each order. Done.
