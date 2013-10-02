@@ -60,7 +60,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="FormHelpers.cs" />
-    <Compile Include="FormNavigation.cs" />
     <Compile Include="IOHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

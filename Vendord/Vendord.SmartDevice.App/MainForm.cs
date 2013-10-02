@@ -14,18 +14,25 @@
     using Vendord.SmartDevice.Shared;
 
     public class MainForm : Form
-    {
-        internal FormNavigation nav;
-        internal Panel mainNavigation;
-        internal Panel mainContent;
-        internal BarcodeAPI barcodeAPI;
+    {        
+        private Panel mainNavigation;
+        private Panel mainContent;
 
-        // scanning state
-        private VendordDatabase.OrderSession currentOrderSession = new VendordDatabase.OrderSession();
-        private VendordDatabase.Product currentProduct = new VendordDatabase.Product();
-        private VendordDatabase.OrderSession_Product currentOrderSession_Product = new VendordDatabase.OrderSession_Product();
+        private Button btnBack;
+        private delegate void Back();
+        private Back BackDelegate;
+        private delegate void Save();
+        private Save SaveDelegate;
 
-        private static class UserInputControlNames
+        // scanning specific fields
+        private BarcodeAPI barcodeAPI;
+        private VendordDatabase.OrderSession currentOrderSession 
+            = new VendordDatabase.OrderSession();
+        private VendordDatabase.Product currentScannedProduct 
+            = new VendordDatabase.Product();
+
+        // user inputs control names
+        private static class UserInputs
         {
             internal const string TXT_ORDER_SESSION_NAME = "txtOrderSessionName";
             internal const string TXT_ORDER_ITEM_AMOUNT = "txtOrderItemAmount";
@@ -35,14 +42,14 @@
         {
             Control[] controls;
 
-            this.Load += handleFormControlEvents;
+            this.Load += new EventHandler(MainForm_Load);
+            this.Closing += new CancelEventHandler(MainForm_Closing);
             this.WindowState = FormWindowState.Maximized;
             this.BackColor = Color.White;
 
             //
             // create main navigation panel
-            //
-            nav = new FormNavigation(this);
+            //            
             mainNavigation = new Panel();
             mainNavigation.Dock = DockStyle.Top;
 
@@ -54,9 +61,7 @@
 
             //
             // add to form - this triggers its layout event 
-            // "The Layout event occurs [on a control] when child controls add added or removed... "
-            // see also http://msdn.microsoft.com/en-us/library/system.windows.forms.control.layout%28v=vs.90%29.aspx
-            //            
+            //           
             controls = new Control[] { mainNavigation, mainContent }.Reverse().ToArray();
             foreach (Control c in controls)
             {
@@ -66,14 +71,18 @@
             //
             // Create Buttons
             //
-            controls = new Control[] { 
-                FormNavigation.CreateButton("Back", FormNavigation.BACK, "TODO", Color.LightGreen, handleFormControlEvents),
-                FormNavigation.CreateButton("Close", FormNavigation.CLOSE, "TODO", Color.Firebrick, handleFormControlEvents)                
-            }.Reverse().ToArray();
+            Button btnClose;
+
+            btnBack = new Button() { Text = "Back" };
+            btnBack.Click += new EventHandler(btnBack_Click);
+
+            btnClose = new Button() { Text = "Close" };
+            btnClose.Click += new EventHandler(btnClose_Click);
 
             //
             // add to panel - this triggers its layout event
             //
+            controls = new Control[] { btnBack, btnClose }.Reverse().ToArray();
             foreach (Control c in controls)
             {
                 c.Dock = DockStyle.Left;
@@ -82,7 +91,9 @@
             }
         }
 
-        private void continueExistingOrderSession()
+        #region Utilities
+
+        private void continueExistingOrder()
         {
             ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
 
@@ -93,12 +104,12 @@
             }
         }
 
-        private void saveNewOrderSession()
+        private void saveNewOrder()
         {
             // start new order session
             List<TextBox> descendents;
 
-            descendents = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.TXT_ORDER_SESSION_NAME, true);
+            descendents = FormHelper.GetControlsByName<TextBox>(this, UserInputs.TXT_ORDER_SESSION_NAME, true);
             if (descendents != null && descendents.Count > 0)
             {
                 VendordDatabase.OrderSession newOrderSession = new VendordDatabase.OrderSession()
@@ -111,21 +122,51 @@
             }
         }
 
-        private void saveCurrentScanningInput()
+        private void saveNewProductOrderAmount()
         {
-            List<TextBox> textBoxes = FormHelper.GetControlsByName<TextBox>(this, UserInputControlNames.TXT_ORDER_ITEM_AMOUNT, true);
+            List<TextBox> textBoxes;
+            textBoxes = FormHelper.GetControlsByName<TextBox>(this, UserInputs.TXT_ORDER_ITEM_AMOUNT, true);
 
             if (textBoxes != null && textBoxes.Count > 0 && textBoxes.First<TextBox>().Text.Length > 0)
             {
                 VendordDatabase.OrderSession_Product orderSessionProduct = new VendordDatabase.OrderSession_Product()
                 {
                     OrderSessionID = currentOrderSession.ID,
-                    ProductID = currentProduct.ID,
-                    CasesToOrder = Convert.ToInt16(textBoxes.FirstOrDefault<TextBox>().Text)
+                    ProductID = currentScannedProduct.ID,
+                    CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
                 };
                 orderSessionProduct.UpsertIntoDB();
             }
         }
+
+        private Bitmap createListViewSmallImage()
+        {
+            SolidBrush brush;
+            Bitmap myBitmap;
+            Graphics myBitmapGraphics;
+            Size mySize = new Size(30, 30);
+
+            brush = new SolidBrush(Color.Gray);
+            myBitmap = new Bitmap(mySize.Width, mySize.Height);
+            myBitmapGraphics = Graphics.FromImage(myBitmap);
+            myBitmapGraphics.FillRectangle(brush, 0, 0, mySize.Width, mySize.Height);
+
+            return myBitmap;
+        }
+
+        private void disableBackButton()
+        {
+            btnBack.Enabled = false;
+            BackDelegate = null;
+        }
+
+        private void enableBackButton(Back method)
+        {
+            btnBack.Enabled = true;
+            BackDelegate = method;
+        }
+
+        #endregion
 
         #region Views
 
@@ -136,38 +177,52 @@
 
         private void loadHomeView()
         {
-            Button btnOrders;            
+            Button btnOrders;
             Button[] buttons;
 
-            btnOrders = FormNavigation.CreateButton("Orders", FormNavigation.ORDERS, "TODO", Color.LightGreen, handleFormControlEvents);                     
+            btnOrders = new Button() { Text = "Orders" };
+            btnOrders.Click += new EventHandler(btnOrders_Click);
 
             this.mainContent.Controls.Add(btnOrders);
 
             // style
-            buttons = new Button[] { btnOrders };
+            buttons = new Button[] { 
+                
+                btnOrders 
+            
+            }.Reverse().ToArray();
+
             foreach (Button b in buttons)
             {
-                b.BringToFront();                
                 b.Dock = DockStyle.Top;
                 b.Height = b.Parent.ClientSize.Height / buttons.Count();
             }
 
-            nav.CurrentView = FormNavigation.HOME;
+            //
+            // back
+            //
+            disableBackButton();
         }
 
         private void loadOrdersView()
         {
-            ListView listView;
+            ListView lvOrders;
             ListViewItem listViewItem;
+            Bitmap myBitmap;
+            ImageList myImageList;
             VendordDatabase db;
 
             //
             // create list view
-            listView = FormNavigation.CreateListView("Order Sessions", null, null, handleFormControlEvents);
-            listView.Items.Add(new ListViewItem()
+            lvOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };
+            lvOrders.ItemActivate += new EventHandler(lvOrders_ItemActivate);
+
+            //
+            // enable add new
+            //
+            lvOrders.Items.Add(new ListViewItem()
             {
                 Text = "<Add New>",
-                Tag = FormNavigation.CREATE_NEW_ORDER_SESSION,
                 ImageIndex = 0
             });
 
@@ -181,37 +236,74 @@
                 listViewItem = new ListViewItem()
                 {
                     Text = order.Name,
-                    Tag = FormNavigation.CONTINUE_EXISTING_ORDER_SESSION,
                     ImageIndex = 0
                 };
                 listViewItem.SubItems.Add(order.ID.ToString());
-                listView.Items.Add(listViewItem);
+                lvOrders.Items.Add(listViewItem);
             }
-
-            // set the listview's layout     
-            listView.View = View.SmallIcon;
-            listView.Dock = DockStyle.Top;
 
             //
             // add icon
             //
-            ImageList imageList;
-            SolidBrush brush;
-            Bitmap myBitmap;
-            Graphics myBitmapGraphics;
-            Size mySize = new Size(30, 30);
+            myBitmap = createListViewSmallImage();
+            myImageList = new ImageList();
+            myImageList.Images.Add(myBitmap);
+            myImageList.ImageSize = myBitmap.Size;
+            lvOrders.SmallImageList = myImageList;
 
-            brush = new SolidBrush(Color.LightGreen);
-            myBitmap = new Bitmap(mySize.Width, mySize.Height);
-            myBitmapGraphics = Graphics.FromImage(myBitmap);
-            myBitmapGraphics.FillRectangle(brush, 0, 0, mySize.Width, mySize.Height);
-            imageList = new ImageList();
-            imageList.Images.Add(myBitmap);
-            imageList.ImageSize = mySize;
-            listView.SmallImageList = imageList;            
+            // set listview's layout and style
+            lvOrders.View = View.List;
+            lvOrders.Dock = DockStyle.Top;
 
             // add the list view to the main content - this triggers its layout event
-            this.mainContent.Controls.Add(listView);
+            this.mainContent.Controls.Add(lvOrders);
+
+            //
+            // back
+            //
+            enableBackButton(loadHomeView);            
+        }
+
+        private void loadCreateNewOrderView()
+        {
+            TextBox textBox;
+            Label label;
+            Button button;
+
+            label = new Label();
+            label.Text = "Order Name";
+
+            textBox = new TextBox();
+            textBox.Name = UserInputs.TXT_ORDER_SESSION_NAME;
+
+            button = new Button() { Text = "Save" };
+            button.Click += new EventHandler(btnSaveNewOrder_Click);
+
+            //
+            // add and layout
+            //
+            this.mainContent.SuspendLayout();
+
+            label.Dock = DockStyle.Top;
+            textBox.Dock = DockStyle.Top;
+            button.Dock = DockStyle.Fill;
+
+            Control[] controls = new Control[] { label, textBox, button }.Reverse().ToArray();
+            foreach (Control c in controls)
+            {
+                this.mainContent.Controls.Add(c);
+            }
+
+            textBox.Focus();
+
+            this.mainContent.ResumeLayout();
+
+            //
+            // back
+            //
+            btnBack.Enabled = true;
+            BackDelegate = loadOrdersView;
+            SaveDelegate = saveNewOrder;
         }
 
         private void loadOrderScanningView()
@@ -224,8 +316,11 @@
             lblInstructions = new Label() { Text = "Start scanning." };
 
             controls = new Control[] { 
+
                 lblOrderSessionName, 
-                lblInstructions }.Reverse<Control>().ToArray<Control>();
+                lblInstructions 
+
+            }.Reverse<Control>().ToArray<Control>();
 
             foreach (Control c in controls)
             {
@@ -235,61 +330,36 @@
 
             barcodeAPI = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
             barcodeAPI.Scan();
+
+            //
+            // back
+            //
+            btnBack.Enabled = true;
+            BackDelegate = loadOrdersView;
         }
 
-        private void loadCreateNewOrderView()
-        {
-            TextBox textBox;
-            Label label;
-            Button button;
-
-            textBox = new TextBox();
-            textBox.Name = UserInputControlNames.TXT_ORDER_SESSION_NAME;
-
-            label = new Label();
-            label.Text = "Order Name";
-
-            button = FormNavigation.CreateButton("Save", FormNavigation.SAVE_AND_START_NEW_ORDER_SESSION, "TODO", Color.LightGreen, handleFormControlEvents);
-
-            this.mainContent.Controls.Add(textBox);
-            this.mainContent.Controls.Add(label);
-            this.mainContent.Controls.Add(button);
-
-            textBox.Focus();
-
-            Control[] controls = new Control[] { label, textBox, button };
-            foreach (Control c in controls)
-            {
-                c.BringToFront();
-                c.Dock = DockStyle.Top;
-                c.Height = c.Parent.ClientSize.Height / controls.Count();
-            }
-        }
-
-        private void loadOrderProductInputView(ScanData scanData)
+        private void loadOrderScanningResultView(ScanData scanData)
         {
             // declare 
-            Label lblProductUPC, lblProductName, lblProductAmount;
+            Label lblProductUPC, lblProductName, lblProductAmount, lblInstruction;
             TextBox txtProductAmount;
-            Button btnSave;
             Control[] controls;
             VendordDatabase db;
 
             // select scanned product from DB
             db = new VendordDatabase();
-            currentProduct = db.Products.First<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
+            currentScannedProduct = db.Products.First<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
 
-            if (currentProduct != null)
+            if (currentScannedProduct != null)
             {
                 // instantiate the controls that will display
-                lblProductUPC = new Label() { Text = currentProduct.UPC };
-                lblProductName = new Label() { Text = currentProduct.Name };
+                lblProductUPC = new Label() { Text = currentScannedProduct.UPC };
+                lblProductName = new Label() { Text = currentScannedProduct.Name };
                 lblProductAmount = new Label() { Text = "Cases to Order:" };
+                lblInstruction = new Label() { Text = "Enter amount and/or keep scanning." };
 
-                txtProductAmount = new TextBox() { Name = UserInputControlNames.TXT_ORDER_ITEM_AMOUNT };
-                txtProductAmount.KeyPress += new KeyPressEventHandler(digitOnlyTextBox_KeyPress);
-
-                btnSave = FormNavigation.CreateButton("Save Order", FormNavigation.SAVE_AND_STOP_SCANNING, "TODO", Color.LightGreen, handleFormControlEvents);
+                txtProductAmount = new TextBox() { Name = UserInputs.TXT_ORDER_ITEM_AMOUNT };
+                txtProductAmount.KeyPress += new KeyPressEventHandler(int32TextBox_Validate_KeyPress);
 
                 // add the controls to an array in the order that we want them to display
                 controls = new Control[] { 
@@ -298,7 +368,7 @@
                     lblProductName, 
                     lblProductAmount,
                     txtProductAmount,
-                    btnSave
+                    lblInstruction
                 
                 }.Reverse<Control>().ToArray<Control>();
 
@@ -314,72 +384,112 @@
                 txtProductAmount.Focus();
             }
 
-            // set the current view
-            nav.CurrentView = FormNavigation.VIEW_AND_EDIT_SCAN_RESULT;
-
             // get ready for another scan
             barcodeAPI.Scan();
+
+            //
+            // back
+            //
+            btnBack.Enabled = true;
+            BackDelegate = loadOrdersView;
+            SaveDelegate = saveNewProductOrderAmount;
         }
 
         #endregion
 
         #region Event Handlers
 
-        private void digitOnlyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
-            if (!char.IsDigit(e.KeyChar))
+            loadHomeView();
+        }
+
+        private void MainForm_Closing(object sender, EventArgs e)
+        {
+            if (SaveDelegate != null)
             {
-                e.Handled = true;
+                SaveDelegate();
             }
         }
 
-        private void handleFormControlEvents(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
-            // set last action
-            nav.ParseActionFromSender(sender);
-
-            // set the name of the form
-            this.Text = String.Format("{0} {1}", this.Name, "");
-
-            // act based on the aciton
-            switch (nav.Action)
+            if (SaveDelegate != null)
             {
-                case FormNavigation.ORDERS:
-                    unloadCurrentView();
-                    loadOrdersView();
-                    break;
+                SaveDelegate();
+            }
 
-                case FormNavigation.CREATE_NEW_ORDER_SESSION:
-                    unloadCurrentView();
-                    loadCreateNewOrderView();
-                    break;
+            this.Close();
+        }
 
-                case FormNavigation.SAVE_AND_START_NEW_ORDER_SESSION:
-                    saveNewOrderSession();
-                    unloadCurrentView();
-                    loadOrderScanningView();
-                    break;
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            if (SaveDelegate != null)
+            {
+                SaveDelegate();
+            }
 
-                case FormNavigation.CONTINUE_EXISTING_ORDER_SESSION:
-                    continueExistingOrderSession();
-                    unloadCurrentView();
-                    loadOrderScanningView();
-                    break;
+            unloadCurrentView();
 
-                case FormNavigation.SAVE_AND_STOP_SCANNING:
-                    saveCurrentScanningInput();
-                    unloadCurrentView();
-                    loadHomeView();
-                    break;
+            if (BackDelegate != null)
+            {
+                BackDelegate();
+            }
+        }
 
-                case FormNavigation.CLOSE:
-                    this.Close();
-                    return; // return because we want to avoid executing code after we close the form.  
+        private void btnOrders_Click(object sender, EventArgs e)
+        {
+            unloadCurrentView();
+            loadOrdersView();
+        }
 
-                default:
-                    unloadCurrentView();
-                    loadHomeView();
-                    break;
+        private void lvOrders_ItemActivate(object sender, EventArgs e)
+        {
+            ListView lvOrders;
+            ListViewItem selectedItem;
+
+            lvOrders = sender as ListView;
+            selectedItem = lvOrders.Items[lvOrders.SelectedIndices[0]];
+            if (selectedItem.Index == 0)
+            {
+                unloadCurrentView();
+                loadCreateNewOrderView();
+            }
+            else
+            {
+                continueExistingOrder();
+                unloadCurrentView();
+                loadOrderScanningView();
+            }
+        }
+
+        private void btnSaveNewOrder_Click(object sender, EventArgs e)
+        {
+            saveNewOrder();
+            unloadCurrentView();
+            loadOrderScanningView();
+        }
+
+        private void int32TextBox_Validate_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // default to disallowing input
+            e.Handled = true;
+
+            // whitelist
+            if (char.IsDigit(e.KeyChar))
+            {
+                // it's a digit
+                try
+                {
+                    Convert.ToInt32((sender as TextBox).Text + e.KeyChar);
+                    // and it's within 32 bits 
+                    // so allow it
+                    e.Handled = false;
+                }
+                catch (OverflowException) 
+                { 
+                    // do nothing
+                }
             }
         }
 
@@ -391,9 +501,9 @@
             switch (scanData.Result)
             {
                 case Results.SUCCESS:
-                    saveCurrentScanningInput();
+                    saveNewProductOrderAmount();
                     unloadCurrentView();
-                    loadOrderProductInputView(scanData);
+                    loadOrderScanningResultView(scanData);
                     break;
 
                 default:
