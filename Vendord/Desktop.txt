@@ -1,0 +1,16 @@
+
+- VS 2008 > Vendord > Solution explorer > Project > Right Click > Publish
+
+The application will be published to:
+file:///C:/Users/Shaun/Documents/GitHub/BigFont/BigFont.MVC/ClickOnce/Vendord/
+
+Users will launch this application from:
+http://www.bigfont.ca/clickonce/vendord/
+
+When this application is installed on the client machine, 
+a shortcut will be added to the Start Menu, 
+and the application can be uninstalled via Add/Remove Programs.
+
+- VS 2013 > BigFont.MVC > Solution Explorer > BigFont.MVC > ClickOnce > Vendord  > Open in Explorer
+- Make sure that all the items are part of the BigFont.MVC project (drag and drop).
+- Save the BigFont.MVC project. 
