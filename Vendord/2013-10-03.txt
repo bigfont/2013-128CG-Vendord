@@ -1,0 +1,8 @@
+
+- The full install download is approx ___ MB.
+
+- The full install process takes approx ___ mins.
+
+Notes
+
+- Windows mobile device center will complain if the device is not connected. 

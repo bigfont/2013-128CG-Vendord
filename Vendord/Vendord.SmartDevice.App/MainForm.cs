@@ -348,7 +348,8 @@
 
             // select scanned product from DB
             db = new VendordDatabase();
-            currentScannedProduct = db.Products.First<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
+            
+            currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
 
             if (currentScannedProduct != null)
             {

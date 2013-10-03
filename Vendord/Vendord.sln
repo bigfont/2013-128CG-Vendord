@@ -28,7 +28,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UseCases", "UseCases", "{20
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{D728C048-9926-4666-90E4-999156A4A5E3}"
 	ProjectSection(SolutionItems) = preProject
-		Desktop.txt = Desktop.txt
+		Desktop.Deploy.txt = Desktop.Deploy.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReleaseNotes", "ReleaseNotes", "{8FAA9CDC-28E3-4562-BC0B-EF60E03969A3}"
+	ProjectSection(SolutionItems) = preProject
+		2013-10-03.txt = 2013-10-03.txt
 	EndProjectSection
 EndProject
 Global
