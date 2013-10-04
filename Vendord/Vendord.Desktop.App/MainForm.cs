@@ -20,9 +20,12 @@
         // see also http://msdn.microsoft.com/en-us/library/system.windows.forms.columnheader.width%28v=vs.90%29.aspx
         private int COLUMN_HEADER_WIDTH_HEADING_LENGTH = -2;  // To autosize to the width of the column heading, set the Width property to -2.  
         private int COLUMN_HEADER_WIDTH_LONGEST_ITEM = -1; // To adjust the width of the longest item in the column, set the Width property to -1. 
+        private int FORM_WIDTH_MINIMUM = 500;
+        private int FORM_HEIGHT_MINIMUM = 500;
         private int COLUMN_HEADER_WIDTH_DEFAULT = 200;
         private int BUTTON_HEIGHT = 50;
         private int NUMBER_OF_NAV_BUTTONS = 2;
+        private double PRINT_PREVIEW_ZOOM = 1f; // this is 100%
 
         private Button btnBack;
         private delegate void Back();
@@ -56,7 +59,9 @@
 
             this.Load += new EventHandler(MainForm_Load);
             this.Closing += new CancelEventHandler(MainForm_Closing);
-            this.WindowState = FormWindowState.Maximized;
+            this.AutoSize = true;
+            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            this.MinimumSize = new Size(FORM_WIDTH_MINIMUM, FORM_HEIGHT_MINIMUM);
             this.BackColor = Color.White;
 
             //
@@ -71,6 +76,8 @@
             //
             mainContent = new Panel();
             mainContent.Dock = DockStyle.Fill;
+            mainContent.AutoSize = true;
+            mainContent.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             //
             // add to form - this triggers its layout event 
@@ -102,8 +109,7 @@
             controls = new Control[] { 
             
                 btnClose,
-                btnBack
-                
+                btnBack                
             
             };
 
@@ -144,8 +150,14 @@
 
                 };
 
-                // preview the document
-                listViewPrinter.PrintPreview();
+                // preview the document                                
+                PrintPreviewDialog printPreview = new PrintPreviewDialog()
+                {
+                    Document = listViewPrinter,
+                    UseAntiAlias = true
+                };
+                printPreview.PrintPreviewControl.Zoom = PRINT_PREVIEW_ZOOM;
+                printPreview.ShowDialog();
             }
         }
 
@@ -263,22 +275,27 @@
 
         private void loadOrdersView()
         {
+            Button btnGetProductsFromITRetail;
             Button btnSyncHandheld;
-            Button btnCompleteOrder;
+            Button btnViewOrders;
             Control[] controls;
 
-            btnCompleteOrder = new Button() { Text = "Complete Order" };
-            btnCompleteOrder.Click += new EventHandler(btnCompleteOrder_Click);
+            btnGetProductsFromITRetail = new Button() { Text = "Get Products from IT Retail" };
+            btnGetProductsFromITRetail.Click += new EventHandler(btnGetProductsFromITRetail_Click);
 
-            btnSyncHandheld = new Button() { Text = "Sync with IT Retail" };
-            btnSyncHandheld.Click += new EventHandler(btnSyncHandheldWithITRetail_Click);
+            btnSyncHandheld = new Button() { Text = "Sync Handheld (before and after Scanning)" };
+            btnSyncHandheld.Click += new EventHandler(btnSyncHandheld_Click);
+
+            btnViewOrders = new Button() { Text = "View Orders" };
+            btnViewOrders.Click += new EventHandler(btnViewOrders_Click);
 
             // add
             controls = new Control[] { 
 
-                btnSyncHandheld,
-                btnCompleteOrder
-                 
+                btnGetProductsFromITRetail,
+                btnViewOrders,
+                btnSyncHandheld
+                                 
             };
 
             foreach (Control c in controls)
@@ -294,7 +311,7 @@
             enableBackButton(loadHomeView);
         }
 
-        private void loadCompleteOrderView()
+        private void loadCompleteOrdersView()
         {
             Button btnPrintOrder;
             ListView listViewMaster;
@@ -424,45 +441,36 @@
             updateListViewDetail();
         }
 
-        private void btnCompleteOrder_Click(object sender, EventArgs e)
+        private void btnViewOrders_Click(object sender, EventArgs e)
         {
-            Sync sync;
-            sync = new Sync();
-
-            if (
-                // merge with handheld
-                sync.MergeDesktopAndDeviceDatabases() == Sync.SyncResult.Complete)
-            {
-                MessageBox.Show("Sync Complete");
-            }
-            else
-            {
-                MessageBox.Show("Device is not connected");
-            }
-
             unloadCurrentView();
-            loadCompleteOrderView();
+            loadCompleteOrdersView();
         }
 
-        private void btnSyncHandheldWithITRetail_Click(object sender, EventArgs e)
+        private void btnSyncHandheld_Click(object sender, EventArgs e)
         {
             Sync sync;
+            Sync.SyncResult syncResult;
             sync = new Sync();
 
-            if (
+            Cursor.Current = Cursors.WaitCursor;
+            syncResult = sync.MergeDesktopAndDeviceDatabases();
+            Cursor.Current = Cursors.Default;
 
-                // pull from IT retail
-                sync.PullProductsFromITRetailDatabase() == Sync.SyncResult.Complete &&
+            (sender as Button).Text += " <Done> ";
+        }
 
-                // then merge with handheld
-                sync.MergeDesktopAndDeviceDatabases() == Sync.SyncResult.Complete)
-            {
-                MessageBox.Show("Sync Complete");
-            }
-            else
-            {
-                MessageBox.Show("Device is not connected.");
-            }
+        private void btnGetProductsFromITRetail_Click(object sender, EventArgs e)
+        {
+            Sync sync;
+            Sync.SyncResult syncResult;
+            sync = new Sync();
+
+            Cursor.Current = Cursors.WaitCursor;
+            syncResult = sync.PullProductsFromITRetailDatabase();
+            Cursor.Current = Cursors.Default;
+
+            (sender as Button).Text += " <Done> ";
         }
 
         #endregion
