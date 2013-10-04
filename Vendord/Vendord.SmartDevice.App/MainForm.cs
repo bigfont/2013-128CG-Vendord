@@ -14,7 +14,7 @@
     using Vendord.SmartDevice.Shared;
 
     public class MainForm : Form
-    {        
+    {
         private Panel mainNavigation;
         private Panel mainContent;
 
@@ -26,9 +26,9 @@
 
         // scanning specific fields
         private BarcodeAPI barcodeAPI;
-        private VendordDatabase.OrderSession currentOrderSession 
+        private VendordDatabase.OrderSession currentOrderSession
             = new VendordDatabase.OrderSession();
-        private VendordDatabase.Product currentScannedProduct 
+        private VendordDatabase.Product currentScannedProduct
             = new VendordDatabase.Product();
 
         // user inputs control names
@@ -261,7 +261,7 @@
             //
             // back
             //
-            enableBackButton(loadHomeView);            
+            enableBackButton(loadHomeView);
         }
 
         private void loadCreateNewOrderView()
@@ -345,25 +345,27 @@
             TextBox txtProductAmount;
             Control[] controls;
             VendordDatabase db;
+                                    
+            // populate controls with default values
+            lblProductUPC = new Label() { Text = scanData.Text };
+            lblProductName = new Label() { Text = "This UPC code is not in the database." };
+            lblProductAmount = new Label() { Text = "Cases to Order:" };
+            txtProductAmount = new TextBox() { Name = UserInputs.TXT_ORDER_ITEM_AMOUNT , Enabled = false };
+            lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
 
-            // select scanned product from DB
+            // add values for product that is in the database
             db = new VendordDatabase();
-            
-            currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
-
-            if (currentScannedProduct != null)
+            currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));                        
+            if(currentScannedProduct != null)
             {
-                // instantiate the controls that will display
-                lblProductUPC = new Label() { Text = currentScannedProduct.UPC };
-                lblProductName = new Label() { Text = currentScannedProduct.Name };
-                lblProductAmount = new Label() { Text = "Cases to Order:" };
-                lblInstruction = new Label() { Text = "Enter amount and/or keep scanning." };
-
-                txtProductAmount = new TextBox() { Name = UserInputs.TXT_ORDER_ITEM_AMOUNT };
+                lblProductName.Text = currentScannedProduct.Name;                
+                txtProductAmount.Enabled = true;              
                 txtProductAmount.KeyPress += new KeyPressEventHandler(int32TextBox_Validate_KeyPress);
+                
+            }
 
-                // add the controls to an array in the order that we want them to display
-                controls = new Control[] { 
+            // add the controls to an array in the order that we want them to display
+            controls = new Control[] { 
                 
                     lblProductUPC, 
                     lblProductName, 
@@ -373,17 +375,16 @@
                 
                 }.Reverse<Control>().ToArray<Control>();
 
-                // add the controls to the mainDisplay
-                // whilst choosing a dock style
-                foreach (Control c in controls)
-                {
-                    c.Dock = DockStyle.Top;
-                    this.mainContent.Controls.Add(c);
-                }
-
-                // set focus to the text box
-                txtProductAmount.Focus();
+            // add the controls to the mainDisplay
+            // whilst choosing a dock style
+            foreach (Control c in controls)
+            {
+                c.Dock = DockStyle.Top;
+                this.mainContent.Controls.Add(c);
             }
+
+            // set focus - we must do this after controls are in the form, apparently
+            txtProductAmount.Focus();
 
             // get ready for another scan
             barcodeAPI.Scan();
@@ -472,24 +473,30 @@
         }
 
         private void int32TextBox_Validate_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // default to disallowing input
+        {            
+            // use a whitelist approach by disallowing all input
             e.Handled = true;
 
-            // whitelist
+            // whitelist controls
+            if (char.IsControl(e.KeyChar))
+            {
+                // it's a control; ergo allow it
+                e.Handled = false;
+            }
+
+            // whitelist digits
             if (char.IsDigit(e.KeyChar))
             {
                 // it's a digit
                 try
                 {
                     Convert.ToInt32((sender as TextBox).Text + e.KeyChar);
-                    // and it's within 32 bits 
-                    // so allow it
+                    // the method didn't throw an overflow exception; so it's within 32 bits; ergo allow it                    
                     e.Handled = false;
                 }
-                catch (OverflowException) 
-                { 
-                    // do nothing
+                catch (OverflowException)
+                {
+                    // catch and continue
                 }
             }
         }

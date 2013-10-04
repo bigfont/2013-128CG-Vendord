@@ -13,7 +13,7 @@
     using System.Data.SqlServerCe; // Compact Edition
     using System.Data.SqlClient; // Full Edition
 
-    public class DatabaseSync
+    public class Sync
     {
         // rapi
         private const string REMOTE_DEVICE_TEMP_COPY = "_REMOTE_DEVICE_TEMP_COPY";
@@ -25,24 +25,16 @@
         private string rapiDatabaseLocalCopy_Path;
 
         // sync status
-        public SyncResultMessage SyncDisconnected;
-        public SyncResultMessage SyncComplete;
-        public class SyncResultMessage
-        {
-            public string Caption;
-            public string Message;
-            public SyncResultMessage(string message, string caption)
-            {
-                this.Caption = caption;
-                this.Message = message;
-            }
+        public enum SyncResult
+        { 
+            Disconnected, 
+            Complete
         }
 
         // ctor
-        public DatabaseSync()
+        public Sync()
         {
-            SyncComplete = new SyncResultMessage("Success", "The sync is complete.");
-            SyncDisconnected = new SyncResultMessage("Disconnected", "The device is disconnected. Please connect it and try again.");
+
         }
 
         private void CopyProductsFromITRetailDBToDesktopDB()
@@ -187,7 +179,7 @@
             }
         }
 
-        public SyncResultMessage MergeDesktopAndDeviceDatabases()
+        public SyncResult MergeDesktopAndDeviceDatabases()
         {
             mgr = new RAPI.RemoteDeviceManager();
             RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
@@ -197,18 +189,18 @@
                 CopyDatabaseFromDeviceToDesktop(remoteDevice);
                 SyncSqlCeDatabases(rapiDatabaseLocalCopy_Path, REMOTE_DEVICE_DB_SYNC_SCOPE, new string[] { "OrderSession", "Product", "OrderSession_Product" });
                 CopyDatabaseBackToDevice(remoteDevice);
-                return SyncComplete;
+                return SyncResult.Complete;
             }
             else
             {
-                return SyncDisconnected;
+                return SyncResult.Disconnected;
             }
         }
 
-        public SyncResultMessage PullProductsFromITRetailDatabase()
+        public SyncResult PullProductsFromITRetailDatabase()
         {
             CopyProductsFromITRetailDBToDesktopDB();
-            return SyncComplete;
+            return SyncResult.Complete;
         }
     }
 }

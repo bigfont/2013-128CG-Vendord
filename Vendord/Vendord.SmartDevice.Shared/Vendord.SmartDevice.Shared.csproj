@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="ErrorHandler.cs" />
     <Compile Include="FormHelpers.cs" />
     <Compile Include="IOHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

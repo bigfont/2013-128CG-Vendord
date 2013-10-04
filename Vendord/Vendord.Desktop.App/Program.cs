@@ -18,29 +18,19 @@ namespace Vendord.Desktop.App
             IOHelpers.LogSubroutine("Main");
             
             SetupGlobalErrorHandling();
-            CreateDatabase();
+            CreateApplicationDatabase();
             
             Application.Run(new MainForm());
         }
 
-        static void CreateDatabase()
-        {
+        static void CreateApplicationDatabase()
+        {            
             VendordDatabase db = new VendordDatabase();
         }
 
         static void SetupGlobalErrorHandling()
         {
-            IOHelpers.LogSubroutine("SetupGlobalErrorHandling");
-
-            AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(currentDomain_UnhandledException);
-        }
-
-        static void currentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs args)
-        {
-            Exception e;
-            e = (Exception)args.ExceptionObject;
-            IOHelpers.LogException(e);
+            ErrorHandler.Setup();
         }
     }
 }

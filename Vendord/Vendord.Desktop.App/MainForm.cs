@@ -10,6 +10,7 @@
     using System.Windows.Forms;
     using System.Collections.ObjectModel;
     using Vendord.SmartDevice.Shared;
+    using BrightIdeasSoftware;
 
     public class MainForm : Form
     {
@@ -19,7 +20,7 @@
         // see also http://msdn.microsoft.com/en-us/library/system.windows.forms.columnheader.width%28v=vs.90%29.aspx
         private int COLUMN_HEADER_WIDTH_HEADING_LENGTH = -2;  // To autosize to the width of the column heading, set the Width property to -2.  
         private int COLUMN_HEADER_WIDTH_LONGEST_ITEM = -1; // To adjust the width of the longest item in the column, set the Width property to -1. 
-        private int COLUMN_HEADER_WIDTH_DEFAULT = 100;
+        private int COLUMN_HEADER_WIDTH_DEFAULT = 200;
         private int BUTTON_HEIGHT = 50;
         private int NUMBER_OF_NAV_BUTTONS = 2;
 
@@ -69,13 +70,13 @@
             // create main content panel
             //
             mainContent = new Panel();
-            mainContent.Dock = DockStyle.Top;
+            mainContent.Dock = DockStyle.Fill;
 
             //
             // add to form - this triggers its layout event 
             //        
             this.SuspendLayout();
-            controls = new Control[] { mainNavigation, mainContent }.Reverse().ToArray();
+            controls = new Control[] { mainContent, mainNavigation, };
             foreach (Control c in controls)
             {
                 this.Controls.Add(c);
@@ -100,10 +101,11 @@
 
             controls = new Control[] { 
             
-                btnBack,
-                btnClose
+                btnClose,
+                btnBack
+                
             
-            }.Reverse().ToArray();
+            };
 
             foreach (Control c in controls)
             {
@@ -117,26 +119,34 @@
 
         #region Utilities
 
-        private void sync_pullProductsFromITRetailDatabase()
+        private void printSelectedOrder()
         {
-            DatabaseSync sync;
-            DatabaseSync.SyncResultMessage syncResult;
+            ListViewPrinter listViewPrinter;
+            ListView listViewDetails;
+            ListView listViewMaster;
 
-            sync = new DatabaseSync();
-            syncResult = sync.PullProductsFromITRetailDatabase();            
+            listViewMaster = FormHelper.GetControlsByName<ListView>(mainContent, UserInputs.LV_MASTER, true)[0];
+            listViewDetails = FormHelper.GetControlsByName<ListView>(mainContent, UserInputs.LV_DETAILS, true)[0];
+            if (listViewMaster != null && listViewDetails != null)
+            {
+                // NOTE the listViewPrinter derives the cell width from that of the listView it's printing.
 
-            MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
+                // create the document
+                listViewPrinter = new ListViewPrinter()
+                {
 
-        private void sync_mergeDesktopAndDeviceDatabases()
-        {
-            DatabaseSync sync;
-            DatabaseSync.SyncResultMessage syncResult;
+                    // set the most important settings
+                    ListView = listViewDetails,
+                    DocumentName = "DocumentName",
+                    Header = "Header",
+                    Footer = "Footer",
+                    IsShrinkToFit = false
 
-            sync = new DatabaseSync();            
-            syncResult = sync.MergeDesktopAndDeviceDatabases();
+                };
 
-            MessageBox.Show(syncResult.Caption, syncResult.Message, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // preview the document
+                listViewPrinter.PrintPreview();
+            }
         }
 
         private void addDataToListViewDetails(ListView listViewDetails, int orderSessionID)
@@ -266,10 +276,10 @@
             // add
             controls = new Control[] { 
 
-                btnCompleteOrder, 
-                btnSyncHandheld 
-
-            }.Reverse().ToArray();
+                btnSyncHandheld,
+                btnCompleteOrder
+                 
+            };
 
             foreach (Control c in controls)
             {
@@ -286,10 +296,14 @@
 
         private void loadCompleteOrderView()
         {
+            Button btnPrintOrder;
             ListView listViewMaster;
             ListView listViewDetails;
-            Control[] controls;
+            ListView[] listViews;
             int orderSessionID;
+
+            btnPrintOrder = new Button() { Text = "Print Selected Order" };
+            btnPrintOrder.Click += new EventHandler(btnPrintOrder_Click);
 
             listViewMaster = createOrderSessionMasterListView();
             orderSessionID = Convert.ToInt32(listViewMaster.Items[0].SubItems[1].Text);
@@ -298,21 +312,18 @@
 
             this.mainContent.SuspendLayout();
 
-            controls = new Control[] { 
+            listViews = new ListView[] { 
             
-                listViewMaster,
-                listViewDetails
+                listViewDetails,
+                listViewMaster
             
-            }.Reverse().ToArray();
+            };
 
-            foreach (ListView lv in controls)
+            // add list views
+            foreach (ListView lv in listViews)
             {
                 lv.Dock = DockStyle.Left;
-                lv.Width
-                    = lv.Columns.Count
-                    * COLUMN_HEADER_WIDTH_DEFAULT
-                    + SystemInformation.VerticalScrollBarWidth
-                    + SystemInformation.BorderSize.Width * 2;
+                lv.Width = lv.Columns.Count * COLUMN_HEADER_WIDTH_DEFAULT;
 
                 lv.BorderStyle = BorderStyle.FixedSingle;
                 lv.GridLines = true;
@@ -323,6 +334,11 @@
                 }
                 this.mainContent.Controls.Add(lv);
             }
+
+            // add button(s)
+            btnPrintOrder.Dock = DockStyle.Top;
+            btnPrintOrder.Height = BUTTON_HEIGHT;
+            this.mainContent.Controls.Add(btnPrintOrder);
 
             this.mainContent.ResumeLayout();
 
@@ -398,6 +414,11 @@
             loadOrdersView();
         }
 
+        private void btnPrintOrder_Click(object sender, EventArgs e)
+        {
+            printSelectedOrder();
+        }
+
         private void listViewMaster_ItemActivate(object sender, EventArgs e)
         {
             updateListViewDetail();
@@ -405,14 +426,43 @@
 
         private void btnCompleteOrder_Click(object sender, EventArgs e)
         {
+            Sync sync;
+            sync = new Sync();
+
+            if (
+                // merge with handheld
+                sync.MergeDesktopAndDeviceDatabases() == Sync.SyncResult.Complete)
+            {
+                MessageBox.Show("Sync Complete");
+            }
+            else
+            {
+                MessageBox.Show("Device is not connected");
+            }
+
             unloadCurrentView();
-            sync_mergeDesktopAndDeviceDatabases();
             loadCompleteOrderView();
         }
 
         private void btnSyncHandheldWithITRetail_Click(object sender, EventArgs e)
         {
-            sync_pullProductsFromITRetailDatabase();
+            Sync sync;
+            sync = new Sync();
+
+            if (
+
+                // pull from IT retail
+                sync.PullProductsFromITRetailDatabase() == Sync.SyncResult.Complete &&
+
+                // then merge with handheld
+                sync.MergeDesktopAndDeviceDatabases() == Sync.SyncResult.Complete)
+            {
+                MessageBox.Show("Sync Complete");
+            }
+            else
+            {
+                MessageBox.Show("Device is not connected.");
+            }
         }
 
         #endregion

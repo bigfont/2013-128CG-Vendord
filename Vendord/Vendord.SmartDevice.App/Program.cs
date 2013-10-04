@@ -13,9 +13,23 @@
         /// </summary>
         [MTAThread]
         static void Main()
-        {            
-            VendordDatabase db = new VendordDatabase();            
+        {
+            IOHelpers.LogSubroutine("Main");
+
+            SetupGlobalErrorHandling();
+            CreateApplicationDatabase();
+
             Application.Run(new MainForm());
         }
+        static void CreateApplicationDatabase()
+        {
+            VendordDatabase db = new VendordDatabase();
+        }
+
+        static void SetupGlobalErrorHandling()
+        {
+            ErrorHandler.Setup();
+        }
+
     }
 }

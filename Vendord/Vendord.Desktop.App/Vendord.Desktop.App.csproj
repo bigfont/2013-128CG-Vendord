@@ -40,7 +40,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;FULL_FRAMEWORK</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FULL_FRAMEWORK, WITHOUT_OBJECTLISTVIEW</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
@@ -85,11 +85,17 @@
     <Compile Include="..\Vendord.SmartDevice.Shared\Database.cs">
       <Link>LinkedFiles\Database.cs</Link>
     </Compile>
+    <Compile Include="..\Vendord.SmartDevice.Shared\ErrorHandler.cs">
+      <Link>LinkedFiles\ErrorHandler.cs</Link>
+    </Compile>
     <Compile Include="..\Vendord.SmartDevice.Shared\FormHelpers.cs">
       <Link>LinkedFiles\FormHelpers.cs</Link>
     </Compile>
     <Compile Include="..\Vendord.SmartDevice.Shared\IOHelpers.cs">
       <Link>LinkedFiles\IOHelpers.cs</Link>
+    </Compile>
+    <Compile Include="ExternalCode\ListViewPrinter.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
