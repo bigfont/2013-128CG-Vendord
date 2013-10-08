@@ -26,6 +26,7 @@
         private int BUTTON_HEIGHT = 50;
         private int NUMBER_OF_NAV_BUTTONS = 2;
         private double PRINT_PREVIEW_ZOOM = 1f; // this is 100%
+        private string BUTTON_MESSAGE_SEPARATOR = " : ";
 
         private Button btnBack;
         private delegate void Back();
@@ -124,6 +125,30 @@
         }
 
         #region Utilities
+
+        private void ButtonStatus_Clear(Button b)
+        {
+            int i;
+            i = b.Text.LastIndexOf(BUTTON_MESSAGE_SEPARATOR);
+            if (i >= 0)
+            {
+                b.Text.Remove(i);
+            }
+        }
+
+        private void ButtonStatus_Done(Button b, string message)
+        {
+            ButtonStatus_Clear(b);
+            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
+            b.BackColor = Color.LightGreen;
+        }
+
+        private void ButtonStatus_Problem(Button b, string message)
+        {
+            ButtonStatus_Clear(b);
+            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
+            b.BackColor = Color.Yellow;
+        }
 
         private void printSelectedOrder()
         {
@@ -445,32 +470,6 @@
         {
             unloadCurrentView();
             loadCompleteOrdersView();
-        }
-
-        private string BUTTON_MESSAGE_SEPARATOR = " : ";
-
-        private void ButtonStatus_Clear(Button b)
-        {
-            int i;
-            i = b.Text.LastIndexOf(BUTTON_MESSAGE_SEPARATOR);
-            if (i >= 0)
-            {
-                b.Text.Remove(i);
-            }
-        }
-
-        private void ButtonStatus_Done(Button b, string message)
-        {
-            ButtonStatus_Clear(b);
-            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
-            b.BackColor = Color.LightGreen;
-        }
-
-        private void ButtonStatus_Problem(Button b, string message)
-        {
-            ButtonStatus_Clear(b);
-            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
-            b.BackColor = Color.Yellow;
         }
 
         private void btnSyncHandheld_Click(object sender, EventArgs e)
