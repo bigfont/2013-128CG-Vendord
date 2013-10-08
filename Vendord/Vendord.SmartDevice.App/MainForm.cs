@@ -15,6 +15,13 @@
 
     public class MainForm : Form
     {
+        private short DEFAULT_PRODUCT_AMOUNT = 1;
+        private static class USER_INPUTS
+        {
+            internal const string TXT_ORDER_SESSION_NAME = "txtOrderSessionName";
+            internal const string TXT_ORDER_ITEM_AMOUNT = "txtOrderItemAmount";
+        }
+
         private Panel mainNavigation;
         private Panel mainContent;
 
@@ -32,11 +39,7 @@
             = new VendordDatabase.Product();
 
         // user inputs control names
-        private static class UserInputs
-        {
-            internal const string TXT_ORDER_SESSION_NAME = "txtOrderSessionName";
-            internal const string TXT_ORDER_ITEM_AMOUNT = "txtOrderItemAmount";
-        }
+
 
         public MainForm()
         {
@@ -109,7 +112,7 @@
             // start new order session
             List<TextBox> descendents;
 
-            descendents = FormHelper.GetControlsByName<TextBox>(this, UserInputs.TXT_ORDER_SESSION_NAME, true);
+            descendents = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TXT_ORDER_SESSION_NAME, true);
             if (descendents != null && descendents.Count > 0)
             {
                 VendordDatabase.OrderSession newOrderSession = new VendordDatabase.OrderSession()
@@ -125,7 +128,7 @@
         private void saveNewProductOrderAmount()
         {
             List<TextBox> textBoxes;
-            textBoxes = FormHelper.GetControlsByName<TextBox>(this, UserInputs.TXT_ORDER_ITEM_AMOUNT, true);
+            textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TXT_ORDER_ITEM_AMOUNT, true);
 
             if (textBoxes != null && textBoxes.Count > 0 && textBoxes.First<TextBox>().Text.Length > 0)
             {
@@ -274,7 +277,7 @@
             label.Text = "Order Name";
 
             textBox = new TextBox();
-            textBox.Name = UserInputs.TXT_ORDER_SESSION_NAME;
+            textBox.Name = USER_INPUTS.TXT_ORDER_SESSION_NAME;
 
             button = new Button() { Text = "Save" };
             button.Click += new EventHandler(btnSaveNewOrder_Click);
@@ -350,7 +353,7 @@
             lblProductUPC = new Label() { Text = scanData.Text };
             lblProductName = new Label() { Text = "This UPC code is not in the database." };
             lblProductAmount = new Label() { Text = "Cases to Order:" };
-            txtProductAmount = new TextBox() { Name = UserInputs.TXT_ORDER_ITEM_AMOUNT , Enabled = false };
+            txtProductAmount = new TextBox() { Name = USER_INPUTS.TXT_ORDER_ITEM_AMOUNT , Enabled = false, Text = DEFAULT_PRODUCT_AMOUNT.ToString() };
             lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
 
             // add values for product that is in the database

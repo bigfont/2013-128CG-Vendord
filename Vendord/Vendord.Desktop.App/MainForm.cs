@@ -27,6 +27,11 @@
         private int NUMBER_OF_NAV_BUTTONS = 2;
         private double PRINT_PREVIEW_ZOOM = 1f; // this is 100%
         private string BUTTON_MESSAGE_SEPARATOR = " : ";
+        private static class USER_INPUTS
+        {
+            internal const string LV_MASTER = "lvMaster";
+            internal const string LV_DETAILS = "lvDetails";
+        }
 
         private Button btnBack;
         private delegate void Back();
@@ -34,11 +39,7 @@
         private delegate void Save();
         private Save SaveDelegate;
 
-        private static class UserInputs
-        {
-            internal const string LV_MASTER = "lvMaster";
-            internal const string LV_DETAILS = "lvDetails";
-        }
+
 
         // database
         private VendordDatabase _db;
@@ -156,8 +157,8 @@
             ListView listViewDetails;
             ListView listViewMaster;
 
-            listViewMaster = FormHelper.GetControlsByName<ListView>(mainContent, UserInputs.LV_MASTER, true)[0];
-            listViewDetails = FormHelper.GetControlsByName<ListView>(mainContent, UserInputs.LV_DETAILS, true)[0];
+            listViewMaster = FormHelper.GetControlsByName<ListView>(mainContent, USER_INPUTS.LV_MASTER, true)[0];
+            listViewDetails = FormHelper.GetControlsByName<ListView>(mainContent, USER_INPUTS.LV_DETAILS, true)[0];
             if (listViewMaster != null && listViewDetails != null)
             {
                 // NOTE the listViewPrinter derives the cell width from that of the listView it's printing.
@@ -215,7 +216,7 @@
             listViewDetails = new ListView()
             {
 
-                Name = UserInputs.LV_DETAILS,
+                Name = USER_INPUTS.LV_DETAILS,
                 View = View.Details,
                 Activation = ItemActivation.OneClick,
                 FullRowSelect = true
@@ -249,7 +250,7 @@
             listViewMaster = new ListView()
             {
 
-                Name = UserInputs.LV_MASTER,
+                Name = USER_INPUTS.LV_MASTER,
                 View = View.Details,
                 Activation = ItemActivation.OneClick,
                 FullRowSelect = true
@@ -403,10 +404,10 @@
             ListView listViewDetails;
             int orderSessionID;
 
-            listViewMaster = FormHelper.GetControlsByName<ListView>(this, UserInputs.LV_MASTER, true).First<ListView>();
+            listViewMaster = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MASTER, true).First<ListView>();
             orderSessionID = Convert.ToInt32(listViewMaster.SelectedItems[0].SubItems[1].Text);
 
-            listViewDetails = FormHelper.GetControlsByName<ListView>(this, UserInputs.LV_DETAILS, true).First<ListView>();
+            listViewDetails = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_DETAILS, true).First<ListView>();
             addDataToListViewDetails(listViewDetails, orderSessionID);
 
             //
