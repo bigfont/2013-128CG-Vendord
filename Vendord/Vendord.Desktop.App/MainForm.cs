@@ -447,6 +447,32 @@
             loadCompleteOrdersView();
         }
 
+        private string BUTTON_MESSAGE_SEPARATOR = " : ";
+
+        private void ButtonStatus_Clear(Button b)
+        {
+            int i;
+            i = b.Text.LastIndexOf(BUTTON_MESSAGE_SEPARATOR);
+            if (i >= 0)
+            {
+                b.Text.Remove(i);
+            }
+        }
+
+        private void ButtonStatus_Done(Button b, string message)
+        {
+            ButtonStatus_Clear(b);
+            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
+            b.BackColor = Color.LightGreen;
+        }
+
+        private void ButtonStatus_Problem(Button b, string message)
+        {
+            ButtonStatus_Clear(b);
+            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
+            b.BackColor = Color.Yellow;
+        }
+
         private void btnSyncHandheld_Click(object sender, EventArgs e)
         {
             Sync sync;
@@ -457,7 +483,14 @@
             syncResult = sync.MergeDesktopAndDeviceDatabases();
             Cursor.Current = Cursors.Default;
 
-            (sender as Button).Text += " <Done> ";
+            if (syncResult == Sync.SyncResult.Complete)
+            {
+                ButtonStatus_Done(sender as Button, "Done");
+            }
+            else if (syncResult == Sync.SyncResult.Disconnected)
+            {
+                ButtonStatus_Problem(sender as Button, "Disconnected");
+            }
         }
 
         private void btnGetProductsFromITRetail_Click(object sender, EventArgs e)
@@ -470,7 +503,14 @@
             syncResult = sync.PullProductsFromITRetailDatabase();
             Cursor.Current = Cursors.Default;
 
-            (sender as Button).Text += " <Done> ";
+            if (syncResult == Sync.SyncResult.Complete)
+            {
+                ButtonStatus_Done(sender as Button, "Done");
+            }
+            else if (syncResult == Sync.SyncResult.Disconnected)
+            {
+                ButtonStatus_Problem(sender as Button, "Disconnected");
+            }
         }
 
         #endregion

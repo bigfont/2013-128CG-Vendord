@@ -1,4 +1,18 @@
 
-Desktop
+1. Add a new product to the IT Retail test database
 
-1. Delete an order item.
+2. Run Vendord.Desktop > Orders
+
+3. Get products from IT Retail
+
+4. Sync handheld.
+
+5. Remove handheld from dock.
+
+6. Open Vendord.Mobile > Orders > New Order > Scan the new product from step (1), add an order amount, and then close Vendord mobile. 
+
+7. Dock the handheld. 
+
+8. Open Vendord.Desktop. 
+
+9. Sync handheld. 
