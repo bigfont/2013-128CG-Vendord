@@ -182,6 +182,13 @@
                     UseAntiAlias = true
                 };
                 printPreview.PrintPreviewControl.Zoom = PRINT_PREVIEW_ZOOM;
+
+                // maximize if PrintPreviewDialog can act as a Form
+                if(printPreview is Form)
+                {
+                    (printPreview as Form).WindowState = FormWindowState.Maximized;
+                }               
+ 
                 printPreview.ShowDialog();
             }
         }
@@ -344,7 +351,7 @@
             ListView[] listViews;
             int orderSessionID;
 
-            btnPrintOrder = new Button() { Text = "Print Selected Order" };
+            btnPrintOrder = new Button() { Text = "Print Current Order" };
             btnPrintOrder.Click += new EventHandler(btnPrintOrder_Click);
 
             listViewMaster = createOrderSessionMasterListView();
