@@ -100,7 +100,7 @@
             btnBack = new Button() { Text = "Back" };
             btnBack.Click += new EventHandler(btnBack_Click);
 
-            btnClose = new Button() { Text = "Close" };
+            btnClose = new Button() { Text = "Save and Close" };
             btnClose.Click += new EventHandler(btnClose_Click);
 
             //

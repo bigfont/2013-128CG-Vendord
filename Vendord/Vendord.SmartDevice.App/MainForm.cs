@@ -79,7 +79,7 @@
             btnBack = new Button() { Text = "Back" };
             btnBack.Click += new EventHandler(btnBack_Click);
 
-            btnClose = new Button() { Text = "Close" };
+            btnClose = new Button() { Text = "Save and Close" };
             btnClose.Click += new EventHandler(btnClose_Click);
 
             //
@@ -348,23 +348,24 @@
             TextBox txtProductAmount;
             Control[] controls;
             VendordDatabase db;
-                                    
+
             // populate controls with default values
             lblProductUPC = new Label() { Text = scanData.Text };
             lblProductName = new Label() { Text = "This UPC code is not in the database." };
             lblProductAmount = new Label() { Text = "Cases to Order:" };
-            txtProductAmount = new TextBox() { Name = USER_INPUTS.TXT_ORDER_ITEM_AMOUNT , Enabled = false, Text = DEFAULT_PRODUCT_AMOUNT.ToString() };
-            lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
+            txtProductAmount = new TextBox() { Name = USER_INPUTS.TXT_ORDER_ITEM_AMOUNT, Enabled = false, Text = DEFAULT_PRODUCT_AMOUNT.ToString() };
+            lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };            
 
             // add values for product that is in the database
             db = new VendordDatabase();
-            currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));                        
-            if(currentScannedProduct != null)
+            currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
+            if (currentScannedProduct != null)
             {
-                lblProductName.Text = currentScannedProduct.Name;                
-                txtProductAmount.Enabled = true;              
-                txtProductAmount.KeyPress += new KeyPressEventHandler(int32TextBox_Validate_KeyPress);
-                
+                lblProductName.Text = currentScannedProduct.Name;
+                txtProductAmount.Enabled = true;
+                txtProductAmount.KeyPress += new KeyPressEventHandler(txtValidateInt32_KeyPress);
+                txtProductAmount.KeyPress += new KeyPressEventHandler(txtClearDefaultValue_KeyPress);
+
             }
 
             // add the controls to an array in the order that we want them to display
@@ -475,8 +476,18 @@
             loadOrderScanningView();
         }
 
-        private void int32TextBox_Validate_KeyPress(object sender, KeyPressEventArgs e)
-        {            
+        private void txtClearDefaultValue_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            TextBox txt;
+            txt = sender as TextBox;
+            if (txt != null && !txt.Modified)
+            {
+                txt.Text = String.Empty;
+            }
+        }
+
+        private void txtValidateInt32_KeyPress(object sender, KeyPressEventArgs e)
+        {
             // use a whitelist approach by disallowing all input
             e.Handled = true;
 
