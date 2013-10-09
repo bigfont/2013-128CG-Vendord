@@ -90,8 +90,7 @@
 
             //
             // add to panel - this triggers its layout event
-            //
-            this.mainNavigation.SuspendLayout();
+            //            
 
             controls = new Control[] { 
             
@@ -99,6 +98,8 @@
                 btnBack                
             
             };
+
+            this.mainNavigation.SuspendLayout();
 
             foreach (Control c in controls)
             {
@@ -435,7 +436,7 @@
             Button btnGetProductsFromITRetail;
             Button btnSyncHandheld;
             Button btnViewOrders;
-            Control[] controls;
+            Button[] buttons;
 
             btnGetProductsFromITRetail = new Button() { Text = "Get Products from IT Retail" };
             btnGetProductsFromITRetail.Click += new EventHandler(btnGetProductsFromITRetail_Click);
@@ -447,7 +448,7 @@
             btnViewOrders.Click += new EventHandler(btnViewOrders_Click);
 
             // add
-            controls = new Control[] { 
+            buttons = new Button[] { 
 
                 btnGetProductsFromITRetail,
                 btnViewOrders,
@@ -455,11 +456,11 @@
                                  
             };
 
-            foreach (Control c in controls)
+            foreach (Button b in buttons)
             {
-                c.Dock = DockStyle.Top;
-                c.Height = BUTTON_HEIGHT;
-                this.mainContent.Controls.Add(c);
+                b.Dock = DockStyle.Top;
+                b.Height = BUTTON_HEIGHT;
+                this.mainContent.Controls.Add(b);
             }
 
             //

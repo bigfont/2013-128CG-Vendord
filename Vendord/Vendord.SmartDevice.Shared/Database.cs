@@ -40,6 +40,16 @@
             public int ID { get; set; }
             public string Name { get; set; }
 
+            public void Delete()
+            {
+                string deleteQuery;
+                deleteQuery = String.Format(@"DELETE OrderSession WHERE ID = {0}",
+                    this.ID);
+
+                VendordDatabase db = new VendordDatabase();
+                db.ExecuteNonQuery(deleteQuery);
+            }
+
             public void UpsertIntoDB()
             {
                 string insertQuery;

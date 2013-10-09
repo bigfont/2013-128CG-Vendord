@@ -16,13 +16,15 @@
     public class MainForm : Form
     {
         private short DEFAULT_PRODUCT_AMOUNT = 1;
+        private int BUTTON_HEIGHT = 50;
+        private int NUMBER_OF_NAV_BUTTONS = 2;
         private static class USER_INPUTS
         {
-            internal const string TXT_ORDER_SESSION_NAME = "txtOrderSessionName";
-            internal const string TXT_ORDER_ITEM_AMOUNT = "txtOrderItemAmount";
+            internal const string TXT_ORDER_SESSION_NAME = "TXT_ORDER_SESSION_NAME";
+            internal const string TXT_ORDER_ITEM_AMOUNT = "TXT_ORDER_ITEM_AMOUNT";
         }
 
-        private Panel mainNavigation;
+        private Panel mainNavigation;        
         private Panel mainContent;
 
         private Button btnBack;
@@ -55,6 +57,7 @@
             //            
             mainNavigation = new Panel();
             mainNavigation.Dock = DockStyle.Top;
+            mainNavigation.Height = BUTTON_HEIGHT;
 
             //
             // create main content panel
@@ -63,13 +66,15 @@
             mainContent.Dock = DockStyle.Fill;
 
             //
-            // add to form - this triggers its layout event 
+            // add to form 
             //           
-            controls = new Control[] { mainNavigation, mainContent }.Reverse().ToArray();
+            this.SuspendLayout();
+            controls = new Control[] { mainContent, mainNavigation };
             foreach (Control c in controls)
             {
                 this.Controls.Add(c);
             }
+            this.ResumeLayout();
 
             //
             // Create Buttons
@@ -85,18 +90,35 @@
             //
             // add to panel - this triggers its layout event
             //
-            controls = new Control[] { btnBack, btnClose }.Reverse().ToArray();
+            controls = new Button[] { btnClose, btnBack };
+
+            this.mainNavigation.SuspendLayout();
+            
             foreach (Control c in controls)
             {
                 c.Dock = DockStyle.Left;
-                c.Width = mainNavigation.ClientSize.Width / controls.Length;
+                c.Height = BUTTON_HEIGHT;
+                c.Width = this.mainNavigation.ClientSize.Width / controls.Length;
                 mainNavigation.Controls.Add(c);
             }
+            this.mainNavigation.ResumeLayout();
         }
 
         #region Utilities
 
-        private void continueExistingOrder()
+        private void deleteSelectedOrder()
+        {
+            ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
+
+            if (listView != null)
+            {
+                currentOrderSession.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                currentOrderSession.Delete();
+                currentOrderSession = null;
+            }
+        }
+
+        private void continueSelectedOrder()
         {
             ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
 
@@ -184,21 +206,20 @@
             Button[] buttons;
 
             btnOrders = new Button() { Text = "Orders" };
-            btnOrders.Click += new EventHandler(btnOrders_Click);
-
-            this.mainContent.Controls.Add(btnOrders);
+            btnOrders.Click += new EventHandler(btnOrders_Click);            
 
             // style
             buttons = new Button[] { 
                 
                 btnOrders 
             
-            }.Reverse().ToArray();
+            };
 
             foreach (Button b in buttons)
             {
                 b.Dock = DockStyle.Top;
-                b.Height = b.Parent.ClientSize.Height / buttons.Count();
+                b.Height = BUTTON_HEIGHT;
+                this.mainContent.Controls.Add(b);
             }
 
             //
@@ -214,20 +235,27 @@
             Bitmap myBitmap;
             ImageList myImageList;
             VendordDatabase db;
+            Panel pnlSecondaryNav;
+            Button[] buttons;
+            Button btnCreate;
+            Button btnDelete;
+            Button btnContinue;
+
+            // create buttons and navigation panel
+            pnlSecondaryNav = new Panel();
+
+            btnCreate = new Button() { Text = "Create" };
+            btnCreate.Click += new EventHandler(btnCreateNewOrder_Click);
+
+            btnDelete = new Button() { Text = "Delete" };
+            btnDelete.Click += new EventHandler(btnDeleteExistingOrder_Click);
+
+            btnContinue = new Button() { Text = "Continue" };
+            btnContinue.Click += new EventHandler(btnContinueExistingOrder_Click);
 
             //
             // create list view
-            lvOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };
-            lvOrders.ItemActivate += new EventHandler(lvOrders_ItemActivate);
-
-            //
-            // enable add new
-            //
-            lvOrders.Items.Add(new ListViewItem()
-            {
-                Text = "<Add New>",
-                ImageIndex = 0
-            });
+            lvOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };            
 
             // 
             // populate list view
@@ -258,8 +286,32 @@
             lvOrders.View = View.List;
             lvOrders.Dock = DockStyle.Top;
 
-            // add the list view to the main content - this triggers its layout event
+            buttons = new Button[] { 
+            
+                btnContinue,
+                btnDelete,
+                btnCreate
+            
+            };
+
+            this.SuspendLayout();
+
+            lvOrders.Dock = DockStyle.Fill;
             this.mainContent.Controls.Add(lvOrders);
+
+            pnlSecondaryNav.Dock = DockStyle.Top;
+            pnlSecondaryNav.Height = BUTTON_HEIGHT;
+            this.mainContent.Controls.Add(pnlSecondaryNav);
+
+            foreach (Button b in buttons)
+            {
+                b.Dock = DockStyle.Left;
+                b.Height = BUTTON_HEIGHT;
+                b.Width = pnlSecondaryNav.ClientSize.Width / buttons.Length;
+                pnlSecondaryNav.Controls.Add(b);
+            }           
+
+            this.ResumeLayout();
 
             //
             // back
@@ -289,9 +341,10 @@
 
             label.Dock = DockStyle.Top;
             textBox.Dock = DockStyle.Top;
-            button.Dock = DockStyle.Fill;
-
-            Control[] controls = new Control[] { label, textBox, button }.Reverse().ToArray();
+            button.Dock = DockStyle.Top;
+            button.Height = BUTTON_HEIGHT;
+            
+            Control[] controls = new Control[] { button, textBox, label };
             foreach (Control c in controls)
             {
                 this.mainContent.Controls.Add(c);
@@ -449,24 +502,24 @@
             loadOrdersView();
         }
 
-        private void lvOrders_ItemActivate(object sender, EventArgs e)
+        private void btnCreateNewOrder_Click(object sender, EventArgs e)
         {
-            ListView lvOrders;
-            ListViewItem selectedItem;
+            unloadCurrentView();
+            loadCreateNewOrderView();
+        }
 
-            lvOrders = sender as ListView;
-            selectedItem = lvOrders.Items[lvOrders.SelectedIndices[0]];
-            if (selectedItem.Index == 0)
-            {
-                unloadCurrentView();
-                loadCreateNewOrderView();
-            }
-            else
-            {
-                continueExistingOrder();
-                unloadCurrentView();
-                loadOrderScanningView();
-            }
+        private void btnDeleteExistingOrder_Click(object sender, EventArgs e)
+        {
+            deleteSelectedOrder();
+
+            // TODO Also delete associated ordersession_products
+        }
+
+        private void btnContinueExistingOrder_Click(object sender, EventArgs e)
+        {
+            continueSelectedOrder();
+            unloadCurrentView();
+            loadOrderScanningView();
         }
 
         private void btnSaveNewOrder_Click(object sender, EventArgs e)
