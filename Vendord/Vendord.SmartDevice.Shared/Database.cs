@@ -9,7 +9,7 @@
     using System.Collections.ObjectModel;
 
     public class VendordDatabase
-    {
+    {        
         private List<Product> products;
         private List<OrderSession> orderSessions;
         private List<OrderSession_Product> orderSession_Products;
@@ -60,6 +60,7 @@
             public int ID { get; set; }
             public string UPC { get; set; } // TODO Change UPC into an INTEGER
             public string Name { get; set; }
+            public string VendorName { get; set; }
             
             public void UpsertIntoDB()
             {
@@ -70,13 +71,12 @@
                 selectQuery = String.Format(@"SELECT COUNT(*) FROM Product WHERE UPC = '{0}'", 
                     this.UPC);
 
-                insertQuery = String.Format(@"INSERT INTO Product (UPC, Name) VALUES ('{0}', '{1}')",
+                insertQuery = String.Format(@"INSERT INTO Product (UPC, Name, VendorName) VALUES ('{0}', '{1}', '{2}')",
                     this.UPC,
-                    this.Name);
+                    this.Name,
+                    this.VendorName);
 
-                updateQuery = String.Format(@"UPDATE Product SET Name = '{1}' WHERE UPC = '{0}'",
-                    this.UPC,
-                    this.Name);
+                updateQuery = null; // TODO Add an update query if appropriate.
 
                 VendordDatabase db = new VendordDatabase();
 
@@ -84,7 +84,7 @@
                 {
                     db.ExecuteNonQuery(insertQuery);
                 }
-                else
+                else if(updateQuery != null)
                 {
                     db.ExecuteNonQuery(updateQuery);
                 }
@@ -158,7 +158,7 @@
                 }
                 return orderSessions;
             }
-        }
+        }        
 
         public List<Product> Products
         {
@@ -181,7 +181,8 @@
                             {
                                 ID = Convert.ToInt32(reader["ID"]),
                                 Name = Convert.ToString(reader["Name"]),
-                                UPC = Convert.ToString(reader["UPC"])
+                                UPC = Convert.ToString(reader["UPC"]),
+                                VendorName = Convert.ToString(reader["VendorName"])
                             };
                             products.Add(item);
                         }
@@ -286,7 +287,7 @@
             //
             if (!TableExists("Product"))
             {
-                createTableQuery = @"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE)";
+                createTableQuery = @"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE, VendorName NVARCHAR(100))";
                 ExecuteNonQuery(createTableQuery);
             }
 

@@ -42,22 +42,22 @@
             SqlDataReader reader;
             SqlCommand command;
             VendordDatabase.Product product;
-
-            // delete all existing products
+            
             product = new VendordDatabase.Product();
 
             // insert all products from IT Retail
             using (SqlConnection conn = new SqlConnection(Constants.IT_RETAIL_DATABASE_CONNECTION_STRING))
             {
                 conn.Open();
-                command = new SqlCommand(@"SELECT Name, UPC FROM Product", conn);
+                command = new SqlCommand(@"SELECT Name, UPC, VendorName FROM Product", conn);
                 reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     product = new VendordDatabase.Product()
                     {
                         Name = Convert.ToString(reader["Name"]),
-                        UPC = Convert.ToString(reader["UPC"])
+                        UPC = Convert.ToString(reader["UPC"]),
+                        VendorName = Convert.ToString(reader["VendorName"])
                     };
 
                     product.UpsertIntoDB();
@@ -198,8 +198,8 @@
         }
 
         public SyncResult PullProductsFromITRetailDatabase()
-        {
-            CopyProductsFromITRetailDBToDesktopDB();
+        {            
+            CopyProductsFromITRetailDBToDesktopDB();            
             return SyncResult.Complete;
         }
     }
