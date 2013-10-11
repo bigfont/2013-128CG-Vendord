@@ -1,0 +1,36 @@
+
+- Visual Studio 2008 looks for Redistributable Packages here:
+C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Bootstrapper\Packages
+
+- Add them via Solution Explorer > Project > Properties > Publish > Prerequisits dialog
+
+- Component Packages have three parts
+
+	Redistributable EXE or MSI
+	Product Manifest product.xml - contains language-neutral metadata
+	Package Manifest package.xml - contains language-specific metadata
+
+- Manifest files must conform to this schema: 
+http://msdn.microsoft.com/en-us/library/ms229223%28v=vs.90%29.aspx
+
+//
+//
+REFERENCES
+//
+//
+
+Adding Custom Prerequisites
+	http://msdn.microsoft.com/en-us/library/ms165429%28v=vs.90%29.aspx
+	
+Creating Bootstrapper Packages
+	This lists the built in properties such as ProcessorArchicture!!!
+	http://msdn.microsoft.com/en-us/library/ms165429(v=vs.110).aspx
+
+//
+//
+QUESTIONS
+//
+//
+
+Do we need both a product and a package file? 
+	

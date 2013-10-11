@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Product
+  ProductCode="Windows.Mobile.Device.Center"
+  xmlns="http://schemas.microsoft.com/developer/2004/01/bootstrapper">
+
+  <PackageFiles CopyAllPackageFiles="false">
+    <PackageFile Name="drvupdate-x86.exe" PublicKey="3082010A0282010100CD819638AE5CA2F2C1DFDED0AB958DD63C9D1F8BC35D862E5DF0B172F5ABAC886AB5DAB1227B0BC8C8A54B915E2213E9F9F5239DB5F46E76AEEFEEA43CC7C4C0595C3FABB3733326A662816179A162F46E8895D06EDDC79FD2A451117661BA708A65A1961689A75D81D04466E5DB569E40CAFCDC76242E443000E5D67D7B9511D5581DA3E84F0BC988DCA2D653996CCA63CA996A9A925E4C4D11E82FD35B5B5E5F52A3732DA5BB84450D8C191576CB08DA9AA67015E84DEC69FD5DB26B8FED295137388BC6464915945098B0F468A4D7DE097167749E778C1D856B97EAE75F45CCE0E6710DD16300937B31988E0BB413BDB3D0EEF1DF21EEA96061EE37433DC30203010001" />
+    <PackageFile Name="drvupdate-amd64.exe"/>
+  </PackageFiles>
+  
+  <Commands Reboot="Defer">
+    
+    <!--Install the 32 bit version-->
+    <Command PackageFile="drvupdate-x86.exe">
+      <InstallConditions>
+        <!-- Block install if the platform is not x86 -->
+        <BypassIf Property="ProcessorArchitecture" Compare="ValueNotEqualTo" Value="Intel" />
+        <BypassIf Property="ProcessorArchitecture" Compare="ValueEqualTo" Value="IA64" />
+        <BypassIf Property="ProcessorArchitecture" Compare="ValueEqualTo" Value="AMD64" />
+      </InstallConditions>
+      <ExitCodes>
+        <ExitCode Value="0" Result="Success" />
+        <ExitCode Value="1641" Result="SuccessReboot" />
+        <ExitCode Value="3010" Result="Success" />
+        <DefaultExitCode Result="Fail" FormatMessageFromSystem="true" />
+      </ExitCodes>
+    </Command>
+    
+    <!--Install the 64 bit version-->
+    <Command PackageFile="drvupdate-amd64.exe">
+      <InstallConditions>
+        <!-- Block install if the platform is x86 -->
+        <BypassIf Property="ProcessorArchitecture" Compare="ValueEqualTo" Value="Intel" />
+      </InstallConditions>
+      <ExitCodes>
+        <ExitCode Value="0" Result="Success" />
+        <ExitCode Value="1641" Result="SuccessReboot" />
+        <ExitCode Value="3010" Result="Success" />
+        <DefaultExitCode Result="Fail" FormatMessageFromSystem="true" />
+      </ExitCodes>
+    </Command>      
+
+  </Commands>
+</Product>

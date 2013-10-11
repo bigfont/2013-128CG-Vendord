@@ -15,7 +15,7 @@
     <OSVersion>5.1</OSVersion>
     <DeployDirSuffix>Vendord.SmartDevice.Shared</DeployDirSuffix>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <NativePlatformName>Windows Mobile 5.0 Pocket PC SDK</NativePlatformName>
+    <NativePlatformName>Windows CE</NativePlatformName>
     <FormFactorID>
     </FormFactorID>
   </PropertyGroup>

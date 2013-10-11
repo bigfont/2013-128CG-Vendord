@@ -28,12 +28,17 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://www.bigfont.ca/clickonce/vendord/</InstallUrl>
+    <SupportUrl>http://www.bigfont.ca</SupportUrl>
+    <ProductName>Vendord</ProductName>
+    <PublisherName>BigFont.ca</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>30</ApplicationRevision>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <ApplicationRevision>42</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <BootstrapperComponentsLocation>Relative</BootstrapperComponentsLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -79,19 +84,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Vendord.SmartDevice.Shared\Constants.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\Constants.cs">
       <Link>LinkedFiles\Constants.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\Database.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\Database.cs">
       <Link>LinkedFiles\Database.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\ErrorHandler.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\ErrorHandler.cs">
       <Link>LinkedFiles\ErrorHandler.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\FormHelpers.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\FormHelpers.cs">
       <Link>LinkedFiles\FormHelpers.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\IOHelpers.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\IOHelpers.cs">
       <Link>LinkedFiles\IOHelpers.cs</Link>
     </Compile>
     <Compile Include="ExternalCode\ListViewPrinter.cs">

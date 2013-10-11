@@ -38,10 +38,7 @@
         private VendordDatabase.OrderSession currentOrderSession
             = new VendordDatabase.OrderSession();
         private VendordDatabase.Product currentScannedProduct
-            = new VendordDatabase.Product();
-
-        // user inputs control names
-
+            = new VendordDatabase.Product();        
 
         public MainForm()
         {
@@ -511,6 +508,8 @@
         private void btnDeleteExistingOrder_Click(object sender, EventArgs e)
         {
             deleteSelectedOrder();
+            unloadCurrentView();
+            loadOrdersView();
 
             // TODO Also delete associated ordersession_products
         }

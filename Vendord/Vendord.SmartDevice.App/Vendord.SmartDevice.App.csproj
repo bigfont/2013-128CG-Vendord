@@ -62,19 +62,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Vendord.SmartDevice.Shared\Constants.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\Constants.cs">
       <Link>LinkedFiles\Constants.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\Database.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\Database.cs">
       <Link>LinkedFiles\Database.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\ErrorHandler.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\ErrorHandler.cs">
       <Link>LinkedFiles\ErrorHandler.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\FormHelpers.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\FormHelpers.cs">
       <Link>LinkedFiles\FormHelpers.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Shared\IOHelpers.cs">
+    <Compile Include="..\Vendord.SmartDevice.Linked\IOHelpers.cs">
       <Link>LinkedFiles\IOHelpers.cs</Link>
     </Compile>
     <Compile Include="BarcodeAPI.cs" />

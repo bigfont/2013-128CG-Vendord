@@ -1,0 +1,81 @@
+
+
+INSTALL
+---
+
+Must Have
+
+- Install the software. Done.
+
+- Add an entry to the Start Menu as Vendord. Done.
+
+- Add an entry to Add or Remove Programs as Vendord. Done.
+
+- Add a desktop shortcut. Not done. This is deprecated.
+
+Should Have
+
+- Detect whether the mobile device is connected before installing, lest Windows Mobile Device Center will not properly install. 
+
+Nice to Have
+
+- Digital Signature. Why bother?
+
+- Consistent and simple product.xml and package.xml manifest files. Meh.
+
+- The proper EULA for each prerequisite.
+	SyncFX20Core. Done.
+	SyncFX20DatabaseProviders. Done.
+	SQL Server Compact 3.5.8. N/A
+	Windows Mobile Device Center. N/A 
+
+
+UNINSTALL
+---
+
+- Uninstall the software. Done.
+
+- Delete the VENDORD folder from Program Files. Done.
+
+- Delete the VENDORD folder from AppData. Not done. This is non-trivial.
+
+
+BUGS
+---
+
+"Windows Mobile Device Center Update"
+This installation package is not supported by this processor type. Contact your product vendor.
+FIX - The fix is to deploy both the 64 and 32 bit versions.
+
+"Cannot Start Application"
+Cannot download the application. The application is missing required files. Contact application vendor for assistance.
+FIX - Add the current version to the VS Project > ClickOnce > Vendord > Application Files.
+
+
+NOTES
+---
+
+- Desktop shortcuts are deprecated.
+
+
+REFERENCES
+---
+
+How to: Publish a ClickOnce Application
+	Shows the steps to a default publish to the Web.
+	http://msdn.microsoft.com/en-us/library/31kztyey%28v=vs.90%29.aspx
+	
+Publishing ClickOnce Applications
+	Shows the table of contents for most of the MSDN ClickOnce topics.
+	http://msdn.microsoft.com/en-us/library/748fh114%28v=vs.90%29.aspx
+	
+Signing ClickOnce Manifests
+	TODO - Figure out what problem signing solves.
+	http://msdn.microsoft.com/en-us/library/zfz60ccf%28v=vs.90%29.aspx
+	
+How to: Specify a Start Menu Name for a ClickOnce Application
+	Shows the steps to changing the Start Menu and Add or Remove Programs name.
+	http://msdn.microsoft.com/en-us/library/shfsy39d%28v=vs.90%29.aspx
+
+	
+
