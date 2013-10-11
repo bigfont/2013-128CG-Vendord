@@ -17,30 +17,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDevice.App", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharingAppDemo-CEProviderEndToEnd", "..\Resources\Database Sync SQL Server and SQL Compact 2-Tier\C#\SharingAppDemo-CEProviderEndToEnd.csproj", "{4D04C367-A2AC-4088-B6A3-25C2568F2932}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UseCases", "UseCases", "{20B71F4A-BA7B-4B90-BE30-BC6EE2AA2155}"
-	ProjectSection(SolutionItems) = preProject
-		01-Done.txt = 01-Done.txt
-		02-Done.txt = 02-Done.txt
-		03.txt = 03.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{D728C048-9926-4666-90E4-999156A4A5E3}"
-	ProjectSection(SolutionItems) = preProject
-		HowTo.AddPublishingPrerequisites.txt = HowTo.AddPublishingPrerequisites.txt
-		HowTo.Desktop.Deploy.txt = HowTo.Desktop.Deploy.txt
-		HowTo.Install.txt = HowTo.Install.txt
-		Requirements.Desktop.Deploy.txt = Requirements.Desktop.Deploy.txt
-		UninstallWMDC.txt = UninstallWMDC.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReleaseNotes", "ReleaseNotes", "{8FAA9CDC-28E3-4562-BC0B-EF60E03969A3}"
-	ProjectSection(SolutionItems) = preProject
-		2013-10-03.txt = 2013-10-03.txt
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListViewPrinterDemo", "..\Resources\ListViewPrinterDemo\ListViewPrinterDemo\ListViewPrinterDemo\ListViewPrinterDemo.csproj", "{B0F21E61-3AB9-43D2-9728-296BC90DEB3A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDevice.Linked", "Vendord.SmartDevice.Linked\Vendord.SmartDevice.Linked.csproj", "{EA738CA8-5ECC-493D-A474-4FCCC2831878}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Txt", "Txt", "{87EBA4DF-90FA-49B3-991C-97A059D89268}"
+	ProjectSection(SolutionItems) = preProject
+		Txt\01-Done.txt = Txt\01-Done.txt
+		Txt\02-Done.txt = Txt\02-Done.txt
+		Txt\03-Done.txt = Txt\03-Done.txt
+		Txt\HowTo.AddPublishingPrerequisites.txt = Txt\HowTo.AddPublishingPrerequisites.txt
+		Txt\HowTo.Desktop.Deploy.txt = Txt\HowTo.Desktop.Deploy.txt
+		Txt\HowTo.Install.txt = Txt\HowTo.Install.txt
+		Txt\Bugs.txt = Txt\Bugs.txt
+		Txt\Requirements.Desktop.Deploy.txt = Txt\Requirements.Desktop.Deploy.txt
+		Txt\UninstallWMDC.txt = Txt\UninstallWMDC.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

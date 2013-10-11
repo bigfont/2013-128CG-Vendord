@@ -1,0 +1,5 @@
+
+10 Oct 2013
+--
+
+- Clicking "Get Products from IT Retail" hangs when there is no database connection.
