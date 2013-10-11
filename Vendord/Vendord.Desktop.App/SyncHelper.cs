@@ -140,7 +140,11 @@
                 orchestrator = new SyncOrchestrator();
                 orchestrator.LocalProvider = localProvider;
                 orchestrator.RemoteProvider = copyProvider;
-                orchestrator.Direction = SyncDirectionOrder.UploadAndDownload;
+                orchestrator.Direction 
+                    = SyncDirectionOrder.DownloadAndUpload; 
+                    // the sync DOWNLOADS and then UPLOADS.
+                    // DOWNLOADS are for order sessions, ergo all order session CRUD should happen on the mobile
+                    // UPLOADS are for products, ergo all product CRUD should happen on the desktop
 
                 orchestrator.StateChanged += new EventHandler<SyncOrchestratorStateChangedEventArgs>(orchestrator_StateChanged);
                 orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(orchestrator_SessionProgress);

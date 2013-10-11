@@ -3,3 +3,5 @@
 --
 
 - Clicking "Get Products from IT Retail" hangs when there is no database connection.
+
+- Deleting an Order on the mobile device doesn't delete it on the desktop app.
