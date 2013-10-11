@@ -18,6 +18,7 @@ http://support.microsoft.com/mats/program_install_and_uninstall/
 
 - Now that WMDC is gone, plug in the mobile device.
 - Turn on the mobile device.
+- It will install drivers, including WMDC, if it hasn't already.
 
 - Then, go to bigfont.ca/clickonce/vendord/publish.htm
 - Click Install
@@ -28,4 +29,4 @@ Known Issues
 --
 
 - Sometimes the install of WMDC hangs.
-- One workaroung is to Task Manage and to end all Windows Installer processes.
+- One workaroung is to open Task Manager and to end all Windows Installer processes.
