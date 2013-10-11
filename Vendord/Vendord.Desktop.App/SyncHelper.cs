@@ -26,8 +26,8 @@
 
         // sync status
         public enum SyncResult
-        { 
-            Disconnected, 
+        {
+            Disconnected,
             Complete
         }
 
@@ -42,7 +42,7 @@
             SqlDataReader reader;
             SqlCommand command;
             VendordDatabase.Product product;
-            
+
             product = new VendordDatabase.Product();
 
             // insert all products from IT Retail
@@ -181,6 +181,7 @@
 
         public SyncResult MergeDesktopAndDeviceDatabases()
         {
+            SyncResult result;
             mgr = new RAPI.RemoteDeviceManager();
             RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
             if (remoteDevice != null && remoteDevice.Status == RAPI.DeviceStatus.Connected)
@@ -189,18 +190,28 @@
                 CopyDatabaseFromDeviceToDesktop(remoteDevice);
                 SyncSqlCeDatabases(rapiDatabaseLocalCopy_Path, REMOTE_DEVICE_DB_SYNC_SCOPE, new string[] { "OrderSession", "Product", "OrderSession_Product" });
                 CopyDatabaseBackToDevice(remoteDevice);
-                return SyncResult.Complete;
+                result = SyncResult.Complete;
             }
             else
             {
-                return SyncResult.Disconnected;
+                result = SyncResult.Disconnected;
             }
+            return result;
         }
 
         public SyncResult PullProductsFromITRetailDatabase()
-        {            
-            CopyProductsFromITRetailDBToDesktopDB();            
-            return SyncResult.Complete;
+        {
+            SyncResult result;
+            try
+            {
+                CopyProductsFromITRetailDBToDesktopDB();
+                result = SyncResult.Complete;
+            }
+            catch (SqlException ex)
+            {
+                result = SyncResult.Disconnected;
+            }
+            return result;
         }
     }
 }
