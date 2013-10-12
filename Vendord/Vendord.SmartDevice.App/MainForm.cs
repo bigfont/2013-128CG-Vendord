@@ -20,7 +20,7 @@
         private int NUMBER_OF_NAV_BUTTONS = 2;
         private static class USER_INPUTS
         {
-            internal const string TXT_ORDER_SESSION_NAME = "TXT_ORDER_SESSION_NAME";
+            internal const string TXT_ORDER_NAME = "TXT_ORDER_NAME";
             internal const string TXT_ORDER_ITEM_AMOUNT = "TXT_ORDER_ITEM_AMOUNT";
         }
 
@@ -35,8 +35,8 @@
 
         // scanning specific fields
         private BarcodeAPI barcodeAPI;
-        private VendordDatabase.OrderSession currentOrderSession
-            = new VendordDatabase.OrderSession();
+        private VendordDatabase.Order currentOrder
+            = new VendordDatabase.Order();
         private VendordDatabase.Product currentScannedProduct
             = new VendordDatabase.Product();        
 
@@ -109,9 +109,11 @@
 
             if (listView != null)
             {
-                currentOrderSession.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
-                currentOrderSession.Delete();
-                currentOrderSession = null;
+                VendordDatabase db = new VendordDatabase();
+
+                currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                currentOrder.AddToTrash(db);
+                currentOrder = null;
             }
         }
 
@@ -121,8 +123,8 @@
 
             if (listView != null)
             {
-                currentOrderSession.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
-                currentOrderSession.Name = listView.FocusedItem.SubItems[0].Text;
+                currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                currentOrder.Name = listView.FocusedItem.SubItems[0].Text;
             }
         }
 
@@ -131,16 +133,16 @@
             // start new order session
             List<TextBox> descendents;
 
-            descendents = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TXT_ORDER_SESSION_NAME, true);
+            descendents = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TXT_ORDER_NAME, true);
             if (descendents != null && descendents.Count > 0)
             {
-                VendordDatabase.OrderSession newOrderSession = new VendordDatabase.OrderSession()
+                VendordDatabase.Order newOrder = new VendordDatabase.Order()
                 {
                     Name = descendents.FirstOrDefault<TextBox>().Text
                 };
-                newOrderSession.UpsertIntoDB();
-                currentOrderSession.ID = newOrderSession.ID;
-                currentOrderSession.Name = newOrderSession.Name;
+                newOrder.UpsertIntoDB(new VendordDatabase());
+                currentOrder.ID = newOrder.ID;
+                currentOrder.Name = newOrder.Name;
             }
         }
 
@@ -151,13 +153,13 @@
 
             if (textBoxes != null && textBoxes.Count > 0 && textBoxes.First<TextBox>().Text.Length > 0)
             {
-                VendordDatabase.OrderSession_Product orderSessionProduct = new VendordDatabase.OrderSession_Product()
+                VendordDatabase.Order_Product OrderProduct = new VendordDatabase.Order_Product()
                 {
-                    OrderSessionID = currentOrderSession.ID,
+                    OrderID = currentOrder.ID,
                     ProductID = currentScannedProduct.ID,
                     CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
                 };
-                orderSessionProduct.UpsertIntoDB();
+                OrderProduct.UpsertIntoDB(new VendordDatabase());
             }
         }
 
@@ -258,7 +260,7 @@
             // populate list view
             //
             db = new VendordDatabase();
-            foreach (VendordDatabase.OrderSession order in db.OrderSessions)
+            foreach (VendordDatabase.Order order in db.Orders)
             {
                 // create item and add it to the list view
                 listViewItem = new ListViewItem()
@@ -326,7 +328,7 @@
             label.Text = "Order Name";
 
             textBox = new TextBox();
-            textBox.Name = USER_INPUTS.TXT_ORDER_SESSION_NAME;
+            textBox.Name = USER_INPUTS.TXT_ORDER_NAME;
 
             button = new Button() { Text = "Save" };
             button.Click += new EventHandler(btnSaveNewOrder_Click);
@@ -361,16 +363,16 @@
 
         private void loadOrderScanningView()
         {
-            Label lblOrderSessionName;
+            Label lblOrderName;
             Label lblInstructions;
             Control[] controls;
 
-            lblOrderSessionName = new Label() { Text = "Order Name:" + currentOrderSession.Name };
+            lblOrderName = new Label() { Text = "Order Name:" + currentOrder.Name };
             lblInstructions = new Label() { Text = "Start scanning." };
 
             controls = new Control[] { 
 
-                lblOrderSessionName, 
+                lblOrderName, 
                 lblInstructions 
 
             }.Reverse<Control>().ToArray<Control>();
@@ -511,7 +513,7 @@
             unloadCurrentView();
             loadOrdersView();
 
-            // TODO Also delete associated ordersession_products
+            // TODO Also delete associated order_Products
         }
 
         private void btnContinueExistingOrder_Click(object sender, EventArgs e)

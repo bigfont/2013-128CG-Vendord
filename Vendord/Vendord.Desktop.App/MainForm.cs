@@ -211,11 +211,11 @@
             ListView listViewMediator;
             ListView listViewDetails;
             ListViewItem selectedListViewItem;
-            int orderSessionID;
+            int OrderID;
             string vendorName;
 
             // defaults
-            orderSessionID = -1;
+            OrderID = -1;
             vendorName = null;
 
             // retrieve the selected orderID
@@ -223,7 +223,7 @@
             selectedListViewItem = getSelectedListViewItem(listViewMaster);
             if (selectedListViewItem != null)
             {
-                orderSessionID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
+                OrderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
 
                 // retrieve the selected vendorName
                 listViewMediator = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MEDIATOR, true).First<ListView>();
@@ -236,7 +236,7 @@
                 // update listViewDetails
                 listViewDetails = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_DETAILS, true).First<ListView>();   
                 listViewDetails.Items.Clear();                                
-                addDataToListViewDetails(listViewDetails, orderSessionID, vendorName);                
+                addDataToListViewDetails(listViewDetails, OrderID, vendorName);                
             }
 
             //
@@ -245,16 +245,16 @@
             enableBackButton(loadOrdersView);
         }
 
-        private void addDataToListViewDetails(ListView listViewDetails, int orderSessionID, string vendorName)
+        private void addDataToListViewDetails(ListView listViewDetails, int OrderID, string vendorName)
         {
             ListViewItem listViewItem;
             VendordDatabase db;
             VendordDatabase.Product product;
 
-            if (orderSessionID >= 0 && vendorName != null && vendorName.Length > 0)
+            if (OrderID >= 0 && vendorName != null && vendorName.Length > 0)
             {
                 db = new VendordDatabase();
-                foreach (VendordDatabase.OrderSession_Product order_product in db.OrderSession_Products.Where(i => i.OrderSessionID == orderSessionID))
+                foreach (VendordDatabase.Order_Product order_product in db.Order_Products.Where(i => i.OrderID == OrderID))
                 {
                     product = db.Products.FirstOrDefault(p => p.ID == order_product.ProductID && p.VendorName.Equals(vendorName));
 
@@ -277,7 +277,7 @@
             listView.Items.Add("Empty");
         }
 
-        private ListView createOrderSessionDetailsListView()
+        private ListView createOrderDetailsListView()
         {
             ListView listViewDetails;
 
@@ -306,17 +306,17 @@
             ListView listViewMediator;
             ListViewItem selectedListViewItem;
 
-            int orderSessionID;
-            orderSessionID = -1;
+            int OrderID;
+            OrderID = -1;
 
             listViewMaster = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MASTER, true).First<ListView>();
             selectedListViewItem = getSelectedListViewItem(listViewMaster);
             if (selectedListViewItem != null)
             {
-                orderSessionID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
+                OrderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
                 listViewMediator = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MEDIATOR, true).First<ListView>();
                 listViewMediator.Items.Clear();
-                addDataToListViewMediator(listViewMediator, orderSessionID);                
+                addDataToListViewMediator(listViewMediator, OrderID);                
             }
 
             //
@@ -325,7 +325,7 @@
             enableBackButton(loadOrdersView);
         }
 
-        private void addDataToListViewMediator(ListView listViewMediator, int orderSessionID)
+        private void addDataToListViewMediator(ListView listViewMediator, int OrderID)
         {
             ListViewItem listViewItem;
             VendordDatabase db;
@@ -334,8 +334,8 @@
 
             var vendorNames =
                 from p in db.Products
-                join op in db.OrderSession_Products on p.ID equals op.ProductID
-                where op.OrderSessionID == orderSessionID 
+                join op in db.Order_Products on p.ID equals op.ProductID
+                where op.OrderID == OrderID 
                 group p by p.VendorName into g
                 select g.Key;
 
@@ -353,7 +353,7 @@
             }
         }
 
-        private ListView createOrderSessionMediatorListView()
+        private ListView createOrderMediatorListView()
         {
             ListView listViewMediator;
 
@@ -379,15 +379,15 @@
             VendordDatabase db;
             // add list view items            
             db = new VendordDatabase();
-            foreach (VendordDatabase.OrderSession orderSession in db.OrderSessions)
+            foreach (VendordDatabase.Order Order in db.Orders)
             {
-                listViewItem = new ListViewItem(orderSession.Name);
-                listViewItem.Tag = orderSession.ID;
+                listViewItem = new ListViewItem(Order.Name);
+                listViewItem.Tag = Order.ID;
                 listViewMaster.Items.Add(listViewItem);
             }
         }
 
-        private ListView createOrderSessionMasterListView()
+        private ListView createOrderMasterListView()
         {
             ListView listViewMaster;
 
@@ -487,7 +487,7 @@
             ListView listViewMediator;
             ListView listViewDetails;
             ListView[] listViews;
-            int orderSessionID;
+            int OrderID;
             string vendorName;
 
             // create button(s)
@@ -495,24 +495,24 @@
             btnPrintOrder.Click += new EventHandler(btnPrintOrder_Click);
 
             // create listviews
-            listViewMaster = createOrderSessionMasterListView();
-            listViewMediator = createOrderSessionMediatorListView();
-            listViewDetails = createOrderSessionDetailsListView();
+            listViewMaster = createOrderMasterListView();
+            listViewMediator = createOrderMediatorListView();
+            listViewDetails = createOrderDetailsListView();
 
             // add data to the master list view
             addDataToListViewMaster(listViewMaster);
             if (listViewMaster.Items.Count > 0)
             {
                 // add data to the mediator list view
-                orderSessionID = Convert.ToInt32(listViewMaster.Items[0].Tag.ToString());
+                OrderID = Convert.ToInt32(listViewMaster.Items[0].Tag.ToString());
                 listViewMediator.Items.Clear();
-                addDataToListViewMediator(listViewMediator, orderSessionID);
+                addDataToListViewMediator(listViewMediator, OrderID);
                 if (listViewMediator.Items.Count > 0)
                 {
                     // add data to the details list view
                     vendorName = listViewMediator.Items[0].Text;
                     listViewDetails.Items.Clear();
-                    addDataToListViewDetails(listViewDetails, orderSessionID, vendorName);
+                    addDataToListViewDetails(listViewDetails, OrderID, vendorName);
                 }
             }
             else

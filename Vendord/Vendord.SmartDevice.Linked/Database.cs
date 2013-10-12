@@ -9,10 +9,11 @@
     using System.Collections.ObjectModel;
 
     public class VendordDatabase
-    {        
+    {
         private List<Product> products;
-        private List<OrderSession> orderSessions;
-        private List<OrderSession_Product> orderSession_Products;
+        private List<Order> order;
+        private List<Order_Product> order_Products;
+        private string connectionString;
 
         private static string sqlCeConnectionStringTemplate = @"Data Source={0};Persist Security Info=False;";
         public static string GenerateSqlCeConnString(string databaseFullPath)
@@ -22,112 +23,123 @@
             return sqlCeConnString;
         }
 
-        public string ConnectionString
+        // TODO Use System.Reflection to make a DRY upsert method for order, Product, and Order_Product        
+
+        public class DbEntity
         {
-            get
+            // non-database columns
+            public string TableName
             {
-                string result;
-                result = GenerateSqlCeConnString(Constants.VendordDatabaseFullPath);
-                return result;
+                get
+                {
+                    string tableName;
+                    tableName = "tbl" + this.GetType().Name;
+                    return tableName;
+                }
+            }
+
+            // database columns
+            public int ID { get; set; }
+            public int IsInTrash { get; set; }
+
+            public void AddToTrash(VendordDatabase db)
+            {
+                string trashQuery;
+
+                trashQuery = String.Format(@"UPDATE {0} SET IsInTrash = 1 WHERE ID = {1}",
+                    this.TableName,
+                    this.ID);
+                
+                db.ExecuteNonQuery(trashQuery);
+            }
+
+            public void EmptyTrash(VendordDatabase db)
+            {
+                string emptyTrashQuery;
+                emptyTrashQuery = String.Format(@"DELETE {0} WHERE (IsInTrash = 1)", 
+                    this.TableName);
+
+                db.ExecuteNonQuery(emptyTrashQuery);
+
             }
         }
 
-        // TODO Use System.Reflection to make a DRY upsert method for OrderSession, Product, and Order_Product
-        // TODO Change OrderSession to Order, because the former is misleading
-
-        public class OrderSession
+        public class Order : DbEntity
         {
-            public int ID { get; set; }
             public string Name { get; set; }
 
-            public void Delete()
-            {
-                string deleteQuery;
-                deleteQuery = String.Format(@"DELETE OrderSession WHERE ID = {0}",
-                    this.ID);
-
-                VendordDatabase db = new VendordDatabase();
-                db.ExecuteNonQuery(deleteQuery);
-            }
-
-            public void UpsertIntoDB()
+            public void UpsertIntoDB(VendordDatabase db)
             {
                 string insertQuery;
 
-                insertQuery = String.Format(@"INSERT INTO OrderSession (Name) VALUES ('{0}');",
+                insertQuery = String.Format(@"INSERT INTO tblOrder (Name) VALUES ('{0}');",
                     this.Name);
 
-                VendordDatabase db = new VendordDatabase();
                 db.ExecuteNonQuery(insertQuery);
 
                 // set the ID to the newly generated ID
-                this.ID = db.OrderSessions.FirstOrDefault<OrderSession>(os => os.Name.Equals(this.Name)).ID;
+                this.ID = db.Orders.FirstOrDefault<Order>(os => os.Name.Equals(this.Name)).ID;
             }
         }
 
-        public class Product
+        public class Product : DbEntity
         {
-            public int ID { get; set; }
             public string UPC { get; set; } // TODO Change UPC into an INTEGER
             public string Name { get; set; }
             public string VendorName { get; set; }
-            
-            public void UpsertIntoDB()
+
+            public void UpsertIntoDB(VendordDatabase db)
             {
                 string selectQuery;
                 string insertQuery;
                 string updateQuery;
 
-                selectQuery = String.Format(@"SELECT COUNT(*) FROM Product WHERE UPC = '{0}'", 
+                selectQuery = String.Format(@"SELECT COUNT(*) FROM tblProduct WHERE UPC = '{0}'",
                     this.UPC);
 
-                insertQuery = String.Format(@"INSERT INTO Product (UPC, Name, VendorName) VALUES ('{0}', '{1}', '{2}')",
+                insertQuery = String.Format(@"INSERT INTO tblProduct (UPC, Name, VendorName) VALUES ('{0}', '{1}', '{2}')",
                     this.UPC,
                     this.Name,
                     this.VendorName);
 
-                updateQuery = null; // TODO Add an update query if appropriate.
-
-                VendordDatabase db = new VendordDatabase();
+                updateQuery = null; // TODO Add an update query if appropriate.                
 
                 if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
                 {
                     db.ExecuteNonQuery(insertQuery);
                 }
-                else if(updateQuery != null)
+                else if (updateQuery != null)
                 {
                     db.ExecuteNonQuery(updateQuery);
                 }
             }
         }
 
-        public class OrderSession_Product
+        public class Order_Product : DbEntity
         {
-            public int OrderSessionID { get; set; }
+            public int OrderID { get; set; }
             public int ProductID { get; set; }
             public int CasesToOrder { get; set; }
 
-            public void UpsertIntoDB()
+            public void UpsertIntoDB(VendordDatabase db)
             {
                 string selectQuery;
                 string insertQuery;
                 string updateQuery;
 
-                selectQuery = String.Format(@"SELECT COUNT(*) FROM OrderSession_Product WHERE OrderSessionID = {0} AND ProductID = {1};",
-                    this.OrderSessionID,
+                selectQuery = String.Format(@"SELECT COUNT(*) FROM tblOrder_Product WHERE OrderID = {0} AND ProductID = {1};",
+                    this.OrderID,
                     this.ProductID);
 
-                insertQuery = String.Format(@"INSERT INTO OrderSession_Product (OrderSessionID, ProductID, CasesToOrder) VALUES ('{0}', '{1}', {2});",
-                    this.OrderSessionID,
+                insertQuery = String.Format(@"INSERT INTO tblOrder_Product (OrderID, ProductID, CasesToOrder) VALUES ('{0}', '{1}', {2});",
+                    this.OrderID,
                     this.ProductID,
                     this.CasesToOrder);
 
-                updateQuery = String.Format(@"UPDATE OrderSession_Product SET CasesToOrder = {2} WHERE OrderSessionID = {0} AND ProductID = {1};",
-                    this.OrderSessionID,
+                updateQuery = String.Format(@"UPDATE tblOrder_Product SET CasesToOrder = {2} WHERE OrderID = {0} AND ProductID = {1};",
+                    this.OrderID,
                     this.ProductID,
                     this.CasesToOrder);
-
-                VendordDatabase db = new VendordDatabase();
 
                 if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
                 {
@@ -140,35 +152,35 @@
             }
         }
 
-        public List<OrderSession> OrderSessions
+        public List<Order> Orders
         {
             get
             {
                 SqlCeDataReader reader;
                 SqlCeCommand command;
 
-                if (orderSessions == null)
+                if (order == null)
                 {
-                    orderSessions = new List<OrderSession>();
-                    using (SqlCeConnection conn = new SqlCeConnection(ConnectionString))
+                    order = new List<Order>();
+                    using (SqlCeConnection conn = new SqlCeConnection(connectionString))
                     {
                         conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM OrderSession", conn);
+                        command = new SqlCeCommand(@"SELECT * FROM tblOrder WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
                         reader = command.ExecuteReader();
                         while (reader.Read())
                         {
-                            OrderSession item = new OrderSession()
+                            Order item = new Order()
                             {
                                 ID = Convert.ToInt32(reader["ID"]),
                                 Name = Convert.ToString(reader["Name"])
                             };
-                            orderSessions.Add(item);
+                            order.Add(item);
                         }
                     }
                 }
-                return orderSessions;
+                return order;
             }
-        }        
+        }
 
         public List<Product> Products
         {
@@ -180,10 +192,10 @@
                 if (products == null)
                 {
                     products = new List<Product>();
-                    using (SqlCeConnection conn = new SqlCeConnection(ConnectionString))
+                    using (SqlCeConnection conn = new SqlCeConnection(connectionString))
                     {
                         conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM Product", conn);
+                        command = new SqlCeCommand(@"SELECT * FROM tblProduct", conn);
                         reader = command.ExecuteReader();
                         while (reader.Read())
                         {
@@ -202,41 +214,48 @@
             }
         }
 
-        public List<OrderSession_Product> OrderSession_Products
+        public List<Order_Product> Order_Products
         {
             get
             {
-                if (orderSession_Products == null)
+                if (order_Products == null)
                 {
                     SqlCeDataReader reader;
                     SqlCeCommand command;
 
-                    orderSession_Products = new List<OrderSession_Product>();
-                    using (SqlCeConnection conn = new SqlCeConnection(ConnectionString))
+                    order_Products = new List<Order_Product>();
+                    using (SqlCeConnection conn = new SqlCeConnection(connectionString))
                     {
                         conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM OrderSession_Product", conn);
+                        command = new SqlCeCommand(@"SELECT * FROM tblOrder_Product", conn);
                         reader = command.ExecuteReader();
                         while (reader.Read())
                         {
-                            OrderSession_Product item = new OrderSession_Product()
+                            Order_Product item = new Order_Product()
                             {
                                 ProductID = Convert.ToInt32(reader["ProductID"]),
-                                OrderSessionID = Convert.ToInt32(reader["OrderSessionID"]),
+                                OrderID = Convert.ToInt32(reader["OrderID"]),
                                 CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
                             };
-                            orderSession_Products.Add(item);
+                            order_Products.Add(item);
                         }
                     }
                 }
-                return orderSession_Products;
+                return order_Products;
             }
+        }
+
+        public void EmptyTrash()
+        {
+            (new Order()).EmptyTrash(this);
+            (new Product()).EmptyTrash(this);
+            (new Order_Product()).EmptyTrash(this);
         }
 
         public object ExecuteScalar(string cmdText)
         {
             object result = null;
-            using (SqlCeConnection conn = new SqlCeConnection(ConnectionString))
+            using (SqlCeConnection conn = new SqlCeConnection(connectionString))
             {
                 conn.Open();
                 SqlCeCommand cmd = conn.CreateCommand();
@@ -251,7 +270,7 @@
             int rowsAffected;
             rowsAffected = 0;
 
-            using (SqlCeConnection conn = new SqlCeConnection(ConnectionString))
+            using (SqlCeConnection conn = new SqlCeConnection(connectionString))
             {
                 conn.Open();
                 SqlCeCommand cmd = conn.CreateCommand();
@@ -288,41 +307,47 @@
             string createTableQuery;
 
             // 
-            if (!TableExists("OrderSession"))
+            if (!TableExists("tblOrder"))
             {
-                createTableQuery = @"CREATE TABLE OrderSession (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100) UNIQUE)";
+                createTableQuery
+                    = @"CREATE TABLE tblOrder 
+                    (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), IsInTrash BIT)";
+
                 ExecuteNonQuery(createTableQuery);
             }
 
             //
-            if (!TableExists("Product"))
+            if (!TableExists("tblProduct"))
             {
-                createTableQuery = @"CREATE TABLE Product (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE, VendorName NVARCHAR(100))";
+                createTableQuery
+                    = @"CREATE TABLE tblProduct 
+                    (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE, VendorName NVARCHAR(100), IsInTrash BIT)";
+
                 ExecuteNonQuery(createTableQuery);
             }
 
             //
-            if (!TableExists("OrderSession_Product"))
+            if (!TableExists("tblOrder_Product"))
             {
-                createTableQuery = @"CREATE TABLE OrderSession_Product (OrderSessionID INTEGER, ProductID INTEGER, CasesToOrder INTEGER, CONSTRAINT PK_OrderSession_Product PRIMARY KEY (OrderSessionID, ProductID))";
+                createTableQuery
+                    = @"CREATE TABLE tblOrder_Product 
+                    (OrderID INTEGER, ProductID INTEGER, CasesToOrder INTEGER, CONSTRAINT PK_Order_Product PRIMARY KEY (OrderID, ProductID), IsInTrash BIT)";
+
                 ExecuteNonQuery(createTableQuery);
             }
 
         }
 
-        public static void CreateCeDB(string databaseFullPath)
+        public void CreateCeDB(string databaseFullPath)
         {
             IOHelpers.LogSubroutine("CreateDB");
-
             SqlCeEngine engine;
-            string connString;
 
+            // create the database
             IOHelpers.CreateDirectoryIfNotExists(Constants.ApplicationDataStoreFullPath);
-
             if (!File.Exists(databaseFullPath))
             {
-                connString = GenerateSqlCeConnString(databaseFullPath);
-                engine = new SqlCeEngine(connString);
+                engine = new SqlCeEngine(connectionString);
                 engine.CreateDatabase();
                 engine.Dispose();
             }
@@ -330,9 +355,17 @@
 
         public VendordDatabase()
         {
-            CreateCeDB(Constants.VendordDatabaseFullPath);
+            string fullPath = Constants.VendordDatabaseFullPath;
+            connectionString = GenerateSqlCeConnString(fullPath);
+            CreateCeDB(fullPath);
             CreateTables();
         }
 
+        public VendordDatabase(string fullPath)
+        {
+            connectionString = GenerateSqlCeConnString(fullPath);
+            CreateCeDB(fullPath);
+            CreateTables();
+        }
     }
 }

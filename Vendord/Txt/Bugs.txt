@@ -2,6 +2,9 @@
 10 Oct 2013
 --
 
-- Clicking "Get Products from IT Retail" hangs when there is no database connection.
+- Clicking "Get Products from IT Retail" hangs when there is no database connection. Done.
 
-- Deleting an Order on the mobile device doesn't delete it on the desktop app.
+- Deleting an Order on the mobile device doesn't delete it on the desktop app. Not done.
+	Fixing this will require something other than "Delete".
+	Instead we will have to use something like "Trash".
+	Then we can empty the trash on sync. 

@@ -15,14 +15,13 @@
 
     public class Sync
     {
-        // rapi
-        private const string REMOTE_DEVICE_TEMP_COPY = "_REMOTE_DEVICE_TEMP_COPY";
+        // rapi        
         private const string REMOTE_DEVICE_DB_SYNC_SCOPE = "REMOTE_DEVICE_DB_SYNC_SCOPE";
 
         // rapi
         private RAPI.RemoteDeviceManager mgr;
-        private string rapiDatabase_Path;
-        private string rapiDatabaseLocalCopy_Path;
+        private string remoteDatabase_FullPath;
+        private string remoteDatabase_LocalCopy_FullPath;
 
         // sync status
         public enum SyncResult
@@ -60,7 +59,7 @@
                         VendorName = Convert.ToString(reader["VendorName"])
                     };
 
-                    product.UpsertIntoDB();
+                    product.UpsertIntoDB(new VendordDatabase());
                 }
             }
         }
@@ -72,17 +71,17 @@
 
             rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
             rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.APPLICATION_NAME);
-            rapiDatabase_Path = Path.Combine(rapiApplicationDataStore, Constants.APPLICATION_DATABASE_NAME);
-            rapiDatabaseLocalCopy_Path = IOHelpers.AddSuffixToFilePath(Constants.VendordDatabaseFullPath, REMOTE_DEVICE_TEMP_COPY);
+            remoteDatabase_FullPath = Path.Combine(rapiApplicationDataStore, Constants.APPLICATION_DATABASE_NAME);
+            remoteDatabase_LocalCopy_FullPath = IOHelpers.AddSuffixToFilePath(Constants.VendordDatabaseFullPath, Constants.REMOTE_COPY_FLAG);
         }
 
         private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
         {
             // does the device have a database
-            if (RAPI.RemoteFile.Exists(remoteDevice, rapiDatabase_Path))
+            if (RAPI.RemoteFile.Exists(remoteDevice, remoteDatabase_FullPath))
             {
                 // yup, so copy it to the desktop
-                RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, rapiDatabase_Path, rapiDatabaseLocalCopy_Path, true);
+                RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, remoteDatabase_FullPath, remoteDatabase_LocalCopy_FullPath, true);
             }
         }
 
@@ -143,8 +142,8 @@
                 orchestrator.Direction 
                     = SyncDirectionOrder.DownloadAndUpload; 
                     // the sync DOWNLOADS and then UPLOADS.
-                    // DOWNLOADS are for order sessions, ergo all order session CRUD should happen on the mobile
-                    // UPLOADS are for products, ergo all product CRUD should happen on the desktop
+                    // DOWNLOADS are for order, ergo all order CRUD should happen on the mobile
+                    // UPLOADS are for products, ergo all product CRUD should happen on the desktop                
 
                 orchestrator.StateChanged += new EventHandler<SyncOrchestratorStateChangedEventArgs>(orchestrator_StateChanged);
                 orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(orchestrator_SessionProgress);
@@ -152,6 +151,16 @@
                 // giver
                 orchestrator.Synchronize();
             }
+        }
+
+        private void CleanUpDatabases()
+        {
+            VendordDatabase db = new VendordDatabase();
+            db.EmptyTrash();
+
+            VendordDatabase db_remote = new VendordDatabase(remoteDatabase_LocalCopy_FullPath);
+            db_remote.EmptyTrash();
+
         }
 
         private void orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
@@ -177,22 +186,26 @@
 
         private void CopyDatabaseBackToDevice(RAPI.RemoteDevice remoteDevice)
         {
-            if (File.Exists(rapiDatabaseLocalCopy_Path))
+            if (File.Exists(remoteDatabase_LocalCopy_FullPath))
             {
-                RAPI.RemoteFile.CopyFileToDevice(remoteDevice, rapiDatabaseLocalCopy_Path, rapiDatabase_Path, true);
+                RAPI.RemoteFile.CopyFileToDevice(remoteDevice, remoteDatabase_LocalCopy_FullPath, remoteDatabase_FullPath, true);
             }
         }
 
         public SyncResult MergeDesktopAndDeviceDatabases()
         {
             SyncResult result;
+            string[] tablesToSync;
             mgr = new RAPI.RemoteDeviceManager();
             RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
             if (remoteDevice != null && remoteDevice.Status == RAPI.DeviceStatus.Connected)
             {
+                tablesToSync = new string[] { "tblOrder", "tblProduct", "tblOrder_Product" };
+
                 SetRemoteDeviceDatabaseNames(remoteDevice);
                 CopyDatabaseFromDeviceToDesktop(remoteDevice);
-                SyncSqlCeDatabases(rapiDatabaseLocalCopy_Path, REMOTE_DEVICE_DB_SYNC_SCOPE, new string[] { "OrderSession", "Product", "OrderSession_Product" });
+                SyncSqlCeDatabases(remoteDatabase_LocalCopy_FullPath, REMOTE_DEVICE_DB_SYNC_SCOPE, tablesToSync);
+                CleanUpDatabases();
                 CopyDatabaseBackToDevice(remoteDevice);
                 result = SyncResult.Complete;
             }

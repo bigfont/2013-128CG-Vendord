@@ -9,6 +9,7 @@
     public class Constants
     {
         public const string APPLICATION_DATABASE_NAME = "VendordDB.sdf";
+        public const string REMOTE_COPY_FLAG = "_REMOTE";
         public const string APPLICATION_NAME = "VENDORD";
         public const string IT_RETAIL_DATABASE_CONNECTION_STRING = "Data Source=FONTY;Initial Catalog=ITRetail;Integrated Security=True";
 
