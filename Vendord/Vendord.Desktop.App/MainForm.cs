@@ -1,102 +1,90 @@
-﻿namespace Vendord.Desktop.App
+﻿[module: 
+    System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "StyleCop.CSharp.DocumentationRules", "*", 
+        Justification = "Reviewed. Suppression is OK here.")]
+
+namespace Vendord.Desktop.App
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Data;
     using System.Drawing;
     using System.Linq;
     using System.Text;
     using System.Windows.Forms;
-    using System.Collections.ObjectModel;
-    using Vendord.SmartDevice.Shared;
     using BrightIdeasSoftware;
+    using Vendord.SmartDevice.Shared;    
 
     public class MainForm : Form
     {
-        internal Panel mainNavigation;
-        internal Panel mainContent;
-
         // see also http://msdn.microsoft.com/en-us/library/system.windows.forms.columnheader.width%28v=vs.90%29.aspx
-        private int COLUMN_HEADER_WIDTH_HEADING_LENGTH = -2;  // To autosize to the width of the column heading, set the Width property to -2.  
-        private int COLUMN_HEADER_WIDTH_LONGEST_ITEM = -1; // To adjust the width of the longest item in the column, set the Width property to -1. 
-        private int FORM_WIDTH_MINIMUM = 500;
-        private int FORM_HEIGHT_MINIMUM = 500;
-        private int COLUMN_HEADER_WIDTH_DEFAULT = 200;
-        private int BUTTON_HEIGHT = 50;
-        private int NUMBER_OF_NAV_BUTTONS = 2;
-        private double PRINT_PREVIEW_ZOOM = 1f; // this is 100%
-        private string BUTTON_MESSAGE_SEPARATOR = " : ";
-        private static class USER_INPUTS
-        {
-            internal const string LV_MASTER = "LV_MASTER";
-            internal const string LV_MEDIATOR = "LV_MEDIATOR";
-            internal const string LV_DETAILS = "LV_DETAILS";
-        }
+        private const int ColumnHeaderWidthHeadingLength = -2;  // To autosize to the width of the column heading, set the Width property to -2.  
+        private const int ColumnHeaderWidthLongestItem = -1; // To adjust the width of the longest item in the column, set the Width property to -1. 
+        private const int FormWidthMinimum = 500;
+        private const int FormHeightMinimum = 500;
+        private const int ColumnHeaderWidthDefault = 200;
+        private const int ButtonHeight = 50;
+        private const int NumberOfNavigationButtons = 2;
+        private const double PrintPreviewZoom = 1f; // this is 100%
+        private const string ButtonMessageSeparator = " : ";
+
+        private Panel mainNavigation;
+        private Panel mainContent;
 
         private Button btnBack;
-        private delegate void Back();
-        private Back BackDelegate;
-        private delegate void Save();
-        private Save SaveDelegate;
+
+        private Back backDelegate;
+
+        private Save saveDelegate;
 
         public MainForm()
         {
             Control[] controls;
 
-            this.Load += new EventHandler(MainForm_Load);
-            this.Closing += new CancelEventHandler(MainForm_Closing);
+            this.Load += new EventHandler(this.MainForm_Load);
+            this.Closing += new CancelEventHandler(this.MainForm_Closing);
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            this.MinimumSize = new Size(FORM_WIDTH_MINIMUM, FORM_HEIGHT_MINIMUM);
+            this.MinimumSize = new Size(FormWidthMinimum, FormHeightMinimum);
             this.BackColor = Color.White;
 
-            //
             // create main navigation panel
-            //            
-            mainNavigation = new Panel();
-            mainNavigation.Dock = DockStyle.Top;
-            mainNavigation.Height = BUTTON_HEIGHT * NUMBER_OF_NAV_BUTTONS;
+            this.mainNavigation = new Panel();
+            this.mainNavigation.Dock = DockStyle.Top;
+            this.mainNavigation.Height = ButtonHeight * NumberOfNavigationButtons;
 
-            //
             // create main content panel
-            //
-            mainContent = new Panel();
-            mainContent.Dock = DockStyle.Fill;
-            mainContent.AutoSize = true;
-            mainContent.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            this.mainContent = new Panel();
+            this.mainContent.Dock = DockStyle.Fill;
+            this.mainContent.AutoSize = true;
+            this.mainContent.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
-            //
-            // add to form - this triggers its layout event 
-            //        
+            // add to form - this triggers its layout event        
             this.SuspendLayout();
-            controls = new Control[] { mainContent, mainNavigation, };
+            controls = new Control[] { this.mainContent, this.mainNavigation, };
             foreach (Control c in controls)
             {
                 this.Controls.Add(c);
             }
+
             this.ResumeLayout();
 
-            //
             // Create Buttons
-            //
             Button btnClose;
 
-            btnBack = new Button() { Text = "Back" };
-            btnBack.Click += new EventHandler(btnBack_Click);
+            this.btnBack = new Button() { Text = "Back" };
+            this.btnBack.Click += new EventHandler(this.BtnBack_Click);
 
             btnClose = new Button() { Text = "Save and Close" };
-            btnClose.Click += new EventHandler(btnClose_Click);
+            btnClose.Click += new EventHandler(this.BtnClose_Click);
 
-            //
-            // add to panel - this triggers its layout event
-            //            
-
-            controls = new Control[] { 
-            
+            // add to panel - this triggers its layout event            
+            controls = new Control[] 
+            {           
                 btnClose,
-                btnBack                
-            
+                this.btnBack                            
             };
 
             this.mainNavigation.SuspendLayout();
@@ -104,19 +92,23 @@
             foreach (Control c in controls)
             {
                 c.Dock = DockStyle.Top;
-                c.Height = BUTTON_HEIGHT;
+                c.Height = ButtonHeight;
                 this.mainNavigation.Controls.Add(c);
             }
 
             this.mainNavigation.ResumeLayout();
         }
 
+        private delegate void Back();
+
+        private delegate void Save();
+
         #region Utilities
 
         private void ButtonStatus_Clear(Button b)
         {
             int i;
-            i = b.Text.LastIndexOf(BUTTON_MESSAGE_SEPARATOR);
+            i = b.Text.LastIndexOf(ButtonMessageSeparator);
             if (i >= 0)
             {
                 b.Text = b.Text.Remove(i);
@@ -125,26 +117,26 @@
 
         private void ButtonStatus_Done(Button b, string message)
         {
-            ButtonStatus_Clear(b);
-            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
+            this.ButtonStatus_Clear(b);
+            b.Text += string.Format("{0} <{1}>", this.ButtonMessageSeparator, message);
             b.BackColor = Color.LightGreen;
         }
 
         private void ButtonStatus_Problem(Button b, string message)
         {
-            ButtonStatus_Clear(b);
-            b.Text += string.Format("{0} <{1}>", BUTTON_MESSAGE_SEPARATOR, message);
+            this.ButtonStatus_Clear(b);
+            b.Text += string.Format("{0} <{1}>", ButtonMessageSeparator, message);
             b.BackColor = Color.Yellow;
         }
 
-        private void printSelectedOrder()
+        private void PrintSelectedOrder()
         {
             ListViewPrinter listViewPrinter;
             ListView listViewDetails;
             ListView listViewMaster;
 
-            listViewMaster = FormHelper.GetControlsByName<ListView>(mainContent, USER_INPUTS.LV_MASTER, true)[0];
-            listViewDetails = FormHelper.GetControlsByName<ListView>(mainContent, USER_INPUTS.LV_DETAILS, true)[0];
+            listViewMaster = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvMaster, true)[0];
+            listViewDetails = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvDetails, true)[0];
             if (listViewMaster != null && listViewDetails != null)
             {
                 // NOTE the listViewPrinter derives the cell width from that of the listView it's printing.
@@ -152,14 +144,12 @@
                 // create the document
                 listViewPrinter = new ListViewPrinter()
                 {
-
                     // set the most important settings
                     ListView = listViewDetails,
                     DocumentName = "DocumentName",
                     Header = "Header",
                     Footer = "Footer",
                     IsShrinkToFit = false
-
                 };
 
                 // preview the document                                
@@ -168,7 +158,7 @@
                     Document = listViewPrinter,
                     UseAntiAlias = true
                 };
-                printPreview.PrintPreviewControl.Zoom = PRINT_PREVIEW_ZOOM;
+                printPreview.PrintPreviewControl.Zoom = PrintPreviewZoom;
 
                 // maximize if PrintPreviewDialog can act as a Form
                 if (printPreview is Form)
@@ -180,7 +170,7 @@
             }
         }
 
-        private ListViewItem getSelectedListViewItem(ListView listView)
+        private ListViewItem GetSelectedListViewItem(ListView listView)
         {
             ListViewItem listViewItem;
             listViewItem = null;
@@ -205,56 +195,54 @@
             return listViewItem;
         }        
 
-        private void updateListViewDetail()
+        private void UpdateListViewDetail()
         {
             ListView listViewMaster;
             ListView listViewMediator;
             ListView listViewDetails;
             ListViewItem selectedListViewItem;
-            int OrderID;
+            int orderID;
             string vendorName;
 
             // defaults
-            OrderID = -1;
+            orderID = -1;
             vendorName = null;
 
             // retrieve the selected orderID
-            listViewMaster = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MASTER, true).First<ListView>();
-            selectedListViewItem = getSelectedListViewItem(listViewMaster);
+            listViewMaster = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvMaster, true).First<ListView>();
+            selectedListViewItem = this.GetSelectedListViewItem(listViewMaster);
             if (selectedListViewItem != null)
             {
-                OrderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
+                orderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
 
                 // retrieve the selected vendorName
-                listViewMediator = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MEDIATOR, true).First<ListView>();
-                selectedListViewItem = getSelectedListViewItem(listViewMediator);
+                listViewMediator = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvMediator, true).First<ListView>();
+                selectedListViewItem = this.GetSelectedListViewItem(listViewMediator);
                 if (selectedListViewItem != null)
                 {
                     vendorName = selectedListViewItem.Text;
                 }
 
                 // update listViewDetails
-                listViewDetails = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_DETAILS, true).First<ListView>();   
-                listViewDetails.Items.Clear();                                
-                addDataToListViewDetails(listViewDetails, OrderID, vendorName);                
+                listViewDetails = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvDetails, true).First<ListView>();   
+                listViewDetails.Items.Clear();
+                this.AddDataToListViewDetails(listViewDetails, orderID, vendorName);                
             }
 
-            //
             // back
-            //
-            enableBackButton(loadOrdersView);
+            this.EnableBackButton(this.LoadOrdersView);
         }
 
-        private void addDataToListViewDetails(ListView listViewDetails, int OrderID, string vendorName)
+        private void AddDataToListViewDetails(ListView listViewDetails, int orderID, string vendorName)
         {
             ListViewItem listViewItem;
             VendordDatabase db;
             VendordDatabase.Product product;
 
-            if (OrderID >= 0 && vendorName != null && vendorName.Length > 0)
+            if (orderID >= 0 && vendorName != null && vendorName.Length > 0)
             {
                 db = new VendordDatabase();
-                foreach (VendordDatabase.Order_Product order_product in db.Order_Products.Where(i => i.OrderID == OrderID))
+                foreach (VendordDatabase.Order_Product order_product in db.Order_Products.Where(i => i.OrderID == orderID))
                 {
                     product = db.Products.FirstOrDefault(p => p.ID == order_product.ProductID && p.VendorName.Equals(vendorName));
 
@@ -268,28 +256,26 @@
             }
             else
             {
-                addEmptyListViewItem(listViewDetails);
+                this.AddEmptyListViewItem(listViewDetails);
             }
         }
 
-        private void addEmptyListViewItem(ListView listView)
+        private void AddEmptyListViewItem(ListView listView)
         {
             listView.Items.Add("Empty");
         }
 
-        private ListView createOrderDetailsListView()
+        private ListView CreateOrderDetailsListView()
         {
             ListView listViewDetails;
 
             listViewDetails = new ListView()
             {
-
-                Name = USER_INPUTS.LV_DETAILS,
+                Name = UserInputs.LvDetails,
                 View = View.Details,
                 HideSelection = false,
                 Activation = ItemActivation.OneClick,
                 FullRowSelect = true
-
             };
 
             // columns are required in View.Details
@@ -300,32 +286,30 @@
             return listViewDetails;
         }
 
-        private void updateListViewMediator()
+        private void UpdateListViewMediator()
         {
             ListView listViewMaster;
             ListView listViewMediator;
             ListViewItem selectedListViewItem;
 
-            int OrderID;
-            OrderID = -1;
+            int orderID;
+            orderID = -1;
 
-            listViewMaster = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MASTER, true).First<ListView>();
-            selectedListViewItem = getSelectedListViewItem(listViewMaster);
+            listViewMaster = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvMaster, true).First<ListView>();
+            selectedListViewItem = this.GetSelectedListViewItem(listViewMaster);
             if (selectedListViewItem != null)
             {
-                OrderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
-                listViewMediator = FormHelper.GetControlsByName<ListView>(this, USER_INPUTS.LV_MEDIATOR, true).First<ListView>();
+                orderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
+                listViewMediator = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvMediator, true).First<ListView>();
                 listViewMediator.Items.Clear();
-                addDataToListViewMediator(listViewMediator, OrderID);                
+                this.AddDataToListViewMediator(listViewMediator, orderID);                
             }
 
-            //
             // back
-            //
-            enableBackButton(loadOrdersView);
+            this.EnableBackButton(this.LoadOrdersView);
         }
 
-        private void addDataToListViewMediator(ListView listViewMediator, int OrderID)
+        private void AddDataToListViewMediator(ListView listViewMediator, int orderID)
         {
             ListViewItem listViewItem;
             VendordDatabase db;
@@ -335,7 +319,7 @@
             var vendorNames =
                 from p in db.Products
                 join op in db.Order_Products on p.ID equals op.ProductID
-                where op.OrderID == OrderID 
+                where op.OrderID == orderID 
                 group p by p.VendorName into g
                 select g.Key;
 
@@ -349,23 +333,23 @@
             }
             else
             {
-                addEmptyListViewItem(listViewMediator);
+                this.AddEmptyListViewItem(listViewMediator);
             }
         }
 
-        private ListView createOrderMediatorListView()
+        private ListView CreateOrderMediatorListView()
         {
             ListView listViewMediator;
 
             listViewMediator = new ListView()
             {
-                Name = USER_INPUTS.LV_MEDIATOR,
+                Name = UserInputs.LvMediator,
                 View = View.Details,
                 HideSelection = false,
                 Activation = ItemActivation.OneClick,
                 FullRowSelect = true,
             };
-            listViewMediator.ItemActivate += new EventHandler(listViewMediator_ItemActivate);
+            listViewMediator.ItemActivate += new EventHandler(this.ListViewMediator_ItemActivate);
 
             listViewMediator.Columns.Add("Vendor Name");
 
@@ -373,33 +357,34 @@
             return listViewMediator;
         }
 
-        private void addDataToListViewMaster(ListView listViewMaster)
+        private void AddDataToListViewMaster(ListView listViewMaster)
         {
             ListViewItem listViewItem;
             VendordDatabase db;
+
             // add list view items            
             db = new VendordDatabase();
-            foreach (VendordDatabase.Order Order in db.Orders)
+            foreach (VendordDatabase.Order order in db.Orders)
             {
-                listViewItem = new ListViewItem(Order.Name);
-                listViewItem.Tag = Order.ID;
+                listViewItem = new ListViewItem(order.Name);
+                listViewItem.Tag = order.ID;
                 listViewMaster.Items.Add(listViewItem);
             }
         }
 
-        private ListView createOrderMasterListView()
+        private ListView CreateOrderMasterListView()
         {
             ListView listViewMaster;
 
             listViewMaster = new ListView()
             {
-                Name = USER_INPUTS.LV_MASTER,
+                Name = UserInputs.LvMaster,
                 View = View.Details,
                 Activation = ItemActivation.OneClick,
                 HideSelection = false,
                 FullRowSelect = true,
             };
-            listViewMaster.ItemActivate += new EventHandler(listViewMaster_ItemActivate);
+            listViewMaster.ItemActivate += new EventHandler(this.ListViewMaster_ItemActivate);
 
             listViewMaster.Columns.Add("Order Name");
 
@@ -407,42 +392,42 @@
             return listViewMaster;
         }
 
-        private void disableBackButton()
+        private void DisableBackButton()
         {
-            btnBack.Enabled = false;
-            BackDelegate = null;
+            this.btnBack.Enabled = false;
+            this.backDelegate = null;
         }
 
-        private void enableBackButton(Back method)
+        private void EnableBackButton(Back method)
         {
-            btnBack.Enabled = true;
-            BackDelegate = method;
+            this.btnBack.Enabled = true;
+            this.backDelegate = method;
         }
 
         #endregion
 
         #region Views
 
-        private void unloadCurrentView()
+        private void UnloadCurrentView()
         {
             this.mainContent.Controls.Clear();
         }
 
-        private void loadHomeView()
+        private void LoadHomeView()
         {
             Button btnOrders;
 
             btnOrders = new Button() { Text = "Orders" };
-            btnOrders.Click += new EventHandler(btnOrders_Click);
+            btnOrders.Click += new EventHandler(this.BtnOrders_Click);
 
             btnOrders.Dock = DockStyle.Top;
-            btnOrders.Height = BUTTON_HEIGHT;
+            btnOrders.Height = ButtonHeight;
             this.mainContent.Controls.Add(btnOrders);
 
-            disableBackButton();
+            this.DisableBackButton();
         }
 
-        private void loadOrdersView()
+        private void LoadOrdersView()
         {
             Button btnGetProductsFromITRetail;
             Button btnSyncHandheld;
@@ -450,103 +435,100 @@
             Button[] buttons;
 
             btnGetProductsFromITRetail = new Button() { Text = "Get Products from IT Retail" };
-            btnGetProductsFromITRetail.Click += new EventHandler(btnGetProductsFromITRetail_Click);
+            btnGetProductsFromITRetail.Click += new EventHandler(this.BtnGetProductsFromITRetail_Click);
 
             btnSyncHandheld = new Button() { Text = "Sync Handheld (before and after Scanning)" };
-            btnSyncHandheld.Click += new EventHandler(btnSyncHandheld_Click);
+            btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
 
             btnViewOrders = new Button() { Text = "View Orders" };
-            btnViewOrders.Click += new EventHandler(btnViewOrders_Click);
+            btnViewOrders.Click += new EventHandler(this.BtnViewOrders_Click);
 
             // add
-            buttons = new Button[] { 
-
+            buttons = new Button[] 
+            { 
                 btnGetProductsFromITRetail,
                 btnViewOrders,
                 btnSyncHandheld
-                                 
             };
 
             foreach (Button b in buttons)
             {
                 b.Dock = DockStyle.Top;
-                b.Height = BUTTON_HEIGHT;
+                b.Height = ButtonHeight;
                 this.mainContent.Controls.Add(b);
             }
 
-            //
             // back
-            // 
-            enableBackButton(loadHomeView);
+            this.EnableBackButton(this.LoadHomeView);
         }
 
-        private void loadCompleteOrdersView()
+        private void LoadCompleteOrdersView()
         {
             Button btnPrintOrder;
             ListView listViewMaster;
             ListView listViewMediator;
             ListView listViewDetails;
             ListView[] listViews;
-            int OrderID;
+            int orderID;
             string vendorName;
 
             // create button(s)
             btnPrintOrder = new Button() { Text = "Print Current Order" };
-            btnPrintOrder.Click += new EventHandler(btnPrintOrder_Click);
+            btnPrintOrder.Click += new EventHandler(this.BtnPrintOrder_Click);
 
             // create listviews
-            listViewMaster = createOrderMasterListView();
-            listViewMediator = createOrderMediatorListView();
-            listViewDetails = createOrderDetailsListView();
+            listViewMaster = this.CreateOrderMasterListView();
+            listViewMediator = this.CreateOrderMediatorListView();
+            listViewDetails = this.CreateOrderDetailsListView();
 
             // add data to the master list view
-            addDataToListViewMaster(listViewMaster);
+            this.AddDataToListViewMaster(listViewMaster);
             if (listViewMaster.Items.Count > 0)
             {
                 // add data to the mediator list view
-                OrderID = Convert.ToInt32(listViewMaster.Items[0].Tag.ToString());
+                orderID = Convert.ToInt32(listViewMaster.Items[0].Tag.ToString());
                 listViewMediator.Items.Clear();
-                addDataToListViewMediator(listViewMediator, OrderID);
+                this.AddDataToListViewMediator(listViewMediator, orderID);
                 if (listViewMediator.Items.Count > 0)
                 {
                     // add data to the details list view
                     vendorName = listViewMediator.Items[0].Text;
                     listViewDetails.Items.Clear();
-                    addDataToListViewDetails(listViewDetails, OrderID, vendorName);
+                    this.AddDataToListViewDetails(listViewDetails, orderID, vendorName);
                 }
             }
             else
             {
-                addEmptyListViewItem(listViewMaster);
-                addEmptyListViewItem(listViewMediator);
-                addEmptyListViewItem(listViewDetails);
+                this.AddEmptyListViewItem(listViewMaster);
+                this.AddEmptyListViewItem(listViewMediator);
+                this.AddEmptyListViewItem(listViewDetails);
             }
 
             // add all controls to the form
             this.mainContent.SuspendLayout();
 
             // start with list views
-            listViews = new ListView[] { 
-            
+            listViews = new ListView[] 
+            { 
                 listViewDetails,
                 listViewMediator,
                 listViewMaster
-            
             };
 
             // add list views
             foreach (ListView lv in listViews)
             {
                 lv.Dock = DockStyle.Left;
-                lv.Width = lv.Columns.Count * COLUMN_HEADER_WIDTH_DEFAULT;
+                lv.Width = lv.Columns.Count * ColumnHeaderWidthDefault;
 
                 lv.BorderStyle = BorderStyle.FixedSingle;
                 lv.GridLines = true;
 
                 foreach (ColumnHeader h in lv.Columns)
                 {
-                    h.Width = COLUMN_HEADER_WIDTH_DEFAULT;
+                    h.Width = ColumnHeaderWidthDefault;
                 }
+
                 this.mainContent.Controls.Add(lv);
             }
 
@@ -559,15 +541,13 @@
 
             // add button(s)
             btnPrintOrder.Dock = DockStyle.Top;
-            btnPrintOrder.Height = BUTTON_HEIGHT;
+            btnPrintOrder.Height = ButtonHeight;
             this.mainContent.Controls.Add(btnPrintOrder);
 
             this.mainContent.ResumeLayout();
 
-            //
             // back
-            //
-            enableBackButton(loadOrdersView);
+            this.EnableBackButton(this.LoadOrdersView);
         }
 
         #endregion
@@ -576,71 +556,71 @@
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            loadHomeView();
+            this.LoadHomeView();
         }
 
         private void MainForm_Closing(object sender, EventArgs e)
         {
-            if (SaveDelegate != null)
+            if (this.saveDelegate != null)
             {
-                SaveDelegate();
+                this.saveDelegate();
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
-            if (SaveDelegate != null)
+            if (this.saveDelegate != null)
             {
-                SaveDelegate();
+                this.saveDelegate();
             }
 
             this.Close();
         }
 
-        private void btnBack_Click(object sender, EventArgs e)
+        private void BtnBack_Click(object sender, EventArgs e)
         {
-            if (SaveDelegate != null)
+            if (this.saveDelegate != null)
             {
-                SaveDelegate();
+                this.saveDelegate();
             }
 
-            unloadCurrentView();
+            this.UnloadCurrentView();
 
-            if (BackDelegate != null)
+            if (this.backDelegate != null)
             {
-                BackDelegate();
+                this.backDelegate();
             }
         }
 
-        private void btnOrders_Click(object sender, EventArgs e)
+        private void BtnOrders_Click(object sender, EventArgs e)
         {
-            unloadCurrentView();
-            loadOrdersView();
+            this.UnloadCurrentView();
+            this.LoadOrdersView();
         }
 
-        private void btnPrintOrder_Click(object sender, EventArgs e)
+        private void BtnPrintOrder_Click(object sender, EventArgs e)
         {
-            printSelectedOrder();
+            this.PrintSelectedOrder();
         }
 
-        private void listViewMaster_ItemActivate(object sender, EventArgs e)
+        private void ListViewMaster_ItemActivate(object sender, EventArgs e)
         {
-            updateListViewMediator();
-            updateListViewDetail();
+            this.UpdateListViewMediator();
+            this.UpdateListViewDetail();
         }
 
-        private void listViewMediator_ItemActivate(object sender, EventArgs e)
+        private void ListViewMediator_ItemActivate(object sender, EventArgs e)
         {
-            updateListViewDetail();
+            this.UpdateListViewDetail();
         }
 
-        private void btnViewOrders_Click(object sender, EventArgs e)
+        private void BtnViewOrders_Click(object sender, EventArgs e)
         {
-            unloadCurrentView();
-            loadCompleteOrdersView();
+            this.UnloadCurrentView();
+            this.LoadCompleteOrdersView();
         }
 
-        private void btnSyncHandheld_Click(object sender, EventArgs e)
+        private void BtnSyncHandheld_Click(object sender, EventArgs e)
         {
             Sync sync;
             Sync.SyncResult syncResult;
@@ -652,15 +632,15 @@
 
             if (syncResult == Sync.SyncResult.Complete)
             {
-                ButtonStatus_Done(sender as Button, "Done");
+                this.ButtonStatus_Done(sender as Button, "Done");
             }
             else if (syncResult == Sync.SyncResult.Disconnected)
             {
-                ButtonStatus_Problem(sender as Button, "Disconnected");
+                this.ButtonStatus_Problem(sender as Button, "Disconnected");
             }
         }
 
-        private void btnGetProductsFromITRetail_Click(object sender, EventArgs e)
+        private void BtnGetProductsFromITRetail_Click(object sender, EventArgs e)
         {
             Sync sync;
             Sync.SyncResult syncResult;
@@ -672,14 +652,21 @@
 
             if (syncResult == Sync.SyncResult.Complete)
             {
-                ButtonStatus_Done(sender as Button, "Done");
+                this.ButtonStatus_Done(sender as Button, "Done");
             }
             else if (syncResult == Sync.SyncResult.Disconnected)
             {
-                ButtonStatus_Problem(sender as Button, "Disconnected");
+                this.ButtonStatus_Problem(sender as Button, "Disconnected");
             }
         }
 
         #endregion
+
+        private static class UserInputs
+        {
+            internal const string LvMaster = "LV_MASTER";
+            internal const string LvMediator = "LV_MEDIATOR";
+            internal const string LvDetails = "LV_DETAILS";
+        }
     }
 }

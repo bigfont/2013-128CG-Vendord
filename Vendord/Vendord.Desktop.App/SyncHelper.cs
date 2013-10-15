@@ -160,7 +160,6 @@
 
             VendordDatabase db_remote = new VendordDatabase(remoteDatabase_LocalCopy_FullPath);
             db_remote.EmptyTrash();
-
         }
 
         private void orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)

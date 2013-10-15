@@ -1,0 +1,11 @@
+SA1300 : CSharp.Naming : method names begin with an upper-case letter.
+
+SA1306 : CSharp.Naming : Variable names and private field names must start with a lower-case letter.
+
+SA1201 : CSharp.Ordering : All classes must be placed after all fields.
+
+SA1201 : CSharp.Ordering : All classes must be placed after all delegates.
+
+SA1208 : CSharp.Ordering : System using directives must be placed before all other using directives.
+
+SA1126 : CSharp.Readability : The call to MainForm_Load must begin with the 'this.', 'base.', 'object.' or 'MainForm.' or 'Form.' prefix to indicate the intended method call.

@@ -1,0 +1,37 @@
+
+[Send this to Derek in an email. Let's plan to have this complete by Fri 18 Oct.]
+
+Handheld Bugs
+---
+
+1 When we add a new product through IT Retail, then open the handheld 
+and scan the new product, the product doesn't show. But
+if we then go back and scan the product a second time, it does show. 
+
+2 Continue without selecting an order closes or freezes.
+
+3 Delete without selected an order closes or freezes.
+
+4 On sync the orders that were deleted on the handheld do not delete on the desktop. 
+
+5 Deleting multiple orders in a row freezes or closes. 
+
+6 Deleting and then creating and then deleting and then creating freezes or closes. 
+
+Handheld Missing Features
+---
+
+1 When we rescan an item that is already in an order, show the number that the user already inputted. 
+
+Desktop Missing Features
+--
+
+1 Create a new vendor in an existing order. 
+
+2 Create a new product in an existing vendor. 
+
+3 Update the number of cases to order for a product. 
+
+4 Print in a layout that matches the existing print layout. 
+
+5 Print all vendord in a current order with one click onto their own sheets. 
