@@ -118,7 +118,7 @@ namespace Vendord.Desktop.App
         private void ButtonStatus_Done(Button b, string message)
         {
             this.ButtonStatus_Clear(b);
-            b.Text += string.Format("{0} <{1}>", this.ButtonMessageSeparator, message);
+            b.Text += string.Format("{0} <{1}>", ButtonMessageSeparator, message);
             b.BackColor = Color.LightGreen;
         }
 
