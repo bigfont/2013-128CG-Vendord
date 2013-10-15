@@ -5,7 +5,7 @@
 
 namespace Vendord.SmartDevice.App
 {
-    using System;    
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Data;
@@ -23,14 +23,17 @@ namespace Vendord.SmartDevice.App
         private const short DefaultProductAmount = 1;
         private const int ButtonHeight = 50;
         private const int NumberOfNavigationButtons = 2;
+        private const string TextBack = "Save and Back";
+        private const string TextClose = "Save and Close";
+        private const string TextContinue = "Save and Continue";
 
-        private Panel mainNavigation;        
+        private Panel mainNavigation;
         private Panel mainContent;
 
         private Button btnBack;
-        
+
         private Back backDelegate;
-        
+
         private Save saveDelegate;
 
         // scanning specific fields
@@ -40,7 +43,7 @@ namespace Vendord.SmartDevice.App
             = new VendordDatabase.Order();
 
         private VendordDatabase.Product currentScannedProduct
-            = new VendordDatabase.Product();        
+            = new VendordDatabase.Product();
 
         public MainForm()
         {
@@ -73,17 +76,17 @@ namespace Vendord.SmartDevice.App
             // Create Buttons
             Button btnClose;
 
-            this.btnBack = new Button() { Text = "Back" };
+            this.btnBack = new Button() { Text = TextBack };
             this.btnBack.Click += new EventHandler(this.BtnBack_Click);
 
-            btnClose = new Button() { Text = "Save and Close" };
+            btnClose = new Button() { Text = TextClose };
             btnClose.Click += new EventHandler(this.BtnClose_Click);
 
             // add to panel - this triggers its layout event
             controls = new Button[] { btnClose, this.btnBack };
 
             this.mainNavigation.SuspendLayout();
-            
+
             foreach (Control c in controls)
             {
                 c.Dock = DockStyle.Left;
@@ -101,46 +104,52 @@ namespace Vendord.SmartDevice.App
 
         #region Utilities
 
+        private void UpdateCurrentOrder()
+        {
+            ListView listView;
+            int orderID;
+            VendordDatabase db;
+
+            // reset the currentOrder to null
+            this.currentOrder = null;
+
+            // get the id of the selected order
+            listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
+            if (listView != null && listView.FocusedItem != null && listView.FocusedItem.SubItems.Count == 2)
+            {
+                orderID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                db = new VendordDatabase();
+
+                // update the currentOrder
+                this.currentOrder = db.Orders.FirstOrDefault(o => o.ID == orderID);
+            }
+        }
+
         private void DeleteSelectedOrder()
         {
-            ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
+            VendordDatabase db;            
 
-            if (listView != null)
+            if (this.currentOrder != null)
             {
-                VendordDatabase db = new VendordDatabase();
-
-                this.currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                db = new VendordDatabase();
                 this.currentOrder.AddToTrash(db);
                 this.currentOrder = null;
             }
         }
 
-        private void ContinueSelectedOrder()
-        {
-            ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
-
-            if (listView != null)
-            {
-                this.currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
-                this.currentOrder.Name = listView.FocusedItem.SubItems[0].Text;
-            }
-        }
-
         private void SaveNewOrder()
-        {
-            // start new order session
-            List<TextBox> descendents;
+        {            
+            List<TextBox> textBoxes;
 
-            descendents = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderName, true);
-            if (descendents != null && descendents.Count > 0)
+            textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderName, true);
+            if (textBoxes != null && textBoxes.Count > 0 && textBoxes.FirstOrDefault().Text.Length > 0)
             {
                 VendordDatabase.Order newOrder = new VendordDatabase.Order()
                 {
-                    Name = descendents.FirstOrDefault<TextBox>().Text
+                    Name = textBoxes.FirstOrDefault<TextBox>().Text
                 };
                 newOrder.UpsertIntoDB(new VendordDatabase());
-                this.currentOrder.ID = newOrder.ID;
-                this.currentOrder.Name = newOrder.Name;
+                this.currentOrder = newOrder;
             }
         }
 
@@ -203,7 +212,7 @@ namespace Vendord.SmartDevice.App
             Button[] buttons;
 
             btnOrders = new Button() { Text = "Orders" };
-            btnOrders.Click += new EventHandler(this.BtnOrders_Click);            
+            btnOrders.Click += new EventHandler(this.BtnOrders_Click);
 
             // style
             buttons = new Button[] 
@@ -248,7 +257,7 @@ namespace Vendord.SmartDevice.App
             btnContinue.Click += new EventHandler(this.BtnContinueExistingOrder_Click);
 
             // create list view
-            listOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };            
+            listOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };
 
             // populate list view
             db = new VendordDatabase();
@@ -297,10 +306,10 @@ namespace Vendord.SmartDevice.App
                 b.Height = ButtonHeight;
                 b.Width = pnlSecondaryNav.ClientSize.Width / buttons.Length;
                 pnlSecondaryNav.Controls.Add(b);
-            }           
+            }
 
             this.ResumeLayout();
-            
+
             // back
             this.EnableBackButton(this.LoadHomeView);
         }
@@ -317,7 +326,7 @@ namespace Vendord.SmartDevice.App
             textBox = new TextBox();
             textBox.Name = USER_INPUTS.TxtOrderName;
 
-            button = new Button() { Text = "Save" };
+            button = new Button() { Text = TextContinue };
             button.Click += new EventHandler(this.BtnSaveNewOrder_Click);
 
             // add and layout
@@ -327,7 +336,7 @@ namespace Vendord.SmartDevice.App
             textBox.Dock = DockStyle.Top;
             button.Dock = DockStyle.Top;
             button.Height = ButtonHeight;
-            
+
             Control[] controls = new Control[] { button, textBox, label };
             foreach (Control c in controls)
             {
@@ -350,27 +359,31 @@ namespace Vendord.SmartDevice.App
             Label lblInstructions;
             Control[] controls;
 
-            lblOrderName = new Label() { Text = "Order Name:" + this.currentOrder.Name };
-            lblInstructions = new Label() { Text = "Start scanning." };
-
-            controls = new Control[] 
-            { 
-                lblOrderName, 
-                lblInstructions 
-            }.Reverse<Control>().ToArray<Control>();
-
-            foreach (Control c in controls)
+            // only load the order scanning view if we have a selected order.
+            if (this.currentOrder != null)
             {
-                c.Dock = DockStyle.Top;
-                this.mainContent.Controls.Add(c);
+                lblOrderName = new Label() { Text = "Order Name:" + this.currentOrder.Name };
+                lblInstructions = new Label() { Text = "Start scanning." };
+
+                controls = new Control[] 
+                { 
+                    lblOrderName, 
+                    lblInstructions 
+                }.Reverse<Control>().ToArray<Control>();
+
+                foreach (Control c in controls)
+                {
+                    c.Dock = DockStyle.Top;
+                    this.mainContent.Controls.Add(c);
+                }
+
+                this.barcodeAPI = new BarcodeAPI(this.BarcodeScanner_OnStatus, this.BarcodeScanner_OnScan);
+                this.barcodeAPI.Scan();
+
+                // back
+                this.btnBack.Enabled = true;
+                this.backDelegate = this.LoadOrdersView;
             }
-
-            this.barcodeAPI = new BarcodeAPI(this.BarcodeScanner_OnStatus, this.BarcodeScanner_OnScan);
-            this.barcodeAPI.Scan();
-
-            // back
-            this.btnBack.Enabled = true;
-            this.backDelegate = this.LoadOrdersView;
         }
 
         private void LoadOrderScanningResultView(ScanData scanData)
@@ -386,7 +399,7 @@ namespace Vendord.SmartDevice.App
             lblProductName = new Label() { Text = "This UPC code is not in the database." };
             lblProductAmount = new Label() { Text = "Cases to Order:" };
             txtProductAmount = new TextBox() { Name = USER_INPUTS.TxtOrderItemAmount, Enabled = false, Text = DefaultProductAmount.ToString() };
-            lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };            
+            lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
 
             // add values for product that is in the database
             db = new VendordDatabase();
@@ -485,18 +498,32 @@ namespace Vendord.SmartDevice.App
 
         private void BtnDeleteExistingOrder_Click(object sender, EventArgs e)
         {
-            this.DeleteSelectedOrder();
-            this.UnloadCurrentView();
-            this.LoadOrdersView();
-
-            // TODO Also delete associated order_Products
+            this.UpdateCurrentOrder();            
+            if (this.currentOrder != null)
+            {
+                this.DeleteSelectedOrder();
+                this.UnloadCurrentView();
+                this.LoadOrdersView();
+                // TODO Also delete associated order_Products
+            }
+            else
+            {
+                MessageBox.Show("Please select an order.");
+            }
         }
 
         private void BtnContinueExistingOrder_Click(object sender, EventArgs e)
         {
-            this.ContinueSelectedOrder();
-            this.UnloadCurrentView();
-            this.LoadOrderScanningView();
+            this.UpdateCurrentOrder();
+            if (this.currentOrder != null)
+            {
+                this.UnloadCurrentView();
+                this.LoadOrderScanningView();
+            }
+            else
+            {
+                MessageBox.Show("Please select an order.");
+            }
         }
 
         private void BtnSaveNewOrder_Click(object sender, EventArgs e)

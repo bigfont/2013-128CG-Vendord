@@ -6,11 +6,14 @@ Handheld Bugs
 
 1 When we add a new product through IT Retail, then open the handheld 
 and scan the new product, the product doesn't show. But
-if we then go back and scan the product a second time, it does show. 
+if we then go back and scan the product a second time, it does show.
 
-2 Continue without selecting an order closes or freezes.
+2 Continue without selecting an order closes or freezes.*
+3 Delete without selected an order closes or freezes.*
 
-3 Delete without selected an order closes or freezes.
+	Fix:
+	- Add to the code contract for each involved method.
+	- Add a message to request selection of an item.
 
 4 On sync the orders that were deleted on the handheld do not delete on the desktop. 
 
@@ -35,3 +38,8 @@ Desktop Missing Features
 4 Print in a layout that matches the existing print layout. 
 
 5 Print all vendord in a current order with one click onto their own sheets. 
+
+Other
+--
+
+Make the buttons on the Smart Device list view larger.
