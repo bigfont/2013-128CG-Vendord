@@ -15,14 +15,17 @@ if we then go back and scan the product a second time, it does show.
 	- Add to the code contract for each involved method.
 	- Add a message to request selection of an item.
 
-4 On sync the orders that were deleted on the handheld do not delete on the desktop. 
+4 On sync the orders that were deleted on the handheld do not delete on the desktop.*
 
 5 Deleting multiple orders in a row freezes or closes. Done. 
 
 	Fix: 
 	Fixing number 2 and 3 above appears to have fixed this too. 
 
-6 Deleting and then creating and then deleting and then creating freezes or closes. 
+6 Deleting and then creating and then deleting and then creating freezes or closes. Done. 
+
+	Fix:
+	Fixing number 2 and 3 above appears to have fixed this.
 
 Handheld Missing Features
 ---
@@ -45,4 +48,7 @@ Desktop Missing Features
 Other
 --
 
-Make the buttons on the Smart Device list view larger.
+Make the buttons on the Smart Device list view larger. Done. 
+ 
+	Fix:
+	Use LargeIcon instead of small.

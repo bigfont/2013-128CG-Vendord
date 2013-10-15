@@ -505,6 +505,7 @@ namespace Vendord.SmartDevice.App
                 this.DeleteSelectedOrder();
                 this.UnloadCurrentView();
                 this.LoadOrdersView();
+
                 // TODO Also delete associated order_Products
             }
             else
