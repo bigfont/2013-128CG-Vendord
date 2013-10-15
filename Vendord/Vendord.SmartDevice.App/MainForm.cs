@@ -1,42 +1,44 @@
-﻿namespace Vendord.SmartDevice.App
+﻿[module:
+    System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "StyleCop.CSharp.DocumentationRules", "*",
+        Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
+
+namespace Vendord.SmartDevice.App
 {
-    using System;
-    using System.Linq;
+    using System;    
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Data;
     using System.Data.SqlServerCe;
     using System.Drawing;
+    using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Windows.Forms;
     using Symbol.Barcode2;
-    using System.IO;
     using Vendord.SmartDevice.Shared;
 
     public class MainForm : Form
     {
-        private short DEFAULT_PRODUCT_AMOUNT = 1;
-        private int BUTTON_HEIGHT = 50;
-        private int NUMBER_OF_NAV_BUTTONS = 2;
-        private static class USER_INPUTS
-        {
-            internal const string TXT_ORDER_NAME = "TXT_ORDER_NAME";
-            internal const string TXT_ORDER_ITEM_AMOUNT = "TXT_ORDER_ITEM_AMOUNT";
-        }
+        private const short DefaultProductAmount = 1;
+        private const int ButtonHeight = 50;
+        private const int NumberOfNavigationButtons = 2;
 
         private Panel mainNavigation;        
         private Panel mainContent;
 
         private Button btnBack;
-        private delegate void Back();
-        private Back BackDelegate;
-        private delegate void Save();
-        private Save SaveDelegate;
+        
+        private Back backDelegate;
+        
+        private Save saveDelegate;
 
         // scanning specific fields
         private BarcodeAPI barcodeAPI;
+
         private VendordDatabase.Order currentOrder
             = new VendordDatabase.Order();
+
         private VendordDatabase.Product currentScannedProduct
             = new VendordDatabase.Product();        
 
@@ -44,66 +46,62 @@
         {
             Control[] controls;
 
-            this.Load += new EventHandler(MainForm_Load);
-            this.Closing += new CancelEventHandler(MainForm_Closing);
+            this.Load += new EventHandler(this.MainForm_Load);
+            this.Closing += new CancelEventHandler(this.MainForm_Closing);
             this.WindowState = FormWindowState.Maximized;
             this.BackColor = Color.White;
 
-            //
-            // create main navigation panel
-            //            
-            mainNavigation = new Panel();
-            mainNavigation.Dock = DockStyle.Top;
-            mainNavigation.Height = BUTTON_HEIGHT;
+            // create main navigation panel           
+            this.mainNavigation = new Panel();
+            this.mainNavigation.Dock = DockStyle.Top;
+            this.mainNavigation.Height = ButtonHeight;
 
-            //
             // create main content panel
-            //
-            mainContent = new Panel();
-            mainContent.Dock = DockStyle.Fill;
+            this.mainContent = new Panel();
+            this.mainContent.Dock = DockStyle.Fill;
 
-            //
-            // add to form 
-            //           
+            // add to form           
             this.SuspendLayout();
-            controls = new Control[] { mainContent, mainNavigation };
+            controls = new Control[] { this.mainContent, this.mainNavigation };
             foreach (Control c in controls)
             {
                 this.Controls.Add(c);
             }
+
             this.ResumeLayout();
 
-            //
             // Create Buttons
-            //
             Button btnClose;
 
-            btnBack = new Button() { Text = "Back" };
-            btnBack.Click += new EventHandler(btnBack_Click);
+            this.btnBack = new Button() { Text = "Back" };
+            this.btnBack.Click += new EventHandler(this.BtnBack_Click);
 
             btnClose = new Button() { Text = "Save and Close" };
-            btnClose.Click += new EventHandler(btnClose_Click);
+            btnClose.Click += new EventHandler(this.BtnClose_Click);
 
-            //
             // add to panel - this triggers its layout event
-            //
-            controls = new Button[] { btnClose, btnBack };
+            controls = new Button[] { btnClose, this.btnBack };
 
             this.mainNavigation.SuspendLayout();
             
             foreach (Control c in controls)
             {
                 c.Dock = DockStyle.Left;
-                c.Height = BUTTON_HEIGHT;
+                c.Height = ButtonHeight;
                 c.Width = this.mainNavigation.ClientSize.Width / controls.Length;
-                mainNavigation.Controls.Add(c);
+                this.mainNavigation.Controls.Add(c);
             }
+
             this.mainNavigation.ResumeLayout();
         }
 
+        private delegate void Back();
+
+        private delegate void Save();
+
         #region Utilities
 
-        private void deleteSelectedOrder()
+        private void DeleteSelectedOrder()
         {
             ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
 
@@ -111,29 +109,29 @@
             {
                 VendordDatabase db = new VendordDatabase();
 
-                currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
-                currentOrder.AddToTrash(db);
-                currentOrder = null;
+                this.currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                this.currentOrder.AddToTrash(db);
+                this.currentOrder = null;
             }
         }
 
-        private void continueSelectedOrder()
+        private void ContinueSelectedOrder()
         {
             ListView listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
 
             if (listView != null)
             {
-                currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
-                currentOrder.Name = listView.FocusedItem.SubItems[0].Text;
+                this.currentOrder.ID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                this.currentOrder.Name = listView.FocusedItem.SubItems[0].Text;
             }
         }
 
-        private void saveNewOrder()
+        private void SaveNewOrder()
         {
             // start new order session
             List<TextBox> descendents;
 
-            descendents = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TXT_ORDER_NAME, true);
+            descendents = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderName, true);
             if (descendents != null && descendents.Count > 0)
             {
                 VendordDatabase.Order newOrder = new VendordDatabase.Order()
@@ -141,29 +139,29 @@
                     Name = descendents.FirstOrDefault<TextBox>().Text
                 };
                 newOrder.UpsertIntoDB(new VendordDatabase());
-                currentOrder.ID = newOrder.ID;
-                currentOrder.Name = newOrder.Name;
+                this.currentOrder.ID = newOrder.ID;
+                this.currentOrder.Name = newOrder.Name;
             }
         }
 
-        private void saveNewProductOrderAmount()
+        private void SaveNewProductOrderAmount()
         {
             List<TextBox> textBoxes;
-            textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TXT_ORDER_ITEM_AMOUNT, true);
+            textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderItemAmount, true);
 
             if (textBoxes != null && textBoxes.Count > 0 && textBoxes.First<TextBox>().Text.Length > 0)
             {
-                VendordDatabase.Order_Product OrderProduct = new VendordDatabase.Order_Product()
+                VendordDatabase.Order_Product orderProduct = new VendordDatabase.Order_Product()
                 {
-                    OrderID = currentOrder.ID,
-                    ProductID = currentScannedProduct.ID,
+                    OrderID = this.currentOrder.ID,
+                    ProductID = this.currentScannedProduct.ID,
                     CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
                 };
-                OrderProduct.UpsertIntoDB(new VendordDatabase());
+                orderProduct.UpsertIntoDB(new VendordDatabase());
             }
         }
 
-        private Bitmap createListViewSmallImage()
+        private Bitmap CreateListViewSmallImage()
         {
             SolidBrush brush;
             Bitmap myBitmap;
@@ -178,58 +176,55 @@
             return myBitmap;
         }
 
-        private void disableBackButton()
+        private void DisableBackButton()
         {
-            btnBack.Enabled = false;
-            BackDelegate = null;
+            this.btnBack.Enabled = false;
+            this.backDelegate = null;
         }
 
-        private void enableBackButton(Back method)
+        private void EnableBackButton(Back method)
         {
-            btnBack.Enabled = true;
-            BackDelegate = method;
+            this.btnBack.Enabled = true;
+            this.backDelegate = method;
         }
 
         #endregion
 
         #region Views
 
-        private void unloadCurrentView()
+        private void UnloadCurrentView()
         {
-            mainContent.Controls.Clear();
+            this.mainContent.Controls.Clear();
         }
 
-        private void loadHomeView()
+        private void LoadHomeView()
         {
             Button btnOrders;
             Button[] buttons;
 
             btnOrders = new Button() { Text = "Orders" };
-            btnOrders.Click += new EventHandler(btnOrders_Click);            
+            btnOrders.Click += new EventHandler(this.BtnOrders_Click);            
 
             // style
-            buttons = new Button[] { 
-                
+            buttons = new Button[] 
+            { 
                 btnOrders 
-            
             };
 
             foreach (Button b in buttons)
             {
                 b.Dock = DockStyle.Top;
-                b.Height = BUTTON_HEIGHT;
+                b.Height = ButtonHeight;
                 this.mainContent.Controls.Add(b);
             }
 
-            //
-            // back
-            //
-            disableBackButton();
+            // back            
+            this.DisableBackButton();
         }
 
-        private void loadOrdersView()
+        private void LoadOrdersView()
         {
-            ListView lvOrders;
+            ListView listOrders;
             ListViewItem listViewItem;
             Bitmap myBitmap;
             ImageList myImageList;
@@ -244,21 +239,18 @@
             pnlSecondaryNav = new Panel();
 
             btnCreate = new Button() { Text = "Create" };
-            btnCreate.Click += new EventHandler(btnCreateNewOrder_Click);
+            btnCreate.Click += new EventHandler(this.BtnCreateNewOrder_Click);
 
             btnDelete = new Button() { Text = "Delete" };
-            btnDelete.Click += new EventHandler(btnDeleteExistingOrder_Click);
+            btnDelete.Click += new EventHandler(this.BtnDeleteExistingOrder_Click);
 
             btnContinue = new Button() { Text = "Continue" };
-            btnContinue.Click += new EventHandler(btnContinueExistingOrder_Click);
+            btnContinue.Click += new EventHandler(this.BtnContinueExistingOrder_Click);
 
-            //
             // create list view
-            lvOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };            
+            listOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };            
 
-            // 
             // populate list view
-            //
             db = new VendordDatabase();
             foreach (VendordDatabase.Order order in db.Orders)
             {
@@ -269,56 +261,51 @@
                     ImageIndex = 0
                 };
                 listViewItem.SubItems.Add(order.ID.ToString());
-                lvOrders.Items.Add(listViewItem);
+                listOrders.Items.Add(listViewItem);
             }
 
-            //
             // add icon
-            //
-            myBitmap = createListViewSmallImage();
+            myBitmap = this.CreateListViewSmallImage();
             myImageList = new ImageList();
             myImageList.Images.Add(myBitmap);
             myImageList.ImageSize = myBitmap.Size;
-            lvOrders.SmallImageList = myImageList;
+            listOrders.SmallImageList = myImageList;
 
             // set listview's layout and style
-            lvOrders.View = View.List;
-            lvOrders.Dock = DockStyle.Top;
+            listOrders.View = View.List;
+            listOrders.Dock = DockStyle.Top;
 
-            buttons = new Button[] { 
-            
+            buttons = new Button[] 
+            { 
                 btnContinue,
                 btnDelete,
                 btnCreate
-            
             };
 
             this.SuspendLayout();
 
-            lvOrders.Dock = DockStyle.Fill;
-            this.mainContent.Controls.Add(lvOrders);
+            listOrders.Dock = DockStyle.Fill;
+            this.mainContent.Controls.Add(listOrders);
 
             pnlSecondaryNav.Dock = DockStyle.Top;
-            pnlSecondaryNav.Height = BUTTON_HEIGHT;
+            pnlSecondaryNav.Height = ButtonHeight;
             this.mainContent.Controls.Add(pnlSecondaryNav);
 
             foreach (Button b in buttons)
             {
                 b.Dock = DockStyle.Left;
-                b.Height = BUTTON_HEIGHT;
+                b.Height = ButtonHeight;
                 b.Width = pnlSecondaryNav.ClientSize.Width / buttons.Length;
                 pnlSecondaryNav.Controls.Add(b);
             }           
 
             this.ResumeLayout();
-
-            //
+            
             // back
-            //
-            enableBackButton(loadHomeView);
+            this.EnableBackButton(this.LoadHomeView);
         }
 
-        private void loadCreateNewOrderView()
+        private void LoadCreateNewOrderView()
         {
             TextBox textBox;
             Label label;
@@ -328,20 +315,18 @@
             label.Text = "Order Name";
 
             textBox = new TextBox();
-            textBox.Name = USER_INPUTS.TXT_ORDER_NAME;
+            textBox.Name = USER_INPUTS.TxtOrderName;
 
             button = new Button() { Text = "Save" };
-            button.Click += new EventHandler(btnSaveNewOrder_Click);
+            button.Click += new EventHandler(this.BtnSaveNewOrder_Click);
 
-            //
             // add and layout
-            //
             this.mainContent.SuspendLayout();
 
             label.Dock = DockStyle.Top;
             textBox.Dock = DockStyle.Top;
             button.Dock = DockStyle.Top;
-            button.Height = BUTTON_HEIGHT;
+            button.Height = ButtonHeight;
             
             Control[] controls = new Control[] { button, textBox, label };
             foreach (Control c in controls)
@@ -353,47 +338,42 @@
 
             this.mainContent.ResumeLayout();
 
-            //
             // back
-            //
-            btnBack.Enabled = true;
-            BackDelegate = loadOrdersView;
-            SaveDelegate = saveNewOrder;
+            this.btnBack.Enabled = true;
+            this.backDelegate = this.LoadOrdersView;
+            this.saveDelegate = this.SaveNewOrder;
         }
 
-        private void loadOrderScanningView()
+        private void LoadOrderScanningView()
         {
             Label lblOrderName;
             Label lblInstructions;
             Control[] controls;
 
-            lblOrderName = new Label() { Text = "Order Name:" + currentOrder.Name };
+            lblOrderName = new Label() { Text = "Order Name:" + this.currentOrder.Name };
             lblInstructions = new Label() { Text = "Start scanning." };
 
-            controls = new Control[] { 
-
+            controls = new Control[] 
+            { 
                 lblOrderName, 
                 lblInstructions 
-
             }.Reverse<Control>().ToArray<Control>();
 
             foreach (Control c in controls)
             {
                 c.Dock = DockStyle.Top;
-                mainContent.Controls.Add(c);
+                this.mainContent.Controls.Add(c);
             }
 
-            barcodeAPI = new BarcodeAPI(barcodeScanner_OnStatus, barcodeScanner_OnScan);
-            barcodeAPI.Scan();
+            this.barcodeAPI = new BarcodeAPI(this.BarcodeScanner_OnStatus, this.BarcodeScanner_OnScan);
+            this.barcodeAPI.Scan();
 
-            //
             // back
-            //
-            btnBack.Enabled = true;
-            BackDelegate = loadOrdersView;
+            this.btnBack.Enabled = true;
+            this.backDelegate = this.LoadOrdersView;
         }
 
-        private void loadOrderScanningResultView(ScanData scanData)
+        private void LoadOrderScanningResultView(ScanData scanData)
         {
             // declare 
             Label lblProductUPC, lblProductName, lblProductAmount, lblInstruction;
@@ -405,31 +385,29 @@
             lblProductUPC = new Label() { Text = scanData.Text };
             lblProductName = new Label() { Text = "This UPC code is not in the database." };
             lblProductAmount = new Label() { Text = "Cases to Order:" };
-            txtProductAmount = new TextBox() { Name = USER_INPUTS.TXT_ORDER_ITEM_AMOUNT, Enabled = false, Text = DEFAULT_PRODUCT_AMOUNT.ToString() };
+            txtProductAmount = new TextBox() { Name = USER_INPUTS.TxtOrderItemAmount, Enabled = false, Text = DefaultProductAmount.ToString() };
             lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };            
 
             // add values for product that is in the database
             db = new VendordDatabase();
-            currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
-            if (currentScannedProduct != null)
+            this.currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
+            if (this.currentScannedProduct != null)
             {
-                lblProductName.Text = currentScannedProduct.Name;
+                lblProductName.Text = this.currentScannedProduct.Name;
                 txtProductAmount.Enabled = true;
-                txtProductAmount.KeyPress += new KeyPressEventHandler(txtValidateInt32_KeyPress);
-                txtProductAmount.KeyPress += new KeyPressEventHandler(txtClearDefaultValue_KeyPress);
-
+                txtProductAmount.KeyPress += new KeyPressEventHandler(this.TxtValidateInt32_KeyPress);
+                txtProductAmount.KeyPress += new KeyPressEventHandler(this.TxtClearDefaultValue_KeyPress);
             }
 
             // add the controls to an array in the order that we want them to display
-            controls = new Control[] { 
-                
-                    lblProductUPC, 
-                    lblProductName, 
-                    lblProductAmount,
-                    txtProductAmount,
-                    lblInstruction
-                
-                }.Reverse<Control>().ToArray<Control>();
+            controls = new Control[]
+            { 
+                lblProductUPC, 
+                lblProductName, 
+                lblProductAmount,
+                txtProductAmount,
+                lblInstruction
+            }.Reverse<Control>().ToArray<Control>();
 
             // add the controls to the mainDisplay
             // whilst choosing a dock style
@@ -443,14 +421,12 @@
             txtProductAmount.Focus();
 
             // get ready for another scan
-            barcodeAPI.Scan();
+            this.barcodeAPI.Scan();
 
-            //
             // back
-            //
-            btnBack.Enabled = true;
-            BackDelegate = loadOrdersView;
-            SaveDelegate = saveNewProductOrderAmount;
+            this.btnBack.Enabled = true;
+            this.backDelegate = this.LoadOrdersView;
+            this.saveDelegate = this.SaveNewProductOrderAmount;
         }
 
         #endregion
@@ -459,88 +435,88 @@
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            loadHomeView();
+            this.LoadHomeView();
         }
 
         private void MainForm_Closing(object sender, EventArgs e)
         {
-            if (SaveDelegate != null)
+            if (this.saveDelegate != null)
             {
-                SaveDelegate();
+                this.saveDelegate();
             }
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click(object sender, EventArgs e)
         {
-            if (SaveDelegate != null)
+            if (this.saveDelegate != null)
             {
-                SaveDelegate();
+                this.saveDelegate();
             }
 
             this.Close();
         }
 
-        private void btnBack_Click(object sender, EventArgs e)
+        private void BtnBack_Click(object sender, EventArgs e)
         {
-            if (SaveDelegate != null)
+            if (this.saveDelegate != null)
             {
-                SaveDelegate();
+                this.saveDelegate();
             }
 
-            unloadCurrentView();
+            this.UnloadCurrentView();
 
-            if (BackDelegate != null)
+            if (this.backDelegate != null)
             {
-                BackDelegate();
+                this.backDelegate();
             }
         }
 
-        private void btnOrders_Click(object sender, EventArgs e)
+        private void BtnOrders_Click(object sender, EventArgs e)
         {
-            unloadCurrentView();
-            loadOrdersView();
+            this.UnloadCurrentView();
+            this.LoadOrdersView();
         }
 
-        private void btnCreateNewOrder_Click(object sender, EventArgs e)
+        private void BtnCreateNewOrder_Click(object sender, EventArgs e)
         {
-            unloadCurrentView();
-            loadCreateNewOrderView();
+            this.UnloadCurrentView();
+            this.LoadCreateNewOrderView();
         }
 
-        private void btnDeleteExistingOrder_Click(object sender, EventArgs e)
+        private void BtnDeleteExistingOrder_Click(object sender, EventArgs e)
         {
-            deleteSelectedOrder();
-            unloadCurrentView();
-            loadOrdersView();
+            this.DeleteSelectedOrder();
+            this.UnloadCurrentView();
+            this.LoadOrdersView();
 
             // TODO Also delete associated order_Products
         }
 
-        private void btnContinueExistingOrder_Click(object sender, EventArgs e)
+        private void BtnContinueExistingOrder_Click(object sender, EventArgs e)
         {
-            continueSelectedOrder();
-            unloadCurrentView();
-            loadOrderScanningView();
+            this.ContinueSelectedOrder();
+            this.UnloadCurrentView();
+            this.LoadOrderScanningView();
         }
 
-        private void btnSaveNewOrder_Click(object sender, EventArgs e)
+        private void BtnSaveNewOrder_Click(object sender, EventArgs e)
         {
-            saveNewOrder();
-            unloadCurrentView();
-            loadOrderScanningView();
+            this.SaveNewOrder();
+            this.UnloadCurrentView();
+            this.LoadOrderScanningView();
         }
 
-        private void txtClearDefaultValue_KeyPress(object sender, KeyPressEventArgs e)
+        private void TxtClearDefaultValue_KeyPress(object sender, KeyPressEventArgs e)
         {
             TextBox txt;
             txt = sender as TextBox;
             if (txt != null && !txt.Modified)
             {
-                txt.Text = String.Empty;
+                txt.Text = string.Empty;
             }
         }
 
-        private void txtValidateInt32_KeyPress(object sender, KeyPressEventArgs e)
+        private void TxtValidateInt32_KeyPress(object sender, KeyPressEventArgs e)
         {
             // use a whitelist approach by disallowing all input
             e.Handled = true;
@@ -559,6 +535,7 @@
                 try
                 {
                     Convert.ToInt32((sender as TextBox).Text + e.KeyChar);
+
                     // the method didn't throw an overflow exception; so it's within 32 bits; ergo allow it                    
                     e.Handled = false;
                 }
@@ -569,7 +546,7 @@
             }
         }
 
-        private void barcodeScanner_OnScan(ScanDataCollection scanDataCollection)
+        private void BarcodeScanner_OnScan(ScanDataCollection scanDataCollection)
         {
             // Get ScanData
             ScanData scanData = scanDataCollection.GetFirst;
@@ -577,23 +554,28 @@
             switch (scanData.Result)
             {
                 case Results.SUCCESS:
-                    saveNewProductOrderAmount();
-                    unloadCurrentView();
-                    loadOrderScanningResultView(scanData);
+                    this.SaveNewProductOrderAmount();
+                    this.UnloadCurrentView();
+                    this.LoadOrderScanningResultView(scanData);
                     break;
 
                 default:
                     break;
             }
-
         }
 
-        private void barcodeScanner_OnStatus(StatusData statusData)
+        private void BarcodeScanner_OnStatus(StatusData statusData)
         {
             int i = 0;
             i++;
         }
 
         #endregion
+
+        private static class USER_INPUTS
+        {
+            internal const string TxtOrderName = "TXT_ORDER_NAME";
+            internal const string TxtOrderItemAmount = "TXT_ORDER_ITEM_AMOUNT";
+        }
     }
 }

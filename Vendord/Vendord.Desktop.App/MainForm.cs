@@ -1,7 +1,7 @@
 ﻿[module: 
     System.Diagnostics.CodeAnalysis.SuppressMessage(
         "StyleCop.CSharp.DocumentationRules", "*", 
-        Justification = "Reviewed. Suppression is OK here.")]
+        Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
 
 namespace Vendord.Desktop.App
 {
