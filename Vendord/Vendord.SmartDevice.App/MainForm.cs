@@ -175,7 +175,7 @@ namespace Vendord.SmartDevice.App
             SolidBrush brush;
             Bitmap myBitmap;
             Graphics myBitmapGraphics;
-            Size mySize = new Size(30, 30);
+            Size mySize = new Size(50, 50);
 
             brush = new SolidBrush(Color.Gray);
             myBitmap = new Bitmap(mySize.Width, mySize.Height);
@@ -279,9 +279,10 @@ namespace Vendord.SmartDevice.App
             myImageList.Images.Add(myBitmap);
             myImageList.ImageSize = myBitmap.Size;
             listOrders.SmallImageList = myImageList;
+            listOrders.LargeImageList = myImageList;
 
             // set listview's layout and style
-            listOrders.View = View.List;
+            listOrders.View = View.LargeIcon;
             listOrders.Dock = DockStyle.Top;
 
             buttons = new Button[] 

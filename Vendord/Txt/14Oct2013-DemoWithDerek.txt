@@ -8,8 +8,8 @@ Handheld Bugs
 and scan the new product, the product doesn't show. But
 if we then go back and scan the product a second time, it does show.
 
-2 Continue without selecting an order closes or freezes.*
-3 Delete without selected an order closes or freezes.*
+2 Continue without selecting an order closes or freezes. Done.
+3 Delete without selected an order closes or freezes. Done.
 
 	Fix:
 	- Add to the code contract for each involved method.
@@ -17,7 +17,10 @@ if we then go back and scan the product a second time, it does show.
 
 4 On sync the orders that were deleted on the handheld do not delete on the desktop. 
 
-5 Deleting multiple orders in a row freezes or closes. 
+5 Deleting multiple orders in a row freezes or closes. Done. 
+
+	Fix: 
+	Fixing number 2 and 3 above appears to have fixed this too. 
 
 6 Deleting and then creating and then deleting and then creating freezes or closes. 
 
