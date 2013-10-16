@@ -58,7 +58,8 @@ namespace Vendord.Desktop.App
             string[] tablesToSync;
             string scopeName;
             string objectPrefix;
-            DbSyncScopeDescription scopeDesc;
+            DbSyncScopeDescription localScopeDesc;
+            DbSyncScopeDescription remoteScopeDesc;
             SqlCeConnection localConn;
             SqlCeConnection remoteConn;
             SyncOrchestrator orchestrator;
@@ -72,21 +73,22 @@ namespace Vendord.Desktop.App
                 this.SetRemoteDeviceDatabaseNames(remoteDevice);
                 this.CopyDatabaseFromDeviceToDesktop(remoteDevice);
 
+                // Instantiate the connections
+                localConn = new SqlCeConnection(VendordDatabase.GenerateSqlCeConnString(Constants.VendordDatabaseFullPath));
+                remoteConn = new SqlCeConnection(VendordDatabase.GenerateSqlCeConnString(this.remoteDatabaseLocalCopyFullPath));
+
                 // Describe the scope
                 tablesToSync = new string[] { "tblOrder", "tblProduct", "tblOrder_Product" };
                 scopeName = "OrdersAndProducts";
-                localConn = new SqlCeConnection(VendordDatabase.GenerateSqlCeConnString(Constants.VendordDatabaseFullPath));
-                scopeDesc = this.DescribeTheScope(tablesToSync, scopeName, localConn);
+                localScopeDesc = this.DescribeTheScope(tablesToSync, scopeName, localConn);
+                remoteScopeDesc = this.DescribeTheScope(tablesToSync, scopeName, remoteConn);
 
                 // Provision the nodes
-                objectPrefix = "Sync";
-                this.ProvisionNode(scopeDesc, localConn, objectPrefix);
-
-                remoteConn = new SqlCeConnection(VendordDatabase.GenerateSqlCeConnString(this.remoteDatabaseLocalCopyFullPath));
-                this.ProvisionNode(scopeDesc, remoteConn, objectPrefix);
+                this.ProvisionNode(localScopeDesc, localConn);
+                this.ProvisionNode(remoteScopeDesc, remoteConn);
 
                 // Set sync options
-                orchestrator = SetSyncOptions(scopeDesc, localConn, remoteConn, objectPrefix);
+                orchestrator = SetSyncOptions(localScopeDesc, localConn, remoteConn);
 
                 // Sync
                 SyncTheNodes(orchestrator);
@@ -158,7 +160,7 @@ namespace Vendord.Desktop.App
         #region MS Sync Framework
 
         private DbSyncScopeDescription DescribeTheScope(string[] tablesToSync, string scopeName, SqlCeConnection localConn)
-        {            
+        {
             DbSyncScopeDescription scopeDesc;
             DbSyncTableDescription tableDesc;
 
@@ -179,34 +181,39 @@ namespace Vendord.Desktop.App
             return scopeDesc;
         }
 
-        private void ProvisionNode(DbSyncScopeDescription scopeDesc, SqlCeConnection conn, string objectPrefix)
+        private void ProvisionNode(DbSyncScopeDescription scopeDesc, SqlCeConnection conn)
         {
-            SqlCeSyncScopeProvisioning provisioning;            
-            provisioning = new SqlCeSyncScopeProvisioning(conn, scopeDesc);            
-            provisioning.ObjectPrefix = objectPrefix;
-            provisioning.SetCreateTableDefault(DbSyncCreationOption.Skip);
-            if (!provisioning.ScopeExists(scopeDesc.ScopeName))
-            {                
-                provisioning.Apply();
-            }            
+            SqlCeSyncScopeProvisioning ceConfig;
+            SqlCeSyncScopeDeprovisioning ceDeconfig;
+
+            ceConfig = new SqlCeSyncScopeProvisioning(conn);
+            if (!ceConfig.ScopeExists(scopeDesc.ScopeName))
+            {
+                ceConfig.PopulateFromScopeDescription(scopeDesc);
+                ceConfig.Apply();               
+            }
         }
 
-        private SyncOrchestrator SetSyncOptions(DbSyncScopeDescription scopeDesc, SqlCeConnection localConn, SqlCeConnection remoteConn, string objectPrefix)
+        private SyncOrchestrator SetSyncOptions(DbSyncScopeDescription scopeDesc, SqlCeConnection localConn, SqlCeConnection remoteConn)
         {
             SqlCeSyncProvider localProvider;
             SqlCeSyncProvider remoteProvider;
             SyncOrchestrator orchestrator;
 
-            localProvider = new SqlCeSyncProvider(scopeDesc.ScopeName, localConn, objectPrefix);
-            remoteProvider = new SqlCeSyncProvider(scopeDesc.ScopeName, remoteConn, objectPrefix);
+            localProvider = new SqlCeSyncProvider();
+            localProvider.ScopeName = scopeDesc.ScopeName;
+            localProvider.Connection = localConn;
+            ////localProvider.SyncProviderPosition = SyncProviderPosition.Local; // important?
+
+            remoteProvider = new SqlCeSyncProvider();
+            remoteProvider.ScopeName = scopeDesc.ScopeName;
+            remoteProvider.Connection = remoteConn;
+            ////remoteProvider.SyncProviderPosition = SyncProviderPosition.Remote; // important?      
 
             orchestrator = new SyncOrchestrator();
             orchestrator.LocalProvider = localProvider;
-            orchestrator.RemoteProvider = remoteProvider;            
+            orchestrator.RemoteProvider = remoteProvider;
             orchestrator.Direction = SyncDirectionOrder.DownloadAndUpload;
-
-            orchestrator.StateChanged += new EventHandler<SyncOrchestratorStateChangedEventArgs>(this.Orchestrator_StateChanged);
-            orchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(this.Orchestrator_SessionProgress);
 
             return orchestrator;
         }
@@ -225,27 +232,6 @@ namespace Vendord.Desktop.App
 
             VendordDatabase db_remote = new VendordDatabase(this.remoteDatabaseLocalCopyFullPath);
             db_remote.EmptyTrash();
-        }
-
-        private void Orchestrator_SessionProgress(object sender, SyncStagedProgressEventArgs e)
-        {
-            decimal percentComplete;
-            SyncProviderPosition position;
-            SessionProgressStage stage;
-
-            percentComplete = e.CompletedWork / e.TotalWork;
-
-            position = e.ReportingProvider;
-
-            stage = e.Stage;
-        }
-
-        private void Orchestrator_StateChanged(object sender, SyncOrchestratorStateChangedEventArgs e)
-        {
-            SyncOrchestratorState newState, oldState;
-
-            newState = e.NewState;
-            oldState = e.OldState;
         }
 
         private void CopyDatabaseBackToDevice(RAPI.RemoteDevice remoteDevice)

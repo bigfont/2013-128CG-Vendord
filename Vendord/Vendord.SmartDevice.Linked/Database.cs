@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
+    using System.Data.Common;
     using System.Data.SqlServerCe;
     using System.Linq;
     using System.Text;
@@ -156,8 +158,9 @@
         {
             get
             {
-                SqlCeDataReader reader;
-                SqlCeCommand command;
+
+                System.Data.SqlServerCe.SqlCeDataReader reader;
+                System.Data.SqlServerCe.SqlCeCommand command;
 
                 if (order == null)
                 {
