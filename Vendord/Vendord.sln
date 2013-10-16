@@ -22,19 +22,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDevice.Linked", "Vendord.SmartDevice.Linked\Vendord.SmartDevice.Linked.csproj", "{EA738CA8-5ECC-493D-A474-4FCCC2831878}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Txt", "Txt", "{87EBA4DF-90FA-49B3-991C-97A059D89268}"
-	ProjectSection(SolutionItems) = preProject
-		Txt\01-Done.txt = Txt\01-Done.txt
-		Txt\02-Done.txt = Txt\02-Done.txt
-		Txt\03-Done.txt = Txt\03-Done.txt
-		Txt\14Oct2013-DemoWithDerek.txt = Txt\14Oct2013-DemoWithDerek.txt
-		Txt\Bugs.txt = Txt\Bugs.txt
-		Txt\HowTo.AddPublishingPrerequisites.txt = Txt\HowTo.AddPublishingPrerequisites.txt
-		Txt\HowTo.Desktop.Deploy.txt = Txt\HowTo.Desktop.Deploy.txt
-		Txt\HowTo.Install.txt = Txt\HowTo.Install.txt
-		Txt\Requirements.Desktop.Deploy.txt = Txt\Requirements.Desktop.Deploy.txt
-		stylecoprules.txt = stylecoprules.txt
-		Txt\UninstallWMDC.txt = Txt\UninstallWMDC.txt
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
