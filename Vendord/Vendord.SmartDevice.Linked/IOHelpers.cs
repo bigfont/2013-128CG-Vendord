@@ -1,10 +1,15 @@
-﻿namespace Vendord.SmartDevice.Shared
+﻿[module:
+    System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "StyleCop.CSharp.DocumentationRules", "*",
+        Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
+
+namespace Vendord.SmartDevice.Shared
 {
     using System;
-    using System.Linq;
     using System.Collections.Generic;
-    using System.Text;
     using System.IO;
+    using System.Linq;
+    using System.Text;    
 
     public class IOHelpers
     {
@@ -60,7 +65,6 @@
 
                 // close the writer and underlying file
                 w.Close();
-
             }
         }
     }

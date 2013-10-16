@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-using System.IO;
-using Vendord.SmartDevice.Shared;
+﻿[module:
+    System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "StyleCop.CSharp.DocumentationRules", "*",
+        Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
 
 namespace Vendord.Desktop.App
 {
-    static class Program
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Windows.Forms;
+
+    using Vendord.SmartDevice.Shared;
+
+    public static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             IOHelpers.LogSubroutine("Main");
             
@@ -23,12 +29,12 @@ namespace Vendord.Desktop.App
             Application.Run(new MainForm());
         }
 
-        static void CreateApplicationDatabase()
+        public static void CreateApplicationDatabase()
         {            
             VendordDatabase db = new VendordDatabase();
         }
 
-        static void SetupGlobalErrorHandling()
+        public static void SetupGlobalErrorHandling()
         {
             ErrorHandler.Setup();
         }

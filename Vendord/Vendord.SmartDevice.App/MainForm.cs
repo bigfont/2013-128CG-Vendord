@@ -160,7 +160,7 @@ namespace Vendord.SmartDevice.App
 
             if (textBoxes != null && textBoxes.Count > 0 && textBoxes.First<TextBox>().Text.Length > 0)
             {
-                VendordDatabase.Order_Product orderProduct = new VendordDatabase.Order_Product()
+                VendordDatabase.OrderProduct orderProduct = new VendordDatabase.OrderProduct()
                 {
                     OrderID = this.currentOrder.ID,
                     ProductID = this.currentScannedProduct.ID,
@@ -506,7 +506,7 @@ namespace Vendord.SmartDevice.App
                 this.UnloadCurrentView();
                 this.LoadOrdersView();
 
-                // TODO Also delete associated order_Products
+                // TODO Also delete associated OrderProducts
             }
             else
             {

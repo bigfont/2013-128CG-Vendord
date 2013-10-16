@@ -1,27 +1,32 @@
-﻿namespace Vendord.SmartDevice.Shared
+﻿[module:
+    System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "StyleCop.CSharp.DocumentationRules", "*",
+        Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
+
+namespace Vendord.SmartDevice.Shared
 {
     using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.Text;
+    using System.Collections.Generic;    
     using System.IO;
+    using System.Linq;
+    using System.Text;
 
     public class Constants
     {
-        public const string APPLICATION_DATABASE_NAME = "VendordDB.sdf";
-        public const string REMOTE_COPY_FLAG = "_REMOTE";
-        public const string APPLICATION_NAME = "VENDORD";
-        public const string IT_RETAIL_DATABASE_CONNECTION_STRING = "Data Source=FONTY;Initial Catalog=ITRetail;Integrated Security=True";
+        public const string ApplicationDatabaseName = "VendordDB.sdf";
+        public const string RemoteCopyFlag = "_REMOTE";
+        public const string ApplicationName = "VENDORD";
+        public const string ItRetailDatabaseConnectionString = "Data Source=FONTY;Initial Catalog=ITRetail;Integrated Security=True";
 
-        private const string ERROR_LOG_NAME = "error.log";
-        private const string APPLICATION_LOG_NAME = "application.log";
+        private const string ErrorLogName = "error.log";
+        private const string ApplicationLogName = "application.log";
 
         public static string ApplicationDataStoreFullPath
         {
             get
             {
                 string result;
-                result = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), APPLICATION_NAME);
+                result = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationName);
                 return result;
             }
         }
@@ -31,7 +36,7 @@
             get
             {
                 string result;
-                result = Path.Combine(ApplicationDataStoreFullPath, ERROR_LOG_NAME);
+                result = Path.Combine(ApplicationDataStoreFullPath, ErrorLogName);
                 return result;
             }
         }
@@ -41,7 +46,7 @@
             get
             {
                 string result;
-                result = Path.Combine(ApplicationDataStoreFullPath, APPLICATION_LOG_NAME);
+                result = Path.Combine(ApplicationDataStoreFullPath, ApplicationLogName);
                 return result;
             }
         }
@@ -51,7 +56,7 @@
             get
             {
                 string result;
-                result = Path.Combine(ApplicationDataStoreFullPath, APPLICATION_DATABASE_NAME);
+                result = Path.Combine(ApplicationDataStoreFullPath, ApplicationDatabaseName);
                 return result;
             }
         }              

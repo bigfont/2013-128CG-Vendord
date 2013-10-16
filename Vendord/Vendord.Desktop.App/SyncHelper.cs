@@ -48,6 +48,7 @@ namespace Vendord.Desktop.App
             catch (SqlException ex)
             {
                 result = SyncResult.Disconnected;
+                IOHelpers.LogException(ex);
             }
 
             return result;
@@ -56,8 +57,7 @@ namespace Vendord.Desktop.App
         public SyncResult MergeDesktopAndDeviceDatabases()
         {
             string[] tablesToSync;
-            string scopeName;
-            string objectPrefix;
+            string scopeName;            
             DbSyncScopeDescription localScopeDesc;
             DbSyncScopeDescription remoteScopeDesc;
             SqlCeConnection localConn;
@@ -78,7 +78,7 @@ namespace Vendord.Desktop.App
                 remoteConn = new SqlCeConnection(VendordDatabase.GenerateSqlCeConnString(this.remoteDatabaseLocalCopyFullPath));
 
                 // Describe the scope
-                tablesToSync = new string[] { "tblOrder", "tblProduct", "tblOrder_Product" };
+                tablesToSync = new string[] { "tblOrder", "tblProduct", "tblOrderProduct" };
                 scopeName = "OrdersAndProducts";
                 localScopeDesc = this.DescribeTheScope(tablesToSync, scopeName, localConn);
                 remoteScopeDesc = this.DescribeTheScope(tablesToSync, scopeName, remoteConn);
@@ -117,7 +117,7 @@ namespace Vendord.Desktop.App
             product = new VendordDatabase.Product();
 
             // insert all products from IT Retail
-            using (SqlConnection conn = new SqlConnection(Constants.IT_RETAIL_DATABASE_CONNECTION_STRING))
+            using (SqlConnection conn = new SqlConnection(Constants.ItRetailDatabaseConnectionString))
             {
                 conn.Open();
                 command = new SqlCommand(@"SELECT Name, UPC, VendorName FROM Product", conn);
@@ -142,9 +142,9 @@ namespace Vendord.Desktop.App
             string rapiApplicationDataStore;
 
             rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
-            rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.APPLICATION_NAME);
-            this.remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.APPLICATION_DATABASE_NAME);
-            this.remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.VendordDatabaseFullPath, Constants.REMOTE_COPY_FLAG);
+            rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.ApplicationName);
+            this.remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.ApplicationDatabaseName);
+            this.remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.VendordDatabaseFullPath, Constants.RemoteCopyFlag);
         }
 
         private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
@@ -183,8 +183,7 @@ namespace Vendord.Desktop.App
 
         private void ProvisionNode(DbSyncScopeDescription scopeDesc, SqlCeConnection conn)
         {
-            SqlCeSyncScopeProvisioning ceConfig;
-            SqlCeSyncScopeDeprovisioning ceDeconfig;
+            SqlCeSyncScopeProvisioning ceConfig;            
 
             ceConfig = new SqlCeSyncScopeProvisioning(conn);
             if (!ceConfig.ScopeExists(scopeDesc.ScopeName))

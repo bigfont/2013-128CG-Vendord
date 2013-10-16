@@ -1,29 +1,34 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using Symbol.Barcode2;
+﻿[module:
+    System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "StyleCop.CSharp.DocumentationRules", "*",
+        Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
 
 namespace Vendord.SmartDevice.App
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;    
+    using System.Text;
+    using Symbol.Barcode2;
+
     public class BarcodeAPI
     {
-        private const int SCAN_TIMEOUT_MILLISECONDS = 5 * 60 * 1000; // five minutes in milliseconds.
+        private const int ScanTimeoutMilliseconds = 5 * 60 * 1000; // five minutes in milliseconds.
 
         private Barcode2 myScannerAPI = null;
 
         public BarcodeAPI(Barcode2.OnStatusHandler statusHandler, Barcode2.OnScanHandler scanHandler)
         {
-            InstantiateScannerAPI();
-            ConfigureTheScannerAPI();                        
-            EnableTheReader();
-            RegisterForStatusEvent(statusHandler);
-            RegisterForScanEvent(scanHandler);            
+            this.InstantiateScannerAPI();
+            this.ConfigureTheScannerAPI();
+            this.EnableTheReader();
+            this.RegisterForStatusEvent(statusHandler);
+            this.RegisterForScanEvent(scanHandler);            
         }
 
         public void Scan()
         {
-            if (myScannerAPI != null)
+            if (this.myScannerAPI != null)
             {
                 // Issue an asynchronous scan meaning the trigger is live until the Scan completes.
                 // Fire the OnStatus event...
@@ -34,13 +39,12 @@ namespace Vendord.SmartDevice.App
                 // if the timeout completes, or
                 // if ScanCancel is called.
                 // Triggers include the hardware trigger AND/OR a software trigger.                
-                myScannerAPI.Scan(SCAN_TIMEOUT_MILLISECONDS);
+                this.myScannerAPI.Scan(ScanTimeoutMilliseconds);
             }
         }
 
         public void StopScan()
         {
-
         }
 
         private void ConfigureTheScannerAPI()
@@ -49,21 +53,20 @@ namespace Vendord.SmartDevice.App
             // remains idle until the user presses the trigger
             // pressing the trigger starts a decoding session
             // a session ends when 1/ decoding completes 2/ BeamTimer expires or 3/ user releases trigger.
-            myScannerAPI.Config.Reader.ReaderSpecific.LaserSpecific.AimType =
+            this.myScannerAPI.Config.Reader.ReaderSpecific.LaserSpecific.AimType =
                 AIM_TYPE.AIM_TYPE_TRIGGER;
 
             // trigger mode
             // aim the user must manually press the trigger
-            myScannerAPI.Config.TriggerMode =
+            this.myScannerAPI.Config.TriggerMode =
                 TRIGGERMODES.HARD;
 
-            
-            myScannerAPI.Config.Reader.Set();
+            this.myScannerAPI.Config.Reader.Set();
         }
 
         private void InstantiateScannerAPI()
         {
-            if (myScannerAPI == null)
+            if (this.myScannerAPI == null)
             {
                 // get the currently available devices
                 Device[] supportedDevices = Devices.SupportedDevices;
@@ -73,29 +76,27 @@ namespace Vendord.SmartDevice.App
                     supportedDevices.First<Device>(d => d.DeviceType == DEVICETYPES.INTERNAL_LASER1);
 
                 // create the barcode reader
-                myScannerAPI = new Barcode2(myDevice);                                
+                this.myScannerAPI = new Barcode2(myDevice);                                
             }            
         }
 
         private void EnableTheReader()
         {
-            if (myScannerAPI != null)
+            if (this.myScannerAPI != null)
             {
                 // This method does NOT make the scanner scan nor turn on the laser.
-                myScannerAPI.Enable();
+                this.myScannerAPI.Enable();
             }
         }
 
         private void RegisterForStatusEvent(Barcode2.OnStatusHandler eventHandler)
         {
-            myScannerAPI.OnStatus += eventHandler;
+            this.myScannerAPI.OnStatus += eventHandler;
         }
 
         private void RegisterForScanEvent(Barcode2.OnScanHandler eventHandler)
         {
-            myScannerAPI.OnScan += eventHandler;
+            this.myScannerAPI.OnScan += eventHandler;
         }
     }
-
-
 }

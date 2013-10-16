@@ -37,7 +37,7 @@ namespace Vendord.Desktop.App
 
         private Back backDelegate;
 
-        private Save saveDelegate;
+        private Save saveDelegate; // TODO Assign to saveDelegate when we have something to save on the desktop
 
         public MainForm()
         {
@@ -242,14 +242,14 @@ namespace Vendord.Desktop.App
             if (orderID >= 0 && vendorName != null && vendorName.Length > 0)
             {
                 db = new VendordDatabase();
-                foreach (VendordDatabase.Order_Product order_product in db.Order_Products.Where(i => i.OrderID == orderID))
+                foreach (VendordDatabase.OrderProduct orderProduct in db.OrderProducts.Where(i => i.OrderID == orderID))
                 {
-                    product = db.Products.FirstOrDefault(p => p.ID == order_product.ProductID && p.VendorName.Equals(vendorName));
+                    product = db.Products.FirstOrDefault(p => p.ID == orderProduct.ProductID && p.VendorName.Equals(vendorName));
 
                     if (product != null)
                     {
                         listViewItem = new ListViewItem(product.Name);
-                        listViewItem.SubItems.Add(order_product.CasesToOrder.ToString());
+                        listViewItem.SubItems.Add(orderProduct.CasesToOrder.ToString());
                         listViewDetails.Items.Add(listViewItem);
                     }
                 }
@@ -318,7 +318,7 @@ namespace Vendord.Desktop.App
 
             var vendorNames =
                 from p in db.Products
-                join op in db.Order_Products on p.ID equals op.ProductID
+                join op in db.OrderProducts on p.ID equals op.ProductID
                 where op.OrderID == orderID 
                 group p by p.VendorName into g
                 select g.Key;
