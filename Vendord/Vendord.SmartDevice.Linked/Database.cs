@@ -158,8 +158,7 @@
         {
             get
             {
-
-                System.Data.SqlServerCe.SqlCeDataReader reader;
+                SqlCeDataReader reader;                
                 System.Data.SqlServerCe.SqlCeCommand command;
 
                 if (order == null)

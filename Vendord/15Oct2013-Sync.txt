@@ -1,0 +1,25 @@
+
+Use MS Sync Framework between one CE Database on a Windows 8 Machine and another on Windows CE 6.0 Device
+-----------
+
+- Install SQL Server CE 3.5 SP2 on the development machine:
+
+1 Open Internet Explorer
+
+1 Go to http://www.microsoft.com/en-ca/download/details.aspx?id=5783
+
+1 Download it
+
+1 Install both the 32-bit and the 64-bit versions
+
+- Install that same version of SQL Server CE on the device:
+
+1 Open the device using Windows Mobile Device Center 6.1
+
+1 Open File Management
+
+1 On the local machine, go to C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i
+
+1 Copy sqlce.wce5.armv4i.CAB to any folder on the device.
+
+1 Open that folder on the device and install the CAB.

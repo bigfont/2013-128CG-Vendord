@@ -12,12 +12,12 @@ C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Bootstrapper\Packages
 
     Windows Installer 3.1
     .NET Framework 3.5
-    SQL Server Compact 3.5 SP2 ENU v3.5.8080.0
+    SQL Server Compact 3.5.8
     Windows Mobile Device Center v6.1.6965.0
-    Microsoft Sync Framework 2.1 Core Components (x86) ENU v2.1.1648.0
-    Microsoft Sync Framework 2.1 Database Providers (x86) ENU v3.1.1648.0
+    SyncFX20Core v2.1 (x86)
+	SyncFX20DatabaseProviders v2.1 (x86)
 
-    Download prerequisites from the component vendor's website. (YES)
+    Download prerequisites from the same location as my application.
 
 6. OK
 7. File > Save All. 
