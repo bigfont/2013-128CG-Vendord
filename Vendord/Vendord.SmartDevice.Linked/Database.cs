@@ -58,7 +58,7 @@ namespace Vendord.SmartDevice.Shared
                         {
                             Order item = new Order()
                             {
-                                ID = Convert.ToInt32(reader["ID"]),
+                                ID = new Guid(reader["ID"].ToString()),
                                 Name = Convert.ToString(reader["Name"])
                             };
                             this.order.Add(item);
@@ -89,7 +89,7 @@ namespace Vendord.SmartDevice.Shared
                         {
                             Product item = new Product()
                             {
-                                ID = Convert.ToInt32(reader["ID"]),
+                                ID = new Guid(reader["ID"].ToString()),
                                 Name = Convert.ToString(reader["Name"]),
                                 UPC = Convert.ToString(reader["UPC"]),
                                 VendorName = Convert.ToString(reader["VendorName"])
@@ -122,8 +122,8 @@ namespace Vendord.SmartDevice.Shared
                         {
                             OrderProduct item = new OrderProduct()
                             {
-                                ProductID = Convert.ToInt32(reader["ProductID"]),
-                                OrderID = Convert.ToInt32(reader["OrderID"]),
+                                ProductID = new Guid(reader["ProductID"].ToString()),
+                                OrderID = new Guid(reader["OrderID"].ToString()),
                                 CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
                             };
                             this.orderProducts.Add(item);
@@ -223,7 +223,7 @@ namespace Vendord.SmartDevice.Shared
             {
                 createTableQuery
                     = @"CREATE TABLE tblOrder 
-                    (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), IsInTrash BIT)";
+                    (ID uniqueidentifier PRIMARY KEY, Name NVARCHAR(100), IsInTrash BIT)";
 
                 this.ExecuteNonQuery(createTableQuery);
             }
@@ -232,7 +232,7 @@ namespace Vendord.SmartDevice.Shared
             {
                 createTableQuery
                     = @"CREATE TABLE tblProduct 
-                    (ID INTEGER IDENTITY(1,1) PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE, VendorName NVARCHAR(100), IsInTrash BIT)";
+                    (ID uniqueidentifier PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE, VendorName NVARCHAR(100), IsInTrash BIT)";
 
                 this.ExecuteNonQuery(createTableQuery);
             }
@@ -262,7 +262,7 @@ namespace Vendord.SmartDevice.Shared
             }
 
             // database columns
-            public int ID { get; set; }
+            public Guid ID { get; set; }
 
             public int IsInTrash { get; set; }
 
@@ -298,7 +298,7 @@ namespace Vendord.SmartDevice.Shared
                 string insertQuery;
 
                 insertQuery = string.Format(
-                    @"INSERT INTO tblOrder (Name) VALUES ('{0}');",
+                    @"INSERT INTO tblOrder (ID, Name) VALUES (NEWID(), '{0}');",
                     this.Name);
 
                 db.ExecuteNonQuery(insertQuery);
@@ -327,7 +327,7 @@ namespace Vendord.SmartDevice.Shared
                     this.UPC);
 
                 insertQuery = string.Format(
-                    @"INSERT INTO tblProduct (UPC, Name, VendorName) VALUES ('{0}', '{1}', '{2}')",
+                    @"INSERT INTO tblProduct (ID, UPC, Name, VendorName) VALUES (NEWID(), '{0}', '{1}', '{2}')",
                     this.UPC,
                     this.Name,
                     this.VendorName);
@@ -347,9 +347,9 @@ namespace Vendord.SmartDevice.Shared
 
         public class OrderProduct : DbEntity
         {
-            public int OrderID { get; set; }
+            public Guid OrderID { get; set; }
 
-            public int ProductID { get; set; }
+            public Guid ProductID { get; set; }
 
             public int CasesToOrder { get; set; }
 
@@ -365,7 +365,7 @@ namespace Vendord.SmartDevice.Shared
                     this.ProductID);
 
                 insertQuery = string.Format(
-                    @"INSERT INTO tblOrderProduct (OrderID, ProductID, CasesToOrder) VALUES ('{0}', '{1}', {2});",
+                    @"INSERT INTO tblOrderProduct (ID, OrderID, ProductID, CasesToOrder) VALUES (NEWID(), '{0}', '{1}', {2});",
                     this.OrderID,
                     this.ProductID,
                     this.CasesToOrder);

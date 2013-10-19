@@ -1,6 +1,6 @@
-﻿[module: 
+﻿[module:
     System.Diagnostics.CodeAnalysis.SuppressMessage(
-        "StyleCop.CSharp.DocumentationRules", "*", 
+        "StyleCop.CSharp.DocumentationRules", "*",
         Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
 
 namespace Vendord.Desktop.App
@@ -15,7 +15,7 @@ namespace Vendord.Desktop.App
     using System.Text;
     using System.Windows.Forms;
     using BrightIdeasSoftware;
-    using Vendord.SmartDevice.Shared;    
+    using Vendord.SmartDevice.Shared;
 
     public class MainForm : Form
     {
@@ -105,7 +105,7 @@ namespace Vendord.Desktop.App
 
         #region Utilities
 
-        private void ButtonStatus_Clear(Button b)
+        private void ButtonMessage_Clear(Button b)
         {
             int i;
             i = b.Text.LastIndexOf(ButtonMessageSeparator);
@@ -115,19 +115,25 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void ButtonStatus_Done(Button b, string message)
+        private void ButtonMessage_Generic(Button b, string message)
         {
-            this.ButtonStatus_Clear(b);
+            this.ButtonMessage_Clear(b);
+            b.Text += string.Format("{0} <{1}>", ButtonMessageSeparator, message);
+        }
+
+        private void ButtonMessage_Done(Button b, string message)
+        {
+            this.ButtonMessage_Clear(b);
             b.Text += string.Format("{0} <{1}>", ButtonMessageSeparator, message);
             b.BackColor = Color.LightGreen;
         }
 
-        private void ButtonStatus_Problem(Button b, string message)
+        private void ButtonMessage_Problem(Button b, string message)
         {
-            this.ButtonStatus_Clear(b);
+            this.ButtonMessage_Clear(b);
             b.Text += string.Format("{0} <{1}>", ButtonMessageSeparator, message);
             b.BackColor = Color.Yellow;
-        }
+        }        
 
         private void PrintSelectedOrder()
         {
@@ -193,7 +199,7 @@ namespace Vendord.Desktop.App
 
             // good to go
             return listViewItem;
-        }        
+        }
 
         private void UpdateListViewDetail()
         {
@@ -201,11 +207,11 @@ namespace Vendord.Desktop.App
             ListView listViewMediator;
             ListView listViewDetails;
             ListViewItem selectedListViewItem;
-            int orderID;
+            Guid orderID;
             string vendorName;
 
             // defaults
-            orderID = -1;
+            orderID = Guid.Empty;
             vendorName = null;
 
             // retrieve the selected orderID
@@ -213,7 +219,7 @@ namespace Vendord.Desktop.App
             selectedListViewItem = this.GetSelectedListViewItem(listViewMaster);
             if (selectedListViewItem != null)
             {
-                orderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
+                orderID = new Guid(selectedListViewItem.Tag.ToString());
 
                 // retrieve the selected vendorName
                 listViewMediator = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvMediator, true).First<ListView>();
@@ -224,22 +230,22 @@ namespace Vendord.Desktop.App
                 }
 
                 // update listViewDetails
-                listViewDetails = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvDetails, true).First<ListView>();   
+                listViewDetails = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvDetails, true).First<ListView>();
                 listViewDetails.Items.Clear();
-                this.AddDataToListViewDetails(listViewDetails, orderID, vendorName);                
+                this.AddDataToListViewDetails(listViewDetails, orderID, vendorName);
             }
 
             // back
             this.EnableBackButton(this.LoadOrdersView);
         }
 
-        private void AddDataToListViewDetails(ListView listViewDetails, int orderID, string vendorName)
+        private void AddDataToListViewDetails(ListView listViewDetails, Guid orderID, string vendorName)
         {
             ListViewItem listViewItem;
             VendordDatabase db;
             VendordDatabase.Product product;
 
-            if (orderID >= 0 && vendorName != null && vendorName.Length > 0)
+            if (orderID != Guid.Empty && vendorName != null && vendorName.Length > 0)
             {
                 db = new VendordDatabase();
                 foreach (VendordDatabase.OrderProduct orderProduct in db.OrderProducts.Where(i => i.OrderID == orderID))
@@ -292,24 +298,24 @@ namespace Vendord.Desktop.App
             ListView listViewMediator;
             ListViewItem selectedListViewItem;
 
-            int orderID;
-            orderID = -1;
+            Guid orderID;
+            orderID = Guid.Empty;
 
             listViewMaster = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvMaster, true).First<ListView>();
             selectedListViewItem = this.GetSelectedListViewItem(listViewMaster);
             if (selectedListViewItem != null)
             {
-                orderID = Convert.ToInt32(selectedListViewItem.Tag.ToString());
+                orderID = new Guid(selectedListViewItem.Tag.ToString());
                 listViewMediator = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvMediator, true).First<ListView>();
                 listViewMediator.Items.Clear();
-                this.AddDataToListViewMediator(listViewMediator, orderID);                
+                this.AddDataToListViewMediator(listViewMediator, orderID);
             }
 
             // back
             this.EnableBackButton(this.LoadOrdersView);
         }
 
-        private void AddDataToListViewMediator(ListView listViewMediator, int orderID)
+        private void AddDataToListViewMediator(ListView listViewMediator, Guid orderID)
         {
             ListViewItem listViewItem;
             VendordDatabase db;
@@ -319,7 +325,7 @@ namespace Vendord.Desktop.App
             var vendorNames =
                 from p in db.Products
                 join op in db.OrderProducts on p.ID equals op.ProductID
-                where op.OrderID == orderID 
+                where op.OrderID == orderID
                 group p by p.VendorName into g
                 select g.Key;
 
@@ -349,6 +355,7 @@ namespace Vendord.Desktop.App
                 Activation = ItemActivation.OneClick,
                 FullRowSelect = true,
             };
+
             listViewMediator.ItemActivate += new EventHandler(this.ListViewMediator_ItemActivate);
 
             listViewMediator.Columns.Add("Vendor Name");
@@ -384,6 +391,8 @@ namespace Vendord.Desktop.App
                 HideSelection = false,
                 FullRowSelect = true,
             };
+
+            // occurs when an ListViewItem is activated
             listViewMaster.ItemActivate += new EventHandler(this.ListViewMaster_ItemActivate);
 
             listViewMaster.Columns.Add("Order Name");
@@ -465,16 +474,22 @@ namespace Vendord.Desktop.App
         private void LoadCompleteOrdersView()
         {
             Button btnPrintOrder;
+            Button btnCreateItem;
+            Button btnDeleteItem;
             ListView listViewMaster;
             ListView listViewMediator;
             ListView listViewDetails;
             ListView[] listViews;
-            int orderID;
+            Guid orderID;
             string vendorName;
 
             // create button(s)
             btnPrintOrder = new Button() { Text = "Print Current Order" };
             btnPrintOrder.Click += new EventHandler(this.BtnPrintOrder_Click);
+            btnCreateItem = new Button() { Text = "Create", Name = UserInputs.BtnCreate };
+            btnCreateItem.Click += new EventHandler(this.BtnCreateItem_Click);
+            btnDeleteItem = new Button() { Text = "Delete", Name = UserInputs.BtnDelete };
+            btnDeleteItem.Click += new EventHandler(this.BtnDeleteItem_Click);
 
             // create listviews
             listViewMaster = this.CreateOrderMasterListView();
@@ -486,7 +501,7 @@ namespace Vendord.Desktop.App
             if (listViewMaster.Items.Count > 0)
             {
                 // add data to the mediator list view
-                orderID = Convert.ToInt32(listViewMaster.Items[0].Tag.ToString());
+                orderID = new Guid(listViewMaster.Items[0].Tag.ToString());
                 listViewMediator.Items.Clear();
                 this.AddDataToListViewMediator(listViewMediator, orderID);
                 if (listViewMediator.Items.Count > 0)
@@ -529,20 +544,37 @@ namespace Vendord.Desktop.App
                     h.Width = ColumnHeaderWidthDefault;
                 }
 
+                // occurs when any click happens in the ListView
+                lv.MouseDown += new MouseEventHandler(this.ListView_MouseClick);
+
+                // makes the ListViewItem.BeginEdit() method effective
+                lv.LabelEdit = true;
+
+                // handle the completion of editing
+                lv.AfterLabelEdit += new LabelEditEventHandler(this.ListView_AfterLabelEdit);
+
                 this.mainContent.Controls.Add(lv);
             }
 
-            // set selected
+            // set selected... you have to focus before setting the selected item :-|
             listViewMediator.Focus();
             listViewMediator.Items[0].Selected = true;
 
             listViewMaster.Focus();
             listViewMaster.Items[0].Selected = true;
 
-            // add button(s)
+            // add button(s)            
             btnPrintOrder.Dock = DockStyle.Top;
             btnPrintOrder.Height = ButtonHeight;
             this.mainContent.Controls.Add(btnPrintOrder);
+
+            btnCreateItem.Dock = DockStyle.Top;
+            btnCreateItem.Height = ButtonHeight;
+            this.mainContent.Controls.Add(btnCreateItem);
+
+            btnDeleteItem.Dock = DockStyle.Top;
+            btnDeleteItem.Height = ButtonHeight;
+            this.mainContent.Controls.Add(btnDeleteItem);
 
             this.mainContent.ResumeLayout();
 
@@ -603,6 +635,76 @@ namespace Vendord.Desktop.App
             this.PrintSelectedOrder();
         }
 
+        private void BtnCreateItem_Click(object sender, EventArgs e)
+        {
+            List<ListView> listViews;
+            ListView targetListView;
+            ListViewItem listViewItem;
+            
+            listViews = FormHelper.GetControlsByType<ListView>(this, true);
+            targetListView = listViews.FirstOrDefault<ListView>(lv => lv.Tag != null && lv.Tag is ControlTag && (lv.Tag as ControlTag).IsSelected);
+
+            if (targetListView != null)
+            {
+                listViewItem = new ListViewItem("Edit Me");                
+                targetListView.Items.Add(listViewItem);
+                listViewItem.BeginEdit();                
+            }
+        }
+
+        private void BtnDeleteItem_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ListView_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            VendordDatabase.Order order;
+
+            if (e.Label != null && e.Label.Length > 0)
+            { 
+                // TODO Add validation for label length
+                order = new VendordDatabase.Order() 
+                { 
+                    Name = e.Label 
+                };
+                order.UpsertIntoDB(new VendordDatabase());
+            }
+        }
+
+        private void ListView_MouseClick(object sender, MouseEventArgs e)
+        {
+            ListView listView;
+            string listViewItemType;
+            ControlTag tag = new ControlTag();
+
+            listView = sender as ListView;
+            listView.Focus();
+            tag.IsSelected = true;
+            listView.Tag = tag;
+
+            listViewItemType = string.Empty;
+            switch (listView.Name)
+            {
+                case UserInputs.LvMaster:
+                    listViewItemType = "Order";
+                    break;
+
+                case UserInputs.LvMediator:
+                    listViewItemType = "Vendor";
+                    break;
+
+                case UserInputs.LvDetails:
+                    listViewItemType = "Product";
+                    break;
+
+                default: break;
+            }
+
+            this.ButtonMessage_Generic(FormHelper.GetControlsByName<Button>(this, UserInputs.BtnCreate, true).FirstOrDefault(), listViewItemType);
+            this.ButtonMessage_Generic(FormHelper.GetControlsByName<Button>(this, UserInputs.BtnDelete, true).FirstOrDefault(), listViewItemType);
+        }
+
         private void ListViewMaster_ItemActivate(object sender, EventArgs e)
         {
             this.UpdateListViewMediator();
@@ -632,11 +734,11 @@ namespace Vendord.Desktop.App
 
             if (syncResult == Sync.SyncResult.Complete)
             {
-                this.ButtonStatus_Done(sender as Button, "Done");
+                this.ButtonMessage_Done(sender as Button, "Done");
             }
             else if (syncResult == Sync.SyncResult.Disconnected)
             {
-                this.ButtonStatus_Problem(sender as Button, "Disconnected");
+                this.ButtonMessage_Problem(sender as Button, "Disconnected");
             }
         }
 
@@ -652,21 +754,28 @@ namespace Vendord.Desktop.App
 
             if (syncResult == Sync.SyncResult.Complete)
             {
-                this.ButtonStatus_Done(sender as Button, "Done");
+                this.ButtonMessage_Done(sender as Button, "Done");
             }
             else if (syncResult == Sync.SyncResult.Disconnected)
             {
-                this.ButtonStatus_Problem(sender as Button, "Disconnected");
+                this.ButtonMessage_Problem(sender as Button, "Disconnected");
             }
         }
 
         #endregion
 
-        private static class UserInputs
+        private class UserInputs
         {
-            internal const string LvMaster = "LV_MASTER";
-            internal const string LvMediator = "LV_MEDIATOR";
-            internal const string LvDetails = "LV_DETAILS";
+            internal const string LvMaster = "LvMaster";
+            internal const string LvMediator = "LvMediator";
+            internal const string LvDetails = "LvDetails";
+            internal const string BtnCreate = "BtnCreate";
+            internal const string BtnDelete = "BtnDelete";
+        }
+
+        private class ControlTag
+        {
+            public bool IsSelected { get; set; }
         }
     }
 }

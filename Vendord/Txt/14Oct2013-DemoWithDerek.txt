@@ -53,9 +53,9 @@ Desktop Missing Features
 
 3 Update the number of cases to order for a product. 
 
-4 Print in a layout that matches the existing print layout. 
+4 Print in a layout that matches the existing print layout.
 
-5 Print all vendord in a current order with one click onto their own sheets. 
+5 Print all vendord in a current order with one click onto their own sheets.
 
 Other
 --

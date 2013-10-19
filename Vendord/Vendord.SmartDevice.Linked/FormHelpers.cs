@@ -54,25 +54,5 @@ namespace Vendord.SmartDevice.Shared
 
             return result;
         }
-
-#if FULL_FRAMEWORK
-
-        internal static DataGridView CreateReadOnlyDataGridView(string action, DataGridViewCellValueEventHandler cellValueEventHandler)
-        {
-            DataGridView dataGridView;
-           
-            dataGridView = new DataGridView();            
-            dataGridView.VirtualMode = true;
-            dataGridView.AllowUserToDeleteRows = false;
-            dataGridView.AllowUserToAddRows = false;
-            dataGridView.CellValueNeeded += new DataGridViewCellValueEventHandler(cellValueEventHandler);
-
-            dataGridView.Name = action;
-            dataGridView.Tag = action;
-
-            return dataGridView;
-        }
-
-#endif
     }
 }
