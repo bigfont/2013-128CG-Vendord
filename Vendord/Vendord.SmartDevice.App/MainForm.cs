@@ -42,7 +42,7 @@ namespace Vendord.SmartDevice.App
         private VendordDatabase.Order currentOrder
             = new VendordDatabase.Order();
 
-        private VendordDatabase.Product currentScannedProduct
+        private VendordDatabase.Product currentProduct
             = new VendordDatabase.Product();
 
         public MainForm()
@@ -156,17 +156,27 @@ namespace Vendord.SmartDevice.App
         private void SaveNewProductOrderAmount()
         {
             List<TextBox> textBoxes;
-            textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderItemAmount, true);
+            TextBox targetTextBox;
+            textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtCasesToOrder, true);
 
-            if (textBoxes != null && textBoxes.Count > 0 && textBoxes.First<TextBox>().Text.Length > 0)
+            if (textBoxes != null && textBoxes.Count > 0)
             {
-                VendordDatabase.OrderProduct orderProduct = new VendordDatabase.OrderProduct()
+                // note the default for a textbox is null
+                targetTextBox = textBoxes.FirstOrDefault<TextBox>();
+
+                // note textbox is disabled if the product is not in the database
+                if (targetTextBox != null && 
+                    targetTextBox.Text.Length > 0 && 
+                    targetTextBox.Enabled)
                 {
-                    OrderID = this.currentOrder.ID,
-                    ProductID = this.currentScannedProduct.ID,
-                    CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
-                };
-                orderProduct.UpsertIntoDB(new VendordDatabase());
+                    VendordDatabase.OrderProduct orderProduct = new VendordDatabase.OrderProduct()
+                    {
+                        OrderID = this.currentOrder.ID,
+                        ProductID = this.currentProduct.ID,
+                        CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
+                    };
+                    orderProduct.UpsertIntoDB(new VendordDatabase());
+                }
             }
         }
 
@@ -391,26 +401,44 @@ namespace Vendord.SmartDevice.App
         {
             // declare 
             Label lblProductUPC, lblProductName, lblProductAmount, lblInstruction;
-            TextBox txtProductAmount;
+            TextBox txtCasesToOrder;
             Control[] controls;
             VendordDatabase db;
+            VendordDatabase.OrderProduct orderProduct;
+            string scannedUpc;
 
             // populate controls with default values
             lblProductUPC = new Label() { Text = scanData.Text };
             lblProductName = new Label() { Text = "This UPC code is not in the database." };
             lblProductAmount = new Label() { Text = "Cases to Order:" };
-            txtProductAmount = new TextBox() { Name = USER_INPUTS.TxtOrderItemAmount, Enabled = false, Text = DefaultProductAmount.ToString() };
+            txtCasesToOrder = new TextBox() { Name = USER_INPUTS.TxtCasesToOrder, Enabled = false, Text = DefaultProductAmount.ToString() };
             lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
 
-            // add values for product that is in the database
+            // get the appropriate product from the database
             db = new VendordDatabase();
-            this.currentScannedProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scanData.Text));
-            if (this.currentScannedProduct != null)
+            scannedUpc = scanData.Text;            
+            this.currentProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scannedUpc));
+
+            // if it is in the database
+            if (this.currentProduct != null)
             {
-                lblProductName.Text = this.currentScannedProduct.Name;
-                txtProductAmount.Enabled = true;
-                txtProductAmount.KeyPress += new KeyPressEventHandler(this.TxtValidateInt32_KeyPress);
-                txtProductAmount.KeyPress += new KeyPressEventHandler(this.TxtClearDefaultValue_KeyPress);
+                // set its name
+                lblProductName.Text = this.currentProduct.Name;
+
+                // enable the textbox for input and setup events
+                txtCasesToOrder.Enabled = true;
+                txtCasesToOrder.KeyPress += new KeyPressEventHandler(this.TxtValidateInt32_KeyPress);
+                txtCasesToOrder.KeyPress += new KeyPressEventHandler(this.TxtClearDefaultValue_KeyPress);
+            }
+
+            // check if this product is already in this order
+            orderProduct = 
+                db.OrderProducts.FirstOrDefault<VendordDatabase.OrderProduct>(op => 
+                op.OrderID == this.currentOrder.ID && op.ProductID == this.currentProduct.ID);
+            if (orderProduct != null)
+            {
+                // it is so use it's existing amountToOrder
+                txtCasesToOrder.Text = orderProduct.CasesToOrder.ToString();
             }
 
             // add the controls to an array in the order that we want them to display
@@ -419,7 +447,7 @@ namespace Vendord.SmartDevice.App
                 lblProductUPC, 
                 lblProductName, 
                 lblProductAmount,
-                txtProductAmount,
+                txtCasesToOrder,
                 lblInstruction
             }.Reverse<Control>().ToArray<Control>();
 
@@ -432,7 +460,7 @@ namespace Vendord.SmartDevice.App
             }
 
             // set focus - we must do this after controls are in the form, apparently
-            txtProductAmount.Focus();
+            txtCasesToOrder.Focus();
 
             // get ready for another scan
             this.barcodeAPI.Scan();
@@ -603,8 +631,8 @@ namespace Vendord.SmartDevice.App
 
         private static class USER_INPUTS
         {
-            internal const string TxtOrderName = "TXT_ORDER_NAME";
-            internal const string TxtOrderItemAmount = "TXT_ORDER_ITEM_AMOUNT";
+            internal const string TxtOrderName = "TxtOrderName";
+            internal const string TxtCasesToOrder = "TxtCasesToOrder";
         }
     }
 }

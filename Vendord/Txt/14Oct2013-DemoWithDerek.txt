@@ -4,9 +4,17 @@
 Handheld Bugs
 ---
 
-1 When we add a new product through IT Retail, then open the handheld 
-and scan the new product, the product doesn't show. But
-if we then go back and scan the product a second time, it does show.*
+1 When we add a new product through IT Retail, then sync with IT Retail, then Sync with handheld, 
+then open the handheld, then scan the new product, 
+
+- with a new order and new database
+- with an existing order and existing database
+- with a new order and existing database 
+
+the product doesn't show. But if we then go back and scan the product a second time, it does show.
+
+	Watch and Wait:
+	- I was not able to replicate the error.
 
 2 Continue without selecting an order closes or freezes. Done.
 3 Delete without selected an order closes or freezes. Done.
@@ -34,7 +42,7 @@ if we then go back and scan the product a second time, it does show.*
 Handheld Missing Features
 ---
 
-1 When we rescan an item that is already in an order, show the number that the user already inputted. 
+1 When we rescan an item that is already in an order, show the number that the user already inputted. Done.
 
 Desktop Missing Features
 --
@@ -56,3 +64,12 @@ Make the buttons on the Smart Device list view larger. Done.
  
 	Fix:
 	Use LargeIcon instead of small.
+	
+When syncing with the handheld, create the remote database if it doesn't exist.
+
+Make <Done> fade out after 10 seconds.
+
+After scanning "this upc is not in the DB", the system crashes.
+
+	Fix:
+	Check to ensure that the textbox is enabled.

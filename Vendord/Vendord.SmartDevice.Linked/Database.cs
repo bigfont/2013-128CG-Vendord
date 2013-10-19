@@ -357,7 +357,7 @@ namespace Vendord.SmartDevice.Shared
             {
                 string selectQuery;
                 string insertQuery;
-                string updateQuery;
+                string updateQuery;                
 
                 selectQuery = string.Format(
                     @"SELECT COUNT(*) FROM tblOrderProduct WHERE OrderID = {0} AND ProductID = {1};",
@@ -378,6 +378,7 @@ namespace Vendord.SmartDevice.Shared
 
                 if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
                 {
+                    // TODO Add a code contract to ensure that both the order and the product exist in the database before insert
                     db.ExecuteNonQuery(insertQuery);
                 }
                 else
