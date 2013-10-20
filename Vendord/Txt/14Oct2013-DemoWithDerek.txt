@@ -49,7 +49,7 @@ Desktop Missing Features
 
 1 Create a new vendor in an existing order. 
 
-2 Create a new product in an existing vendor. 
+2 Create a new product in an existing vendor.*
 
 3 Update the number of cases to order for a product. 
 

@@ -202,12 +202,10 @@ namespace Vendord.Desktop.App
             localProvider = new SqlCeSyncProvider();
             localProvider.ScopeName = scopeDesc.ScopeName;
             localProvider.Connection = localConn;
-            ////localProvider.SyncProviderPosition = SyncProviderPosition.Local; // important?
 
             remoteProvider = new SqlCeSyncProvider();
             remoteProvider.ScopeName = scopeDesc.ScopeName;
-            remoteProvider.Connection = remoteConn;
-            ////remoteProvider.SyncProviderPosition = SyncProviderPosition.Remote; // important?      
+            remoteProvider.Connection = remoteConn;   
 
             orchestrator = new SyncOrchestrator();
             orchestrator.LocalProvider = localProvider;

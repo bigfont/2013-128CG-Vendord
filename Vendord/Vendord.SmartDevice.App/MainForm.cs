@@ -107,7 +107,7 @@ namespace Vendord.SmartDevice.App
         private void UpdateCurrentOrder()
         {
             ListView listView;
-            int orderID;
+            Guid orderID;
             VendordDatabase db;
 
             // reset the currentOrder to null
@@ -117,7 +117,7 @@ namespace Vendord.SmartDevice.App
             listView = FormHelper.GetControlsByType<ListView>(this, true).FirstOrDefault<ListView>();
             if (listView != null && listView.FocusedItem != null && listView.FocusedItem.SubItems.Count == 2)
             {
-                orderID = Convert.ToInt32(listView.FocusedItem.SubItems[1].Text);
+                orderID = new Guid(listView.FocusedItem.SubItems[1].Text);
                 db = new VendordDatabase();
 
                 // update the currentOrder
