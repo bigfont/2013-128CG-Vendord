@@ -1,75 +1,47 @@
 
-[Send this to Derek in an email. Let's plan to have this complete by Fri 18 Oct.]
-
-Handheld Bugs
+Handheld Bugs. DONE.
 ---
 
 1 When we add a new product through IT Retail, then sync with IT Retail, then Sync with handheld, 
-then open the handheld, then scan the new product, 
-
-- with a new order and new database
-- with an existing order and existing database
-- with a new order and existing database 
-
-the product doesn't show. But if we then go back and scan the product a second time, it does show.
-
-	Watch and Wait:
-	- I was not able to replicate the error.
+then open the handheld, then scan the new product, the product doesn't show. 
+But if we then go back and scan the product a second time, it does show. Done. Unable to reproduct.
 
 2 Continue without selecting an order closes or freezes. Done.
+
 3 Delete without selected an order closes or freezes. Done.
 
-	Fix:
-	- Add to the code contract for each involved method.
-	- Add a message to request selection of an item.
-
-4 On sync the orders that were deleted on the handheld do not delete on the desktop. Done. Hooray!!!
-
-	Fix:
-	- Refactor the Sync Framework code.
-	- The main fix was to use SQL Server CE 3.5 SP2 on the device and the machine.	  
+4 On sync the orders that were deleted on the handheld do not delete on the desktop. Done. 
 
 5 Deleting multiple orders in a row freezes or closes. Done. 
 
-	Fix: 
-	- Fixing number 2 and 3 above appears to have fixed this too. 
-
 6 Deleting and then creating and then deleting and then creating freezes or closes. Done. 
 
-	Fix:
-	- Fixing number 2 and 3 above appears to have fixed this.
-
-Handheld Missing Features
+Handheld Missing Features. DONE.
 ---
 
 1 When we rescan an item that is already in an order, show the number that the user already inputted. Done.
 
-Desktop Missing Features
+Desktop Missing Features. MOSTLY DONE. Need a copy of an existing print sheet.
 --
 
 1 Create a new vendor in an existing order. Done.
 
 2 Create a new product in an existing vendor. Done.
 
-3 Update the number of cases to order for a product. *
+3 Update the number of cases to order for a product. Done.
 
 4 Print in a layout that matches the existing print layout.
 
 5 Print all vendord in a current order with one click onto their own sheets.
 
-Other
+Other Bugs & Features
 --
 
+After scanning "this upc is not in the DB", the system crashes. Done.
+
 Make the buttons on the Smart Device list view larger. Done. 
- 
-	Fix:
-	Use LargeIcon instead of small.
 	
 When syncing with the handheld, create the remote database if it doesn't exist.
 
 Make <Done> fade out after 10 seconds.
 
-After scanning "this upc is not in the DB", the system crashes.
-
-	Fix:
-	Check to ensure that the textbox is enabled.
