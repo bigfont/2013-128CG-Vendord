@@ -184,7 +184,7 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void AddItemToListViewProduct(VendordDatabase.Product product, int casesToOrder, ListView listViewProduct)
+        private void AddItemToListViewProduct(Product product, int casesToOrder, ListView listViewProduct)
         {
             ListViewItem listViewItem;
             if (product != null)
@@ -221,7 +221,7 @@ namespace Vendord.Desktop.App
                     if (listViewVendor.FocusedItem == null)
                     {
                         // show them all
-                        foreach (VendordDatabase.Product product in (new VendordDatabase()).Products)
+                        foreach (Product product in (new Database()).Products)
                         {
                             listBox.Items.Add(product);
                         }
@@ -230,7 +230,7 @@ namespace Vendord.Desktop.App
                     {
                         // filter on vendor
                         currentVendor = listViewVendor.FocusedItem.Text;
-                        foreach (VendordDatabase.Product product in ((new VendordDatabase()).Products.Where(p => p.VendorName == currentVendor)))
+                        foreach (Product product in ((new Database()).Products.Where(p => p.VendorName == currentVendor)))
                         {
                             listBox.Items.Add(product);
                         }                        
@@ -286,13 +286,13 @@ namespace Vendord.Desktop.App
 
         private void AddDataToListViewProduct(ListView listViewProduct, Guid orderID, string vendorName)
         {
-            VendordDatabase db;
-            VendordDatabase.Product product;
+            Database db;
+            Product product;
 
             if (orderID != Guid.Empty && vendorName != null && vendorName.Length > 0)
             {
-                db = new VendordDatabase();
-                foreach (VendordDatabase.OrderProduct orderProduct in db.OrderProducts.Where(i => i.OrderID == orderID))
+                db = new Database();
+                foreach (OrderProduct orderProduct in db.OrderProducts.Where(i => i.OrderID == orderID))
                 {
                     product = db.Products.FirstOrDefault(p => p.ID == orderProduct.ProductID && p.VendorName.Equals(vendorName));
                     this.AddItemToListViewProduct(product, orderProduct.CasesToOrder, listViewProduct);
@@ -351,9 +351,9 @@ namespace Vendord.Desktop.App
         private void AddDataToListViewVendor(ListView listViewVendor, Guid orderID)
         {
             ListViewItem listViewItem;
-            VendordDatabase db;
+            Database db;
 
-            db = new VendordDatabase();
+            db = new Database();
 
             var vendorNames =
                 from p in db.Products
@@ -398,11 +398,11 @@ namespace Vendord.Desktop.App
         private void AddDataToListViewOrder(ListView listViewOrder)
         {
             ListViewItem listViewItem;
-            VendordDatabase db;
+            Database db;
 
             // add list view items            
-            db = new VendordDatabase();
-            foreach (VendordDatabase.Order order in db.Orders)
+            db = new Database();
+            foreach (Order order in db.Orders)
             {
                 listViewItem = new ListViewItem(order.Name);
                 listViewItem.Tag = order.ID;
@@ -652,27 +652,27 @@ namespace Vendord.Desktop.App
             ListViewItem listViewItemVendor;
             ListViewItem listViewItemProduct;
             ListBox listBox;
-            VendordDatabase.Product product;
-            VendordDatabase.OrderProduct orderProduct;
+            Product product;
+            OrderProduct orderProduct;
 
             if (sender != null && sender is ListBox)
             {
                 listBox = sender as ListBox;
-                if (listBox.SelectedItem != null && listBox.SelectedItem is VendordDatabase.Product)
+                if (listBox.SelectedItem != null && listBox.SelectedItem is Product)
                 {
                     listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
                     if (listViewOrder.FocusedItem != null)
                     {
-                        product = listBox.SelectedItem as VendordDatabase.Product;                        
+                        product = listBox.SelectedItem as Product;                        
 
                         // save
-                        orderProduct = new VendordDatabase.OrderProduct() 
+                        orderProduct = new OrderProduct() 
                         {
                             OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
                             ProductID = product.ID,
                             CasesToOrder = 0
                         };
-                        orderProduct.UpsertIntoDB(new VendordDatabase());
+                        orderProduct.UpsertIntoDB(new Database());
 
                         //update ui
                         this.UpdateListViewVendor();
@@ -732,7 +732,7 @@ namespace Vendord.Desktop.App
             TextBox senderTextbox;
             ListView listViewProduct;
             ListView listViewOrder;            
-            VendordDatabase.OrderProduct orderProduct;
+            OrderProduct orderProduct;
 
             // retrieve relevant controls
             listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
@@ -740,13 +740,13 @@ namespace Vendord.Desktop.App
             senderTextbox = sender as TextBox;
             
             // save the amount to order            
-            orderProduct = new VendordDatabase.OrderProduct() 
+            orderProduct = new OrderProduct() 
             {
                 OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
                 ProductID = new Guid(listViewProduct.FocusedItem.Tag.ToString()),
                 CasesToOrder = Convert.ToInt32(senderTextbox.Text)
             };      
-            orderProduct.UpsertIntoDB(new VendordDatabase());
+            orderProduct.UpsertIntoDB(new Database());
             
             // update the UI - this is a performance hit :-(
             senderTextbox.Parent.Controls.Remove(senderTextbox);

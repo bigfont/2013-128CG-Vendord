@@ -31,7 +31,7 @@ namespace Vendord.Desktop.App
 
         public static void CreateApplicationDatabase()
         {            
-            VendordDatabase db = new VendordDatabase();
+            Database db = new Database();
         }
 
         public static void SetupGlobalErrorHandling()

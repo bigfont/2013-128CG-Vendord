@@ -29,7 +29,7 @@ namespace Vendord.SmartDevice.App
 
         private static void CreateApplicationDatabase()
         {
-            VendordDatabase db = new VendordDatabase();
+            Database db = new Database();
         }
 
         private static void SetupGlobalErrorHandling()

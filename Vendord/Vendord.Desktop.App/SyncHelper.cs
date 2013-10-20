@@ -74,8 +74,8 @@ namespace Vendord.Desktop.App
                 this.CopyDatabaseFromDeviceToDesktop(remoteDevice);
 
                 // Instantiate the connections
-                localConn = new SqlCeConnection(VendordDatabase.GenerateSqlCeConnString(Constants.VendordDatabaseFullPath));
-                remoteConn = new SqlCeConnection(VendordDatabase.GenerateSqlCeConnString(this.remoteDatabaseLocalCopyFullPath));
+                localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.DatabaseFullPath));
+                remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(this.remoteDatabaseLocalCopyFullPath));
 
                 // Describe the scope
                 tablesToSync = new string[] { "tblOrder", "tblProduct", "tblOrderProduct" };
@@ -112,9 +112,9 @@ namespace Vendord.Desktop.App
         {
             SqlDataReader reader;
             SqlCommand command;
-            VendordDatabase.Product product;
+            Product product;
 
-            product = new VendordDatabase.Product();
+            product = new Product();
 
             // insert all products from IT Retail
             using (SqlConnection conn = new SqlConnection(Constants.ItRetailDatabaseConnectionString))
@@ -124,14 +124,14 @@ namespace Vendord.Desktop.App
                 reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    product = new VendordDatabase.Product()
+                    product = new Product()
                     {
                         Name = Convert.ToString(reader["Name"]),
                         UPC = Convert.ToString(reader["UPC"]),
                         VendorName = Convert.ToString(reader["VendorName"])
                     };
 
-                    product.UpsertIntoDB(new VendordDatabase());
+                    product.UpsertIntoDB(new Database());
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace Vendord.Desktop.App
             rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
             rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.ApplicationName);
             this.remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.ApplicationDatabaseName);
-            this.remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.VendordDatabaseFullPath, Constants.RemoteCopyFlag);
+            this.remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.DatabaseFullPath, Constants.RemoteCopyFlag);
         }
 
         private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
@@ -224,10 +224,10 @@ namespace Vendord.Desktop.App
 
         private void CleanUpDatabases()
         {
-            VendordDatabase db = new VendordDatabase();
+            Database db = new Database();
             db.EmptyTrash();
 
-            VendordDatabase db_remote = new VendordDatabase(this.remoteDatabaseLocalCopyFullPath);
+            Database db_remote = new Database(this.remoteDatabaseLocalCopyFullPath);
             db_remote.EmptyTrash();
         }
 

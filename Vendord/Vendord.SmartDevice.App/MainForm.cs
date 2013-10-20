@@ -39,11 +39,11 @@ namespace Vendord.SmartDevice.App
         // scanning specific fields
         private BarcodeAPI barcodeAPI;
 
-        private VendordDatabase.Order currentOrder
-            = new VendordDatabase.Order();
+        private Order currentOrder
+            = new Order();
 
-        private VendordDatabase.Product currentProduct
-            = new VendordDatabase.Product();
+        private Product currentProduct
+            = new Product();
 
         public MainForm()
         {
@@ -108,7 +108,7 @@ namespace Vendord.SmartDevice.App
         {
             ListView listView;
             Guid orderID;
-            VendordDatabase db;
+            Database db;
 
             // reset the currentOrder to null
             this.currentOrder = null;
@@ -118,7 +118,7 @@ namespace Vendord.SmartDevice.App
             if (listView != null && listView.FocusedItem != null && listView.FocusedItem.SubItems.Count == 2)
             {
                 orderID = new Guid(listView.FocusedItem.SubItems[1].Text);
-                db = new VendordDatabase();
+                db = new Database();
 
                 // update the currentOrder
                 this.currentOrder = db.Orders.FirstOrDefault(o => o.ID == orderID);
@@ -127,11 +127,11 @@ namespace Vendord.SmartDevice.App
 
         private void DeleteSelectedOrder()
         {
-            VendordDatabase db;            
+            Database db;            
 
             if (this.currentOrder != null)
             {
-                db = new VendordDatabase();
+                db = new Database();
                 this.currentOrder.AddToTrash(db);
                 this.currentOrder = null;
             }
@@ -144,11 +144,11 @@ namespace Vendord.SmartDevice.App
             textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderName, true);
             if (textBoxes != null && textBoxes.Count > 0 && textBoxes.FirstOrDefault().Text.Length > 0)
             {
-                VendordDatabase.Order newOrder = new VendordDatabase.Order()
+                Order newOrder = new Order()
                 {
                     Name = textBoxes.FirstOrDefault<TextBox>().Text
                 };
-                newOrder.UpsertIntoDB(new VendordDatabase());
+                newOrder.UpsertIntoDB(new Database());
                 this.currentOrder = newOrder;
             }
         }
@@ -169,13 +169,13 @@ namespace Vendord.SmartDevice.App
                     targetTextBox.Text.Length > 0 && 
                     targetTextBox.Enabled)
                 {
-                    VendordDatabase.OrderProduct orderProduct = new VendordDatabase.OrderProduct()
+                    OrderProduct orderProduct = new OrderProduct()
                     {
                         OrderID = this.currentOrder.ID,
                         ProductID = this.currentProduct.ID,
                         CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
                     };
-                    orderProduct.UpsertIntoDB(new VendordDatabase());
+                    orderProduct.UpsertIntoDB(new Database());
                 }
             }
         }
@@ -247,7 +247,7 @@ namespace Vendord.SmartDevice.App
             ListViewItem listViewItem;
             Bitmap myBitmap;
             ImageList myImageList;
-            VendordDatabase db;
+            Database db;
             Panel pnlSecondaryNav;
             Button[] buttons;
             Button btnCreate;
@@ -270,8 +270,8 @@ namespace Vendord.SmartDevice.App
             listOrders = new ListView() { Activation = ItemActivation.OneClick, FullRowSelect = true };
 
             // populate list view
-            db = new VendordDatabase();
-            foreach (VendordDatabase.Order order in db.Orders)
+            db = new Database();
+            foreach (Order order in db.Orders)
             {
                 // create item and add it to the list view
                 listViewItem = new ListViewItem()
@@ -403,8 +403,8 @@ namespace Vendord.SmartDevice.App
             Label lblProductUPC, lblProductName, lblProductAmount, lblInstruction;
             TextBox txtCasesToOrder;
             Control[] controls;
-            VendordDatabase db;
-            VendordDatabase.OrderProduct orderProduct;
+            Database db;
+            OrderProduct orderProduct;
             string scannedUpc;
 
             // populate controls with default values
@@ -415,9 +415,9 @@ namespace Vendord.SmartDevice.App
             lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
 
             // get the appropriate product from the database
-            db = new VendordDatabase();
+            db = new Database();
             scannedUpc = scanData.Text;            
-            this.currentProduct = db.Products.FirstOrDefault<VendordDatabase.Product>(p => p.UPC.Equals(scannedUpc));
+            this.currentProduct = db.Products.FirstOrDefault<Product>(p => p.UPC.Equals(scannedUpc));
 
             // if it is in the database
             if (this.currentProduct != null)
@@ -433,7 +433,7 @@ namespace Vendord.SmartDevice.App
 
             // check if this product is already in this order
             orderProduct = 
-                db.OrderProducts.FirstOrDefault<VendordDatabase.OrderProduct>(op => 
+                db.OrderProducts.FirstOrDefault<OrderProduct>(op => 
                 op.OrderID == this.currentOrder.ID && op.ProductID == this.currentProduct.ID);
             if (orderProduct != null)
             {

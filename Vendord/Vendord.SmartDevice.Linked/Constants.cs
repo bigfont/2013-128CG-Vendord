@@ -51,7 +51,7 @@ namespace Vendord.SmartDevice.Shared
             }
         }
 
-        public static string VendordDatabaseFullPath
+        public static string DatabaseFullPath
         {
             get
             {
