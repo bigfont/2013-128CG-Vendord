@@ -200,6 +200,8 @@ namespace Vendord.Desktop.App
         private void AddListBoxProduct()
         {
             ListBox listBox;
+            ListView listViewVendor;
+            string currentVendor;            
 
             listBox = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
 
@@ -210,12 +212,31 @@ namespace Vendord.Desktop.App
                 listBox.Name = UserInputs.LbSelect;
                 listBox.SelectedIndexChanged += new EventHandler(this.ListBox_SelectedIndexChanged);
 
-                foreach (VendordDatabase.Product product in (new VendordDatabase()).Products)
-                {
-                    listBox.Items.Add(product);
-                }
+                listViewVendor = FormHelper
+                    .GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true)
+                    .FirstOrDefault<ListView>();
 
-                this.mainContent.Controls.Add(listBox);
+                if (listViewVendor != null)
+                {
+                    if (listViewVendor.FocusedItem == null)
+                    {
+                        // show them all
+                        foreach (VendordDatabase.Product product in (new VendordDatabase()).Products)
+                        {
+                            listBox.Items.Add(product);
+                        }
+                    }
+                    else
+                    {
+                        // filter on vendor
+                        currentVendor = listViewVendor.FocusedItem.Text;
+                        foreach (VendordDatabase.Product product in ((new VendordDatabase()).Products.Where(p => p.VendorName == currentVendor)))
+                        {
+                            listBox.Items.Add(product);
+                        }                        
+                    }
+                    this.mainContent.Controls.Add(listBox);
+                }
             }
             else
             {
@@ -296,10 +317,10 @@ namespace Vendord.Desktop.App
             // columns are required in View.Details
             listViewProduct.Columns.Add("Product");
             listViewProduct.Columns.Add("Cases to Order");
-
-            listViewProduct.AfterLabelEdit += new LabelEditEventHandler(this.ListViewProduct_AfterLabelEdit);
+            
             listViewProduct.MouseDown += new MouseEventHandler(this.ListViewAny_MouseClick);
             listViewProduct.LabelEdit = true; // makes the ListViewItem.BeginEdit() method effective
+            listViewProduct.ItemActivate += new EventHandler(ListViewProduct_ItemActivate);
 
             // return 
             return listViewProduct;
@@ -655,9 +676,42 @@ namespace Vendord.Desktop.App
                         listViewItemProduct = listViewProduct.Items.Find(product.Name, false)[0];
                         listViewItemProduct.Selected = true;
                         listViewItemProduct.Focused = true;
+                        EditProductCasesToOrder(listViewProduct, listViewItemProduct);                      
                     }
                 }
             }
+        }
+
+        // HACK Add textbox overlay - might be better just to use a GridView instead of ListView        
+        private void EditProductCasesToOrder(ListView listViewProduct, ListViewItem listViewItemProduct)
+        {
+            TextBox textbox;
+            int x, y;
+
+            textbox = new TextBox();
+            textbox.BorderStyle = BorderStyle.FixedSingle;
+            textbox.Margin = new Padding(0);
+
+            textbox.Multiline = true;
+            textbox.MinimumSize = listViewItemProduct.SubItems[1].Bounds.Size;
+            textbox.Size = listViewItemProduct.SubItems[1].Bounds.Size;
+
+            textbox.Text = listViewItemProduct.SubItems[1].Text;
+            textbox.LostFocus += new EventHandler(Textbox_LostFocus);
+
+            x =
+                listViewProduct.Location.X +
+                listViewItemProduct.SubItems[1].Bounds.Location.X;
+            y =
+                listViewProduct.Location.Y +
+                listViewItemProduct.SubItems[1].Bounds.Location.Y;
+
+            textbox.Location = new Point(x, y);
+
+            this.mainContent.Controls.Add(textbox);
+            textbox.BringToFront();
+            textbox.Focus();
+            textbox.SelectAll();
         }
 
         private void SaveProductToOrder(VendordDatabase.Product product, Guid orderID, int casesToOrder)
@@ -673,9 +727,9 @@ namespace Vendord.Desktop.App
             orderProduct.UpsertIntoDB(new VendordDatabase());
         }
 
-        private void ListViewProduct_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        private void Textbox_LostFocus(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            (sender as Control).Parent.Controls.Remove(sender as Control);            
         }
 
         private void ListViewAny_SelectedIndexChanged_DisallowZeroSelectedItems(object sender, EventArgs e)
@@ -721,6 +775,19 @@ namespace Vendord.Desktop.App
         private void ListViewVendor_ItemActivate(object sender, EventArgs e)
         {            
             this.UpdateListViewProduct();            
+        }
+
+        private void ListViewProduct_ItemActivate(object sender, EventArgs e)
+        {
+            ListView listViewProduct;
+            ListViewItem listViewItemProduct;
+
+            listViewProduct = sender as ListView;
+            listViewItemProduct = listViewProduct != null ? listViewProduct.FocusedItem : null;
+            if (listViewItemProduct != null)
+            {
+                EditProductCasesToOrder(listViewProduct, listViewItemProduct);
+            }
         }
 
         private void BtnViewOrders_Click(object sender, EventArgs e)

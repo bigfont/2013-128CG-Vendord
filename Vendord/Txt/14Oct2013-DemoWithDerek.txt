@@ -47,11 +47,11 @@ Handheld Missing Features
 Desktop Missing Features
 --
 
-1 Create a new vendor in an existing order. 
+1 Create a new vendor in an existing order. Done.
 
-2 Create a new product in an existing vendor.*
+2 Create a new product in an existing vendor. Done.
 
-3 Update the number of cases to order for a product. 
+3 Update the number of cases to order for a product. *
 
 4 Print in a layout that matches the existing print layout.
 
