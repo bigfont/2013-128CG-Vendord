@@ -653,6 +653,7 @@ namespace Vendord.Desktop.App
             ListViewItem listViewItemProduct;
             ListBox listBox;
             VendordDatabase.Product product;
+            VendordDatabase.OrderProduct orderProduct;
 
             if (sender != null && sender is ListBox)
             {
@@ -662,20 +663,32 @@ namespace Vendord.Desktop.App
                     listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
                     if (listViewOrder.FocusedItem != null)
                     {
-                        product = listBox.SelectedItem as VendordDatabase.Product;
-                        this.SaveProductToOrder(product, new Guid(listViewOrder.FocusedItem.Tag.ToString()), 0);
+                        product = listBox.SelectedItem as VendordDatabase.Product;                        
 
+                        // save
+                        orderProduct = new VendordDatabase.OrderProduct() 
+                        {
+                            OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
+                            ProductID = product.ID,
+                            CasesToOrder = 0
+                        };
+                        orderProduct.UpsertIntoDB(new VendordDatabase());
+
+                        //update ui
                         this.UpdateListViewVendor();
                         listViewVendor = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true).FirstOrDefault<ListView>();
                         listViewItemVendor = listViewVendor.Items.Find(product.VendorName, false)[0];
                         listViewItemVendor.Selected = true;
                         listViewItemVendor.Focused = true;
 
+                        // keep updating ui
                         this.UpdateListViewProduct();
                         listViewProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvProduct, true).FirstOrDefault<ListView>();
                         listViewItemProduct = listViewProduct.Items.Find(product.Name, false)[0];
                         listViewItemProduct.Selected = true;
                         listViewItemProduct.Focused = true;
+
+                        // add the edit box
                         EditProductCasesToOrder(listViewProduct, listViewItemProduct);                      
                     }
                 }
@@ -697,7 +710,7 @@ namespace Vendord.Desktop.App
             textbox.Size = listViewItemProduct.SubItems[1].Bounds.Size;
 
             textbox.Text = listViewItemProduct.SubItems[1].Text;
-            textbox.LostFocus += new EventHandler(Textbox_LostFocus);
+            textbox.LostFocus += new EventHandler(TextboxCasesToOrder_LostFocus);
 
             x =
                 listViewProduct.Location.X +
@@ -714,22 +727,30 @@ namespace Vendord.Desktop.App
             textbox.SelectAll();
         }
 
-        private void SaveProductToOrder(VendordDatabase.Product product, Guid orderID, int casesToOrder)
+        private void TextboxCasesToOrder_LostFocus(object sender, EventArgs e)
         {
+            TextBox senderTextbox;
+            ListView listViewProduct;
+            ListView listViewOrder;            
             VendordDatabase.OrderProduct orderProduct;
 
-            orderProduct = new VendordDatabase.OrderProduct()
+            // retrieve relevant controls
+            listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
+            listViewProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvProduct, true).FirstOrDefault<ListView>();
+            senderTextbox = sender as TextBox;
+            
+            // save the amount to order            
+            orderProduct = new VendordDatabase.OrderProduct() 
             {
-                OrderID = orderID,
-                ProductID = product.ID,
-                CasesToOrder = Convert.ToInt32(casesToOrder)
-            };
+                OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
+                ProductID = new Guid(listViewProduct.FocusedItem.Tag.ToString()),
+                CasesToOrder = Convert.ToInt32(senderTextbox.Text)
+            };      
             orderProduct.UpsertIntoDB(new VendordDatabase());
-        }
-
-        private void Textbox_LostFocus(object sender, EventArgs e)
-        {
-            (sender as Control).Parent.Controls.Remove(sender as Control);            
+            
+            // update the UI - this is a performance hit :-(
+            senderTextbox.Parent.Controls.Remove(senderTextbox);
+            UpdateListViewProduct();
         }
 
         private void ListViewAny_SelectedIndexChanged_DisallowZeroSelectedItems(object sender, EventArgs e)
