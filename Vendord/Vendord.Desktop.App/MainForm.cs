@@ -259,44 +259,84 @@ namespace Vendord.Desktop.App
             }
         }
 
+        private float MyHeaderFontSize = 12.0F;
+        private float MyHeaderTextInset = 6.0F;
+        private float MyHeaderBoarderThickness = 1.0F;
+        private float MyHeaderPaddingThickness = 5.0F;
+        private float MyHeaderHeightCorrection = 10.0F;
+        private string OrderFor = "Country Grocer Salt Spring";
+        private string Dept = "TODO - Add Dept";
+
         private void PrintSelectedOrder()
         {
             ListViewPrinter listViewPrinter;
             ListView listViewOrderProduct;
             ListView listViewOrder;
+            ListView listViewVendor;
+
+            string supplier;
+            StringBuilder header;
 
             listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true)[0];
             listViewOrderProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true)[0];
-            if (listViewOrder != null && listViewOrderProduct != null)
+            listViewVendor = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true)[0];
+
+            if (listViewOrder != null && listViewOrderProduct != null & listViewVendor != null)
             {
-                // NOTE the listViewPrinter derives the cell width from that of the listView it's printing.
-
-                // create the document
-                listViewPrinter = new ListViewPrinter()
+                if (GetSelectedListViewItem(listViewOrder) != null)
                 {
-                    // set the most important settings
-                    ListView = listViewOrderProduct,
-                    DocumentName = "DocumentName",
-                    Header = "Header",
-                    Footer = "Footer",
-                    IsShrinkToFit = false
-                };
+                    supplier =
+                        GetSelectedListViewItem(listViewVendor).Text;
 
-                // preview the document                                
-                PrintPreviewDialog printPreview = new PrintPreviewDialog()
-                {
-                    Document = listViewPrinter,
-                    UseAntiAlias = true
-                };
-                printPreview.PrintPreviewControl.Zoom = PrintPreviewZoom;
+                    header = new StringBuilder();
+                    // line
+                    header.Append("Order for: " + this.OrderFor.ToUpper());
+                    header.Append("\nDept: " + this.Dept.ToUpper());                    
+                    header.Append("\nSupplier: " + supplier.ToUpper());
+                    header.Append("\nOrder Created: " + DateTime.Now.ToLongDateString());
 
-                // maximize if PrintPreviewDialog can act as a Form
-                if (printPreview is Form)
+                    // NOTE the listViewPrinter derives the cell width from that of the listView it's printing.
+
+                    // create the document
+                    listViewPrinter = new ListViewPrinter()
+                    {
+                        // set the most important settings
+                        ListView = listViewOrderProduct,
+                        Header = header.ToString(),
+                        IsShrinkToFit = false
+                    };
+
+                    listViewPrinter.HeaderFormat = new BlockFormat()
+                    {
+                        Font = new Font(FontFamily.GenericSansSerif, MyHeaderFontSize, FontStyle.Regular, GraphicsUnit.Point),
+                        CanWrap = true,
+                        MinimumTextHeight = (MyHeaderFontSize * 4) + (MyHeaderTextInset * 2) + (MyHeaderBoarderThickness * 2) + (MyHeaderPaddingThickness * 2) + MyHeaderHeightCorrection                         
+                    };
+                    listViewPrinter.HeaderFormat.SetTextInset(Sides.All, MyHeaderTextInset);
+                    listViewPrinter.HeaderFormat.SetBorder(Sides.All, MyHeaderBoarderThickness, new SolidBrush(Color.Black));
+                    listViewPrinter.HeaderFormat.SetPadding(Sides.All, MyHeaderPaddingThickness);                    
+
+                    // preview the document                                
+                    PrintPreviewDialog printPreview = new PrintPreviewDialog()
+                    {
+                        Document = listViewPrinter,
+                        UseAntiAlias = true
+                    };
+                    printPreview.PrintPreviewControl.Zoom = PrintPreviewZoom;
+
+                    // maximize if PrintPreviewDialog can act as a Form
+                    if (printPreview is Form)
+                    {
+                        (printPreview as Form).WindowState = FormWindowState.Maximized;
+                    }
+
+                    printPreview.ShowDialog();
+                }
+                else
                 {
-                    (printPreview as Form).WindowState = FormWindowState.Maximized;
+                    MessageBox.Show("Please select an order");
                 }
 
-                printPreview.ShowDialog();
             }
         }
 
