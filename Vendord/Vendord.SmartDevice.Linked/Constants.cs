@@ -17,6 +17,7 @@ namespace Vendord.SmartDevice.Shared
         public const string RemoteCopyFlag = "_REMOTE";
         public const string ApplicationName = "VENDORD";
         public const string ItRetailDatabaseConnectionString = "Data Source=FONTY;Initial Catalog=ITRetail;Integrated Security=True";
+        public const int DefaultCasesToOrder = 1;
 
         private const string ErrorLogName = "error.log";
         private const string ApplicationLogName = "application.log";

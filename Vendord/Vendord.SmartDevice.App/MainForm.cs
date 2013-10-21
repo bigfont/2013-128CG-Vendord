@@ -19,8 +19,7 @@ namespace Vendord.SmartDevice.App
     using Vendord.SmartDevice.Shared;
 
     public class MainForm : Form
-    {
-        private const short DefaultProductAmount = 1;
+    {        
         private const int ButtonHeight = 50;
         private const int NumberOfNavigationButtons = 2;
         private const string TextBack = "Save and Back";
@@ -411,7 +410,7 @@ namespace Vendord.SmartDevice.App
             lblProductUPC = new Label() { Text = scanData.Text };
             lblProductName = new Label() { Text = "This UPC code is not in the database." };
             lblProductAmount = new Label() { Text = "Cases to Order:" };
-            txtCasesToOrder = new TextBox() { Name = USER_INPUTS.TxtCasesToOrder, Enabled = false, Text = DefaultProductAmount.ToString() };
+            txtCasesToOrder = new TextBox() { Name = USER_INPUTS.TxtCasesToOrder, Enabled = false, Text = Constants.DefaultCasesToOrder.ToString() };
             lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
 
             // get the appropriate product from the database

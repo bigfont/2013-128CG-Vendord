@@ -26,8 +26,7 @@ namespace Vendord.Desktop.App
         private const int FormHeightMinimum = 500;
         private const int ColumnHeaderWidthDefault = 200;
         private const int ButtonHeight = 50;
-        private const int NumberOfNavigationButtons = 2;
-        private const int DefaultCasesToOrder = 1;
+        private const int NumberOfNavigationButtons = 2;        
         private const double PrintPreviewZoom = 1f; // this is 100%        
         private const char ButtonMessageStartChar = '<';
         private const char ButtonMessageEndChar = '>';
@@ -912,7 +911,7 @@ namespace Vendord.Desktop.App
                             {
                                 OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
                                 ProductUPC = product.UPC,
-                                CasesToOrder = DefaultCasesToOrder
+                                CasesToOrder = Constants.DefaultCasesToOrder
                             };
                             orderProduct.UpsertIntoDB(new Database());
                         }
