@@ -60,7 +60,7 @@ namespace Vendord.SmartDevice.App
 
             // create main content panel
             this.mainContent = new Panel();
-            this.mainContent.Dock = DockStyle.Fill;
+            this.mainContent.Dock = DockStyle.Fill;            
 
             // add to form           
             this.SuspendLayout();
@@ -102,6 +102,18 @@ namespace Vendord.SmartDevice.App
         private delegate void Save();
 
         #region Utilities
+
+        private void SetBackColorForAllChildControls<T>(Control controlToSearch, Color color, bool searchDescendents) where T : Control
+        {
+            foreach (T control in controlToSearch.Controls)
+            {
+                control.BackColor = color;
+                if (searchDescendents)
+                {
+                    SetBackColorForAllChildControls<T>(control, color, true);
+                }
+            }
+        }
 
         private void UpdateCurrentOrder()
         {
@@ -236,6 +248,9 @@ namespace Vendord.SmartDevice.App
                 this.mainContent.Controls.Add(b);
             }
 
+            // colors
+            this.SetBackColorForAllChildControls<Control>(this, Color.White, true);
+
             // back            
             this.DisableBackButton();
         }
@@ -318,7 +333,10 @@ namespace Vendord.SmartDevice.App
                 pnlSecondaryNav.Controls.Add(b);
             }
 
-            this.ResumeLayout();
+            // colors
+            this.SetBackColorForAllChildControls<Control>(this, Color.White, true);
+
+            this.ResumeLayout();        
 
             // back
             this.EnableBackButton(this.LoadHomeView);
@@ -357,6 +375,9 @@ namespace Vendord.SmartDevice.App
 
             this.mainContent.ResumeLayout();
 
+            // colors
+            this.SetBackColorForAllChildControls<Control>(this, Color.White, true);
+
             // back
             this.btnBack.Enabled = true;
             this.backDelegate = this.LoadOrdersView;
@@ -389,6 +410,9 @@ namespace Vendord.SmartDevice.App
 
                 this.barcodeAPI = new BarcodeAPI(this.BarcodeScanner_OnStatus, this.BarcodeScanner_OnScan);
                 this.barcodeAPI.Scan();
+
+                // colors
+                this.SetBackColorForAllChildControls<Control>(this, Color.White, true);
 
                 // back
                 this.btnBack.Enabled = true;
@@ -464,6 +488,9 @@ namespace Vendord.SmartDevice.App
             // get ready for another scan
             this.barcodeAPI.Scan();
 
+            // colors
+            this.SetBackColorForAllChildControls<Control>(this, Color.White, true);
+
             // back
             this.btnBack.Enabled = true;
             this.backDelegate = this.LoadOrdersView;
@@ -475,9 +502,9 @@ namespace Vendord.SmartDevice.App
         #region Event Handlers
 
         private void MainForm_Load(object sender, EventArgs e)
-        {
-            this.LoadHomeView();
-        }
+        {            
+            this.LoadHomeView();                        
+        }        
 
         private void MainForm_Closing(object sender, EventArgs e)
         {
