@@ -33,7 +33,7 @@ namespace Vendord.SmartDevice.Shared
     /// GUID Generation http://social.msdn.microsoft.com/Forums/sqlserver/en-US/af52661f-7eb5-4c73-87e8-2d9ad195e112/algorithm-to-generate-guids-in-sql-server?forum=transactsql
     /// </seealso>
     /// </remarks>       
-    public class DbEntity
+    public abstract class DbEntity
     {
         // non-database columns
         public string TableName
@@ -45,23 +45,8 @@ namespace Vendord.SmartDevice.Shared
                 return tableName;
             }
         }
-
-        // database columns
-        public Guid ID { get; set; }
-
+                
         public int IsInTrash { get; set; }
-
-        public void AddToTrash(Database db)
-        {
-            string trashQuery;
-
-            trashQuery = string.Format(
-                @"UPDATE {0} SET IsInTrash = 1 WHERE ID = '{1}'",
-                this.TableName,
-                this.ID);
-
-            db.ExecuteNonQuery(trashQuery);
-        }
 
         public void EmptyTrash(Database db)
         {
@@ -72,10 +57,15 @@ namespace Vendord.SmartDevice.Shared
 
             db.ExecuteNonQuery(emptyTrashQuery);
         }
+
+        public abstract void AddToTrash(Database db);
     }
+
 
     public class Order : DbEntity
     {
+        public Guid ID { get; set; }
+
         public string Name { get; set; }
 
         public void UpsertIntoDB(Database db)
@@ -90,6 +80,18 @@ namespace Vendord.SmartDevice.Shared
 
             // set the ID to the newly generated ID
             this.ID = db.Orders.FirstOrDefault<Order>(os => os.Name.Equals(this.Name)).ID;
+        }
+
+        public override void AddToTrash(Database db)
+        {
+            string trashQuery;
+
+            trashQuery = string.Format(
+                @"UPDATE {0} SET IsInTrash = 1 WHERE ID = '{1}'",
+                this.TableName,
+                this.ID);
+
+            db.ExecuteNonQuery(trashQuery);
         }
 
         public override string ToString()
@@ -113,11 +115,13 @@ namespace Vendord.SmartDevice.Shared
             string updateQuery;
 
             selectQuery = string.Format(
-                @"SELECT COUNT(*) FROM tblProduct WHERE UPC = '{0}'",
+                @"SELECT COUNT(*) FROM {0} WHERE UPC = '{1}'",
+                this.TableName,
                 this.UPC);
 
             insertQuery = string.Format(
-                @"INSERT INTO tblProduct (ID, UPC, Name, VendorName) VALUES (NEWID(), '{0}', '{1}', '{2}')",
+                @"INSERT INTO {0} (UPC, Name, VendorName) VALUES ('{1}', '{2}', '{3}')",
+                this.TableName,
                 this.UPC,
                 this.Name,
                 this.VendorName);
@@ -134,6 +138,18 @@ namespace Vendord.SmartDevice.Shared
             }
         }
 
+        public override void AddToTrash(Database db)
+        {
+            string trashQuery;
+
+            trashQuery = string.Format(
+                @"UPDATE {0} SET IsInTrash = 1 WHERE UPC = '{1}'",
+                this.TableName,
+                this.UPC);
+
+            db.ExecuteNonQuery(trashQuery);
+        }
+
         public override string ToString()
         {
             return this.Name;
@@ -144,7 +160,7 @@ namespace Vendord.SmartDevice.Shared
     {
         public Guid OrderID { get; set; }
 
-        public Guid ProductID { get; set; }
+        public string ProductUPC { get; set; }
 
         public int CasesToOrder { get; set; }
 
@@ -155,20 +171,20 @@ namespace Vendord.SmartDevice.Shared
             string updateQuery;
 
             selectQuery = string.Format(
-                @"SELECT COUNT(*) FROM tblOrderProduct WHERE OrderID = '{0}' AND ProductID = '{1}';",
+                @"SELECT COUNT(*) FROM " + this.TableName + " WHERE OrderID = '{0}' AND ProductUPC = '{1}';",
                 this.OrderID,
-                this.ProductID);
+                this.ProductUPC);
 
             insertQuery = string.Format(
-                @"INSERT INTO tblOrderProduct (OrderID, ProductID, CasesToOrder) VALUES ('{0}', '{1}', {2});",
+                @"INSERT INTO " + this.TableName + " (OrderID, ProductUPC, CasesToOrder) VALUES ('{0}', '{1}', {2});",
                 this.OrderID,
-                this.ProductID,
+                this.ProductUPC,
                 this.CasesToOrder);
 
             updateQuery = string.Format(
-                @"UPDATE tblOrderProduct SET CasesToOrder = {2} WHERE OrderID = '{0}' AND ProductID = '{1}';",
+                @"UPDATE " + this.TableName + " SET CasesToOrder = {2}, IsInTrash = 0 WHERE OrderID = '{0}' AND ProductUPC = '{1}';",
                 this.OrderID,
-                this.ProductID,
+                this.ProductUPC,
                 this.CasesToOrder);
 
             if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
@@ -180,6 +196,19 @@ namespace Vendord.SmartDevice.Shared
             {
                 db.ExecuteNonQuery(updateQuery);
             }
+        }
+
+        public override void AddToTrash(Database db)
+        {
+            string trashQuery;
+
+            trashQuery = string.Format(
+                @"UPDATE {0} SET IsInTrash = 1 WHERE OrderID = '{1}' AND ProductUPC = '{2}'",
+                this.TableName,
+                this.OrderID,
+                this.ProductUPC);
+
+            db.ExecuteNonQuery(trashQuery);
         }
     }
 
@@ -256,8 +285,7 @@ namespace Vendord.SmartDevice.Shared
                         while (reader.Read())
                         {
                             Product item = new Product()
-                            {
-                                ID = new Guid(reader["ID"].ToString()),
+                            {                                
                                 Name = Convert.ToString(reader["Name"]),
                                 UPC = Convert.ToString(reader["UPC"]),
                                 VendorName = Convert.ToString(reader["VendorName"])
@@ -284,13 +312,13 @@ namespace Vendord.SmartDevice.Shared
                     using (SqlCeConnection conn = new SqlCeConnection(this.connectionString))
                     {
                         conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM tblOrderProduct", conn);
+                        command = new SqlCeCommand(@"SELECT * FROM tblOrderProduct WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
                         reader = command.ExecuteReader();
                         while (reader.Read())
                         {
                             OrderProduct item = new OrderProduct()
                             {
-                                ProductID = new Guid(reader["ProductID"].ToString()),
+                                ProductUPC = reader["ProductUPC"].ToString(),
                                 OrderID = new Guid(reader["OrderID"].ToString()),
                                 CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
                             };
@@ -400,7 +428,7 @@ namespace Vendord.SmartDevice.Shared
             {
                 createTableQuery
                     = @"CREATE TABLE tblProduct 
-                    (ID uniqueidentifier PRIMARY KEY, Name NVARCHAR(100), UPC NVARCHAR(100) UNIQUE, VendorName NVARCHAR(100), IsInTrash BIT)";
+                    (UPC NVARCHAR(100) PRIMARY KEY, Name NVARCHAR(100), VendorName NVARCHAR(100), IsInTrash BIT)";
 
                 this.ExecuteNonQuery(createTableQuery);
             }
@@ -409,7 +437,8 @@ namespace Vendord.SmartDevice.Shared
             {
                 createTableQuery
                     = @"CREATE TABLE tblOrderProduct 
-                    (OrderID uniqueidentifier, ProductID uniqueidentifier, CasesToOrder INTEGER, CONSTRAINT PK_OrderProduct PRIMARY KEY (OrderID, ProductID), IsInTrash BIT)";
+                    (OrderID uniqueidentifier, ProductUPC NVARCHAR(100), CasesToOrder INTEGER, IsInTrash BIT, 
+                    CONSTRAINT PK_OrderProduct PRIMARY KEY (OrderID, ProductUPC))";
 
                 this.ExecuteNonQuery(createTableQuery);
             }
