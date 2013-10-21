@@ -61,7 +61,6 @@ namespace Vendord.SmartDevice.Shared
         public abstract void AddToTrash(Database db);
     }
 
-
     public class Order : DbEntity
     {
         public Guid ID { get; set; }
