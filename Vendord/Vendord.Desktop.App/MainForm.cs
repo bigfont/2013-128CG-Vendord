@@ -231,23 +231,32 @@ namespace Vendord.Desktop.App
 
         private void ButtonMessage_Generic(Button b, string message, string tag)
         {
-            this.ButtonMessage_Clear(b);
-            b.Text += this.CreateButtonMessage(message);
-            b.Tag = tag;
+            if (b != null)
+            {
+                this.ButtonMessage_Clear(b);
+                b.Text += this.CreateButtonMessage(message);
+                b.Tag = tag;
+            }
         }
 
         private void ButtonMessage_Done(Button b, string message)
         {
-            this.ButtonMessage_Clear(b);
-            b.Text += this.CreateButtonMessage(message);
-            b.BackColor = Color.LightGreen;
+            if (b != null)
+            {
+                this.ButtonMessage_Clear(b);
+                b.Text += this.CreateButtonMessage(message);
+                b.BackColor = Color.LightGreen;
+            }
         }
 
         private void ButtonMessage_Problem(Button b, string message)
         {
-            this.ButtonMessage_Clear(b);
-            b.Text += this.CreateButtonMessage(message);
-            b.BackColor = Color.Yellow;
+            if (b != null)
+            {
+                this.ButtonMessage_Clear(b);
+                b.Text += this.CreateButtonMessage(message);
+                b.BackColor = Color.Yellow;
+            }
         }
 
         private void PrintSelectedOrder()
@@ -862,7 +871,7 @@ namespace Vendord.Desktop.App
                                 OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
                                 ProductUPC = product.UPC
                             };
-                            orderProduct.UpsertIntoDB(new Database());                           
+                            orderProduct.UpsertIntoDB(new Database());
                         }
 
                         // update ui
@@ -879,10 +888,10 @@ namespace Vendord.Desktop.App
                         listViewOrderProduct = this.UpdateListViewOrderProduct();
                         if (listViewOrderProduct.Items.Count > 0)
                         {
-                            listViewItemOrderProduct = listViewOrderProduct.Items.Find(product.UPC, false)[0];                            
+                            listViewItemOrderProduct = listViewOrderProduct.Items.Find(product.UPC, false)[0];
                             listViewOrderProduct.SelectedItems.Clear();
                             listViewItemOrderProduct.Selected = true;
-                            listViewItemOrderProduct.Focused = true;                            
+                            listViewItemOrderProduct.Focused = true;
                         }
                     }
                 }
