@@ -429,16 +429,16 @@ namespace Vendord.SmartDevice.App
                 txtCasesToOrder.Enabled = true;
                 txtCasesToOrder.KeyPress += new KeyPressEventHandler(this.TxtValidateInt32_KeyPress);
                 txtCasesToOrder.KeyPress += new KeyPressEventHandler(this.TxtClearDefaultValue_KeyPress);
-            }
 
-            // check if this product is already in this order
-            orderProduct = 
-                db.OrderProducts.FirstOrDefault<OrderProduct>(op => 
-                op.OrderID == this.currentOrder.ID && op.ProductUPC == this.currentProduct.UPC);
-            if (orderProduct != null)
-            {
-                // it is so use it's existing amountToOrder
-                txtCasesToOrder.Text = orderProduct.CasesToOrder.ToString();
+                // check if this product is already in this order
+                orderProduct =
+                    db.OrderProducts.FirstOrDefault<OrderProduct>(op =>
+                    op.OrderID == this.currentOrder.ID && op.ProductUPC == this.currentProduct.UPC);
+                if (orderProduct != null)
+                {
+                    // it is so use it's existing amountToOrder
+                    txtCasesToOrder.Text = orderProduct.CasesToOrder.ToString();
+                }
             }
 
             // add the controls to an array in the order that we want them to display
