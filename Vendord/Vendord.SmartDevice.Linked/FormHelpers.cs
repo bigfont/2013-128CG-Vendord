@@ -53,35 +53,39 @@ namespace Vendord.SmartDevice.Shared
             }
 
             return result;
+        }        
+
+        internal static bool KeyPressIsDigit(KeyPressEventArgs e)
+        {
+            return char.IsDigit(e.KeyChar);
         }
 
-        internal static void WhiteListControlKeys(KeyPressEventArgs e)
+        internal static bool KeyPressIsControlKey(KeyPressEventArgs e)
         {
-            if (char.IsControl(e.KeyChar))
-            {
-                // it's a control; ergo allow it
-                e.Handled = false;
-            }
+            return char.IsControl(e.KeyChar);
         }
 
-        internal static void WhiteListDigitKeys(KeyPressEventArgs e)
+        internal static bool TextboxValueIsInt32(object sender, KeyPressEventArgs e)
         {
-            // whitelist digits
-            if (char.IsDigit(e.KeyChar))
+            string newValue;
+            bool isInt32;
+
+            isInt32 = false;
+            if (sender is TextBox)
             {
-                // it's a digit
+                newValue = (sender as TextBox).Text + e.KeyChar;
                 try
                 {
-                    ////Convert.ToInt32((sender as TextBox).Text + e.KeyChar);
-
-                    // the method didn't throw an overflow exception; so it's within 32 bits; ergo allow it                    
-                    e.Handled = false;
+                    Convert.ToInt32(newValue);
+                    isInt32 = true;
                 }
-                catch (OverflowException)
+                catch (Exception)
                 {
-                    // catch and continue
+                    // do nothing
                 }
             }
+                        
+            return isInt32;
         }
     }
 }

@@ -578,8 +578,15 @@ namespace Vendord.SmartDevice.App
             // use a whitelist approach by disallowing all input
             e.Handled = true;
 
-            FormHelper.WhiteListControlKeys(e);
-            FormHelper.WhiteListDigitKeys(e);            
+            if (FormHelper.KeyPressIsControlKey(e))
+            {
+                e.Handled = false;
+            }
+
+            if (FormHelper.KeyPressIsDigit(e) && FormHelper.TextboxValueIsInt32(sender, e))
+            {
+                e.Handled = false;
+            }
         }
 
         private void BarcodeScanner_OnScan(ScanDataCollection scanDataCollection)

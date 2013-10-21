@@ -943,17 +943,24 @@ namespace Vendord.Desktop.App
 
         private void Textbox_KeyPress_WhiteList(object sender, KeyPressEventArgs e)
         {
+            // use a whitelist approach by disallowing all input
             e.Handled = true;
 
-            FormHelper.WhiteListControlKeys(e);
-            FormHelper.WhiteListDigitKeys(e);
+            if (FormHelper.KeyPressIsControlKey(e))
+            {
+                e.Handled = false;
+            }
+
+            if (FormHelper.KeyPressIsDigit(e) && FormHelper.TextboxValueIsInt32(sender, e))
+            {
+                e.Handled = false;
+            }
 
             // save on return
             if (e.KeyChar == (char)Keys.Return)
             {
                 // cause the textbox to lose focus thereby triggering its LostFocus event
-                FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0].Focus();
-                
+                FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0].Focus();                
             }
         }
 
