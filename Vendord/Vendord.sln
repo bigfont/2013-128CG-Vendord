@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Txt", "Txt", "{87EBA4DF-90F
 		Txt\03-Done.txt = Txt\03-Done.txt
 		Txt\14Oct2013-DemoWithDerek.txt = Txt\14Oct2013-DemoWithDerek.txt
 		15Oct2013-Sync.txt = 15Oct2013-Sync.txt
+		21Oct2013-DemoWithDerek.txt = 21Oct2013-DemoWithDerek.txt
 		Txt\Bugs.txt = Txt\Bugs.txt
 		Txt\HowTo.AddPublishingPrerequisites.txt = Txt\HowTo.AddPublishingPrerequisites.txt
 		Txt\HowTo.Desktop.Deploy.txt = Txt\HowTo.Desktop.Deploy.txt

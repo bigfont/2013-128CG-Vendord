@@ -1,0 +1,20 @@
+
+- Create several orders.
+
+- Dock the handheld in existing dock. (Yay, works!)
+
+- Sync. 
+
+- Add products to existing orders. 
+
+Changes to Make
+--
+
+Amount to order
+--
+- Make the default value 1 instead of zero.
+- Add validation for the cases to order being a integer. I.e. Allow only integers.
+
+Print one Vendor
+--
+- Make sure that the Vendor is activated.

@@ -25,7 +25,7 @@ namespace Vendord.SmartDevice.Shared
                 }
 
                 if (searchDescendents)
-                { 
+                {
                     result.AddRange(GetControlsByType<T>(c, true));
                 }
             }
@@ -53,6 +53,35 @@ namespace Vendord.SmartDevice.Shared
             }
 
             return result;
+        }
+
+        internal static void WhiteListControlKeys(KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar))
+            {
+                // it's a control; ergo allow it
+                e.Handled = false;
+            }
+        }
+
+        internal static void WhiteListDigitKeys(KeyPressEventArgs e)
+        {
+            // whitelist digits
+            if (char.IsDigit(e.KeyChar))
+            {
+                // it's a digit
+                try
+                {
+                    ////Convert.ToInt32((sender as TextBox).Text + e.KeyChar);
+
+                    // the method didn't throw an overflow exception; so it's within 32 bits; ergo allow it                    
+                    e.Handled = false;
+                }
+                catch (OverflowException)
+                {
+                    // catch and continue
+                }
+            }
         }
     }
 }

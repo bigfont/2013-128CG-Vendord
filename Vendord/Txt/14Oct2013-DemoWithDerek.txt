@@ -30,9 +30,9 @@ Desktop Missing Features. MOSTLY DONE. Need a copy of an existing print sheet.
 
 3 Update the number of cases to order for a product. Done.
 
-4 Print in a layout that matches the existing print layout.
+4 Print in a layout that matches the existing print layout. Done.
 
-5 Print all vendord in a current order with one click onto their own sheets.
+5 Print all vendord in a current order with one click onto their own sheets.*
 
 Other Bugs & Features
 --

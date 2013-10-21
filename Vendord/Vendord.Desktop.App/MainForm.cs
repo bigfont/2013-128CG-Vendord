@@ -27,6 +27,7 @@ namespace Vendord.Desktop.App
         private const int ColumnHeaderWidthDefault = 200;
         private const int ButtonHeight = 50;
         private const int NumberOfNavigationButtons = 2;
+        private const int DefaultCasesToOrder = 1;
         private const double PrintPreviewZoom = 1f; // this is 100%        
         private const char ButtonMessageStartChar = '<';
         private const char ButtonMessageEndChar = '>';
@@ -148,6 +149,7 @@ namespace Vendord.Desktop.App
             textbox.Tag = new TagProperties() { OriginalText = textbox.Text };
 
             textbox.LostFocus += new EventHandler(this.TextboxCasesToOrder_LostFocus_SaveChanges);
+            textbox.KeyPress += new KeyPressEventHandler(Textbox_KeyPress_WhiteList);
 
             x =
                 listViewOrderProduct.Location.X +
@@ -572,7 +574,7 @@ namespace Vendord.Desktop.App
                 Name = UserInputs.LvVendor,
                 View = View.Details,
                 HideSelection = false,
-                Activation = ItemActivation.Standard,
+                Activation = ItemActivation.OneClick,
                 FullRowSelect = true,
                 MultiSelect = false
             };
@@ -617,7 +619,7 @@ namespace Vendord.Desktop.App
             {
                 Name = UserInputs.LvOrder,
                 View = View.Details,
-                Activation = ItemActivation.Standard,
+                Activation = ItemActivation.OneClick,
                 HideSelection = false,
                 FullRowSelect = true,
                 MultiSelect = false
@@ -909,7 +911,8 @@ namespace Vendord.Desktop.App
                             orderProduct = new OrderProduct()
                             {
                                 OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
-                                ProductUPC = product.UPC
+                                ProductUPC = product.UPC,
+                                CasesToOrder = DefaultCasesToOrder
                             };
                             orderProduct.UpsertIntoDB(new Database());
                         }
@@ -938,27 +941,46 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void TextboxCasesToOrder_LostFocus_SaveChanges(object sender, EventArgs e)
+        private void Textbox_KeyPress_WhiteList(object sender, KeyPressEventArgs e)
         {
-            TextBox senderTextbox;
+            e.Handled = true;
+
+            FormHelper.WhiteListControlKeys(e);
+            FormHelper.WhiteListDigitKeys(e);
+
+            // save on return
+            if (e.KeyChar == (char)Keys.Return)
+            {
+                // cause the textbox to lose focus thereby triggering its LostFocus event
+                FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0].Focus();
+                
+            }
+        }
+
+        private void SaveCasesToOrderFromTextboxAndRemoveFromUI(TextBox textbox)
+        {
             ListView listViewProduct;
             ListView listViewOrder;
             OrderProduct orderProduct;
 
-            // retrieve relevant controls
-            listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
-            listViewProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true).FirstOrDefault<ListView>();
-            senderTextbox = sender as TextBox;
-
-            // check if the text has changed
-            if (!(senderTextbox.Tag as TagProperties).OriginalText.Equals(senderTextbox.Text))
+            /*
+             * Code Contract
+             * TextBox must have text.
+             * Text must have changed.
+             */
+            if (textbox.Text.Length > 0 &&
+                !(textbox.Tag as TagProperties).OriginalText.Equals(textbox.Text))
             {
+                // retrieve relevant controls
+                listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
+                listViewProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true).FirstOrDefault<ListView>();            
+
                 // save the amount to order            
                 orderProduct = new OrderProduct()
                 {
                     OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
                     ProductUPC = this.GetSelectedListViewItem(listViewProduct).Tag.ToString(),
-                    CasesToOrder = Convert.ToInt32(senderTextbox.Text)
+                    CasesToOrder = Convert.ToInt32(textbox.Text)
                 };
                 orderProduct.UpsertIntoDB(new Database());
 
@@ -966,7 +988,12 @@ namespace Vendord.Desktop.App
                 this.UpdateListViewOrderProduct();
             }
 
-            senderTextbox.Parent.Controls.Remove(senderTextbox);
+            textbox.Parent.Controls.Remove(textbox);
+        }
+
+        private void TextboxCasesToOrder_LostFocus_SaveChanges(object sender, EventArgs e)
+        {
+            SaveCasesToOrderFromTextboxAndRemoveFromUI(sender as TextBox);            
         }
 
         private void ListViewAny_SelectedIndexChanged_DisallowZeroSelectedItems(object sender, EventArgs e)
