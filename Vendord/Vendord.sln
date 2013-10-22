@@ -36,10 +36,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Txt", "Txt", "{87EBA4DF-90F
 		Txt\UninstallWMDC.txt = Txt\UninstallWMDC.txt
 	EndProjectSection
 EndProject
-Project("{B900F1C2-3D47-4FEC-85B3-04AAF18C3634}") = "Vendord.SmartDeviceCab", "Vendord.SmartDeviceCab\Vendord.SmartDeviceCab.vddproj", "{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "VendordSetup", "VendordSetup\VendordSetup.vdproj", "{55E56A13-BACD-4701-A06A-A37B8ADB43DF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -160,22 +156,6 @@ Global
 		{EA738CA8-5ECC-493D-A474-4FCCC2831878}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{EA738CA8-5ECC-493D-A474-4FCCC2831878}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
 		{EA738CA8-5ECC-493D-A474-4FCCC2831878}.Release|Win32.ActiveCfg = Release|Any CPU
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Debug|Any CPU.ActiveCfg = Debug
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Debug|Mixed Platforms.ActiveCfg = Debug
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Debug|Win32.ActiveCfg = Debug
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Release|Any CPU.ActiveCfg = Release
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Release|Mixed Platforms.ActiveCfg = Release
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release
-		{4B48E8EF-EE5E-432C-B85A-71F5A5CA0D3A}.Release|Win32.ActiveCfg = Release
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Debug|Any CPU.ActiveCfg = Debug
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Debug|Mixed Platforms.ActiveCfg = Debug
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Debug|Win32.ActiveCfg = Debug
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Release|Any CPU.ActiveCfg = Release
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Release|Mixed Platforms.ActiveCfg = Release
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release
-		{55E56A13-BACD-4701-A06A-A37B8ADB43DF}.Release|Win32.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
