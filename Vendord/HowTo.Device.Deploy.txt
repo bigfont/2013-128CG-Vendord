@@ -1,0 +1,29 @@
+
+Step 1.
+
+http://msdn.microsoft.com/en-us/library/zcebx8f8.aspx
+- Walkthrough: Packaging a Smart Device Solution for Deployment
+- Explains how to create CAB project.
+
+Step 2. 
+
+http://msdn.microsoft.com/en-us/library/bb158614.aspx
+- Application Manager .ini File Format 
+- Explains how to create an INI file.
+
+Step 3. 
+
+http://msdn.microsoft.com/en-us/library/bb158603.aspx
+- Troubleshooting the Application Manager
+- Explains how to troubleshoot .ini files while using appmgr.exe
+
+Step 4. 
+
+http://msdn.microsoft.com/en-us/library/bb158529.aspx
+- Creating an Installer for Windows Mobile Applications
+- Explains how to create an installer for the CAB files.
+
+Notes. 
+
+- Include a CAB for the Vendord.SmartDevice.App
+- Include a CAB for SQL Server CE 3.5 SP2 so that MS Sync framework functions.
