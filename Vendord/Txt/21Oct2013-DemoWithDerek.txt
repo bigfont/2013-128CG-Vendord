@@ -1,25 +1,22 @@
 
-Notes on the Demo
---
-
-- Create several orders with the handheld. Done.
-- Dock the handheld in existing dock. (Yay, works!). Done.
-- Sync. Done.
-- Add products to existing orders. Done.
-
 New Features / Bugs
 --
 
 - Make the default value 1 instead of zero. Done.
+
 - Add validation for the cases to order being a integer. I.e. Allow only integers. Done.
+
 - Make sure that the Vendor is activated. Done.
+
 - When we try to sync in disconnected state a second time the software throws an error. Done.
+
 - When we try to sync a handheld without the database, the software throws an error. Done.
+
 - Make the background color white. 
 	- Handheld. Done.
-	- Desktop. Todo.
+	- Desktop.*
 	
-- Delete SYNC fails. 
+- Delete SYNC fails.*
 	deleted orders in gun
 	created a new order
 	scanned a couple item
@@ -29,8 +26,5 @@ New Features / Bugs
 	nothing was there, showed no orders, just blank
 	tried deleting that order, did another one same result
 
-Still Todo
---
+- Enable printing of all vendors at once.*
 
-- Enable printing of all vendors at once.
-- Maybe make the background white on desktop. 

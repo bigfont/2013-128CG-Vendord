@@ -1,4 +1,0 @@
-
-- Delete the C:/Windows/WindowsMobile directory and all its contents!
-- Run MS Fixit for uninstalling.
-- Uninstall Windows Mobile Device Center and it's Driver Update.

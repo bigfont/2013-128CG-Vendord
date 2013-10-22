@@ -1,0 +1,36 @@
+
+HowTo: Setup a Partnership between the Desktop and the Device
+--
+
+Note: This entire process might not be necessary. That said, it works. :-)
+
+- Delete the C:/Windows/WindowsMobile directory, because it contains Windows Mobile Device Center (WMDC)
+- This might require ending these processes and services
+	- Windows Mobile Device Center
+	- Microsoft Sync Center
+	- Windows Mobile-2003-based device connectivity
+	- Windows Mobile-based device connectivity
+
+- Once that directory is gone, open Programs & Features
+- Run Microsoft Fixit to ensure the following: 
+	- Windows Mobile Device Center.
+	- Windows Mobile Device Center Driver Update.
+	- http://support.microsoft.com/mats/program_install_and_uninstall/
+
+- Now that WMDC is gone, plug in the mobile device.
+- Turn on the mobile device.
+- You might have to connect and disconnect the device several times to complete the following steps: 
+	- It will install the Sync Cradle.
+	- Install Windows Mobile Device Center
+	- Setup a connection.
+
+Known Issues
+--
+
+- Sometimes the install of WMDC hangs.
+- One workaroung is to open Task Manager and to end all Windows Installer processes.
+
+- Do we also have to uninstall the Symbol USB Sync Driver?
+- Plugin in device.
+- Open Control Panel > Administrative Tools > Computer Management > Device Manager
+- Uninstall the Symbol USB Sync driver.

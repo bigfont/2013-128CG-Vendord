@@ -29,6 +29,8 @@ Install SQL Server CE 3.5 SP2 on the PC:
 Install that same version of SQL Server CE on the Telezon:
 -----
 
+Note: At some point you need to delete the existing DB 
+
 - On the PC, go to C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i
 
 - this is WINDOW-1
@@ -44,6 +46,8 @@ Install that same version of SQL Server CE on the Telezon:
 - Paste "The CAB" from above into any folder on the Telezon.
 
 - Undock the Telezon. 
+
+- Go to My Device > Application Data > 
 
 - Using the Telezon, open MyDevice. 
 
