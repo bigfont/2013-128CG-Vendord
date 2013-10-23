@@ -15,7 +15,19 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_18033C0593954AB99DBEA3E29244507E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_77FC03C9B8E649A1818144EE36E986C4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_814C73087F0F4D92BA1D96AE574D5D7F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -27,7 +39,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_965DC50C57C74B1585471B0EE5AF85AD"
+        "MsmKey" = "8:_E389C70F828D4F7BAEB1162EFB69F2B7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -170,10 +182,50 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_965DC50C57C74B1585471B0EE5AF85AD"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18033C0593954AB99DBEA3E29244507E"
             {
-            "SourcePath" = "8:..\\Vendord.SmartDevice.App\\Vendord.SmartDevice.ini"
+            "SourcePath" = "8:..\\Vendord.Ini\\SqlServerCe_3_5_1.ini"
+            "TargetName" = "8:SqlServerCe_3_5_1.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_68A48A4B4A9F41799BAA578BF72F4EDF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_814C73087F0F4D92BA1D96AE574D5D7F"
+            {
+            "SourcePath" = "8:..\\Vendord.Ini\\Vendord.SmartDevice.ini"
             "TargetName" = "8:Vendord.SmartDevice.ini"
+            "Tag" = "8:"
+            "Folder" = "8:_68A48A4B4A9F41799BAA578BF72F4EDF"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E389C70F828D4F7BAEB1162EFB69F2B7"
+            {
+            "SourcePath" = "8:..\\Resources\\SqlServerCe 3.5 SP2\\sqlce.wce5.armv4i.CAB"
+            "TargetName" = "8:sqlce.wce5.armv4i.CAB"
             "Tag" = "8:"
             "Folder" = "8:_68A48A4B4A9F41799BAA578BF72F4EDF"
             "Condition" = "8:"
@@ -247,22 +299,22 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Vendord.SmartDevice.Setup"
         "ProductCode" = "8:{75E2FF89-C483-4998-8A60-387D5A055A5E}"
-        "PackageCode" = "8:{F1ED9CD1-9291-49B2-9D80-7262CE86B5B6}"
+        "PackageCode" = "8:{A14FC712-4951-4281-9DDB-14E846FB0EC1}"
         "UpgradeCode" = "8:{B566A556-EBCB-4BEB-9AE4-09CCDD3738BB}"
         "RestartWWWService" = "11:FALSE"
-        "RemovePreviousVersions" = "11:FALSE"
+        "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Default Company Name"
+        "Manufacturer" = "8:BigFont"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:Vendord.SmartDevice.Setup"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Default Company Name"
+        "ARPCONTACT" = "8:BigFont"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPCOMMENTS" = "8:Install Vendord onto Windows CE from a PC over USB."
+        "ARPURLINFOABOUT" = "8:http://www.bigfont.ca"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -366,6 +418,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_718F173E86644C9E9B0B9565A5C942DE"
+            {
+            "Name" = "8:Shortcut to Built Outputs from Vendord.SmartDevice.Cab (Release)"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_8617443ACFB84310991CC2CD3422F2EC"
+            "Folder" = "8:_B9D50521DCBA4BDCB49B34C389FF66A0"
+            "WorkingFolder" = "8:_68A48A4B4A9F41799BAA578BF72F4EDF"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {

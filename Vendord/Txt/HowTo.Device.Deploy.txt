@@ -1,34 +1,86 @@
 
-Step 1. Mostly done. We skipped a few nice-to-have steps.
-
-http://msdn.microsoft.com/en-us/library/zcebx8f8.aspx
-- Walkthrough: Packaging a Smart Device Solution for Deployment
+Step 1. Walkthrough: Packaging a Smart Device Solution for Deployment
+ 
 - Explains how to create CAB project.
+- Customizations via View > Properties Windows
 
-Step 2. Mostly done. We skipped a few nice-to-have steps.
+	CE Setup DLL =			(None)
+	Compress =				False
+	Manufacturer =			BigFont
+	OSVersionMax =			6.99
+	OS VersionMin =			5.0
+	ProductName =			Vendord
+	
+- Customizations via Right Click > Properties
+	
+	Output File Name =		Vendord.SmartDevice.cab	
+	
+- Other Customizations
 
-http://msdn.microsoft.com/en-us/library/bb158614.aspx
-- Application Manager .ini File Format 
+	Start Menu Shortcut =	Vendord Shortcut
+	Registtry Entry =		HKCU\SOFTWARE\BigFont\Vendord
+
+- See also
+http://msdn.microsoft.com/en-us/library/zcebx8f8.aspx
+
+
+
+Step 2. Application Manager .ini File Format 
+ 
 - Explains how to create an INI file.
 - Note: Use WordPad not NotePad lest the encoding is not valid.
+- Customizations 
 
-Step 3. Done.
+	[CEAppManager]
+	Version      = 1.0
+	Component    = Vendord_SmartDevice_App
 
-http://msdn.microsoft.com/en-us/library/bb158603.aspx
-- Troubleshooting the Application Manager
+	[Vendord_SmartDevice_App]
+	Description		= Vendord Smart Device App
+	CabFiles		= Vendord.SmartDevice.Cab
+	Uninstall		= Vendord
+	;[IconFile		= icon_filename]
+	;[IconIndex		= icon_index]
+	;[DeviceFile	= device_file]
+
+- See also
+http://msdn.microsoft.com/en-us/library/bb158614.aspx
+
+
+
+Step 3. Troubleshooting the Application Manager
+
 - Explains how to troubleshoot .ini files while using appmgr.exe
+- It can be helpful to do this before moving on to Step 4. 
+- E.g. 
+	
+	Paste the INI file beside its related CAB file, then...
+	Open an elevated command prompt and run...
+	"C:\Windows\WindowsMobile\ceappmgr.exe" "full_path_to_the_ini_file"
+	E.g.
+	"C:\Windows\WindowsMobile\ceappmgr.exe" "C:\Users\Shaun\Documents\GitHub\2013-128CG-Vendord\Vendord\Vendord.SmartDevice.CAB\Release\Vendord.SmartDevice.ini"
+	"C:\Windows\WindowsMobile\ceappmgr.exe" "C:\Users\Shaun\Documents\GitHub\2013-128CG-Vendord\Vendord\Resources\SqlServerCe 3.5 SP2\SqlServerCe_3_5_1.ini"
 
-Step 4. Partly done.
+- See also
+http://msdn.microsoft.com/en-us/library/bb158603.aspx 
 
-http://msdn.microsoft.com/en-us/library/bb158529.aspx
-- Creating an Installer for Windows Mobile Applications
+
+
+Step 4.  Creating an Installer for Windows Mobile Applications
+
 - Explains how to create an installer for the CAB files.
+
+- See also
+http://msdn.microsoft.com/en-us/library/bb158529.aspx
+
 
 Notes
 --
 
 - Include a CAB for the Vendord.SmartDevice.App
 - Include a CAB for SQL Server CE 3.5 SP2 so that MS Sync framework functions.
+
+
 
 Overview of Pointers Where ">" Means "points to"
 --

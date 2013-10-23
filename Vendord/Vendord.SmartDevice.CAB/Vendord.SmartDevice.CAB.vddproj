@@ -596,7 +596,7 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Vendord"
-        "Manufacturer" = "8:BigFont.ca"
+        "Manufacturer" = "8:BigFont"
         "OSVersionMin" = "8:5.0"
         "OSVersionMax" = "8:6.99"
         "NoUninstall" = "11:FALSE"
@@ -656,6 +656,17 @@
                             "Condition" = "8:"
                                 "Keys"
                                 {
+                                    "{B1EBC968-6B66-4532-A885-748B79AF4477}:_872C019814D8469C80AA4BFDA0B537BF"
+                                    {
+                                    "Name" = "8:Vendord"
+                                    "Condition" = "8:"
+                                        "Keys"
+                                        {
+                                        }
+                                        "Values"
+                                        {
+                                        }
+                                    }
                                 }
                                 "Values"
                                 {

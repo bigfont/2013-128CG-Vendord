@@ -33,24 +33,34 @@ namespace Vendord.CustomAction
             if (key != null)
             {
                 // Get the path to the Application Manager from the registry value
-                string appPath = null;
-                appPath = key.GetValue(null).ToString();
+                string applicationManagerPath = null;
+                applicationManagerPath = key.GetValue(null).ToString();
 
                 // Get the target directory where the .ini file is installed.
                 // This is sent from the Setup application
-                string strIniFilePath = "\"" + Context.Parameters["targetdir"] + "Vendord.SmartDevice.ini\"";
-                if (appPath != null)
-                {                    
-                    // Now launch the Application Manager
-                    System.Diagnostics.Process process = new System.Diagnostics.Process();
-                    process.StartInfo.FileName = appPath;
-                    process.StartInfo.Arguments = strIniFilePath;
-                    process.Start();
-                }
+                string iniFilePath;
+                
+                iniFilePath = "\"" + Context.Parameters["targetdir"] + "Vendord.SmartDevice.ini\"";
+                PassIniToApplicationManagerAndStart(applicationManagerPath, iniFilePath);
+
+                iniFilePath = "\"" + Context.Parameters["targetdir"] + "SqlServerCe_3_5_1.ini\"";
+                PassIniToApplicationManagerAndStart(applicationManagerPath, iniFilePath);
             }
             else
             {
                 // No Active Sync - throw a message
+            }
+        }
+
+        private void PassIniToApplicationManagerAndStart(string applicationManagerPath, string iniFilePath)
+        {
+            if (applicationManagerPath != null && iniFilePath != null)
+            {
+                // Now launch the Application Manager
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+                process.StartInfo.FileName = applicationManagerPath;
+                process.StartInfo.Arguments = iniFilePath;
+                process.Start();
             }
         }
     }
