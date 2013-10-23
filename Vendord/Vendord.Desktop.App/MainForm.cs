@@ -660,7 +660,7 @@ namespace Vendord.Desktop.App
             };
 
             // occurs when an ListViewItem is activated
-            listViewOrder.SelectedIndexChanged += new EventHandler(this.ListViewOrder_SelectedIndexChanged);
+            listViewOrder.SelectedIndexChanged += new EventHandler(this.ListViewOrder_SelectedIndexChanged);                    
 
             // add user visible columns
             listViewOrder.Columns.Add("Order Name");
