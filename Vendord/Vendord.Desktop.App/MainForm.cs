@@ -36,6 +36,7 @@ namespace Vendord.Desktop.App
 
         private Panel mainNavigation;
         private Panel mainContent;
+        private int lvItemIndexToPrintNext = 0;
 
         private Button btnBack;
 
@@ -288,7 +289,29 @@ namespace Vendord.Desktop.App
             printPreview.ShowDialog();
         }
 
-        private ListViewPrinter CreateListViewPrinterFromListViewOrderProduct()
+        private void AddSelectedVendorOrderToThePrintDocument(PrintPageEventArgs e)
+        {
+            Font MyFont = new Font(FontFamily.GenericSerif, 12.0F);
+            Brush MyFontBrush = Brushes.Black;
+            Point MyPoint = new Point(0, 0);
+
+            string vendorName;
+            string productName;
+
+            vendorName = LvVendor.SelectedItems[0].Text;
+            e.Graphics.DrawString(vendorName, MyFont, MyFontBrush, MyPoint);
+
+            foreach (ListViewItem item in LvOrderProduct.Items)
+            {
+                MyPoint.Y += 50;
+
+                productName = item.Text;
+                e.Graphics.DrawString(productName, MyFont, MyFontBrush, MyPoint);
+            }
+
+        }
+
+        private ListViewPrinter CreateListViewPrinterFromListViewOrderProduct_Deprecated()
         {
             ListViewPrinter listViewPrinter;
 
@@ -331,8 +354,6 @@ namespace Vendord.Desktop.App
 
         private void PrintSelectedOrder()
         {
-            ListViewPrinter listViewPrinter;
-
             if (this.LvOrder != null && this.LvOrderProduct != null & this.LvVendor != null)
             {
                 if (this.GetSelectedListViewItem(this.LvOrder) != null && LvVendor.Items != null && LvVendor.Items.Count > 0)
@@ -1076,33 +1097,27 @@ namespace Vendord.Desktop.App
             {
                 AddSelectedVendorOrderToThePrintDocument(e);
             }
-        }
-
-        private void AddSelectedVendorOrderToThePrintDocument(PrintPageEventArgs e)
-        {
-            Font MyFont = new Font(FontFamily.GenericSerif, 12.0F);
-        }
-
-        private int LvItemIndexToPrintNext = 0;
+        }        
+        
         private void PrintDocument_PrintOrderForAllVendors(object sender, PrintPageEventArgs e)
         {
             // ensure that LvVendor has items
             if (this.LvVendor != null && this.LvVendor.Items != null && this.LvVendor.Items.Count > 0)
             {
                 // select the next list view item to print
-                if (LvItemIndexToPrintNext < LvVendor.Items.Count)
+                if (lvItemIndexToPrintNext < LvVendor.Items.Count)
                 {
-                    this.LvVendor.Items[LvItemIndexToPrintNext].Selected = true;
+                    this.LvVendor.Items[lvItemIndexToPrintNext].Selected = true;
                 }
 
                 // Print the next vendor's order
                 AddSelectedVendorOrderToThePrintDocument(e);
 
                 // increment the list view item to print next
-                this.LvItemIndexToPrintNext++;
+                this.lvItemIndexToPrintNext++;
 
                 // keeping printing?
-                if (LvItemIndexToPrintNext < LvVendor.Items.Count)
+                if (lvItemIndexToPrintNext < LvVendor.Items.Count)
                 {
                     // keep print
                     e.HasMorePages = true;
@@ -1110,7 +1125,7 @@ namespace Vendord.Desktop.App
                 else
                 {
                     // reset
-                    this.LvItemIndexToPrintNext = 0;
+                    this.lvItemIndexToPrintNext = 0;
                 }
             }
         }
