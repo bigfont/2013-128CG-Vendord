@@ -197,7 +197,7 @@ namespace Vendord.Desktop.App
 
             order = new Order()
             {
-                ID = new Guid(this.LvOrder.FocusedItem.Tag.ToString())
+                ID = new Guid(this.LvOrder.SelectedItems[0].Tag.ToString())
             };
             order.AddToTrash(new Database());
         }
@@ -365,7 +365,7 @@ namespace Vendord.Desktop.App
                 // save the amount to order            
                 orderProduct = new OrderProduct()
                 {
-                    OrderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString()),
+                    OrderID = new Guid(this.LvOrder.SelectedItems[0].Tag.ToString()),
                     ProductUPC = this.LvOrderProduct.SelectedItems[0].Tag.ToString(),
                     CasesToOrder = Convert.ToInt32(textbox.Text)
                 };
@@ -436,7 +436,7 @@ namespace Vendord.Desktop.App
 
                 if (this.LvVendor != null)
                 {
-                    currentVendor = this.LvVendor.FocusedItem != null ? this.LvVendor.FocusedItem.Text : null;
+                    currentVendor = this.LvVendor.SelectedItems[0] != null ? this.LvVendor.FocusedItem.Text : null;
                     this.AddDataToListBoxProduct(listBox, currentVendor);
                     this.mainContent.Controls.Add(listBox);
                 }
@@ -460,7 +460,7 @@ namespace Vendord.Desktop.App
             vendorName = null;
 
             // retrieve selected orderID            
-            orderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString());
+            orderID = new Guid(this.LvOrder.SelectedItems[0].Tag.ToString());
 
             if (orderID != null)
             {
@@ -543,7 +543,7 @@ namespace Vendord.Desktop.App
 
             this.LvVendor.Items.Clear();
 
-            selectedOrder = this.LvOrder.FocusedItem;
+            selectedOrder = this.LvOrder.SelectedItems[0];
             if (selectedOrder != null)
             {
                 orderID = new Guid(selectedOrder.Tag.ToString());
@@ -903,7 +903,7 @@ namespace Vendord.Desktop.App
                 listBox = sender as ListBox;
                 if (listBox.SelectedItem != null && listBox.SelectedItem is Product)
                 {
-                    if (this.LvOrder.FocusedItem != null)
+                    if (this.LvOrder.SelectedItems[0] != null)
                     {
                         product = listBox.SelectedItem as Product;
 
@@ -917,7 +917,7 @@ namespace Vendord.Desktop.App
                             // save
                             orderProduct = new OrderProduct()
                             {
-                                OrderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString()),
+                                OrderID = new Guid(this.LvOrder.SelectedItems[0].Tag.ToString()),
                                 ProductUPC = product.UPC,
                                 CasesToOrder = Constants.DefaultCasesToOrder
                             };
@@ -1001,7 +1001,7 @@ namespace Vendord.Desktop.App
             ListViewItem listViewItemProduct;
 
             listViewProduct = sender as ListView;
-            listViewItemProduct = listViewProduct != null ? listViewProduct.FocusedItem : null;
+            listViewItemProduct = listViewProduct != null ? listViewProduct.SelectedItems[0] : null;
             if (listViewItemProduct != null)
             {
                 this.EditOrderProductCasesToOrder(listViewProduct, listViewItemProduct);
