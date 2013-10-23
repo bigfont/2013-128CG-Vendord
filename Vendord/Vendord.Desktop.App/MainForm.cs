@@ -335,26 +335,20 @@ namespace Vendord.Desktop.App
 
             if (this.LvOrder != null && this.LvOrderProduct != null & this.LvVendor != null)
             {
-                if (this.GetSelectedListViewItem(this.LvOrder) != null)
+                if (this.GetSelectedListViewItem(this.LvOrder) != null && LvVendor.Items != null && LvVendor.Items.Count > 0)
                 {
-                    ////listViewPrinter = this.CreateListViewPrinterFromListViewOrderProduct();
-                    ////this.PreviewPrintDocument(listViewPrinter);
-
-                    #region Prototype
-
-                    // ensure that LvVendor has items. I.e. Ensure the user has selected an order.
-                    if (LvVendor.Items != null && LvVendor.Items.Count > 0)
+                    PrintDocument printDocument = new PrintDocument();
+                    printDocument.BeginPrint += (s, e) =>
                     {
-                        PrintDocument printDocument = new PrintDocument();
-                        printDocument.PrintPage += new PrintPageEventHandler(PrintDocument_PrintPage);
-                        this.PreviewPrintDocument(printDocument);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please select an order to print.");
-                    }
 
-                    #endregion
+                    };
+                    printDocument.PrintPage += new PrintPageEventHandler(PrintDocument_PrintOrderForAllVendors);
+                    printDocument.EndPrint += (s, e) =>
+                    {
+
+                    };
+                    this.PreviewPrintDocument(printDocument);
+
                 }
                 else
                 {
@@ -582,7 +576,7 @@ namespace Vendord.Desktop.App
 
             listViewVendor.Columns.Add("Vendor Name");
 
-            listViewVendor.ItemActivate += new EventHandler(this.ListViewVendor_ItemActivate);
+            listViewVendor.SelectedIndexChanged += new EventHandler(this.ListViewVendor_SelectedIndexChanged);
 
             return listViewVendor;
         }
@@ -625,7 +619,7 @@ namespace Vendord.Desktop.App
             };
 
             // occurs when an ListViewItem is activated
-            listViewOrder.ItemActivate += new EventHandler(this.ListViewOrder_ItemActivate);
+            listViewOrder.SelectedIndexChanged += new EventHandler(this.ListViewOrder_SelectedIndexChanged);
 
             // add user visible columns
             listViewOrder.Columns.Add("Order Name");
@@ -1004,14 +998,14 @@ namespace Vendord.Desktop.App
                 (sender as ListView).Name);
         }
 
-        private void ListViewOrder_ItemActivate(object sender, EventArgs e)
+        private void ListViewOrder_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.UpdateListViewVendor();
             this.UpdateListViewOrderProduct();
             this.UpdateListBoxProduct();
         }
 
-        private void ListViewVendor_ItemActivate(object sender, EventArgs e)
+        private void ListViewVendor_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.UpdateListViewOrderProduct();
             this.UpdateListBoxProduct();
@@ -1076,29 +1070,47 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        private void PrintDocument_PrintOrderForSpecificVendor(object sender, PrintPageEventArgs e)
         {
-            ListViewItem selectedListViewItem;
-
-            // ensure that LvVendor has items.
-            if (LvVendor.Items != null && LvVendor.Items.Count > 0)
+            if (this.LvVendor != null && this.LvVendor.SelectedItems != null && this.LvVendor.SelectedItems.Count != 0)
             {
-                // select the first list item if one isn't selected
-                if (LvVendor.SelectedIndices == null || LvVendor.SelectedIndices.Count == 0)
+                AddSelectedVendorOrderToThePrintDocument(e);
+            }
+        }
+
+        private void AddSelectedVendorOrderToThePrintDocument(PrintPageEventArgs e)
+        {
+            Font MyFont = new Font(FontFamily.GenericSerif, 12.0F);
+        }
+
+        private int LvItemIndexToPrintNext = 0;
+        private void PrintDocument_PrintOrderForAllVendors(object sender, PrintPageEventArgs e)
+        {
+            // ensure that LvVendor has items
+            if (this.LvVendor != null && this.LvVendor.Items != null && this.LvVendor.Items.Count > 0)
+            {
+                // select the next list view item to print
+                if (LvItemIndexToPrintNext < LvVendor.Items.Count)
                 {
-                    LvVendor.Items[0].Selected = true;
+                    this.LvVendor.Items[LvItemIndexToPrintNext].Selected = true;
                 }
 
-                // get the currently selected list view item
-                selectedListViewItem = LvVendor.Items[LvVendor.SelectedIndices[0]];
+                // Print the next vendor's order
+                AddSelectedVendorOrderToThePrintDocument(e);
 
-                // print the selected list view item
-                if (selectedListViewItem != null)
+                // increment the list view item to print next
+                this.LvItemIndexToPrintNext++;
+
+                // keeping printing?
+                if (LvItemIndexToPrintNext < LvVendor.Items.Count)
                 {
-                    string vendorName = selectedListViewItem.Text;
-                    e.Graphics.DrawString(vendorName, new Font(FontFamily.GenericSansSerif, 12.0F), Brushes.Black, new Point(0, 0));
-
-                    ////e.HasMorePages = true;           
+                    // keep print
+                    e.HasMorePages = true;
+                }
+                else
+                {
+                    // reset
+                    this.LvItemIndexToPrintNext = 0;
                 }
             }
         }
