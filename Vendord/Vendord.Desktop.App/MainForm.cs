@@ -137,10 +137,14 @@ namespace Vendord.Desktop.App
         private ListViewItem GetSelectedListViewItem(ListView listView)
         {
             ListViewItem result;
-            result = null;
+            listView.Focus();
             if (listView.SelectedItems.Count != 0)
             {
                 result = listView.SelectedItems[0];
+            }
+            else
+            {
+                result = null;
             }
             return result;
         }
@@ -460,6 +464,7 @@ namespace Vendord.Desktop.App
 
         private ListView UpdateListViewOrderProduct()
         {
+            ListViewItem selectedListViewOrderItem;
             ListViewItem selectedListViewVendorItem;
             Guid orderID;
             string vendorName;
@@ -470,21 +475,24 @@ namespace Vendord.Desktop.App
             // defaults            
             vendorName = null;
 
-            // retrieve selected orderID            
-            orderID = new Guid(GetSelectedListViewItem(this.LvOrder).Tag.ToString());
-
-            if (orderID != null)
+            // retrieve selected orderID
+            selectedListViewOrderItem = GetSelectedListViewItem(this.LvOrder);
+            if (selectedListViewOrderItem != null)
             {
-                // retrieve selected vendorName
-                selectedListViewVendorItem = GetSelectedListViewItem(this.LvVendor);
-                if (selectedListViewVendorItem != null)
+                orderID = new Guid(selectedListViewOrderItem.Tag.ToString());
+                if (orderID != null)
                 {
-                    vendorName = selectedListViewVendorItem.Text;
-                }
-                          
+                    // retrieve selected vendorName
+                    selectedListViewVendorItem = GetSelectedListViewItem(this.LvVendor);
+                    if (selectedListViewVendorItem != null)
+                    {
+                        vendorName = selectedListViewVendorItem.Text;
+                    }
 
-                // update listViewProduct 
-                this.AddDataToListViewOrderProduct(this.LvOrderProduct, orderID, vendorName);
+
+                    // update listViewProduct 
+                    this.AddDataToListViewOrderProduct(this.LvOrderProduct, orderID, vendorName);
+                }
             }
 
             // back
@@ -782,7 +790,8 @@ namespace Vendord.Desktop.App
                     h.Width = ColumnHeaderWidthDefault;
                 }
 
-                lv.GotFocus += new EventHandler(ListViewAny_GotFocus);                                
+                // enter occurs on single click, for instance, and probably other ways too.
+                lv.Enter += new EventHandler(ListViewAny_Enter);                                     
 
                 this.mainContent.Controls.Add(lv);
             }
@@ -986,7 +995,7 @@ namespace Vendord.Desktop.App
             this.SaveCasesToOrderFromTextboxAndRemoveFromUI(sender as TextBox);
         }
 
-        private void ListViewAny_GotFocus(object sender, EventArgs e)
+        private void ListViewAny_Enter(object sender, EventArgs e)
         {
             this.ButtonMessage_Generic(
                 FormHelper.GetControlsByName<Button>(this, UserInputs.BtnDelete, true).FirstOrDefault(),
