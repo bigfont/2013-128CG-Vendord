@@ -132,32 +132,7 @@ namespace Vendord.Desktop.App
             get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0]; }
         }
 
-        #region Utilities
-
-        private ListViewItem GetSelectedListViewItem(ListView listView)
-        {
-            ListViewItem targetListViewItem;
-
-            targetListViewItem = null;
-
-            if (listView != null)
-            {
-                if (listView.FocusedItem != null)
-                {
-                    targetListViewItem = listView.FocusedItem;
-                }
-                else if (listView.SelectedItems != null && listView.SelectedItems.Count > 0)
-                {
-                    targetListViewItem = listView.SelectedItems[0];
-                }
-                else
-                {
-                    targetListViewItem = new ListViewItem();
-                }
-            }
-
-            return targetListViewItem;
-        }
+        #region Utilities       
 
         private void EditOrderProductCasesToOrder(ListView listViewOrderProduct, ListViewItem listViewItemOrderProduct)
         {
@@ -199,8 +174,8 @@ namespace Vendord.Desktop.App
             ListViewItem selectedListViewOrderProductItem;
             OrderProduct orderProduct;
 
-            selectedListViewOrderItem = this.GetSelectedListViewItem(this.LvOrder);
-            selectedListViewOrderProductItem = this.GetSelectedListViewItem(this.LvOrderProduct);
+            selectedListViewOrderItem = this.LvOrder.SelectedItems[0];
+            selectedListViewOrderProductItem = this.LvOrderProduct.SelectedItems[0];
 
             if (selectedListViewOrderItem != null && selectedListViewOrderItem.Tag != null &&
                 selectedListViewOrderProductItem != null && selectedListViewOrderProductItem.Tag != null)
@@ -281,7 +256,7 @@ namespace Vendord.Desktop.App
             StringBuilder header;
 
             // get the name of the supplier
-            supplier = this.GetSelectedListViewItem(this.LvVendor).Text;
+            supplier = this.LvVendor.SelectedItems[0].Text;
 
             // build the report header
             header = new StringBuilder();
@@ -354,7 +329,7 @@ namespace Vendord.Desktop.App
         {
             if (this.LvOrder != null && this.LvOrderProduct != null & this.LvVendor != null)
             {
-                if (this.GetSelectedListViewItem(this.LvOrder) != null && this.LvVendor.Items != null && this.LvVendor.Items.Count > 0)
+                if (this.LvOrder.SelectedItems[0] != null && this.LvVendor.Items != null && this.LvVendor.Items.Count > 0)
                 {
                     PrintDocument printDocument = new PrintDocument();
                     if (this.LvVendor.SelectedItems.Count == 0)
@@ -391,7 +366,7 @@ namespace Vendord.Desktop.App
                 orderProduct = new OrderProduct()
                 {
                     OrderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString()),
-                    ProductUPC = this.GetSelectedListViewItem(this.LvOrderProduct).Tag.ToString(),
+                    ProductUPC = this.LvOrderProduct.SelectedItems[0].Tag.ToString(),
                     CasesToOrder = Convert.ToInt32(textbox.Text)
                 };
                 orderProduct.UpsertIntoDB(new Database());
@@ -413,7 +388,7 @@ namespace Vendord.Desktop.App
 
             if (this.LvVendor != null)
             {
-                targetListViewItem = this.GetSelectedListViewItem(this.LvVendor);
+                targetListViewItem = this.LvVendor.SelectedItems[0];
                 currentVendor = targetListViewItem != null ? targetListViewItem.Text : null;
                 if (listBox != null && listBox.Items != null)
                 {
@@ -490,7 +465,7 @@ namespace Vendord.Desktop.App
             if (orderID != null)
             {
                 // retrieve selected vendorName                
-                selectedListViewVendorItem = this.GetSelectedListViewItem(this.LvVendor);
+                selectedListViewVendorItem = this.LvVendor.SelectedItems[0];
                 if (selectedListViewVendorItem != null)
                 {
                     vendorName = selectedListViewVendorItem.Text;
