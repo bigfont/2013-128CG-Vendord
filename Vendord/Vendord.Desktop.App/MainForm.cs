@@ -375,6 +375,34 @@ namespace Vendord.Desktop.App
             }
         }
 
+        private void SaveCasesToOrderFromTextboxAndRemoveFromUI(TextBox textbox)
+        {
+            OrderProduct orderProduct;
+
+            /*
+             * Code Contract
+             * TextBox must have text.
+             * Text must have changed.
+             */
+            if (textbox.Text.Length > 0 &&
+                !(textbox.Tag as TagProperties).OriginalText.Equals(textbox.Text))
+            {
+                // save the amount to order            
+                orderProduct = new OrderProduct()
+                {
+                    OrderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString()),
+                    ProductUPC = this.GetSelectedListViewItem(this.LvOrderProduct).Tag.ToString(),
+                    CasesToOrder = Convert.ToInt32(textbox.Text)
+                };
+                orderProduct.UpsertIntoDB(new Database());
+
+                // update the UI - this is a performance hit :-(                
+                this.UpdateListViewOrderProduct();
+            }
+
+            textbox.Parent.Controls.Remove(textbox);
+        }
+
         private void UpdateListBoxProduct()
         {
             ListBox listBox;
@@ -767,8 +795,7 @@ namespace Vendord.Desktop.App
                     h.Width = ColumnHeaderWidthDefault;
                 }
 
-                lv.SelectedIndexChanged += new EventHandler(this.ListViewAny_SelectedIndexChanged_AddMessageToDeleteButton);
-                lv.SelectedIndexChanged += new EventHandler(this.ListViewAny_SelectedIndexChanged_DisallowZeroSelectedItems);
+                lv.GotFocus += new EventHandler(ListViewAny_GotFocus);                                
 
                 this.mainContent.Controls.Add(lv);
             }
@@ -965,50 +992,14 @@ namespace Vendord.Desktop.App
                 // cause the textbox to lose focus thereby triggering its LostFocus event
                 this.LvOrderProduct.Focus();
             }
-        }
-
-        private void SaveCasesToOrderFromTextboxAndRemoveFromUI(TextBox textbox)
-        {
-            OrderProduct orderProduct;
-
-            /*
-             * Code Contract
-             * TextBox must have text.
-             * Text must have changed.
-             */
-            if (textbox.Text.Length > 0 &&
-                !(textbox.Tag as TagProperties).OriginalText.Equals(textbox.Text))
-            {
-                // save the amount to order            
-                orderProduct = new OrderProduct()
-                {
-                    OrderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString()),
-                    ProductUPC = this.GetSelectedListViewItem(this.LvOrderProduct).Tag.ToString(),
-                    CasesToOrder = Convert.ToInt32(textbox.Text)
-                };
-                orderProduct.UpsertIntoDB(new Database());
-
-                // update the UI - this is a performance hit :-(                
-                this.UpdateListViewOrderProduct();
-            }
-
-            textbox.Parent.Controls.Remove(textbox);
-        }
+        }        
 
         private void TextboxCasesToOrder_LostFocus_SaveChanges(object sender, EventArgs e)
         {
             this.SaveCasesToOrderFromTextboxAndRemoveFromUI(sender as TextBox);
         }
 
-        private void ListViewAny_SelectedIndexChanged_DisallowZeroSelectedItems(object sender, EventArgs e)
-        {
-            if ((sender as ListView).FocusedItem != null)
-            {
-                (sender as ListView).FocusedItem.Selected = true;
-            }
-        }
-
-        private void ListViewAny_SelectedIndexChanged_AddMessageToDeleteButton(object sender, EventArgs e)
+        private void ListViewAny_GotFocus(object sender, EventArgs e)
         {
             this.ButtonMessage_Generic(
                 FormHelper.GetControlsByName<Button>(this, UserInputs.BtnDelete, true).FirstOrDefault(),
