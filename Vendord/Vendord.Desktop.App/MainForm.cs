@@ -190,11 +190,11 @@ namespace Vendord.Desktop.App
         }
 
         private int DeleteSelectedOrderProduct()
-        {                        
+        {
             ListViewItem selectedListViewOrderItem;
             ListViewItem selectedListViewOrderProductItem;
-            OrderProduct orderProduct;            
-            
+            OrderProduct orderProduct;
+
             selectedListViewOrderItem = this.GetSelectedListViewItem(this.LvOrder);
             selectedListViewOrderProductItem = this.GetSelectedListViewItem(this.LvOrderProduct);
 
@@ -213,8 +213,8 @@ namespace Vendord.Desktop.App
         }
 
         private void DeleteSelectedOrder()
-        {            
-            Order order;            
+        {
+            Order order;
 
             order = new Order()
             {
@@ -337,8 +337,24 @@ namespace Vendord.Desktop.App
             {
                 if (this.GetSelectedListViewItem(this.LvOrder) != null)
                 {
-                    listViewPrinter = this.CreateListViewPrinterFromListViewOrderProduct();
-                    this.PreviewPrintDocument(listViewPrinter);
+                    ////listViewPrinter = this.CreateListViewPrinterFromListViewOrderProduct();
+                    ////this.PreviewPrintDocument(listViewPrinter);
+
+                    #region Prototype
+
+                    // ensure that LvVendor has items. I.e. Ensure the user has selected an order.
+                    if (LvVendor.Items != null && LvVendor.Items.Count > 0)
+                    {
+                        PrintDocument printDocument = new PrintDocument();
+                        printDocument.PrintPage += new PrintPageEventHandler(PrintDocument_PrintPage);
+                        this.PreviewPrintDocument(printDocument);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please select an order to print.");
+                    }
+
+                    #endregion
                 }
                 else
                 {
@@ -349,7 +365,7 @@ namespace Vendord.Desktop.App
 
         private void UpdateListBoxProduct()
         {
-            ListBox listBox;            
+            ListBox listBox;
             ListViewItem targetListViewItem;
             string currentVendor;
 
@@ -391,7 +407,7 @@ namespace Vendord.Desktop.App
 
         private void AddListBoxProduct()
         {
-            ListBox listBox;            
+            ListBox listBox;
             string currentVendor;
 
             listBox = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
@@ -417,7 +433,7 @@ namespace Vendord.Desktop.App
         }
 
         private ListView UpdateListViewOrderProduct()
-        {                                    
+        {
             ListViewItem selectedListViewVendorItem;
             Guid orderID;
             string vendorName;
@@ -506,7 +522,7 @@ namespace Vendord.Desktop.App
         }
 
         private ListView UpdateListViewVendor()
-        {          
+        {
             ListViewItem selectedOrder;
             Guid orderID;
 
@@ -572,7 +588,7 @@ namespace Vendord.Desktop.App
         }
 
         private ListView UpdateListViewOrder()
-        {           
+        {
             this.LvOrder.Items.Clear();
             this.AddDataToListViewOrder(this.LvOrder);
             return this.LvOrder;
@@ -861,7 +877,7 @@ namespace Vendord.Desktop.App
         }
 
         private void ListBox_DoubleClick_AddProductToOrder(object sender, EventArgs e)
-        {                                    
+        {
             ListViewItem listViewItemVendor;
             ListViewItem listViewItemOrderProduct;
             ListBox listBox;
@@ -872,9 +888,9 @@ namespace Vendord.Desktop.App
             {
                 listBox = sender as ListBox;
                 if (listBox.SelectedItem != null && listBox.SelectedItem is Product)
-                {                    
+                {
                     if (this.LvOrder.FocusedItem != null)
-                    {                                                
+                    {
                         product = listBox.SelectedItem as Product;
 
                         if (this.LvOrderProduct.Items.ContainsKey(product.UPC))
@@ -1057,6 +1073,33 @@ namespace Vendord.Desktop.App
             else if (syncResult == Sync.SyncResult.Disconnected)
             {
                 this.ButtonMessage_Problem(sender as Button, "Disconnected");
+            }
+        }
+
+        private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            ListViewItem selectedListViewItem;
+
+            // ensure that LvVendor has items.
+            if (LvVendor.Items != null && LvVendor.Items.Count > 0)
+            {
+                // select the first list item if one isn't selected
+                if (LvVendor.SelectedIndices == null || LvVendor.SelectedIndices.Count == 0)
+                {
+                    LvVendor.Items[0].Selected = true;
+                }
+
+                // get the currently selected list view item
+                selectedListViewItem = LvVendor.Items[LvVendor.SelectedIndices[0]];
+
+                // print the selected list view item
+                if (selectedListViewItem != null)
+                {
+                    string vendorName = selectedListViewItem.Text;
+                    e.Graphics.DrawString(vendorName, new Font(FontFamily.GenericSansSerif, 12.0F), Brushes.Black, new Point(0, 0));
+
+                    ////e.HasMorePages = true;           
+                }
             }
         }
 
