@@ -132,7 +132,18 @@ namespace Vendord.Desktop.App
             get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0]; }
         }
 
-        #region Utilities       
+        #region Utilities
+
+        private ListViewItem GetSelectedListViewItem(ListView listView)
+        {
+            ListViewItem result;
+            result = null;
+            if (listView.SelectedItems.Count != 0)
+            {
+                result = listView.SelectedItems[0];
+            }
+            return result;
+        }
 
         private void EditOrderProductCasesToOrder(ListView listViewOrderProduct, ListViewItem listViewItemOrderProduct)
         {
@@ -174,8 +185,8 @@ namespace Vendord.Desktop.App
             ListViewItem selectedListViewOrderProductItem;
             OrderProduct orderProduct;
 
-            selectedListViewOrderItem = this.LvOrder.SelectedItems[0];
-            selectedListViewOrderProductItem = this.LvOrderProduct.SelectedItems[0];
+            selectedListViewOrderItem = GetSelectedListViewItem(this.LvOrder);
+            selectedListViewOrderProductItem = GetSelectedListViewItem(this.LvOrderProduct);
 
             if (selectedListViewOrderItem != null && selectedListViewOrderItem.Tag != null &&
                 selectedListViewOrderProductItem != null && selectedListViewOrderProductItem.Tag != null)
@@ -197,7 +208,7 @@ namespace Vendord.Desktop.App
 
             order = new Order()
             {
-                ID = new Guid(this.LvOrder.SelectedItems[0].Tag.ToString())
+                ID = new Guid(GetSelectedListViewItem(this.LvOrder).Tag.ToString())
             };
             order.AddToTrash(new Database());
         }
@@ -388,7 +399,7 @@ namespace Vendord.Desktop.App
 
             if (this.LvVendor != null)
             {
-                targetListViewItem = this.LvVendor.SelectedItems[0];
+                targetListViewItem = GetSelectedListViewItem(this.LvVendor);
                 currentVendor = targetListViewItem != null ? targetListViewItem.Text : null;
                 if (listBox != null && listBox.Items != null)
                 {
@@ -460,16 +471,17 @@ namespace Vendord.Desktop.App
             vendorName = null;
 
             // retrieve selected orderID            
-            orderID = new Guid(this.LvOrder.SelectedItems[0].Tag.ToString());
+            orderID = new Guid(GetSelectedListViewItem(this.LvOrder).Tag.ToString());
 
             if (orderID != null)
             {
-                // retrieve selected vendorName                
-                selectedListViewVendorItem = this.LvVendor.SelectedItems[0];
+                // retrieve selected vendorName
+                selectedListViewVendorItem = GetSelectedListViewItem(this.LvVendor);
                 if (selectedListViewVendorItem != null)
                 {
                     vendorName = selectedListViewVendorItem.Text;
                 }
+                          
 
                 // update listViewProduct 
                 this.AddDataToListViewOrderProduct(this.LvOrderProduct, orderID, vendorName);
@@ -543,7 +555,7 @@ namespace Vendord.Desktop.App
 
             this.LvVendor.Items.Clear();
 
-            selectedOrder = this.LvOrder.SelectedItems[0];
+            selectedOrder = GetSelectedListViewItem(this.LvOrder);
             if (selectedOrder != null)
             {
                 orderID = new Guid(selectedOrder.Tag.ToString());
