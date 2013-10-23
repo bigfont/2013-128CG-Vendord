@@ -38,8 +38,7 @@ namespace Vendord.Desktop.App
         private Panel mainContent;
         private int listViewItemIndexToPrintNext = 0;
         private Font myFont = new Font(FontFamily.GenericSerif, 12.0F);
-        private Brush myFontBrush = Brushes.Black;
-        private Point myPoint = new Point(0, 0);
+        private Brush myFontBrush = Brushes.Black;        
 
         private Button btnBack;
 
@@ -327,16 +326,17 @@ namespace Vendord.Desktop.App
         {
             string vendorName;
             string productName;
+            Point myPoint = new Point(0, 0);
 
             vendorName = this.LvVendor.SelectedItems[0].Text;
-            e.Graphics.DrawString(vendorName, this.myFont, this.myFontBrush, this.myPoint);
+            e.Graphics.DrawString(vendorName, this.myFont, this.myFontBrush, myPoint);
 
             foreach (ListViewItem item in this.LvOrderProduct.Items)
             {
-                this.myPoint.Y += 50;
+                myPoint.Y += 50;
 
                 productName = item.Text;
-                e.Graphics.DrawString(productName, this.myFont, this.myFontBrush, this.myPoint);
+                e.Graphics.DrawString(productName, this.myFont, this.myFontBrush, myPoint);
             }
         }
 

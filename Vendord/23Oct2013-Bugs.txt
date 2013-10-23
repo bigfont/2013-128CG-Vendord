@@ -4,7 +4,7 @@ MUST FIX
 - Print top padding increasing for each page.
 - Clicking on an actual order does not change focus to the order list view. Done.
 - There is flashing when click on the order listview if an only if we do not click on an actual item. Done.
-- Clicking no an actual order does not refresh the vendor list view.
+- Clicking no an actual order does not refresh the vendor list view. Wont fix.
 
 SHOULD FIX
 
