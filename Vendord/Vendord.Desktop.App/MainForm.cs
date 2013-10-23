@@ -26,7 +26,7 @@ namespace Vendord.Desktop.App
         private const int FormHeightMinimum = 500;
         private const int ColumnHeaderWidthDefault = 200;
         private const int ButtonHeight = 50;
-        private const int NumberOfNavigationButtons = 2;        
+        private const int NumberOfNavigationButtons = 2;
         private const double PrintPreviewZoom = 1f; // this is 100%        
         private const char ButtonMessageStartChar = '<';
         private const char ButtonMessageEndChar = '>';
@@ -39,6 +39,14 @@ namespace Vendord.Desktop.App
         private Back backDelegate;
 
         private Save saveDelegate; // TODO Assign to saveDelegate when we have something to save on the desktop
+
+        private float myHeaderFontSize = 12.0F;
+        private float myHeaderTextInset = 6.0F;
+        private float myHeaderBoarderThickness = 1.0F;
+        private float myHeaderPaddingThickness = 5.0F;
+        private float myHeaderHeightCorrection = 10.0F;
+        private string orderFor = "Country Grocer Salt Spring";
+        private string dept = "TODO - Add Dept";
 
         public MainForm()
         {
@@ -104,6 +112,21 @@ namespace Vendord.Desktop.App
 
         private delegate void Save();
 
+        private ListView LvOrder
+        {
+            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, false)[0]; }
+        }
+
+        private ListView LvVendor
+        {
+            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, false)[0]; }
+        }
+
+        private ListView LvOrderProduct
+        {
+            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0]; }
+        }
+
         #region Utilities
 
         private ListViewItem GetSelectedListViewItem(ListView listView)
@@ -148,7 +171,7 @@ namespace Vendord.Desktop.App
             textbox.Tag = new TagProperties() { OriginalText = textbox.Text };
 
             textbox.LostFocus += new EventHandler(this.TextboxCasesToOrder_LostFocus_SaveChanges);
-            textbox.KeyPress += new KeyPressEventHandler(Textbox_KeyPress_WhiteList);
+            textbox.KeyPress += new KeyPressEventHandler(this.Textbox_KeyPress_WhiteList);
 
             x =
                 listViewOrderProduct.Location.X +
@@ -166,23 +189,13 @@ namespace Vendord.Desktop.App
         }
 
         private int DeleteSelectedOrderProduct()
-        {
-            ListView listViewOrderProduct;
-            ListView listViewOrder;
+        {                        
             ListViewItem selectedListViewOrderItem;
             ListViewItem selectedListViewOrderProductItem;
-            OrderProduct orderProduct;
-
-            listViewOrderProduct = FormHelper
-                .GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true)
-                .FirstOrDefault<ListView>();
-
-            listViewOrder = FormHelper
-                .GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true)
-                .FirstOrDefault<ListView>();
-
-            selectedListViewOrderItem = this.GetSelectedListViewItem(listViewOrder);
-            selectedListViewOrderProductItem = this.GetSelectedListViewItem(listViewOrderProduct);
+            OrderProduct orderProduct;            
+            
+            selectedListViewOrderItem = this.GetSelectedListViewItem(this.LvOrder);
+            selectedListViewOrderProductItem = this.GetSelectedListViewItem(this.LvOrderProduct);
 
             if (selectedListViewOrderItem != null && selectedListViewOrderItem.Tag != null &&
                 selectedListViewOrderProductItem != null && selectedListViewOrderProductItem.Tag != null)
@@ -199,17 +212,12 @@ namespace Vendord.Desktop.App
         }
 
         private void DeleteSelectedOrder()
-        {
-            ListView listViewOrder;
-            Order order;
-
-            listViewOrder = FormHelper
-                .GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true)
-                .FirstOrDefault<ListView>();
+        {            
+            Order order;            
 
             order = new Order()
             {
-                ID = new Guid(listViewOrder.FocusedItem.Tag.ToString())
+                ID = new Guid(this.LvOrder.FocusedItem.Tag.ToString())
             };
             order.AddToTrash(new Database());
         }
@@ -260,39 +268,25 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private float MyHeaderFontSize = 12.0F;
-        private float MyHeaderTextInset = 6.0F;
-        private float MyHeaderBoarderThickness = 1.0F;
-        private float MyHeaderPaddingThickness = 5.0F;
-        private float MyHeaderHeightCorrection = 10.0F;
-        private string OrderFor = "Country Grocer Salt Spring";
-        private string Dept = "TODO - Add Dept";
-
         private void PrintSelectedOrder()
         {
             ListViewPrinter listViewPrinter;
-            ListView listViewOrderProduct;
-            ListView listViewOrder;
-            ListView listViewVendor;
 
             string supplier;
             StringBuilder header;
 
-            listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true)[0];
-            listViewOrderProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true)[0];
-            listViewVendor = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true)[0];
-
-            if (listViewOrder != null && listViewOrderProduct != null & listViewVendor != null)
+            if (this.LvOrder != null && this.LvOrderProduct != null & this.LvVendor != null)
             {
-                if (GetSelectedListViewItem(listViewOrder) != null)
+                if (this.GetSelectedListViewItem(this.LvOrder) != null)
                 {
                     supplier =
-                        GetSelectedListViewItem(listViewVendor).Text;
+                        this.GetSelectedListViewItem(this.LvVendor).Text;
 
                     header = new StringBuilder();
+
                     // line
-                    header.Append("Order for: " + this.OrderFor.ToUpper());
-                    header.Append("\nDept: " + this.Dept.ToUpper());                    
+                    header.Append("Order for: " + this.orderFor.ToUpper());
+                    header.Append("\nDept: " + this.dept.ToUpper());
                     header.Append("\nSupplier: " + supplier.ToUpper());
                     header.Append("\nOrder Created: " + DateTime.Now.ToLongDateString());
 
@@ -302,20 +296,20 @@ namespace Vendord.Desktop.App
                     listViewPrinter = new ListViewPrinter()
                     {
                         // set the most important settings
-                        ListView = listViewOrderProduct,
+                        ListView = this.LvOrderProduct,
                         Header = header.ToString(),
                         IsShrinkToFit = false
                     };
 
                     listViewPrinter.HeaderFormat = new BlockFormat()
                     {
-                        Font = new Font(FontFamily.GenericSansSerif, MyHeaderFontSize, FontStyle.Regular, GraphicsUnit.Point),
+                        Font = new Font(FontFamily.GenericSansSerif, this.myHeaderFontSize, FontStyle.Regular, GraphicsUnit.Point),
                         CanWrap = true,
-                        MinimumTextHeight = (MyHeaderFontSize * 4) + (MyHeaderTextInset * 2) + (MyHeaderBoarderThickness * 2) + (MyHeaderPaddingThickness * 2) + MyHeaderHeightCorrection                         
+                        MinimumTextHeight = (this.myHeaderFontSize * 4) + (this.myHeaderTextInset * 2) + (this.myHeaderBoarderThickness * 2) + (this.myHeaderPaddingThickness * 2) + this.myHeaderHeightCorrection
                     };
-                    listViewPrinter.HeaderFormat.SetTextInset(Sides.All, MyHeaderTextInset);
-                    listViewPrinter.HeaderFormat.SetBorder(Sides.All, MyHeaderBoarderThickness, new SolidBrush(Color.Black));
-                    listViewPrinter.HeaderFormat.SetPadding(Sides.All, MyHeaderPaddingThickness);                    
+                    listViewPrinter.HeaderFormat.SetTextInset(Sides.All, this.myHeaderTextInset);
+                    listViewPrinter.HeaderFormat.SetBorder(Sides.All, this.myHeaderBoarderThickness, new SolidBrush(Color.Black));
+                    listViewPrinter.HeaderFormat.SetPadding(Sides.All, this.myHeaderPaddingThickness);
 
                     // preview the document                                
                     PrintPreviewDialog printPreview = new PrintPreviewDialog()
@@ -337,26 +331,20 @@ namespace Vendord.Desktop.App
                 {
                     MessageBox.Show("Please select an order");
                 }
-
             }
         }
 
         private void UpdateListBoxProduct()
         {
-            ListBox listBox;
-            ListView listViewVendor;
+            ListBox listBox;            
             ListViewItem targetListViewItem;
             string currentVendor;
 
             listBox = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
 
-            listViewVendor = FormHelper
-                .GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true)
-                .FirstOrDefault<ListView>();
-
-            if (listViewVendor != null)
+            if (this.LvVendor != null)
             {
-                targetListViewItem = this.GetSelectedListViewItem(listViewVendor);
+                targetListViewItem = this.GetSelectedListViewItem(this.LvVendor);
                 currentVendor = targetListViewItem != null ? targetListViewItem.Text : null;
                 if (listBox != null && listBox.Items != null)
                 {
@@ -390,8 +378,7 @@ namespace Vendord.Desktop.App
 
         private void AddListBoxProduct()
         {
-            ListBox listBox;
-            ListView listViewVendor;
+            ListBox listBox;            
             string currentVendor;
 
             listBox = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
@@ -403,13 +390,9 @@ namespace Vendord.Desktop.App
                 listBox.Name = UserInputs.LbSelect;
                 listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
 
-                listViewVendor = FormHelper
-                    .GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true)
-                    .FirstOrDefault<ListView>();
-
-                if (listViewVendor != null)
+                if (this.LvVendor != null)
                 {
-                    currentVendor = listViewVendor.FocusedItem != null ? listViewVendor.FocusedItem.Text : null;
+                    currentVendor = this.LvVendor.FocusedItem != null ? this.LvVendor.FocusedItem.Text : null;
                     this.AddDataToListBoxProduct(listBox, currentVendor);
                     this.mainContent.Controls.Add(listBox);
                 }
@@ -421,43 +404,37 @@ namespace Vendord.Desktop.App
         }
 
         private ListView UpdateListViewOrderProduct()
-        {
-            ListView listViewOrder;
-            ListView listViewVendor;
-            ListView listViewOrderProduct;
+        {                                    
             ListViewItem selectedListViewVendorItem;
             Guid orderID;
             string vendorName;
 
-            // clear
-            listViewOrderProduct = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvOrderProduct, true).First<ListView>();
-            listViewOrderProduct.Items.Clear();
+            // clear            
+            this.LvOrderProduct.Items.Clear();
 
             // defaults            
             vendorName = null;
 
-            // retrieve selected orderID
-            listViewOrder = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvOrder, true).First<ListView>();
-            orderID = new Guid(listViewOrder.FocusedItem.Tag.ToString());
+            // retrieve selected orderID            
+            orderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString());
 
             if (orderID != null)
             {
-                // retrieve selected vendorName
-                listViewVendor = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvVendor, true).First<ListView>();
-                selectedListViewVendorItem = this.GetSelectedListViewItem(listViewVendor);
+                // retrieve selected vendorName                
+                selectedListViewVendorItem = this.GetSelectedListViewItem(this.LvVendor);
                 if (selectedListViewVendorItem != null)
                 {
                     vendorName = selectedListViewVendorItem.Text;
                 }
 
                 // update listViewProduct 
-                this.AddDataToListViewOrderProduct(listViewOrderProduct, orderID, vendorName);
+                this.AddDataToListViewOrderProduct(this.LvOrderProduct, orderID, vendorName);
             }
 
             // back
             this.EnableBackButton(this.LoadOrdersView);
 
-            return listViewOrderProduct;
+            return this.LvOrderProduct;
         }
 
         private void AddItemToListViewOrderProduct(Product product, int casesToOrder, ListView listViewOrderProduct)
@@ -516,27 +493,23 @@ namespace Vendord.Desktop.App
         }
 
         private ListView UpdateListViewVendor()
-        {
-            ListView listViewOrder;
-            ListView listViewVendor;
+        {          
             ListViewItem selectedOrder;
             Guid orderID;
 
-            listViewVendor = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvVendor, true).First<ListView>();
-            listViewVendor.Items.Clear();
+            this.LvVendor.Items.Clear();
 
-            listViewOrder = FormHelper.GetControlsByName<ListView>(this, UserInputs.LvOrder, true).First<ListView>();
-            selectedOrder = listViewOrder.FocusedItem;
+            selectedOrder = this.LvOrder.FocusedItem;
             if (selectedOrder != null)
             {
                 orderID = new Guid(selectedOrder.Tag.ToString());
-                this.AddDataToListViewVendor(listViewVendor, orderID);
+                this.AddDataToListViewVendor(this.LvVendor, orderID);
             }
 
             // back
             this.EnableBackButton(this.LoadOrdersView);
 
-            return listViewVendor;
+            return this.LvVendor;
         }
 
         private void AddDataToListViewVendor(ListView listViewVendor, Guid orderID)
@@ -588,10 +561,9 @@ namespace Vendord.Desktop.App
         private ListView UpdateListViewOrder()
         {
             ListView listViewOrder;
-            listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).First<ListView>();
-            listViewOrder.Items.Clear();
-            this.AddDataToListViewOrder(listViewOrder);
-            return listViewOrder;
+            this.LvOrder.Items.Clear();
+            this.AddDataToListViewOrder(this.LvOrder);
+            return this.LvOrder;
         }
 
         private void AddDataToListViewOrder(ListView listViewOrder)
@@ -877,10 +849,7 @@ namespace Vendord.Desktop.App
         }
 
         private void ListBox_DoubleClick_AddProductToOrder(object sender, EventArgs e)
-        {
-            ListView listViewOrderProduct;
-            ListView listViewVendor;
-            ListView listViewOrder;
+        {                                    
             ListViewItem listViewItemVendor;
             ListViewItem listViewItemOrderProduct;
             ListBox listBox;
@@ -891,47 +860,42 @@ namespace Vendord.Desktop.App
             {
                 listBox = sender as ListBox;
                 if (listBox.SelectedItem != null && listBox.SelectedItem is Product)
-                {
-                    listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
-                    if (listViewOrder.FocusedItem != null)
-                    {
-                        listViewVendor = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, false).FirstOrDefault<ListView>();
-                        listViewOrderProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false).FirstOrDefault<ListView>();
+                {                    
+                    if (this.LvOrder.FocusedItem != null)
+                    {                                                
                         product = listBox.SelectedItem as Product;
 
-                        if (listViewOrderProduct.Items.ContainsKey(product.UPC))
+                        if (this.LvOrderProduct.Items.ContainsKey(product.UPC))
                         {
                             // do not add it but do focus on it
-                            listViewItemOrderProduct = listViewOrderProduct.Items.Find(product.UPC, false)[0];
+                            listViewItemOrderProduct = this.LvOrderProduct.Items.Find(product.UPC, false)[0];
                         }
                         else
                         {
                             // save
                             orderProduct = new OrderProduct()
                             {
-                                OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
+                                OrderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString()),
                                 ProductUPC = product.UPC,
                                 CasesToOrder = Constants.DefaultCasesToOrder
                             };
                             orderProduct.UpsertIntoDB(new Database());
                         }
 
-                        // update ui
-                        listViewVendor = this.UpdateListViewVendor();
-                        if (listViewVendor.Items.Count > 0)
+                        // update ui                        
+                        if (this.UpdateListViewVendor().Items.Count > 0)
                         {
-                            listViewItemVendor = listViewVendor.Items.Find(product.VendorName, false)[0];
-                            listViewVendor.SelectedItems.Clear();
+                            listViewItemVendor = this.LvVendor.Items.Find(product.VendorName, false)[0];
+                            this.LvVendor.SelectedItems.Clear();
                             listViewItemVendor.Selected = true;
                             listViewItemVendor.Focused = true;
                         }
 
-                        // keep updating ui
-                        listViewOrderProduct = this.UpdateListViewOrderProduct();
-                        if (listViewOrderProduct.Items.Count > 0)
+                        // keep updating ui                        
+                        if (this.UpdateListViewOrderProduct().Items.Count > 0)
                         {
-                            listViewItemOrderProduct = listViewOrderProduct.Items.Find(product.UPC, false)[0];
-                            listViewOrderProduct.SelectedItems.Clear();
+                            listViewItemOrderProduct = this.LvOrderProduct.Items.Find(product.UPC, false)[0];
+                            this.LvOrderProduct.SelectedItems.Clear();
                             listViewItemOrderProduct.Selected = true;
                             listViewItemOrderProduct.Focused = true;
                         }
@@ -959,14 +923,12 @@ namespace Vendord.Desktop.App
             if (e.KeyChar == (char)Keys.Return)
             {
                 // cause the textbox to lose focus thereby triggering its LostFocus event
-                FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0].Focus();                
+                this.LvOrderProduct.Focus();
             }
         }
 
         private void SaveCasesToOrderFromTextboxAndRemoveFromUI(TextBox textbox)
         {
-            ListView listViewProduct;
-            ListView listViewOrder;
             OrderProduct orderProduct;
 
             /*
@@ -977,15 +939,11 @@ namespace Vendord.Desktop.App
             if (textbox.Text.Length > 0 &&
                 !(textbox.Tag as TagProperties).OriginalText.Equals(textbox.Text))
             {
-                // retrieve relevant controls
-                listViewOrder = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true).FirstOrDefault<ListView>();
-                listViewProduct = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true).FirstOrDefault<ListView>();            
-
                 // save the amount to order            
                 orderProduct = new OrderProduct()
                 {
-                    OrderID = new Guid(listViewOrder.FocusedItem.Tag.ToString()),
-                    ProductUPC = this.GetSelectedListViewItem(listViewProduct).Tag.ToString(),
+                    OrderID = new Guid(this.LvOrder.FocusedItem.Tag.ToString()),
+                    ProductUPC = this.GetSelectedListViewItem(this.LvOrderProduct).Tag.ToString(),
                     CasesToOrder = Convert.ToInt32(textbox.Text)
                 };
                 orderProduct.UpsertIntoDB(new Database());
@@ -999,7 +957,7 @@ namespace Vendord.Desktop.App
 
         private void TextboxCasesToOrder_LostFocus_SaveChanges(object sender, EventArgs e)
         {
-            SaveCasesToOrderFromTextboxAndRemoveFromUI(sender as TextBox);            
+            this.SaveCasesToOrderFromTextboxAndRemoveFromUI(sender as TextBox);
         }
 
         private void ListViewAny_SelectedIndexChanged_DisallowZeroSelectedItems(object sender, EventArgs e)
