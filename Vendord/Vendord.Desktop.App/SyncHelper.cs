@@ -114,7 +114,7 @@ namespace Vendord.Desktop.App
                 {
                     IOHelpers.LogException(e);
                 }
-                catch (System.Devices.RapiException e)
+                catch (System.Devices.RapiException)
                 { 
                 
                 }
