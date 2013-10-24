@@ -44,12 +44,6 @@ namespace Vendord.Desktop.App
 
         private Save saveDelegate; // TODO Assign to saveDelegate when we have something to save on the desktop
 
-        private float myHeaderFontSize = 12.0F;
-        private float myHeaderTextInset = 6.0F;
-        private float myHeaderBoarderThickness = 1.0F;
-        private float myHeaderPaddingThickness = 5.0F;
-        private float myHeaderHeightCorrection = 10.0F;
-
         public MainForm()
         {
             Control[] controls;
@@ -301,9 +295,9 @@ namespace Vendord.Desktop.App
             int numColumns = 3;
 
             // add some spaces
-            this.NewLine(e, myFont, ref myPoint);
-            this.NewLine(e, myFont, ref myPoint);
-            this.NewLine(e, myFont, ref myPoint);
+            this.NewLine(e, this.myFont, ref myPoint);
+            this.NewLine(e, this.myFont, ref myPoint);
+            this.NewLine(e, this.myFont, ref myPoint);
 
             e.Graphics.DrawString("UPC", this.myFont, this.myFontBrush, myPoint);
             this.NewColumn(e, numColumns, ref myPoint);
@@ -315,14 +309,14 @@ namespace Vendord.Desktop.App
             foreach (ListViewItem item in this.LvOrderProduct.Items)
             {
                 // new line
-                this.NewLine(e, myFont, ref myPoint);
-                productUpc = "TODO";
+                this.NewLine(e, this.myFont, ref myPoint);
+                productUpc = item.Tag.ToString();
                 e.Graphics.DrawString(productUpc, this.myFont, this.myFontBrush, myPoint);
                 this.NewColumn(e, numColumns, ref myPoint);
                 productName = item.Text;
                 e.Graphics.DrawString(productName, this.myFont, this.myFontBrush, myPoint);
                 this.NewColumn(e, numColumns, ref myPoint);
-                casesToOrder = "TODO";
+                casesToOrder = item.SubItems[1].Text.ToString(); // HACK - Magic Number.
                 e.Graphics.DrawString(casesToOrder, this.myFont, this.myFontBrush, myPoint);
             }
         }
@@ -344,13 +338,14 @@ namespace Vendord.Desktop.App
             {
                 vendor += this.SelectedListViewItem(this.LvVendor).Text;
             }
+
             orderCreated = "Order Created: " + DateTime.Now.ToLongDateString();
 
             // draw strings
             e.Graphics.DrawString(orderFor, this.myFont, this.myFontBrush, myPoint);
             this.NewColumn(e, numColumns, ref myPoint);
             e.Graphics.DrawString(dept, this.myFont, this.myFontBrush, myPoint);
-            this.NewLine(e, myFont, ref myPoint);
+            this.NewLine(e, this.myFont, ref myPoint);
             e.Graphics.DrawString(vendor, this.myFont, this.myFontBrush, myPoint);
             this.NewColumn(e, numColumns, ref myPoint);
             e.Graphics.DrawString(orderCreated, this.myFont, this.myFontBrush, myPoint);
@@ -391,7 +386,6 @@ namespace Vendord.Desktop.App
                         this.PreviewPrintDocument(printDocument);
                         ////printDocument.Print();
                     }
-
                 }
                 else
                 {
