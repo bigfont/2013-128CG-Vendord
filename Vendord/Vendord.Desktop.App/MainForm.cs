@@ -31,8 +31,6 @@ namespace Vendord.Desktop.App
         private const double PrintPreviewZoom = 1f; // this is 100%        
         private const char ButtonMessageStartChar = '<';
         private const char ButtonMessageEndChar = '>';
-        private const string OrderFor = "Country Grocer Salt Spring";
-        private const string Dept = "Grocery";
 
         private Panel mainNavigation;
         private Panel mainContent;
@@ -262,50 +260,7 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private ListViewPrinter CreateListViewPrinterFromListViewOrderProduct_Deprecated()
-        {
-            ListViewPrinter listViewPrinter;
-
-            string supplier;
-            StringBuilder header;
-
-            // get the name of the supplier
-            supplier = null;
-            if (this.SelectedListViewItem(this.LvVendor) != null)
-            {
-                supplier = this.SelectedListViewItem(this.LvVendor).Text;
-            }
-
-            // build the report header
-            header = new StringBuilder();
-            header.Append("Order for: " + OrderFor.ToUpper());
-            header.Append("\nDept: " + Dept.ToUpper());
-            header.Append("\nSupplier: " + supplier.ToUpper());
-            header.Append("\nOrder Created: " + DateTime.Now.ToLongDateString());
-
-            // NOTE the listViewPrinter derives the cell width from that of the listView it's printing.
-
-            // create the document
-            listViewPrinter = new ListViewPrinter()
-            {
-                // set the most important settings
-                ListView = this.LvOrderProduct,
-                Header = header.ToString(),
-                IsShrinkToFit = false
-            };
-
-            listViewPrinter.HeaderFormat = new BlockFormat()
-            {
-                Font = new Font(FontFamily.GenericSansSerif, this.myHeaderFontSize, FontStyle.Regular, GraphicsUnit.Point),
-                CanWrap = true,
-                MinimumTextHeight = (this.myHeaderFontSize * 4) + (this.myHeaderTextInset * 2) + (this.myHeaderBoarderThickness * 2) + (this.myHeaderPaddingThickness * 2) + this.myHeaderHeightCorrection
-            };
-            listViewPrinter.HeaderFormat.SetTextInset(Sides.All, this.myHeaderTextInset);
-            listViewPrinter.HeaderFormat.SetBorder(Sides.All, this.myHeaderBoarderThickness, new SolidBrush(Color.Black));
-            listViewPrinter.HeaderFormat.SetPadding(Sides.All, this.myHeaderPaddingThickness);
-
-            return listViewPrinter;
-        }
+        #region Print
 
         private void PreviewPrintDocument(PrintDocument printDocument)
         {
@@ -326,27 +281,88 @@ namespace Vendord.Desktop.App
             printPreview.ShowDialog();
         }
 
-        private void AddSelectedVendorOrderToThePrintDocument(PrintPageEventArgs e)
+        private void NewLine(PrintPageEventArgs e, Font myFont, ref Point myPoint)
         {
-            string vendorName;
+            myPoint.X = e.MarginBounds.Left;
+            myPoint.Y += myFont.Height;
+        }
+
+        private void NewColumn(PrintPageEventArgs e, int numColumns, ref Point myPoint)
+        {
+            myPoint.X += e.MarginBounds.Width / numColumns;
+        }
+
+        private void AddTheListView(PrintPageEventArgs e, ref Point myPoint)
+        {
+            // columns
+            string productUpc;
             string productName;
-            Point myPoint = new Point(0, 0);
+            string casesToOrder;
+            int numColumns = 3;
 
-            vendorName = null;
-            if (this.SelectedListViewItem(this.LvVendor) != null)
-            {
-                vendorName = this.SelectedListViewItem(this.LvVendor).Text;
-            }
+            // add some spaces
+            this.NewLine(e, myFont, ref myPoint);
+            this.NewLine(e, myFont, ref myPoint);
+            this.NewLine(e, myFont, ref myPoint);
 
-            e.Graphics.DrawString(vendorName, this.myFont, this.myFontBrush, myPoint);
+            e.Graphics.DrawString("UPC", this.myFont, this.myFontBrush, myPoint);
+            this.NewColumn(e, numColumns, ref myPoint);
+            e.Graphics.DrawString("Name", this.myFont, this.myFontBrush, myPoint);
+            this.NewColumn(e, numColumns, ref myPoint);
+            e.Graphics.DrawString("Cases to Order", this.myFont, this.myFontBrush, myPoint);
 
+            // add the rows
             foreach (ListViewItem item in this.LvOrderProduct.Items)
             {
-                myPoint.Y += 50;
-
+                // new line
+                this.NewLine(e, myFont, ref myPoint);
+                productUpc = "TODO";
+                e.Graphics.DrawString(productUpc, this.myFont, this.myFontBrush, myPoint);
+                this.NewColumn(e, numColumns, ref myPoint);
                 productName = item.Text;
                 e.Graphics.DrawString(productName, this.myFont, this.myFontBrush, myPoint);
+                this.NewColumn(e, numColumns, ref myPoint);
+                casesToOrder = "TODO";
+                e.Graphics.DrawString(casesToOrder, this.myFont, this.myFontBrush, myPoint);
             }
+        }
+
+        private void AddTheHeader(PrintPageEventArgs e, ref Point myPoint)
+        {
+            // declare fields
+            string orderFor;
+            string dept;
+            string vendor;
+            string orderCreated;
+            int numColumns = 2;
+
+            // instantiate fields
+            orderFor = "Order For: Country Grocer Salt Spring";
+            dept = "Dept: TODO - Add dept";
+            vendor = "Vendor: ";
+            if (this.SelectedListViewItem(this.LvVendor) != null)
+            {
+                vendor += this.SelectedListViewItem(this.LvVendor).Text;
+            }
+            orderCreated = "Order Created: " + DateTime.Now.ToLongDateString();
+
+            // draw strings
+            e.Graphics.DrawString(orderFor, this.myFont, this.myFontBrush, myPoint);
+            this.NewColumn(e, numColumns, ref myPoint);
+            e.Graphics.DrawString(dept, this.myFont, this.myFontBrush, myPoint);
+            this.NewLine(e, myFont, ref myPoint);
+            e.Graphics.DrawString(vendor, this.myFont, this.myFontBrush, myPoint);
+            this.NewColumn(e, numColumns, ref myPoint);
+            e.Graphics.DrawString(orderCreated, this.myFont, this.myFontBrush, myPoint);
+        }
+
+        private void AddSelectedVendorOrderToThePrintDocument(PrintPageEventArgs e)
+        {
+            Point myPoint;                           
+            
+            myPoint = new Point(e.MarginBounds.Left, e.MarginBounds.Top);
+            this.AddTheHeader(e, ref myPoint);
+            this.AddTheListView(e, ref myPoint);
         }
 
         private void PrintSelectedOrder()
@@ -355,7 +371,8 @@ namespace Vendord.Desktop.App
             {
                 if (this.SelectedListViewItem(this.LvOrder) != null && this.LvVendor.Items != null && this.LvVendor.Items.Count > 0)
                 {
-                    PrintDocument printDocument = new PrintDocument();
+                    PrintDocument printDocument = new PrintDocument();                    
+
                     if (this.LvVendor.SelectedItems.Count == 0)
                     {
                         printDocument.PrintPage += new PrintPageEventHandler(this.PrintDocument_PrintOrderForAllVendors);
@@ -365,7 +382,16 @@ namespace Vendord.Desktop.App
                         printDocument.PrintPage += new PrintPageEventHandler(this.PrintDocument_PrintOrderForSpecificVendor);
                     }
 
-                    this.PreviewPrintDocument(printDocument);
+                    PrintDialog printDialog = new PrintDialog();
+                    printDialog.Document = printDocument;
+                    printDialog.UseEXDialog = true;
+                    DialogResult result = printDialog.ShowDialog();
+                    if (result == DialogResult.OK)
+                    {
+                        this.PreviewPrintDocument(printDocument);
+                        ////printDocument.Print();
+                    }
+
                 }
                 else
                 {
@@ -373,6 +399,8 @@ namespace Vendord.Desktop.App
                 }
             }
         }
+
+        #endregion
 
         private void SaveCasesToOrderFromTextboxAndRemoveFromUI(TextBox textbox)
         {
@@ -879,11 +907,6 @@ namespace Vendord.Desktop.App
             this.LoadOrdersView();
         }
 
-        private void BtnPrintOrder_Click(object sender, EventArgs e)
-        {
-            this.PrintSelectedOrder();
-        }
-
         private void BtnCreateItem_Click(object sender, EventArgs e)
         {
             this.AddListBoxProduct();
@@ -1091,6 +1114,13 @@ namespace Vendord.Desktop.App
             }
         }
 
+        #region Print
+
+        private void BtnPrintOrder_Click(object sender, EventArgs e)
+        {
+            this.PrintSelectedOrder();
+        }
+
         private void PrintDocument_PrintOrderForSpecificVendor(object sender, PrintPageEventArgs e)
         {
             if (this.LvVendor != null && this.LvVendor.SelectedItems != null && this.LvVendor.SelectedItems.Count != 0)
@@ -1129,6 +1159,8 @@ namespace Vendord.Desktop.App
                 }
             }
         }
+
+        #endregion
 
         #endregion
 
