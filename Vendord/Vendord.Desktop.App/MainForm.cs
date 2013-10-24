@@ -135,7 +135,7 @@ namespace Vendord.Desktop.App
 
         private ListViewItem SelectedListViewItem(ListView listView)
         {
-            ListViewItem result;            
+            ListViewItem result;
             if (listView != null && listView.SelectedItems.Count != 0)
             {
                 result = listView.SelectedItems[0];
@@ -453,33 +453,24 @@ namespace Vendord.Desktop.App
             currentVendor = null;
             if (listBox == null)
             {
-                // there is no listbox
-                if (this.SelectedListViewItem(this.LvOrder) != null)
+                // there is no list box
+                if (this.SelectedListViewItem(this.LvVendor) != null)
                 {
-                    // the user has selected an order
-                    if (this.SelectedListViewItem(this.LvVendor) != null)
-                    {
-                        // the user has selected a vendor
-                        currentVendor = this.SelectedListViewItem(this.LvVendor).Text;
-                    }
-                    
-                    // create the list box
-                    listBox = new ListBox();
-                    listBox.Dock = DockStyle.Right;
-                    listBox.Name = UserInputs.LbSelect;
-                    listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
-
-                    // add data to listbox for the currentVendor.
-                    this.AddDataToListBoxProduct(listBox, currentVendor);
-
-                    // add the listbox to the GUI.
-                    this.mainContent.Controls.Add(listBox);
+                    // the user has selected a vendor
+                    currentVendor = this.SelectedListViewItem(this.LvVendor).Text;
                 }
-                else
-                {
-                    // the user has not selected an order
-                    MessageBox.Show("Please select an order");
-                }
+
+                // create the list box
+                listBox = new ListBox();
+                listBox.Dock = DockStyle.Right;
+                listBox.Name = UserInputs.LbSelect;
+                listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
+
+                // add data to listbox for the currentVendor.
+                this.AddDataToListBoxProduct(listBox, currentVendor);
+
+                // add the listbox to the GUI.
+                this.mainContent.Controls.Add(listBox);
             }
             else
             {
@@ -777,7 +768,7 @@ namespace Vendord.Desktop.App
             // create button(s)
             btnPrintOrder = new Button() { Text = "Print Current Order" };
             btnPrintOrder.Click += new EventHandler(this.BtnPrintOrder_Click);
-            btnCreateItem = new Button() { Text = "Add Product to Current Order", Name = UserInputs.BtnCreate };
+            btnCreateItem = new Button() { Text = "Show Product List", Name = UserInputs.BtnCreate };
             btnCreateItem.Click += new EventHandler(this.BtnCreateItem_Click);
             btnDeleteItem = new Button() { Text = "Delete Selected", Name = UserInputs.BtnDelete };
             btnDeleteItem.Click += new EventHandler(this.BtnDeleteItem_Click);
