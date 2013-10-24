@@ -136,7 +136,7 @@ namespace Vendord.Desktop.App
         private ListViewItem SelectedListViewItem(ListView listView)
         {
             ListViewItem result;            
-            if (listView.SelectedItems.Count != 0)
+            if (listView != null && listView.SelectedItems.Count != 0)
             {
                 result = listView.SelectedItems[0];
             }
@@ -450,20 +450,40 @@ namespace Vendord.Desktop.App
             string currentVendor;
 
             listBox = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
-
-            if (listBox == null && this.LvVendor != null && this.SelectedListViewItem(this.LvVendor) != null)
+            currentVendor = null;
+            if (listBox == null)
             {
-                listBox = new ListBox();
-                listBox.Dock = DockStyle.Right;
-                listBox.Name = UserInputs.LbSelect;
-                listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
+                // there is no listbox
+                if (this.SelectedListViewItem(this.LvOrder) != null)
+                {
+                    // the user has selected an order
+                    if (this.SelectedListViewItem(this.LvVendor) != null)
+                    {
+                        // the user has selected a vendor
+                        currentVendor = this.SelectedListViewItem(this.LvVendor).Text;
+                    }
+                    
+                    // create the list box
+                    listBox = new ListBox();
+                    listBox.Dock = DockStyle.Right;
+                    listBox.Name = UserInputs.LbSelect;
+                    listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
 
-                currentVendor = this.SelectedListViewItem(this.LvVendor) != null ? this.SelectedListViewItem(this.LvVendor).Text : null;
-                this.AddDataToListBoxProduct(listBox, currentVendor);
-                this.mainContent.Controls.Add(listBox);
+                    // add data to listbox for the currentVendor.
+                    this.AddDataToListBoxProduct(listBox, currentVendor);
+
+                    // add the listbox to the GUI.
+                    this.mainContent.Controls.Add(listBox);
+                }
+                else
+                {
+                    // the user has not selected an order
+                    MessageBox.Show("Please select an order");
+                }
             }
             else
             {
+                // there is already a listbox
                 this.mainContent.Controls.Remove(listBox);
             }
         }
