@@ -135,8 +135,7 @@ namespace Vendord.Desktop.App
 
         private ListViewItem SelectedListViewItem(ListView listView)
         {
-            ListViewItem result;
-            listView.Focus();
+            ListViewItem result;            
             if (listView.SelectedItems.Count != 0)
             {
                 result = listView.SelectedItems[0];
