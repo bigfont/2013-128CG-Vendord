@@ -384,7 +384,7 @@ namespace Vendord.Desktop.App
                     if (result == DialogResult.OK)
                     {
                         this.PreviewPrintDocument(printDocument);
-                        ////printDocument.Print();
+                        printDocument.Print();
                     }
                 }
                 else
