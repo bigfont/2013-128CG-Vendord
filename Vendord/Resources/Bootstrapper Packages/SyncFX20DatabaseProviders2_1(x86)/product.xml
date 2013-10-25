@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Product ProductCode="SyncFX20DatabaseProviders-v2.1(x86)" xmlns="http://schemas.microsoft.com/developer/2004/01/bootstrapper">
+  <RelatedProducts>
+    <DependsOnProduct Code="SyncFX20Core-v2.1(x86)" />
+  </RelatedProducts>
+</Product>

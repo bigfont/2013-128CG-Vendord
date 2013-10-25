@@ -1,0 +1,92 @@
+
+Deploy
+---
+
+- Open Visual Studio 2008 > Vendord
+
+- Publish Vendord.Desktop.App
+
+- Rebuild Vendord.SmartDevice.Setup 
+
+- Close Visual Studio 2008
+
+- Copy Vendord.SmartDevice.Setup.msi into ..\BigFont.MVC\Software\Vendord\WinCe6
+
+- Open Visual Studio 2013 > BigFont
+
+- Include the published Vendord.DesktopApp in the Project
+
+- Close Visual Studio 2013 and Save Changes
+
+- Open Git > BigFont
+
+git add -A
+git commit -m "Add vendord..."
+git push
+
+- Check that the newest version shows here
+http://www.bigfont.ca/software/vendord/win7/publish.htm	
+
+
+
+
+Uninstall from PC
+--- 
+
+- Delete the VENDORD AppData directory (warning - will delete data)
+
+- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center (warning - can be very hard)
+
+- Use AppWiz.cpl to uninstall the following
+
+1 Vendord
+2 MS SQL Server Compact 3.5 SP2 x64
+3 MS SQL Server Compact 3.5 SP2 for Devices
+4 MS SQL Server Compact 3.5 SP2
+
+
+
+
+ Uninstall from Device
+ ---
+
+- Delete the VENDORD ApplicationData directory (warning - will delete data)
+
+- Use AppWiz.cpl to uninstall the following
+
+1 Vendord
+2 SQL Server Compact 3.5 Core
+3 Microsoft .NET CF 3.5 EN-String Resources
+
+- Delete the Vendord.SmartDevice.App Program Files directory
+
+
+
+
+Install on PC
+---
+
+- Go to 
+http://www.bigfont.ca/software/vendord/win7/publish.htm
+
+- Click Install
+
+- Accept about twelve security warnings
+
+
+
+Install on Device
+--
+
+- Connect your device through Windows Mobile Device Center
+
+- Go to 
+http://www.bigfont.ca/software/vendord/win7/publish.htm
+
+- Click Install
+
+- Accept about twelve security warnings.
+
+- Accept all default settings
+
+
