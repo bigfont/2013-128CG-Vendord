@@ -43,6 +43,8 @@ Uninstall from PC
 2 MS SQL Server Compact 3.5 SP2 x64
 3 MS SQL Server Compact 3.5 SP2 for Devices
 4 MS SQL Server Compact 3.5 SP2
+5 Microsoft Sync Framework 2.1 Core Componsents (x86)
+6 Microsoft Sync Framework 2.1 Database Providers (x86)
 
 
 
