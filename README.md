@@ -41,3 +41,8 @@ Publish the Desktop App
 	- Websites > bigfont > deployments
 	- Check that the deployment succeeded.
 	- If it did, go to http://bigfont.ca/software/vendord/win7/publish.htm > Install
+	- Choose "Save"
+	- Accept the myriad security prompts
+	- Once it is downloaded, choose to Run setup.exe
+	- Accept the myriad security prompts
+	- Installation will eventually complete.
