@@ -483,11 +483,19 @@ namespace Vendord.Desktop.App
                 }
 
                 // create the list box
-                listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect, Width = 500 };
+                listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect };
                 listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
 
                 // add data to listbox for the currentVendor.
                 this.AddDataToListBoxProduct(listBox, currentVendor);
+
+                Graphics graphics = this.CreateGraphics();
+                var maxItemWidth = (
+                    from object item in listBox.Items 
+                    select graphics.MeasureString(item.ToString(), this.Font) 
+                    into mySize select (int) mySize.Width).Concat(new[] {0}).Max();
+
+                listBox.Width = maxItemWidth + SystemInformation.VerticalScrollBarWidth * 3;
 
                 // add the listbox to the GUI.
                 this.mainContent.Controls.Add(listBox);
