@@ -1,0 +1,10 @@
+
+- Setup a mobile partnership. Done. 
+
+- Install Vendord.SmartDevice.Setup. Done. 
+
+- Run Vendord.SmartDevice.App from Visual Studio using F5. Done.
+
+- Run Vendord.Desktop.App from Visual Studio using F5. Done. 
+
+- Programmatically read the PosBack.mdb file using System.Data.OleDb. Done.

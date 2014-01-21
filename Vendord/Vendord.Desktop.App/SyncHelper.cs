@@ -1,47 +1,46 @@
-﻿[module:
-    System.Diagnostics.CodeAnalysis.SuppressMessage(
+﻿using System;
+using System.Data.SqlClient;
+using System.Data.SqlServerCe;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.Synchronization;
+using Microsoft.Synchronization.Data;
+using Microsoft.Synchronization.Data.SqlServerCe;
+using Vendord.SmartDevice.Shared;
+
+[module:
+    SuppressMessage(
         "StyleCop.CSharp.DocumentationRules", "*",
         Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
 
 namespace Vendord.Desktop.App
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.SqlClient; // Full Edition
-    using System.Data.SqlServerCe; // Compact Edition
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-    using Microsoft.Synchronization;
-    using Microsoft.Synchronization.Data;
-    using Microsoft.Synchronization.Data.SqlServerCe;
-    using Vendord.SmartDevice.Shared;
+    // Full Edition
+    // Compact Edition
     using RAPI = System.Devices; // Remote API Managed Code Wrapper
 
     public class Sync
     {
         // rapi       
-        private string remoteDatabaseFullPath;
-        private string remoteDatabaseLocalCopyFullPath;
-
-        // ctor
-        public Sync()
-        {
-        }
-
-        // sync status
         public enum SyncResult
         {
             Disconnected,
             Complete
         }
 
+        private string remoteDatabaseFullPath;
+        private string remoteDatabaseLocalCopyFullPath;
+
+        // ctor
+
+        // sync status
+
         public SyncResult PullProductsFromITRetailDatabase()
         {
             SyncResult result;
             try
             {
-                this.CopyProductsFromITRetailDBToDesktopDB();
+                CopyProductsFromITRetailDBToDesktopDB();
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -56,7 +55,7 @@ namespace Vendord.Desktop.App
         public SyncResult MergeDesktopAndDeviceDatabases()
         {
             string[] tablesToSync;
-            string scopeName;            
+            string scopeName;
             DbSyncScopeDescription localScopeDesc;
             DbSyncScopeDescription remoteScopeDesc;
             SqlCeConnection localConn;
@@ -78,22 +77,22 @@ namespace Vendord.Desktop.App
                 try
                 {
                     // Get the remote database
-                    this.SetRemoteDeviceDatabaseNames(remoteDevice);
-                    this.CopyDatabaseFromDeviceToDesktop(remoteDevice);
+                    SetRemoteDeviceDatabaseNames(remoteDevice);
+                    CopyDatabaseFromDeviceToDesktop(remoteDevice);
 
                     // Instantiate the connections
                     localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.DatabaseFullPath));
-                    remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(this.remoteDatabaseLocalCopyFullPath));
+                    remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(remoteDatabaseLocalCopyFullPath));
 
                     // Describe the scope
-                    tablesToSync = new string[] { "tblOrder", "tblProduct", "tblOrderProduct" };
+                    tablesToSync = new[] {"tblOrder", "tblProduct", "tblOrderProduct"};
                     scopeName = "OrdersAndProducts";
-                    localScopeDesc = this.DescribeTheScope(tablesToSync, scopeName, localConn);
-                    remoteScopeDesc = this.DescribeTheScope(tablesToSync, scopeName, remoteConn);
+                    localScopeDesc = DescribeTheScope(tablesToSync, scopeName, localConn);
+                    remoteScopeDesc = DescribeTheScope(tablesToSync, scopeName, remoteConn);
 
                     // Provision the nodes
-                    this.ProvisionNode(localScopeDesc, localConn);
-                    this.ProvisionNode(remoteScopeDesc, remoteConn);
+                    ProvisionNode(localScopeDesc, localConn);
+                    ProvisionNode(remoteScopeDesc, remoteConn);
 
                     // Set sync options
                     orchestrator = SetSyncOptions(localScopeDesc, localConn, remoteConn);
@@ -104,21 +103,20 @@ namespace Vendord.Desktop.App
                     // Clean up
                     remoteConn.Close();
                     localConn.Close();
-                    this.CleanUpDatabases();
-                    this.CopyDatabaseBackToDevice(remoteDevice);
+                    CleanUpDatabases();
+                    CopyDatabaseBackToDevice(remoteDevice);
 
                     // success!
                     result = SyncResult.Complete;
                 }
-                catch (System.InvalidOperationException e)
+                catch (InvalidOperationException e)
                 {
                     IOHelpers.LogException(e);
                 }
-                catch (System.Devices.RapiException)
-                { 
-                
+                catch (RAPI.RapiException)
+                {
                 }
-            }            
+            }
 
             return result;
         }
@@ -133,7 +131,7 @@ namespace Vendord.Desktop.App
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    var product = new Product()
+                    var product = new Product
                     {
                         Name = Convert.ToString(reader["Name"]),
                         UPC = Convert.ToString(reader["UPC"]),
@@ -152,27 +150,49 @@ namespace Vendord.Desktop.App
 
             rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
             rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.ApplicationName);
-            this.remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.ApplicationDatabaseName);
-            this.remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.DatabaseFullPath, Constants.RemoteCopyFlag);
+            remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.ApplicationDatabaseName);
+            remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.DatabaseFullPath,
+                Constants.RemoteCopyFlag);
         }
 
         private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
         {
             // does the device have a database
-            if (RAPI.RemoteFile.Exists(remoteDevice, this.remoteDatabaseFullPath))
+            if (RAPI.RemoteFile.Exists(remoteDevice, remoteDatabaseFullPath))
             {
                 // yup, so copy it to the desktop
-                RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, this.remoteDatabaseFullPath, this.remoteDatabaseLocalCopyFullPath, true);
+                RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, remoteDatabaseFullPath, remoteDatabaseLocalCopyFullPath,
+                    true);
             }
             else
             {
-                RAPI.RemoteFile.Create(remoteDevice, this.remoteDatabaseFullPath);
+                RAPI.RemoteFile.Create(remoteDevice, remoteDatabaseFullPath);
+            }
+        }
+
+        private void CleanUpDatabases()
+        {
+            var db = new Database();
+            db.EmptyTrash();
+
+            var db_remote = new Database(remoteDatabaseLocalCopyFullPath);
+            db_remote.EmptyTrash();
+        }
+
+        private void CopyDatabaseBackToDevice(RAPI.RemoteDevice remoteDevice)
+        {
+            if (File.Exists(remoteDatabaseLocalCopyFullPath) &
+                RAPI.RemoteFile.Exists(remoteDevice, remoteDatabaseFullPath))
+            {
+                RAPI.RemoteFile.CopyFileToDevice(remoteDevice, remoteDatabaseLocalCopyFullPath, remoteDatabaseFullPath,
+                    true);
             }
         }
 
         #region MS Sync Framework
 
-        private DbSyncScopeDescription DescribeTheScope(string[] tablesToSync, string scopeName, SqlCeConnection localConn)
+        private DbSyncScopeDescription DescribeTheScope(string[] tablesToSync, string scopeName,
+            SqlCeConnection localConn)
         {
             DbSyncScopeDescription scopeDesc;
             DbSyncTableDescription tableDesc;
@@ -196,17 +216,18 @@ namespace Vendord.Desktop.App
 
         private void ProvisionNode(DbSyncScopeDescription scopeDesc, SqlCeConnection conn)
         {
-            SqlCeSyncScopeProvisioning ceConfig;            
+            SqlCeSyncScopeProvisioning ceConfig;
 
             ceConfig = new SqlCeSyncScopeProvisioning(conn);
             if (!ceConfig.ScopeExists(scopeDesc.ScopeName))
             {
                 ceConfig.PopulateFromScopeDescription(scopeDesc);
-                ceConfig.Apply();               
+                ceConfig.Apply();
             }
         }
 
-        private SyncOrchestrator SetSyncOptions(DbSyncScopeDescription scopeDesc, SqlCeConnection localConn, SqlCeConnection remoteConn)
+        private SyncOrchestrator SetSyncOptions(DbSyncScopeDescription scopeDesc, SqlCeConnection localConn,
+            SqlCeConnection remoteConn)
         {
             SqlCeSyncProvider localProvider;
             SqlCeSyncProvider remoteProvider;
@@ -218,7 +239,7 @@ namespace Vendord.Desktop.App
 
             remoteProvider = new SqlCeSyncProvider();
             remoteProvider.ScopeName = scopeDesc.ScopeName;
-            remoteProvider.Connection = remoteConn;   
+            remoteProvider.Connection = remoteConn;
 
             orchestrator = new SyncOrchestrator();
             orchestrator.LocalProvider = localProvider;
@@ -234,22 +255,5 @@ namespace Vendord.Desktop.App
         }
 
         #endregion
-
-        private void CleanUpDatabases()
-        {
-            Database db = new Database();
-            db.EmptyTrash();
-
-            Database db_remote = new Database(this.remoteDatabaseLocalCopyFullPath);
-            db_remote.EmptyTrash();
-        }
-
-        private void CopyDatabaseBackToDevice(RAPI.RemoteDevice remoteDevice)
-        {
-            if (File.Exists(this.remoteDatabaseLocalCopyFullPath) & RAPI.RemoteFile.Exists(remoteDevice, this.remoteDatabaseFullPath))
-            {
-                RAPI.RemoteFile.CopyFileToDevice(remoteDevice, this.remoteDatabaseLocalCopyFullPath, this.remoteDatabaseFullPath, true);
-            }
-        }
     }
 }
