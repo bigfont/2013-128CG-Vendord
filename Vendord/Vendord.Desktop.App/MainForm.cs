@@ -1095,7 +1095,7 @@ namespace Vendord.Desktop.App
             sync = new Sync();
 
             Cursor.Current = Cursors.WaitCursor;
-            syncResult = sync.PullProductsFromITRetailDatabase();
+            syncResult = sync.PullProductsFromItRetailDatabase();
             Cursor.Current = Cursors.Default;
 
             if (syncResult == Sync.SyncResult.Complete)
