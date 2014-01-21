@@ -4,13 +4,17 @@
 Publish the Desktop App
 --
 
-- Open Visual Studio 2008 > Vendord
+- Open Vendord.sln in Visual Studio 2008.
 
 - Publish Vendord.Desktop.App
 	- I.e. Right Click > Publish
-	- Location to Publish > C:\Users\Shaun\Documents\GitHub\BigFont\BigFont.MVC\Software\Vendord\Win7\
-	- From a Website > http://bigfont.ca/software/vendord/win7/
+	- Where do you want to publish the application? 
+	- C:\Users\Shaun\Documents\GitHub\BigFont\BigFont.MVC\Software\Vendord\Win7\
+	- How will users install the application? 
+	- From a website: 
+	- http://bigfont.ca/software/vendord/win7/
 	- Yes. This app is available online and offline.
+	- Next > Finish
 
 - Include the new files in BigFont.MVC
 	- Open Visual Studio 2013 > BigFont.MVC	
