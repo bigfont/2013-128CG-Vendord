@@ -1,7 +1,7 @@
 2013-128CG-Vendord
 ==================
 
-Publish the Desktop App
+ClickOnce Deployment of Vendord.Desktop.App
 --
 
 - Publish Vendord.Desktop.App
