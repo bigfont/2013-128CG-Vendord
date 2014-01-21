@@ -31,10 +31,6 @@ namespace Vendord.Desktop.App
         private string _remoteDatabaseFullPath;
         private string _remoteDatabaseLocalCopyFullPath;
 
-        // ctor
-
-        // sync status
-
         public SyncResult PullProductsFromItRetailDatabase()
         {
             SyncResult result;
