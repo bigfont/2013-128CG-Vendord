@@ -20,7 +20,8 @@ namespace Vendord.Desktop.App
 {
     // Full Edition
     // Compact Edition
-    using RAPI = System.Devices; // Remote API Managed Code Wrapper
+    using RAPI = System.Devices;
+    using System.Data.OleDb; // Remote API Managed Code Wrapper
 
     public class Sync
     {
@@ -39,7 +40,7 @@ namespace Vendord.Desktop.App
             SyncResult result;
             try
             {
-                CopyProductsFromItRetailDbToDesktopDb();
+                CopyProductsFromItRetailMsAccessBackupFileToDesktopDb();
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -68,7 +69,7 @@ namespace Vendord.Desktop.App
                 CopyDatabaseFromDeviceToDesktop(remoteDevice);
 
                 // Instantiate the connections
-                var localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.DatabaseFullPath));
+                var localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.VendordMainDatabaseFullPath));
                 var remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(_remoteDatabaseLocalCopyFullPath));
 
                 // Describe the scope
@@ -107,21 +108,26 @@ namespace Vendord.Desktop.App
             return result;
         }
 
-        private static void CopyProductsFromItRetailDbToDesktopDb()
+        private static void CopyProductsFromItRetailMsAccessBackupFileToDesktopDb()
         {
             // insert all products from IT Retail
-            using (var conn = new SqlConnection(Constants.ItRetailDatabaseConnectionString))
+            var msAccessConnString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};", Constants.ItRetailMsAccessBackupFileFullPath);
+            using (var conn = new OleDbConnection(msAccessConnString))
             {
                 conn.Open();
-                var command = new SqlCommand(@"SELECT Name, Upc, VendorName FROM Product", conn);
+
+                const string query = "SELECT upc, description FROM ProductSales;";
+                var command = new OleDbCommand(query, conn);
+
+
                 var reader = command.ExecuteReader();
-                while (reader.Read())
+                while (reader != null && reader.Read())
                 {
                     var product = new Product
                     {
-                        Name = Convert.ToString(reader["Name"]),
+                        Name = Convert.ToString(reader["Description"]),
                         Upc = Convert.ToString(reader["Upc"]),
-                        VendorName = Convert.ToString(reader["VendorName"])
+                        VendorName = "TODO - Retrieve Vendor Name"
                     };
 
                     product.UpsertIntoDb(new Database());
@@ -134,7 +140,7 @@ namespace Vendord.Desktop.App
             var rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
             var rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.ApplicationName);
             _remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.ApplicationDatabaseName);
-            _remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.DatabaseFullPath,
+            _remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.VendordMainDatabaseFullPath,
                 Constants.RemoteCopyFlag);
         }
 

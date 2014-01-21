@@ -208,7 +208,7 @@ namespace Vendord.SmartDevice.Linked
 
         public Database()
         {
-            string fullPath = Constants.DatabaseFullPath;
+            string fullPath = Constants.VendordMainDatabaseFullPath;
             this._connectionString = GenerateSqlCeConnString(fullPath);
             this.CreateCeDb(fullPath);
             this.CreateTables();
@@ -339,10 +339,11 @@ namespace Vendord.SmartDevice.Linked
                 SqlCeCommand cmd = conn.CreateCommand();
                 cmd.CommandText = cmdText;
                 if (parameters != null)
-                {
+                {                    
                     cmd.Parameters.AddRange(parameters);
                 }
                 result = cmd.ExecuteScalar();
+                cmd.Parameters.Clear();
             }
 
             return result;
@@ -363,6 +364,7 @@ namespace Vendord.SmartDevice.Linked
                     cmd.Parameters.AddRange(parameters);
                 }
                 rowsAffected = cmd.ExecuteNonQuery();
+                cmd.Parameters.Clear();
             }
 
             return rowsAffected;
