@@ -353,8 +353,8 @@ namespace Vendord.Desktop.App
 
         private void AddSelectedVendorOrderToThePrintDocument(PrintPageEventArgs e)
         {
-            Point myPoint;                           
-            
+            Point myPoint;
+
             myPoint = new Point(e.MarginBounds.Left, e.MarginBounds.Top);
             this.AddTheHeader(e, ref myPoint);
             this.AddTheListView(e, ref myPoint);
@@ -366,7 +366,7 @@ namespace Vendord.Desktop.App
             {
                 if (this.SelectedListViewItem(this.LvOrder) != null && this.LvVendor.Items != null && this.LvVendor.Items.Count > 0)
                 {
-                    PrintDocument printDocument = new PrintDocument();                    
+                    PrintDocument printDocument = new PrintDocument();
 
                     if (this.LvVendor.SelectedItems.Count == 0)
                     {
@@ -483,9 +483,7 @@ namespace Vendord.Desktop.App
                 }
 
                 // create the list box
-                listBox = new ListBox();
-                listBox.Dock = DockStyle.Right;
-                listBox.Name = UserInputs.LbSelect;
+                listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect, Width = 500 };
                 listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
 
                 // add data to listbox for the currentVendor.
