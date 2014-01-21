@@ -207,24 +207,24 @@ namespace Vendord.SmartDevice.Shared
 
     public class Database
     {
-        private static string sqlCeConnectionStringTemplate = @"Data Source={0};Persist Security Info=False;";
+        private const string SqlCeConnectionStringTemplate = @"Data Source={0};Persist Security Info=False;";
 
-        private List<Product> products;
-        private List<Order> order;
-        private List<OrderProduct> orderProducts;
-        private string connectionString;
+        private List<Product> _products;
+        private List<Order> _order;
+        private List<OrderProduct> _orderProducts;
+        private readonly string _connectionString;
 
         public Database()
         {
             string fullPath = Constants.DatabaseFullPath;
-            this.connectionString = GenerateSqlCeConnString(fullPath);
+            this._connectionString = GenerateSqlCeConnString(fullPath);
             this.CreateCeDB(fullPath);
             this.CreateTables();
         }
 
         public Database(string fullPath)
         {
-            this.connectionString = GenerateSqlCeConnString(fullPath);
+            this._connectionString = GenerateSqlCeConnString(fullPath);
             this.CreateCeDB(fullPath);
             this.CreateTables();
         }
@@ -236,10 +236,10 @@ namespace Vendord.SmartDevice.Shared
                 SqlCeDataReader reader;
                 System.Data.SqlServerCe.SqlCeCommand command;
 
-                if (this.order == null)
+                if (this._order == null)
                 {
-                    this.order = new List<Order>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this.connectionString))
+                    this._order = new List<Order>();
+                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
                     {
                         conn.Open();
                         command = new SqlCeCommand(@"SELECT * FROM tblOrder WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
@@ -251,12 +251,12 @@ namespace Vendord.SmartDevice.Shared
                                 ID = new Guid(reader["ID"].ToString()),
                                 Name = Convert.ToString(reader["Name"])
                             };
-                            this.order.Add(item);
+                            this._order.Add(item);
                         }
                     }
                 }
 
-                return this.order;
+                return this._order;
             }
         }
 
@@ -267,10 +267,10 @@ namespace Vendord.SmartDevice.Shared
                 SqlCeDataReader reader;
                 SqlCeCommand command;
 
-                if (this.products == null)
+                if (this._products == null)
                 {
-                    this.products = new List<Product>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this.connectionString))
+                    this._products = new List<Product>();
+                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
                     {
                         conn.Open();
                         command = new SqlCeCommand(@"SELECT * FROM tblProduct", conn);
@@ -283,12 +283,12 @@ namespace Vendord.SmartDevice.Shared
                                 UPC = Convert.ToString(reader["UPC"]),
                                 VendorName = Convert.ToString(reader["VendorName"])
                             };
-                            this.products.Add(item);
+                            this._products.Add(item);
                         }
                     }
                 }
 
-                return this.products;
+                return this._products;
             }
         }
 
@@ -296,13 +296,13 @@ namespace Vendord.SmartDevice.Shared
         {
             get
             {
-                if (this.orderProducts == null)
+                if (this._orderProducts == null)
                 {
                     SqlCeDataReader reader;
                     SqlCeCommand command;
 
-                    this.orderProducts = new List<OrderProduct>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this.connectionString))
+                    this._orderProducts = new List<OrderProduct>();
+                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
                     {
                         conn.Open();
                         command = new SqlCeCommand(@"SELECT * FROM tblOrderProduct WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
@@ -315,19 +315,19 @@ namespace Vendord.SmartDevice.Shared
                                 OrderID = new Guid(reader["OrderID"].ToString()),
                                 CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
                             };
-                            this.orderProducts.Add(item);
+                            this._orderProducts.Add(item);
                         }
                     }
                 }
 
-                return this.orderProducts;
+                return this._orderProducts;
             }
         }
 
         public static string GenerateSqlCeConnString(string databaseFullPath)
         {
             string sqlCeConnString;
-            sqlCeConnString = string.Format(sqlCeConnectionStringTemplate, databaseFullPath);
+            sqlCeConnString = string.Format(SqlCeConnectionStringTemplate, databaseFullPath);
             return sqlCeConnString;
         }
 
@@ -341,7 +341,7 @@ namespace Vendord.SmartDevice.Shared
         public object ExecuteScalar(string cmdText, SqlCeParameter[] parameters)
         {
             object result = null;
-            using (var conn = new SqlCeConnection(this.connectionString))
+            using (var conn = new SqlCeConnection(this._connectionString))
             {
                 conn.Open();
                 SqlCeCommand cmd = conn.CreateCommand();
@@ -361,7 +361,7 @@ namespace Vendord.SmartDevice.Shared
             int rowsAffected;
             rowsAffected = 0;
 
-            using (SqlCeConnection conn = new SqlCeConnection(this.connectionString))
+            using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
             {
                 conn.Open();
                 SqlCeCommand cmd = conn.CreateCommand();
@@ -384,7 +384,7 @@ namespace Vendord.SmartDevice.Shared
             IOHelpers.CreateDirectoryIfNotExists(Constants.ApplicationDataStoreFullPath);
             if (!File.Exists(databaseFullPath))
             {
-                var engine = new SqlCeEngine(this.connectionString);
+                var engine = new SqlCeEngine(this._connectionString);
                 engine.CreateDatabase();
                 engine.Dispose();
             }
