@@ -11,13 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Txt", "Txt", "{87EBA4DF-90F
 	ProjectSection(SolutionItems) = preProject
 		GettingStarted.txt = GettingStarted.txt
 		Txt\HowTo.AddPublishingPrerequisites.txt = Txt\HowTo.AddPublishingPrerequisites.txt
-		Txt\HowTo.Desktop.Deploy.txt = Txt\HowTo.Desktop.Deploy.txt
 		Txt\HowTo.Device.Deploy.txt = Txt\HowTo.Device.Deploy.txt
 		Txt\HowTo.SetupMobilePartnership.txt = Txt\HowTo.SetupMobilePartnership.txt
 		Txt\Overview.Deploy-Uninstall-Install.txt = Txt\Overview.Deploy-Uninstall-Install.txt
-		Txt\Requirements.Desktop.Deploy.txt = Txt\Requirements.Desktop.Deploy.txt
 		Txt\StyleCop.txt = Txt\StyleCop.txt
-		Txt\TroubleShooting.MS-Sync.txt = Txt\TroubleShooting.MS-Sync.txt
 	EndProjectSection
 EndProject
 Project("{B900F1C2-3D47-4FEC-85B3-04AAF18C3634}") = "Vendord.SmartDevice.Cab", "Vendord.SmartDevice.CAB\Vendord.SmartDevice.CAB.vddproj", "{6C907122-93EB-4C77-8A87-AC6BE21F8753}"

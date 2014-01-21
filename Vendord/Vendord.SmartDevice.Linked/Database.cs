@@ -45,7 +45,7 @@ namespace Vendord.SmartDevice.Shared
                 return tableName;
             }
         }
-                
+
         public int IsInTrash { get; set; }
 
         public void EmptyTrash(Database db)
@@ -55,7 +55,7 @@ namespace Vendord.SmartDevice.Shared
                 @"DELETE {0} WHERE (IsInTrash = 1)",
                 this.TableName);
 
-            db.ExecuteNonQuery(emptyTrashQuery);
+            db.ExecuteNonQuery(emptyTrashQuery, null);
         }
 
         public abstract void AddToTrash(Database db);
@@ -75,7 +75,7 @@ namespace Vendord.SmartDevice.Shared
                 @"INSERT INTO tblOrder (ID, Name) VALUES (NEWID(), '{0}');",
                 this.Name);
 
-            db.ExecuteNonQuery(insertQuery);
+            db.ExecuteNonQuery(insertQuery, null);
 
             // set the ID to the newly generated ID
             this.ID = db.Orders.FirstOrDefault<Order>(os => os.Name.Equals(this.Name)).ID;
@@ -90,7 +90,7 @@ namespace Vendord.SmartDevice.Shared
                 this.TableName,
                 this.ID);
 
-            db.ExecuteNonQuery(trashQuery);
+            db.ExecuteNonQuery(trashQuery, null);
         }
 
         public override string ToString()
@@ -108,32 +108,26 @@ namespace Vendord.SmartDevice.Shared
         public string VendorName { get; set; }
 
         public void UpsertIntoDB(Database db)
-        {
-            string selectQuery;
-            string insertQuery;
-            string updateQuery;
+        {            
 
-            selectQuery = string.Format(
-                @"SELECT COUNT(*) FROM {0} WHERE UPC = '{1}'",
-                this.TableName,
-                this.UPC);
-
-            insertQuery = string.Format(
-                @"INSERT INTO {0} (UPC, Name, VendorName) VALUES ('{1}', '{2}', '{3}')",
-                this.TableName,
-                this.UPC,
-                this.Name,
-                this.VendorName);
-
-            updateQuery = null; // TODO Add an update query if appropriate.                
-
-            if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
+            var parameters = new SqlCeParameter[]
             {
-                db.ExecuteNonQuery(insertQuery);
-            }
-            else if (updateQuery != null)
+                new SqlCeParameter() { ParameterName = "@Upc", SqlDbType = SqlDbType.NVarChar, Value = this.UPC },
+                new SqlCeParameter() { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = this.Name },
+                new SqlCeParameter() { ParameterName = "@VendorName", SqlDbType = SqlDbType.NVarChar, Value = this.VendorName }
+            };
+
+            string selectQuery = string.Format(
+                @"SELECT COUNT(*) FROM {0} WHERE UPC = @upc",
+                this.TableName);
+
+            string insertQuery = string.Format(
+                @"INSERT INTO {0} (UPC, Name, VendorName) VALUES (@upc, @name, @vendorName)",
+                this.TableName);
+
+            if (Convert.ToInt16(db.ExecuteScalar(selectQuery, parameters)) == 0)
             {
-                db.ExecuteNonQuery(updateQuery);
+                db.ExecuteNonQuery(insertQuery, parameters);
             }
         }
 
@@ -146,7 +140,7 @@ namespace Vendord.SmartDevice.Shared
                 this.TableName,
                 this.UPC);
 
-            db.ExecuteNonQuery(trashQuery);
+            db.ExecuteNonQuery(trashQuery, null);
         }
 
         public override string ToString()
@@ -186,14 +180,14 @@ namespace Vendord.SmartDevice.Shared
                 this.ProductUPC,
                 this.CasesToOrder);
 
-            if (Convert.ToInt16(db.ExecuteScalar(selectQuery)) == 0)
+            if (Convert.ToInt16(db.ExecuteScalar(selectQuery, null)) == 0)
             {
                 // TODO Add a code contract to ensure that both the order and the product exist in the database before insert
-                db.ExecuteNonQuery(insertQuery);
+                db.ExecuteNonQuery(insertQuery, null);
             }
             else
             {
-                db.ExecuteNonQuery(updateQuery);
+                db.ExecuteNonQuery(updateQuery, null);
             }
         }
 
@@ -207,7 +201,7 @@ namespace Vendord.SmartDevice.Shared
                 this.OrderID,
                 this.ProductUPC);
 
-            db.ExecuteNonQuery(trashQuery);
+            db.ExecuteNonQuery(trashQuery, null);
         }
     }
 
@@ -284,7 +278,7 @@ namespace Vendord.SmartDevice.Shared
                         while (reader.Read())
                         {
                             Product item = new Product()
-                            {                                
+                            {
                                 Name = Convert.ToString(reader["Name"]),
                                 UPC = Convert.ToString(reader["UPC"]),
                                 VendorName = Convert.ToString(reader["VendorName"])
@@ -344,21 +338,25 @@ namespace Vendord.SmartDevice.Shared
             (new OrderProduct()).EmptyTrash(this);
         }
 
-        public object ExecuteScalar(string cmdText)
+        public object ExecuteScalar(string cmdText, SqlCeParameter[] parameters)
         {
             object result = null;
-            using (SqlCeConnection conn = new SqlCeConnection(this.connectionString))
+            using (var conn = new SqlCeConnection(this.connectionString))
             {
                 conn.Open();
                 SqlCeCommand cmd = conn.CreateCommand();
                 cmd.CommandText = cmdText;
+                if (parameters != null)
+                {
+                    cmd.Parameters.AddRange(parameters);
+                }
                 result = cmd.ExecuteScalar();
             }
 
             return result;
         }
 
-        public int ExecuteNonQuery(string cmdText)
+        public int ExecuteNonQuery(string cmdText, SqlCeParameter[] parameters)
         {
             int rowsAffected;
             rowsAffected = 0;
@@ -368,6 +366,10 @@ namespace Vendord.SmartDevice.Shared
                 conn.Open();
                 SqlCeCommand cmd = conn.CreateCommand();
                 cmd.CommandText = cmdText;
+                if (parameters != null)
+                {
+                    cmd.Parameters.AddRange(parameters);
+                }
                 rowsAffected = cmd.ExecuteNonQuery();
             }
 
@@ -401,7 +403,7 @@ namespace Vendord.SmartDevice.Shared
             queryTemplate = @"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'";
             query = string.Format(queryTemplate, tableName);
 
-            count = (int)this.ExecuteScalar(query);
+            count = (int)this.ExecuteScalar(query, null);
 
             tableExists = count > 0;
 
@@ -420,7 +422,7 @@ namespace Vendord.SmartDevice.Shared
                     = @"CREATE TABLE tblOrder 
                     (ID uniqueidentifier PRIMARY KEY, Name NVARCHAR(100), IsInTrash BIT)";
 
-                this.ExecuteNonQuery(createTableQuery);
+                this.ExecuteNonQuery(createTableQuery, null);
             }
 
             if (!this.TableExists("tblProduct"))
@@ -429,7 +431,7 @@ namespace Vendord.SmartDevice.Shared
                     = @"CREATE TABLE tblProduct 
                     (UPC NVARCHAR(100) PRIMARY KEY, Name NVARCHAR(100), VendorName NVARCHAR(100), IsInTrash BIT)";
 
-                this.ExecuteNonQuery(createTableQuery);
+                this.ExecuteNonQuery(createTableQuery, null);
             }
 
             if (!this.TableExists("tblOrderProduct"))
@@ -439,7 +441,7 @@ namespace Vendord.SmartDevice.Shared
                     (OrderID uniqueidentifier, ProductUPC NVARCHAR(100), CasesToOrder INTEGER, IsInTrash BIT, 
                     CONSTRAINT PK_OrderProduct PRIMARY KEY (OrderID, ProductUPC))";
 
-                this.ExecuteNonQuery(createTableQuery);
+                this.ExecuteNonQuery(createTableQuery, null);
             }
         }
     }
