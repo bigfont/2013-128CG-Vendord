@@ -16,7 +16,7 @@ namespace Vendord.Desktop.App
     using System.Text;
     using System.Windows.Forms;
     using BrightIdeasSoftware;
-    using Vendord.SmartDevice.Shared;
+    using Vendord.SmartDevice.Linked;
 
     public class MainForm : Form
     {
@@ -203,7 +203,7 @@ namespace Vendord.Desktop.App
 
             order = new Order()
             {
-                ID = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString())
+                Id = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString())
             };
             order.AddToTrash(new Database());
         }
@@ -299,7 +299,7 @@ namespace Vendord.Desktop.App
             this.NewLine(e, this.myFont, ref myPoint);
             this.NewLine(e, this.myFont, ref myPoint);
 
-            e.Graphics.DrawString("UPC", this.myFont, this.myFontBrush, myPoint);
+            e.Graphics.DrawString("Upc", this.myFont, this.myFontBrush, myPoint);
             this.NewColumn(e, numColumns, ref myPoint);
             e.Graphics.DrawString("Name", this.myFont, this.myFontBrush, myPoint);
             this.NewColumn(e, numColumns, ref myPoint);
@@ -415,7 +415,7 @@ namespace Vendord.Desktop.App
                     ProductUPC = this.SelectedListViewItem(this.LvOrderProduct).Tag.ToString(),
                     CasesToOrder = Convert.ToInt32(textbox.Text)
                 };
-                orderProduct.UpsertIntoDB(new Database());
+                orderProduct.UpsertIntoDb(new Database());
 
                 // update the UI - this is a performance hit :-(                
                 this.UpdateListViewOrderProduct();
@@ -545,8 +545,8 @@ namespace Vendord.Desktop.App
             if (product != null)
             {
                 listViewItem = new ListViewItem(product.Name);
-                listViewItem.Tag = product.UPC;
-                listViewItem.Name = product.UPC;
+                listViewItem.Tag = product.Upc;
+                listViewItem.Name = product.Upc;
                 listViewItem.SubItems.Add(casesToOrder.ToString());
                 listViewOrderProduct.Items.Add(listViewItem);
             }
@@ -564,7 +564,7 @@ namespace Vendord.Desktop.App
                 db = new Database();
                 foreach (OrderProduct orderProduct in db.OrderProducts.Where(i => i.OrderID == orderID))
                 {
-                    product = filteredProducts.FirstOrDefault(p => p.UPC == orderProduct.ProductUPC);
+                    product = filteredProducts.FirstOrDefault(p => p.Upc == orderProduct.ProductUPC);
                     this.AddItemToListViewOrderProduct(product, orderProduct.CasesToOrder, listViewOrderProduct);
                 }
             }
@@ -623,7 +623,7 @@ namespace Vendord.Desktop.App
 
             var vendorNames =
                 from p in db.Products
-                join op in db.OrderProducts on p.UPC equals op.ProductUPC
+                join op in db.OrderProducts on p.Upc equals op.ProductUPC
                 where op.OrderID == orderID
                 group p by p.VendorName into g
                 select g.Key;
@@ -677,7 +677,7 @@ namespace Vendord.Desktop.App
             foreach (Order order in db.Orders)
             {
                 listViewItem = new ListViewItem(order.Name);
-                listViewItem.Tag = order.ID;
+                listViewItem.Tag = order.Id;
                 listViewItem.Name = order.Name;
                 listViewOrder.Items.Add(listViewItem);
             }
@@ -961,10 +961,10 @@ namespace Vendord.Desktop.App
                     {
                         product = listBox.SelectedItem as Product;
 
-                        if (this.LvOrderProduct.Items.ContainsKey(product.UPC))
+                        if (this.LvOrderProduct.Items.ContainsKey(product.Upc))
                         {
                             // do not add it but do focus on it
-                            listViewItemOrderProduct = this.LvOrderProduct.Items.Find(product.UPC, false)[0];
+                            listViewItemOrderProduct = this.LvOrderProduct.Items.Find(product.Upc, false)[0];
                         }
                         else
                         {
@@ -972,10 +972,10 @@ namespace Vendord.Desktop.App
                             orderProduct = new OrderProduct()
                             {
                                 OrderID = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString()),
-                                ProductUPC = product.UPC,
+                                ProductUPC = product.Upc,
                                 CasesToOrder = Constants.DefaultCasesToOrder
                             };
-                            orderProduct.UpsertIntoDB(new Database());
+                            orderProduct.UpsertIntoDb(new Database());
                         }
 
                         // update ui                        
@@ -990,7 +990,7 @@ namespace Vendord.Desktop.App
                         // keep updating ui                        
                         if (this.UpdateListViewOrderProduct().Items.Count > 0)
                         {
-                            listViewItemOrderProduct = this.LvOrderProduct.Items.Find(product.UPC, false)[0];
+                            listViewItemOrderProduct = this.LvOrderProduct.Items.Find(product.Upc, false)[0];
                             this.LvOrderProduct.SelectedItems.Clear();
                             listViewItemOrderProduct.Selected = true;
                             listViewItemOrderProduct.Focused = true;

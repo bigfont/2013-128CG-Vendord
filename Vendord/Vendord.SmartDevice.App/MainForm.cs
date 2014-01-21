@@ -16,7 +16,7 @@ namespace Vendord.SmartDevice.App
     using System.Text;
     using System.Windows.Forms;
     using Symbol.Barcode2;
-    using Vendord.SmartDevice.Shared;
+    using Vendord.SmartDevice.Linked;
 
     public class MainForm : Form
     {        
@@ -132,7 +132,7 @@ namespace Vendord.SmartDevice.App
                 db = new Database();
 
                 // update the currentOrder
-                this.currentOrder = db.Orders.FirstOrDefault(o => o.ID == orderID);
+                this.currentOrder = db.Orders.FirstOrDefault(o => o.Id == orderID);
             }
         }
 
@@ -159,7 +159,7 @@ namespace Vendord.SmartDevice.App
                 {
                     Name = textBoxes.FirstOrDefault<TextBox>().Text
                 };
-                newOrder.UpsertIntoDB(new Database());
+                newOrder.UpsertIntoDb(new Database());
                 this.currentOrder = newOrder;
             }
         }
@@ -182,11 +182,11 @@ namespace Vendord.SmartDevice.App
                 {
                     OrderProduct orderProduct = new OrderProduct()
                     {
-                        OrderID = this.currentOrder.ID,
-                        ProductUPC = this.currentProduct.UPC,
+                        OrderID = this.currentOrder.Id,
+                        ProductUPC = this.currentProduct.Upc,
                         CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
                     };
-                    orderProduct.UpsertIntoDB(new Database());
+                    orderProduct.UpsertIntoDb(new Database());
                 }
             }
         }
@@ -293,7 +293,7 @@ namespace Vendord.SmartDevice.App
                     Text = order.Name,
                     ImageIndex = 0
                 };
-                listViewItem.SubItems.Add(order.ID.ToString());
+                listViewItem.SubItems.Add(order.Id.ToString());
                 listOrders.Items.Add(listViewItem);
             }
 
@@ -432,7 +432,7 @@ namespace Vendord.SmartDevice.App
 
             // populate controls with default values
             lblProductUPC = new Label() { Text = scanData.Text };
-            lblProductName = new Label() { Text = "This UPC code is not in the database." };
+            lblProductName = new Label() { Text = "This Upc code is not in the database." };
             lblProductAmount = new Label() { Text = "Cases to Order:" };
             txtCasesToOrder = new TextBox() { Name = USER_INPUTS.TxtCasesToOrder, Enabled = false, Text = Constants.DefaultCasesToOrder.ToString() };
             lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
@@ -440,7 +440,7 @@ namespace Vendord.SmartDevice.App
             // get the appropriate product from the database
             db = new Database();
             scannedUpc = scanData.Text;            
-            this.currentProduct = db.Products.FirstOrDefault<Product>(p => p.UPC.Equals(scannedUpc));
+            this.currentProduct = db.Products.FirstOrDefault<Product>(p => p.Upc.Equals(scannedUpc));
 
             // if it is in the database
             if (this.currentProduct != null)
@@ -456,7 +456,7 @@ namespace Vendord.SmartDevice.App
                 // check if this product is already in this order
                 orderProduct =
                     db.OrderProducts.FirstOrDefault<OrderProduct>(op =>
-                    op.OrderID == this.currentOrder.ID && op.ProductUPC == this.currentProduct.UPC);
+                    op.OrderID == this.currentOrder.Id && op.ProductUPC == this.currentProduct.Upc);
                 if (orderProduct != null)
                 {
                     // it is so use it's existing amountToOrder

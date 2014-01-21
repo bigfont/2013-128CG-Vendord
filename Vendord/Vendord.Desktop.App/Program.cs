@@ -11,7 +11,7 @@ namespace Vendord.Desktop.App
     using System.Linq;
     using System.Windows.Forms;
 
-    using Vendord.SmartDevice.Shared;
+    using Vendord.SmartDevice.Linked;
 
     public static class Program
     {

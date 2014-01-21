@@ -3,7 +3,7 @@
         "StyleCop.CSharp.DocumentationRules", "*",
         Justification = "Reviewed. Suppression of all documentation rules is OK here.")]
 
-namespace Vendord.SmartDevice.Shared
+namespace Vendord.SmartDevice.Linked
 {
     using System;
     using System.Collections.Generic;    

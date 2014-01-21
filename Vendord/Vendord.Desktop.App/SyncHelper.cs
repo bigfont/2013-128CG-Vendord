@@ -9,7 +9,7 @@ using System.Linq;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Data;
 using Microsoft.Synchronization.Data.SqlServerCe;
-using Vendord.SmartDevice.Shared;
+using Vendord.SmartDevice.Linked;
 
 [module:
     SuppressMessage(
@@ -113,18 +113,18 @@ namespace Vendord.Desktop.App
             using (var conn = new SqlConnection(Constants.ItRetailDatabaseConnectionString))
             {
                 conn.Open();
-                var command = new SqlCommand(@"SELECT Name, UPC, VendorName FROM Product", conn);
+                var command = new SqlCommand(@"SELECT Name, Upc, VendorName FROM Product", conn);
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     var product = new Product
                     {
                         Name = Convert.ToString(reader["Name"]),
-                        UPC = Convert.ToString(reader["UPC"]),
+                        Upc = Convert.ToString(reader["Upc"]),
                         VendorName = Convert.ToString(reader["VendorName"])
                     };
 
-                    product.UpsertIntoDB(new Database());
+                    product.UpsertIntoDb(new Database());
                 }
             }
         }
