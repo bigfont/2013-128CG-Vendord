@@ -379,13 +379,12 @@ namespace Vendord.SmartDevice.Shared
         public void CreateCeDB(string databaseFullPath)
         {
             IOHelpers.LogSubroutine("CreateDB");
-            SqlCeEngine engine;
 
             // create the database
             IOHelpers.CreateDirectoryIfNotExists(Constants.ApplicationDataStoreFullPath);
             if (!File.Exists(databaseFullPath))
             {
-                engine = new SqlCeEngine(this.connectionString);
+                var engine = new SqlCeEngine(this.connectionString);
                 engine.CreateDatabase();
                 engine.Dispose();
             }
@@ -395,17 +394,12 @@ namespace Vendord.SmartDevice.Shared
         {
             IOHelpers.LogSubroutine("TableExists");
 
-            string queryTemplate;
-            string query;
-            int count;
-            bool tableExists;
+            const string queryTemplate = @"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'";
+            string query = string.Format(queryTemplate, tableName);
 
-            queryTemplate = @"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{0}'";
-            query = string.Format(queryTemplate, tableName);
+            var count = (int)this.ExecuteScalar(query, null);
 
-            count = (int)this.ExecuteScalar(query, null);
-
-            tableExists = count > 0;
+            bool tableExists = count > 0;
 
             return tableExists;
         }
