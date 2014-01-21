@@ -1,0 +1,13 @@
+
+MUST FIX
+
+- Printing prints twice if we click Print on the Print Preview but once if we click close.
+- Selecting an order and clicking back throws an error.
+- Sometimes the first scan in a new session doesn't work. We need to go "back" and then restart the session.
+
+
+SHOULD FIX
+
+
+
+NICE-TO-FIX

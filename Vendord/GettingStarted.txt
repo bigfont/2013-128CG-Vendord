@@ -1,0 +1,12 @@
+
+- Setup a Mobile Partnerhship 
+- See HowTo.SetupMobilePartnership.txt
+
+- Install the Vendord.SmartDevice.App 
+- by right clicking on Vendord.SmartDevice.Setup and choosing Install.
+
+- Debug the Vendord.SmartDevice.App
+- by right clicking it and choosing Debug > Start New Instance
+
+- Debu the Vendord.Desktop.App
+- by right clicking it and choosing Debug > Start New Instance

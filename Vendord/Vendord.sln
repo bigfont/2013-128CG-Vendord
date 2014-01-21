@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Txt", "Txt", "{87EBA4DF-90F
 		Txt\22Oct2013-InstallWithDerek.txt = Txt\22Oct2013-InstallWithDerek.txt
 		23Oct2013-Bugs.txt = 23Oct2013-Bugs.txt
 		Txt\23Oct2013-Bugs.txt = Txt\23Oct2013-Bugs.txt
+		@GettingStarted.txt = @GettingStarted.txt
 		Txt\HowTo.AddPublishingPrerequisites.txt = Txt\HowTo.AddPublishingPrerequisites.txt
 		Txt\HowTo.Desktop.Deploy.txt = Txt\HowTo.Desktop.Deploy.txt
 		Txt\HowTo.Device.Deploy.txt = Txt\HowTo.Device.Deploy.txt
@@ -39,6 +40,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 		Vendord.vsmdi = Vendord.vsmdi
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataProgramming-MicrosoftAccess2010", "DataProgramming-MicrosoftAccess2010\DataProgramming-MicrosoftAccess2010.csproj", "{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -148,8 +151,26 @@ Global
 		{E1B3117C-4477-4968-8E5F-DFB9C30B4DBE}.Release|Win32.ActiveCfg = Release
 		{E1B3117C-4477-4968-8E5F-DFB9C30B4DBE}.Release|x86.ActiveCfg = Release
 		{E1B3117C-4477-4968-8E5F-DFB9C30B4DBE}.Release|x86.Build.0 = Release
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|Win32.ActiveCfg = Release|Any CPU
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|x86.ActiveCfg = Release|x86
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9A52E8E3-0E1F-4F78-A173-6F2A2336E114} = {7925C6EB-6002-4319-8FC8-CE59F12BE765}
 	EndGlobalSection
 EndGlobal

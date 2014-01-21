@@ -33,19 +33,23 @@ http://www.bigfont.ca/software/vendord/win7/publish.htm
 Uninstall from PC
 --- 
 
-- Delete the VENDORD AppData directory (warning - will delete data)
+- Delete the VENDORD AppData directory [warning - will delete data]
 
-- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center (warning - can be very hard)
+- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center [warning - can be very hard - only do this if necessary]
 
-- Use AppWiz.cpl to uninstall the following
+- Use AppWiz.cpl to un-install the following
 
 1 Vendord
-2 MS SQL Server Compact 3.5 SP2 x64
-3 MS SQL Server Compact 3.5 SP2 for Devices
+2 MS SQL Server Compact 3.5 SP2 x64 *
+3 MS SQL Server Compact 3.5 SP2 for Devices *
 4 MS SQL Server Compact 3.5 SP2
-5 Microsoft Sync Framework 2.1 Core Componsents (x86)
-6 Microsoft Sync Framework 2.1 Database Providers (x86)
+5 MS SQL Server 2005 Compact Edition
+6 MS .NET Compact Framework 3.5 ^
+7 Microsoft Sync Framework 2.1 Core Components (x86)
+8 Microsoft Sync Framework 2.1 Database Providers (x86)
 
+* Not always present.
+^ Uninstall is not an option.
 
 
 
@@ -57,8 +61,10 @@ Uninstall from PC
 - Use AppWiz.cpl to uninstall the following
 
 1 Vendord
-2 SQL Server Compact 3.5 Core
+2 SQL Server Compact 3.5 Core *
 3 Microsoft .NET CF 3.5 EN-String Resources
+
+* If this doesn't uninstall properly, considering deleting the MS SQL Server Compact folder from /Program Files
 
 - Delete the Vendord.SmartDevice.App Program Files directory
 
@@ -83,12 +89,41 @@ Install on Device
 - Connect your device through Windows Mobile Device Center
 
 - Go to 
-http://www.bigfont.ca/software/vendord/win7/publish.htm
+http://www.bigfont.ca/software/vendord/wince6/publish.htm
 
 - Click Install
 
 - Accept about twelve security warnings.
 
-- Accept all default settings
+- Accept all default settings.
+
+- Consider deleting the ProgramFiles > BigFont > Vendord.SmartDevice.Setup folder.
+
+
+
+
+Installation Locations (for manual uninstall)
+--
+
+Device
+
+	\ > Application Data > VENDORD > ...
+	
+	\ > Program Files > Vendord > ...
+	
+	\ > Program Files > Microsoft SQL Server Compact Edition > v3.5 > ...
+
+PC
+
+		C: > ProgramFiles > BigFont > Vendord.SmartDevice.Setup > ...
+		
+		C: > Users > some_user > AppData > Roaming > VENDORD > ...
+		
+		C: > Users > some_user > AppData > Local > Apps > 2.0 > obfuscated_dir_name > obfuscated_dir_name > vend...
+		
+		TODO - Add dependency install locations.
+		
+
+
 
 

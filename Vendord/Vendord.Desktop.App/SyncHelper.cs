@@ -125,21 +125,15 @@ namespace Vendord.Desktop.App
 
         private void CopyProductsFromITRetailDBToDesktopDB()
         {
-            SqlDataReader reader;
-            SqlCommand command;
-            Product product;
-
-            product = new Product();
-
             // insert all products from IT Retail
-            using (SqlConnection conn = new SqlConnection(Constants.ItRetailDatabaseConnectionString))
+            using (var conn = new SqlConnection(Constants.ItRetailDatabaseConnectionString))
             {
                 conn.Open();
-                command = new SqlCommand(@"SELECT Name, UPC, VendorName FROM Product", conn);
-                reader = command.ExecuteReader();
+                var command = new SqlCommand(@"SELECT Name, UPC, VendorName FROM Product", conn);
+                SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    product = new Product()
+                    var product = new Product()
                     {
                         Name = Convert.ToString(reader["Name"]),
                         UPC = Convert.ToString(reader["UPC"]),

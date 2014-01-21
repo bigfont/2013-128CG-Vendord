@@ -1,7 +1,7 @@
 
 MUST FIX
 
-- Print top padding increasing for each page.
+- Print top padding increasing for each page. Done.
 - Clicking on an actual order does not change focus to the order list view. Done.
 - There is flashing when click on the order listview if an only if we do not click on an actual item. Done.
 - Clicking no an actual order does not refresh the vendor list view. Wont fix.
@@ -9,6 +9,5 @@ MUST FIX
 SHOULD FIX
 
 - ListBox takes two clicks to activate.
-
 
 NICE-TO-FIX
