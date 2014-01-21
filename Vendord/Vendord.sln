@@ -36,10 +36,6 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Vendord.SmartDevice.Setup", "Vendord.SmartDevice.Setup\Vendord.SmartDevice.Setup.vdproj", "{E1B3117C-4477-4968-8E5F-DFB9C30B4DBE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7925C6EB-6002-4319-8FC8-CE59F12BE765}"
-	ProjectSection(SolutionItems) = preProject
-		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
-		Vendord.vsmdi = Vendord.vsmdi
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataProgramming-MicrosoftAccess2010", "DataProgramming-MicrosoftAccess2010\DataProgramming-MicrosoftAccess2010.csproj", "{9A52E8E3-0E1F-4F78-A173-6F2A2336E114}"
 EndProject
