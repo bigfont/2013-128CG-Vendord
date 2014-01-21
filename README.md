@@ -46,3 +46,8 @@ ClickOnce Deployment of Vendord.Desktop.App
 	- Once it is downloaded, choose to Run setup.exe
 	- Accept the myriad security prompts
 	- Installation will eventually complete.
+
+Uninstall Vendord.Desktop.App
+--
+
+
