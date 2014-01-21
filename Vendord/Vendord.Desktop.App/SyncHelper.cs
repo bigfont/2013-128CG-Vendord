@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlServerCe;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using Microsoft.Synchronization;
 using Microsoft.Synchronization.Data;
 using Microsoft.Synchronization.Data.SqlServerCe;
@@ -36,7 +39,7 @@ namespace Vendord.Desktop.App
             SyncResult result;
             try
             {
-                CopyProductsFromITRetailDBToDesktopDB();
+                CopyProductsFromItRetailDbToDesktopDb();
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -55,65 +58,63 @@ namespace Vendord.Desktop.App
 
             // get the remote device
             var mgr = new RAPI.RemoteDeviceManager();
-            RAPI.RemoteDevice remoteDevice = mgr.Devices.FirstConnectedDevice;
-            if (remoteDevice != null && remoteDevice.Status == RAPI.DeviceStatus.Connected)
+            var remoteDevice = mgr.Devices.FirstConnectedDevice;
+            if (remoteDevice == null || remoteDevice.Status != RAPI.DeviceStatus.Connected) return result;
+            // we assume that we have a connected device now but sometimes it disconnected
+            try
             {
-                // we assume that we have a connected device now but sometimes it disconnected
-                try
-                {
-                    // Get the remote database
-                    SetRemoteDeviceDatabaseNames(remoteDevice);
-                    CopyDatabaseFromDeviceToDesktop(remoteDevice);
+                // Get the remote database
+                SetRemoteDeviceDatabaseNames(remoteDevice);
+                CopyDatabaseFromDeviceToDesktop(remoteDevice);
 
-                    // Instantiate the connections
-                    var localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.DatabaseFullPath));
-                    var remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(_remoteDatabaseLocalCopyFullPath));
+                // Instantiate the connections
+                var localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.DatabaseFullPath));
+                var remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(_remoteDatabaseLocalCopyFullPath));
 
-                    // Describe the scope
-                    var tablesToSync = new[] {"tblOrder", "tblProduct", "tblOrderProduct"};
-                    const string scopeName = "OrdersAndProducts";
-                    DbSyncScopeDescription localScopeDesc = DescribeTheScope(tablesToSync, scopeName, localConn);
-                    DbSyncScopeDescription remoteScopeDesc = DescribeTheScope(tablesToSync, scopeName, remoteConn);
+                // Describe the scope
+                var tablesToSync = new[] { "tblOrder", "tblProduct", "tblOrderProduct" };
+                const string scopeName = "OrdersAndProducts";
+                var localScopeDesc = DescribeTheScope(tablesToSync, scopeName, localConn);
+                var remoteScopeDesc = DescribeTheScope(tablesToSync, scopeName, remoteConn);
 
-                    // Provision the nodes
-                    ProvisionNode(localScopeDesc, localConn);
-                    ProvisionNode(remoteScopeDesc, remoteConn);
+                // Provision the nodes
+                ProvisionNode(localScopeDesc, localConn);
+                ProvisionNode(remoteScopeDesc, remoteConn);
 
-                    // Set sync options
-                    SyncOrchestrator orchestrator = SetSyncOptions(localScopeDesc, localConn, remoteConn);
+                // Set sync options
+                var orchestrator = SetSyncOptions(localScopeDesc, localConn, remoteConn);
 
-                    // Sync
-                    SyncTheNodes(orchestrator);
+                // Sync
+                SyncTheNodes(orchestrator);
 
-                    // Clean up
-                    remoteConn.Close();
-                    localConn.Close();
-                    CleanUpDatabases();
-                    CopyDatabaseBackToDevice(remoteDevice);
+                // Clean up
+                remoteConn.Close();
+                localConn.Close();
+                CleanUpDatabases();
+                CopyDatabaseBackToDevice(remoteDevice);
 
-                    // success!
-                    result = SyncResult.Complete;
-                }
-                catch (InvalidOperationException e)
-                {
-                    IOHelpers.LogException(e);
-                }
-                catch (RAPI.RapiException)
-                {
-                }
+                // success!
+                result = SyncResult.Complete;
+            }
+            catch (InvalidOperationException e)
+            {
+                IOHelpers.LogException(e);
+            }
+            catch (RAPI.RapiException)
+            {
             }
 
             return result;
         }
 
-        private void CopyProductsFromITRetailDBToDesktopDB()
+        private static void CopyProductsFromItRetailDbToDesktopDb()
         {
             // insert all products from IT Retail
             using (var conn = new SqlConnection(Constants.ItRetailDatabaseConnectionString))
             {
                 conn.Open();
                 var command = new SqlCommand(@"SELECT Name, UPC, VendorName FROM Product", conn);
-                SqlDataReader reader = command.ExecuteReader();
+                var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     var product = new Product
@@ -130,8 +131,8 @@ namespace Vendord.Desktop.App
 
         private void SetRemoteDeviceDatabaseNames(RAPI.RemoteDevice remoteDevice)
         {
-            string rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
-            string rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.ApplicationName);
+            var rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
+            var rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.ApplicationName);
             _remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.ApplicationDatabaseName);
             _remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.DatabaseFullPath,
                 Constants.RemoteCopyFlag);
@@ -173,62 +174,49 @@ namespace Vendord.Desktop.App
 
         #region MS Sync Framework
 
-        private DbSyncScopeDescription DescribeTheScope(string[] tablesToSync, string scopeName,
+        private static DbSyncScopeDescription DescribeTheScope(IEnumerable<string> tablesToSync, string scopeName,
             SqlCeConnection localConn)
         {
             // create a scope description object
-            var scopeDesc = new DbSyncScopeDescription();
-            scopeDesc.ScopeName = scopeName;
+            var scopeDesc = new DbSyncScopeDescription { ScopeName = scopeName };
 
             // connect to the local version of the database
 
             // add each table to the scope without any filtering
-            foreach (string tableName in tablesToSync)
+            foreach (var tableDesc in tablesToSync.Select(tableName => SqlCeSyncDescriptionBuilder.GetDescriptionForTable(tableName, localConn)))
             {
-                // get the table descriptions from the database
-                DbSyncTableDescription tableDesc = SqlCeSyncDescriptionBuilder.GetDescriptionForTable(tableName, localConn);
                 scopeDesc.Tables.Add(tableDesc);
             }
 
             return scopeDesc;
         }
 
-        private void ProvisionNode(DbSyncScopeDescription scopeDesc, SqlCeConnection conn)
+        private static void ProvisionNode(DbSyncScopeDescription scopeDesc, SqlCeConnection conn)
         {
-            SqlCeSyncScopeProvisioning ceConfig;
-
-            ceConfig = new SqlCeSyncScopeProvisioning(conn);
-            if (!ceConfig.ScopeExists(scopeDesc.ScopeName))
-            {
-                ceConfig.PopulateFromScopeDescription(scopeDesc);
-                ceConfig.Apply();
-            }
+            var ceConfig = new SqlCeSyncScopeProvisioning(conn);
+            if (ceConfig.ScopeExists(scopeDesc.ScopeName)) return;
+            ceConfig.PopulateFromScopeDescription(scopeDesc);
+            ceConfig.Apply();
         }
 
-        private SyncOrchestrator SetSyncOptions(DbSyncScopeDescription scopeDesc, SqlCeConnection localConn,
-            SqlCeConnection remoteConn)
+        private static SyncOrchestrator SetSyncOptions(DbSyncScopeDescription scopeDesc, IDbConnection localConn,
+            IDbConnection remoteConn)
         {
-            SqlCeSyncProvider localProvider;
-            SqlCeSyncProvider remoteProvider;
-            SyncOrchestrator orchestrator;
+            var localProvider = new SqlCeSyncProvider { ScopeName = scopeDesc.ScopeName, Connection = localConn };
 
-            localProvider = new SqlCeSyncProvider();
-            localProvider.ScopeName = scopeDesc.ScopeName;
-            localProvider.Connection = localConn;
+            var remoteProvider = new SqlCeSyncProvider { ScopeName = scopeDesc.ScopeName, Connection = remoteConn };
 
-            remoteProvider = new SqlCeSyncProvider();
-            remoteProvider.ScopeName = scopeDesc.ScopeName;
-            remoteProvider.Connection = remoteConn;
-
-            orchestrator = new SyncOrchestrator();
-            orchestrator.LocalProvider = localProvider;
-            orchestrator.RemoteProvider = remoteProvider;
-            orchestrator.Direction = SyncDirectionOrder.DownloadAndUpload;
+            var orchestrator = new SyncOrchestrator
+            {
+                LocalProvider = localProvider,
+                RemoteProvider = remoteProvider,
+                Direction = SyncDirectionOrder.DownloadAndUpload
+            };
 
             return orchestrator;
         }
 
-        private void SyncTheNodes(SyncOrchestrator orchestrator)
+        private static void SyncTheNodes(SyncOrchestrator orchestrator)
         {
             orchestrator.Synchronize();
         }
