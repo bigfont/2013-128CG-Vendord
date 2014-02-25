@@ -108,7 +108,7 @@ namespace Vendord.Desktop.App
             return result;
         }
 
-        private static void CopyProductsFromItRetailMsAccessBackupFileToDesktopDb()
+        private void CopyProductsFromItRetailMsAccessBackupFileToDesktopDb()
         {
             // insert all products from IT Retail
             var msAccessConnString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};", Constants.ItRetailMsAccessBackupFileFullPath);
