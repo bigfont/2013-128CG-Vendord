@@ -1,10 +1,6 @@
 
-Deploy
----
-
-- Open Visual Studio 2008 > Vendord
-
-- Publish Vendord.Desktop.App
+	
+	
 
 - Rebuild Vendord.SmartDevice.Setup 
 
@@ -67,20 +63,6 @@ Uninstall from PC
 * If this doesn't uninstall properly, considering deleting the MS SQL Server Compact folder from /Program Files
 
 - Delete the Vendord.SmartDevice.App Program Files directory
-
-
-
-
-Install on PC
----
-
-- Go to 
-http://www.bigfont.ca/software/vendord/win7/publish.htm
-
-- Click Install
-
-- Accept about twelve security warnings
-
 
 
 Install on Device
