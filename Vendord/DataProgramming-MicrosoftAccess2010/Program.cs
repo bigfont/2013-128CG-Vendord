@@ -15,7 +15,7 @@ namespace DataProgramming_MicrosoftAccess2010
                     "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=PosBack.mdb;Jet OLEDB:Database Password=1L0v3Acce55;");
 
             // Prepare SQL query
-            const string query = "SELECT upc, description FROM ProductSales;";
+            const string query = "SELECT upc, description FROM ProductSales;"; // cost, totalcost
             var cmd = new OleDbCommand(query, cn);
 
             try
