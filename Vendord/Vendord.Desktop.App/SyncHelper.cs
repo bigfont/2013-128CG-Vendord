@@ -143,8 +143,8 @@ namespace Vendord.Desktop.App
                 // if five seconds have passed, make the worker report progress
                 double timeSinceLastReport = DateTime.Now.Subtract(progressReportTime).TotalSeconds;
                 if (timeSinceLastReport >= 1.0)
-                {
-                    worker.ReportProgress(insertedRecords / totalRecords * 100);
+                {                    
+                    worker.ReportProgress(100 * insertedRecords / totalRecords);
                     progressReportTime = DateTime.Now;
                 }
             }
