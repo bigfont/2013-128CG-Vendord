@@ -22,7 +22,8 @@ namespace Vendord.Desktop.App
     // Compact Edition
     using RAPI = System.Devices;
     using System.Data.OleDb;
-    using System.Xml.Linq; // Remote API Managed Code Wrapper
+    using System.Xml.Linq;
+    using System.ComponentModel; // Remote API Managed Code Wrapper
 
     public class Sync
     {
@@ -36,12 +37,12 @@ namespace Vendord.Desktop.App
         private string _remoteDatabaseFullPath;
         private string _remoteDatabaseLocalCopyFullPath;
 
-        public SyncResult PullProductsFromItRetailDatabase()
+        public SyncResult PullProductsFromItRetailDatabase(BackgroundWorker worker, ref int totalRecords, ref int insertedRecords)
         {
             SyncResult result;
             try
             {
-                CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb();
+                CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(worker, ref totalRecords, ref insertedRecords);
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -113,23 +114,39 @@ namespace Vendord.Desktop.App
         {
             XElement productsXml = XElement.Load("products.xml");
             var query =
-                from p in productsXml.Descendants("products")
+                from p in productsXml.Descendants("Products")
                 select new Product()
                 {
                     Upc = (string)p.Element("upc"),
                     Name = (string)p.Element("description"),
                     Price = (decimal?)p.Element("normal_price"),
-                    VendorId = (int?)p.Element("vendor")
+                    VendorId = (int?)p.Element("vendor"), 
+                    VendorName = ""
                 };
             List<Product> products = query.ToList<Product>();
+            return products;
         }
 
-        private void CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb()
+        private void CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(BackgroundWorker worker, ref int totalRecords, ref int insertedRecords)
         {
             List<Product> products = GetProductListFromMsAccessXmlBackup();
+
+            insertedRecords = 0;
+            totalRecords = products.Count();
+            DateTime progressReportTime = DateTime.MinValue;
+
             foreach (Product p in products)
-            {             
-                product.UpsertIntoDb(new Database());
+            {                
+                p.UpsertIntoDb(new Database());
+                insertedRecords++;
+
+                // if five seconds have passed, make the worker report progress
+                double timeSinceLastReport = DateTime.Now.Subtract(progressReportTime).TotalSeconds;
+                if (timeSinceLastReport >= 1.0)
+                {
+                    worker.ReportProgress(insertedRecords / totalRecords * 100);
+                    progressReportTime = DateTime.Now;
+                }
             }
         }
 

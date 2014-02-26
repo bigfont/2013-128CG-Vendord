@@ -34,6 +34,11 @@ namespace Vendord.Desktop.App
 
         private Panel mainNavigation;
         private Panel mainContent;
+
+        private BackgroundWorker backgroundWorker;
+        private int totalRecords;
+        private int insertedRecords;
+
         private int listViewItemIndexToPrintNext = 0;
         private Font myFont = new Font(FontFamily.GenericSerif, 12.0F);
         private Brush myFontBrush = Brushes.Black;
@@ -54,6 +59,16 @@ namespace Vendord.Desktop.App
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.MinimumSize = new Size(FormWidthMinimum, FormHeightMinimum);
             this.BackColor = Color.White;
+
+            // create background worker and it's progress reported            
+            this.backgroundWorker = new BackgroundWorker();
+            this.backgroundWorker.WorkerReportsProgress = true;
+            this.backgroundWorker.DoWork
+                += new DoWorkEventHandler(BackgroundWorker_DoWork);
+            this.backgroundWorker.ProgressChanged
+                += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted
+                += new RunWorkerCompletedEventHandler(BackgroundWorker_RunWorkerCompleted);
 
             // create main navigation panel
             this.mainNavigation = new Panel();
@@ -491,9 +506,10 @@ namespace Vendord.Desktop.App
 
                 Graphics graphics = this.CreateGraphics();
                 var maxItemWidth = (
-                    from object item in listBox.Items 
-                    select graphics.MeasureString(item.ToString(), this.Font) 
-                    into mySize select (int) mySize.Width).Concat(new[] {0}).Max();
+                    from object item in listBox.Items
+                    select graphics.MeasureString(item.ToString(), this.Font)
+                        into mySize
+                        select (int)mySize.Width).Concat(new[] { 0 }).Max();
 
                 listBox.Width = maxItemWidth + SystemInformation.VerticalScrollBarWidth * 3;
 
@@ -1096,22 +1112,47 @@ namespace Vendord.Desktop.App
 
         private void BtnGetProductsFromITRetail_Click(object sender, EventArgs e)
         {
-            Sync sync;
-            Sync.SyncResult syncResult;
-            sync = new Sync();
-
-            Cursor.Current = Cursors.WaitCursor;
-            syncResult = sync.PullProductsFromItRetailDatabase();
-            Cursor.Current = Cursors.Default;
-
-            if (syncResult == Sync.SyncResult.Complete)
+            if (this.backgroundWorker.IsBusy != true)
             {
-                this.ButtonMessage_Done(sender as Button, "Done");
+                this.backgroundWorker.RunWorkerAsync();
             }
-            else if (syncResult == Sync.SyncResult.Disconnected)
-            {
-                this.ButtonMessage_Problem(sender as Button, "Disconnected");
-            }
+        }
+
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            ////Sync sync;
+            ////Sync.SyncResult syncResult;
+            ////sync = new Sync();
+
+            ////Cursor.Current = Cursors.WaitCursor;
+            ////syncResult = sync.PullProductsFromItRetailDatabase();
+            ////Cursor.Current = Cursors.Default;
+
+            ////if (syncResult == Sync.SyncResult.Complete)
+            ////{
+            ////    this.ButtonMessage_Done(sender as Button, "Done");
+            ////}
+            ////else if (syncResult == Sync.SyncResult.Disconnected)
+            ////{
+            ////    this.ButtonMessage_Problem(sender as Button, "Disconnected");
+            ////}
+
+            BackgroundWorker worker = sender as BackgroundWorker;
+            Sync sync = new Sync();
+            sync.PullProductsFromItRetailDatabase(worker, ref totalRecords, ref insertedRecords);
+        }
+
+        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("Updated {0}/{1} products - {2}% complete.", insertedRecords, totalRecords, e.ProgressPercentage);
+            this.Text = builder.ToString();
+        }
+
+        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            int i = 0;
+            ++i;
         }
 
         #region Print
