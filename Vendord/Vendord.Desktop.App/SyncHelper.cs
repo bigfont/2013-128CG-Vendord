@@ -21,7 +21,8 @@ namespace Vendord.Desktop.App
     // Full Edition
     // Compact Edition
     using RAPI = System.Devices;
-    using System.Data.OleDb; // Remote API Managed Code Wrapper
+    using System.Data.OleDb;
+    using System.Xml.Linq; // Remote API Managed Code Wrapper
 
     public class Sync
     {
@@ -40,7 +41,7 @@ namespace Vendord.Desktop.App
             SyncResult result;
             try
             {
-                CopyProductsFromItRetailMsAccessBackupFileToDesktopDb();
+                CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb();
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -108,30 +109,27 @@ namespace Vendord.Desktop.App
             return result;
         }
 
-        private void CopyProductsFromItRetailMsAccessBackupFileToDesktopDb()
+        private List<Product> GetProductListFromMsAccessXmlBackup()
         {
-            // insert all products from IT Retail
-            var msAccessConnString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};", Constants.ItRetailMsAccessBackupFileFullPath);
-            using (var conn = new OleDbConnection(msAccessConnString))
-            {
-                conn.Open();
-
-                const string query = "SELECT upc, description FROM ProductSales;";
-                var command = new OleDbCommand(query, conn);
-
-
-                var reader = command.ExecuteReader();
-                while (reader != null && reader.Read())
+            XElement productsXml = XElement.Load("products.xml");
+            var query =
+                from p in productsXml.Descendants("products")
+                select new Product()
                 {
-                    var product = new Product
-                    {
-                        Name = Convert.ToString(reader["Description"]),
-                        Upc = Convert.ToString(reader["Upc"]),
-                        VendorName = "TODO - Retrieve Vendor Name"
-                    };
+                    Upc = (string)p.Element("upc"),
+                    Name = (string)p.Element("description"),
+                    Price = (decimal?)p.Element("normal_price"),
+                    VendorId = (int?)p.Element("vendor")
+                };
+            List<Product> products = query.ToList<Product>();
+        }
 
-                    product.UpsertIntoDb(new Database());
-                }
+        private void CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb()
+        {
+            List<Product> products = GetProductListFromMsAccessXmlBackup();
+            foreach (Product p in products)
+            {             
+                product.UpsertIntoDb(new Database());
             }
         }
 
