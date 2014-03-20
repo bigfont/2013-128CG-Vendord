@@ -12,12 +12,12 @@ namespace Vendord.Desktop.App
     using System.Data;
     using System.Drawing;
     using System.Drawing.Printing;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Windows.Forms;
     using BrightIdeasSoftware;
     using Vendord.SmartDevice.Linked;
-    using System.IO;
 
     public class MainForm : Form
     {
@@ -32,6 +32,10 @@ namespace Vendord.Desktop.App
         private const double PrintPreviewZoom = 1f; // this is 100%        
         private const char ButtonMessageStartChar = '<';
         private const char ButtonMessageEndChar = '>';
+        private const string DefaultStatusLabelText = "Status:";
+        private const int DefaultStatusMin = 0;
+        private const int DefaultStatusMax = 1;
+        private const int DefaultStatusValue = 1;
 
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusLabel;
@@ -66,27 +70,28 @@ namespace Vendord.Desktop.App
 
             // enable drag and drop
             this.AllowDrop = true;
-            this.DragEnter += new DragEventHandler(Form1_DragEnter);
-            this.DragDrop += new DragEventHandler(Form1_DragDrop);            
+            this.DragEnter += new DragEventHandler(this.Form1_DragEnter);
+            this.DragDrop += new DragEventHandler(this.Form1_DragDrop);            
 
             // create background worker and it's progress reported            
             this.backgroundWorker = new BackgroundWorker();
             this.backgroundWorker.WorkerReportsProgress = true;
             this.backgroundWorker.DoWork
-                += new DoWorkEventHandler(BackgroundWorker_DoWork);
+                += new DoWorkEventHandler(this.BackgroundWorker_DoWork);
             this.backgroundWorker.ProgressChanged
-                += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
+                += new ProgressChangedEventHandler(this.BackgroundWorker_ProgressChanged);
             this.backgroundWorker.RunWorkerCompleted
-                += new RunWorkerCompletedEventHandler(BackgroundWorker_RunWorkerCompleted);
+                += new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
 
             // add a status strip
             this.statusStrip = new StatusStrip();
             this.statusStrip.Dock = DockStyle.Top;            
             this.statusStrip.SizingGrip = false;
             this.statusStrip.BackColor = Color.Transparent;
-            this.statusLabel = new ToolStripStatusLabel("Status Label Text");
-            this.progressBar = new ToolStripProgressBar("Progress Bar Name") { AutoSize = false, Dock = DockStyle.Fill };
-            this.statusStrip.Items.AddRange(new ToolStripItem[] { this.statusLabel, this.progressBar });            
+            this.statusLabel = new ToolStripStatusLabel(DefaultStatusLabelText);
+            this.progressBar = new ToolStripProgressBar() { AutoSize = false, Dock = DockStyle.Fill };
+            this.statusStrip.Items.AddRange(new ToolStripItem[] { this.statusLabel, this.progressBar });
+            this.UpdateStatusStrip(null, null, null, null);
 
             // create main navigation panel
             this.mainNavigation = new Panel();
@@ -112,10 +117,10 @@ namespace Vendord.Desktop.App
             // Create Buttons
             Button btnClose;
 
-            this.btnBack = ButtonFactory("Back");
+            this.btnBack = this.ButtonFactory("Back");
             this.btnBack.Click += new EventHandler(this.BtnBack_Click);
 
-            btnClose = ButtonFactory("Save and Close");
+            btnClose = this.ButtonFactory("Save and Close");
             btnClose.Click += new EventHandler(this.BtnClose_Click);
 
             // add to panel - this triggers its layout event            
@@ -538,7 +543,7 @@ namespace Vendord.Desktop.App
                         into mySize
                         select (int)mySize.Width).Concat(new[] { 0 }).Max();
 
-                listBox.Width = maxItemWidth + SystemInformation.VerticalScrollBarWidth * 3;
+                listBox.Width = maxItemWidth + (SystemInformation.VerticalScrollBarWidth * 3);
 
                 // add the listbox to the GUI.
                 this.mainContent.Controls.Add(listBox);
@@ -781,7 +786,7 @@ namespace Vendord.Desktop.App
         {
             Button btnOrders;
 
-            btnOrders = ButtonFactory("Orders");
+            btnOrders = this.ButtonFactory("Orders");
             btnOrders.Click += new EventHandler(this.BtnOrders_Click);
 
             btnOrders.Dock = DockStyle.Top;
@@ -793,24 +798,19 @@ namespace Vendord.Desktop.App
 
         private void LoadOrdersView()
         {
-            Button btnGetProductsFromITRetail;
             Button btnSyncHandheld;
             Button btnViewOrders;
             Button[] buttons;
 
-            btnGetProductsFromITRetail = ButtonFactory("Get Products from IT Retail");
-            btnGetProductsFromITRetail.Click += new EventHandler(this.BtnGetProductsFromITRetail_Click);
-
-            btnSyncHandheld = ButtonFactory("Sync Handheld (before and after Scanning)");
+            btnSyncHandheld = this.ButtonFactory("Sync Handheld (before and after Scanning)");
             btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
 
-            btnViewOrders = ButtonFactory("View Orders"); 
+            btnViewOrders = this.ButtonFactory("View Orders"); 
             btnViewOrders.Click += new EventHandler(this.BtnViewOrders_Click);
 
             // add
             buttons = new Button[] 
             { 
-                btnGetProductsFromITRetail,
                 btnViewOrders,
                 btnSyncHandheld
             };
@@ -837,12 +837,12 @@ namespace Vendord.Desktop.App
             ListView[] listViews;
 
             // create button(s)
-            btnPrintOrder = ButtonFactory("Print Current Order");
+            btnPrintOrder = this.ButtonFactory("Print Current Order");
             btnPrintOrder.Click += new EventHandler(this.BtnPrintOrder_Click);
-            btnCreateItem = ButtonFactory("Show Product List");
+            btnCreateItem = this.ButtonFactory("Show Product List");
             btnCreateItem.Name = UserInputs.BtnCreate;
             btnCreateItem.Click += new EventHandler(this.BtnCreateItem_Click);
-            btnDeleteItem = ButtonFactory("Delete Selected");
+            btnDeleteItem = this.ButtonFactory("Delete Selected");
             btnDeleteItem.Name = UserInputs.BtnDelete;
             btnDeleteItem.Click += new EventHandler(this.BtnDeleteItem_Click);
 
@@ -1139,47 +1139,39 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void BtnGetProductsFromITRetail_Click(object sender, EventArgs e)
-        {
-            if (this.backgroundWorker.IsBusy != true)
-            {
-                this.backgroundWorker.RunWorkerAsync();
-            }
-        }
-
         private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             Sync sync = new Sync();
-            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref totalRecords, ref insertedRecords);            
+            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref this.totalRecords, ref this.insertedRecords);            
         }
 
         private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("Updated {0}/{1} products - {2}% complete.", insertedRecords, totalRecords, e.ProgressPercentage);
-            
-            // update status strip
-            UpdateStatusStrip(builder.ToString(), 0, totalRecords, insertedRecords);
+            builder.AppendFormat("Updated {0}/{1} products - {2}% complete.", this.insertedRecords, this.totalRecords, e.ProgressPercentage);
+            this.UpdateStatusStrip(builder.ToString(), 0, this.totalRecords, this.insertedRecords);
         }
 
-        private void UpdateStatusStrip(string message, int min, int max, int current)
+        private void UpdateStatusStrip(string message, int? min, int? max, int? current)
         {
-            this.statusLabel.Text = message;
-            this.progressBar.Minimum = min;
-            this.progressBar.Maximum = max;
-            this.progressBar.Value = current;
+            this.statusLabel.Text = message ?? DefaultStatusLabelText;
+            this.progressBar.Minimum = min ?? DefaultStatusMin;
+            this.progressBar.Maximum = max ?? DefaultStatusMax;
+            this.progressBar.Value = current ?? DefaultStatusValue;
         }
 
         private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            int i = 0;
-            ++i;
+            this.UpdateStatusStrip(null, null, null, null);
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
         }
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
