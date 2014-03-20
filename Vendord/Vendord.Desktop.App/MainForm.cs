@@ -33,6 +33,7 @@ namespace Vendord.Desktop.App
         private const char ButtonMessageStartChar = '<';
         private const char ButtonMessageEndChar = '>';
 
+        private StatusStrip statusStrip;
         private Panel mainNavigation;
         private Panel mainContent;
 
@@ -64,7 +65,7 @@ namespace Vendord.Desktop.App
             // enable drag and drop
             this.AllowDrop = true;
             this.DragEnter += new DragEventHandler(Form1_DragEnter);
-            this.DragDrop += new DragEventHandler(Form1_DragDrop);
+            this.DragDrop += new DragEventHandler(Form1_DragDrop);            
 
             // create background worker and it's progress reported            
             this.backgroundWorker = new BackgroundWorker();
@@ -75,6 +76,15 @@ namespace Vendord.Desktop.App
                 += new ProgressChangedEventHandler(BackgroundWorker_ProgressChanged);
             this.backgroundWorker.RunWorkerCompleted
                 += new RunWorkerCompletedEventHandler(BackgroundWorker_RunWorkerCompleted);
+
+            // add a status strip
+            this.statusStrip = new StatusStrip();
+            this.statusStrip.Dock = DockStyle.Top;
+            this.statusStrip.Height = ButtonHeight;
+            this.statusStrip.GripStyle = ToolStripGripStyle.Hidden;
+            this.statusStrip.Items.Add = new ToolStripStatusLabel();
+            this.statusStrip.Items.Add = new ToolStripProgressBar();
+
 
             // create main navigation panel
             this.mainNavigation = new Panel();
@@ -89,7 +99,7 @@ namespace Vendord.Desktop.App
 
             // add to form - this triggers its layout event        
             this.SuspendLayout();
-            controls = new Control[] { this.mainContent, this.mainNavigation, };
+            controls = new Control[] { this.mainContent, this.mainNavigation, this.statusStrip };
             foreach (Control c in controls)
             {
                 this.Controls.Add(c);
