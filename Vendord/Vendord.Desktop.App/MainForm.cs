@@ -34,6 +34,8 @@ namespace Vendord.Desktop.App
         private const char ButtonMessageEndChar = '>';
 
         private StatusStrip statusStrip;
+        private ToolStripStatusLabel statusLabel;
+        private ToolStripProgressBar progressBar;
         private Panel mainNavigation;
         private Panel mainContent;
 
@@ -79,15 +81,12 @@ namespace Vendord.Desktop.App
 
             // add a status strip
             this.statusStrip = new StatusStrip();
-            this.statusStrip.Dock = DockStyle.Top;
-            this.statusStrip.Height = ButtonHeight;
+            this.statusStrip.Dock = DockStyle.Top;            
             this.statusStrip.SizingGrip = false;
             this.statusStrip.BackColor = Color.Transparent;
-            this.statusStrip.Items.Add(new ToolStripStatusLabel("Status Label Text"));
-            this.statusStrip.Items.Add(new ToolStripProgressBar("Progress Bar Name") {                  
-                 AutoSize = false
-            });
-
+            this.statusLabel = new ToolStripStatusLabel("Status Label Text");
+            this.progressBar = new ToolStripProgressBar("Progress Bar Name") { AutoSize = false, Dock = DockStyle.Fill };
+            this.statusStrip.Items.AddRange(new ToolStripItem[] { this.statusLabel, this.progressBar });            
 
             // create main navigation panel
             this.mainNavigation = new Panel();
@@ -161,10 +160,11 @@ namespace Vendord.Desktop.App
 
         private Button ButtonFactory(string text)
         {
-            return new Button() { 
-                Text = text,
-                FlatStyle = FlatStyle.Flat
-            };
+            Button b = new Button();
+            b.Text = text;
+            b.FlatStyle = FlatStyle.Flat;
+            b.FlatAppearance.BorderSize = 1;            
+            return b;
         }
 
         private ListViewItem SelectedListViewItem(ListView listView)
@@ -1151,14 +1151,24 @@ namespace Vendord.Desktop.App
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             Sync sync = new Sync();
-            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref totalRecords, ref insertedRecords);
+            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref totalRecords, ref insertedRecords);            
         }
 
         private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat("Updated {0}/{1} products - {2}% complete.", insertedRecords, totalRecords, e.ProgressPercentage);
-            this.Text = builder.ToString();
+            
+            // update status strip
+            UpdateStatusStrip(builder.ToString(), 0, totalRecords, insertedRecords);
+        }
+
+        private void UpdateStatusStrip(string message, int min, int max, int current)
+        {
+            this.statusLabel.Text = message;
+            this.progressBar.Minimum = min;
+            this.progressBar.Maximum = max;
+            this.progressBar.Value = current;
         }
 
         private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
