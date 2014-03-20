@@ -37,6 +37,9 @@ namespace Vendord.Desktop.App
         private const int DefaultStatusMax = 1;
         private const int DefaultStatusValue = 1;
 
+        PrintPreviewDialog printPreview;
+        PrintDocument printDocument;
+
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusLabel;
         private ToolStripProgressBar progressBar;
@@ -303,23 +306,23 @@ namespace Vendord.Desktop.App
 
         #region Print
 
-        private void PreviewPrintDocument(PrintDocument printDocument)
+        private void PreviewPrintDocument()
         {
             // preview the document                                
-            PrintPreviewDialog printPreview = new PrintPreviewDialog()
+            this.printPreview = new PrintPreviewDialog()
             {
                 Document = printDocument,
                 UseAntiAlias = true
             };
-            printPreview.PrintPreviewControl.Zoom = PrintPreviewZoom;
+            this.printPreview.PrintPreviewControl.Zoom = PrintPreviewZoom;         
 
             // maximize if PrintPreviewDialog can act as a Form
-            if (printPreview is Form)
+            if (this.printPreview is Form)
             {
-                (printPreview as Form).WindowState = FormWindowState.Maximized;
+                (this.printPreview as Form).WindowState = FormWindowState.Maximized;
             }
 
-            printPreview.ShowDialog();
+            this.printPreview.ShowDialog();
         }
 
         private void NewLine(PrintPageEventArgs e, Font myFont, ref Point myPoint)
@@ -328,9 +331,9 @@ namespace Vendord.Desktop.App
             myPoint.Y += myFont.Height;
         }
 
-        private void NewColumn(PrintPageEventArgs e, int numColumns, ref Point myPoint)
+        private void EndColumn(PrintPageEventArgs e, int columnWidth, ref Point myPoint)
         {
-            myPoint.X += e.MarginBounds.Width / numColumns;
+            myPoint.X += columnWidth;
         }
 
         private void AddTheListView(PrintPageEventArgs e, ref Point myPoint)
@@ -339,7 +342,10 @@ namespace Vendord.Desktop.App
             string productUpc;
             string productName;
             string casesToOrder;
-            int numColumns = 3;
+
+            int upcColumnWidth = Convert.ToInt16(e.MarginBounds.Width * 0.25);
+            int nameColumnWidth = Convert.ToInt16(e.MarginBounds.Width * 0.60);
+            int casesToOrderColumnWidth = Convert.ToInt16(e.MarginBounds.Width * 0.15);
 
             // add some spaces
             this.NewLine(e, this.myFont, ref myPoint);
@@ -347,10 +353,13 @@ namespace Vendord.Desktop.App
             this.NewLine(e, this.myFont, ref myPoint);
 
             e.Graphics.DrawString("Upc", this.myFont, this.myFontBrush, myPoint);
-            this.NewColumn(e, numColumns, ref myPoint);
+            this.EndColumn(e, upcColumnWidth, ref myPoint);
+
             e.Graphics.DrawString("Name", this.myFont, this.myFontBrush, myPoint);
-            this.NewColumn(e, numColumns, ref myPoint);
-            e.Graphics.DrawString("Cases to Order", this.myFont, this.myFontBrush, myPoint);
+            this.EndColumn(e, nameColumnWidth, ref myPoint);
+
+            e.Graphics.DrawString("Cases", this.myFont, this.myFontBrush, myPoint);
+            // no need to end the column
 
             // add the rows
             foreach (ListViewItem item in this.LvOrderProduct.Items)
@@ -359,12 +368,15 @@ namespace Vendord.Desktop.App
                 this.NewLine(e, this.myFont, ref myPoint);
                 productUpc = item.Tag.ToString();
                 e.Graphics.DrawString(productUpc, this.myFont, this.myFontBrush, myPoint);
-                this.NewColumn(e, numColumns, ref myPoint);
+                this.EndColumn(e, upcColumnWidth, ref myPoint);
+
                 productName = item.Text;
                 e.Graphics.DrawString(productName, this.myFont, this.myFontBrush, myPoint);
-                this.NewColumn(e, numColumns, ref myPoint);
+                this.EndColumn(e, nameColumnWidth, ref myPoint);
+
                 casesToOrder = item.SubItems[1].Text.ToString(); // HACK - Magic Number.
                 e.Graphics.DrawString(casesToOrder, this.myFont, this.myFontBrush, myPoint);
+                // no need to end the column
             }
         }
 
@@ -375,7 +387,7 @@ namespace Vendord.Desktop.App
             string dept;
             string vendor;
             string orderCreated;
-            int numColumns = 2;
+            int columnWidth = e.MarginBounds.Width / 2;
 
             // instantiate fields
             orderFor = "Order For: Country Grocer Salt Spring";
@@ -390,18 +402,20 @@ namespace Vendord.Desktop.App
 
             // draw strings
             e.Graphics.DrawString(orderFor, this.myFont, this.myFontBrush, myPoint);
-            this.NewColumn(e, numColumns, ref myPoint);
+            this.EndColumn(e, columnWidth, ref myPoint);
+
             e.Graphics.DrawString(dept, this.myFont, this.myFontBrush, myPoint);
             this.NewLine(e, this.myFont, ref myPoint);
+
             e.Graphics.DrawString(vendor, this.myFont, this.myFontBrush, myPoint);
-            this.NewColumn(e, numColumns, ref myPoint);
+            this.EndColumn(e, columnWidth, ref myPoint);
+
             e.Graphics.DrawString(orderCreated, this.myFont, this.myFontBrush, myPoint);
         }
 
         private void AddSelectedVendorOrderToThePrintDocument(PrintPageEventArgs e)
         {
             Point myPoint;
-
             myPoint = new Point(e.MarginBounds.Left, e.MarginBounds.Top);
             this.AddTheHeader(e, ref myPoint);
             this.AddTheListView(e, ref myPoint);
@@ -411,9 +425,18 @@ namespace Vendord.Desktop.App
         {
             if (this.LvOrder != null && this.LvOrderProduct != null & this.LvVendor != null)
             {
-                if (this.SelectedListViewItem(this.LvOrder) != null && this.LvVendor.Items != null && this.LvVendor.Items.Count > 0)
+                if (this.SelectedListViewItem(this.LvOrder) == null || this.LvVendor.Items == null)
                 {
-                    PrintDocument printDocument = new PrintDocument();
+                    MessageBox.Show("Please select an order");
+                }
+                else if (this.LvVendor.Items.Count == 0)
+                {
+                    MessageBox.Show("Please select an order that has items.");
+                }
+                else
+                {
+                    printDocument = new PrintDocument();
+                    printDocument.BeginPrint += new PrintEventHandler(this.PrintDocument_BeginPrint);
 
                     if (this.LvVendor.SelectedItems.Count == 0)
                     {
@@ -430,13 +453,8 @@ namespace Vendord.Desktop.App
                     DialogResult result = printDialog.ShowDialog();
                     if (result == DialogResult.OK)
                     {
-                        this.PreviewPrintDocument(printDocument);
-                        printDocument.Print();
+                        this.PreviewPrintDocument();                        
                     }
-                }
-                else
-                {
-                    MessageBox.Show("Please select an order");
                 }
             }
         }
@@ -1219,6 +1237,14 @@ namespace Vendord.Desktop.App
         private void BtnPrintOrder_Click(object sender, EventArgs e)
         {
             this.PrintSelectedOrder();
+        }
+
+        private void PrintDocument_BeginPrint(object sender, PrintEventArgs e)
+        {
+            if (this.printPreview != null && !printDocument.PrintController.IsPreview)
+            {
+                this.printPreview.Close();
+            }
         }
 
         private void PrintDocument_PrintOrderForSpecificVendor(object sender, PrintPageEventArgs e)
