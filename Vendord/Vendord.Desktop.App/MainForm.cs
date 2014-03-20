@@ -60,6 +60,11 @@ namespace Vendord.Desktop.App
             this.MinimumSize = new Size(FormWidthMinimum, FormHeightMinimum);
             this.BackColor = Color.White;
 
+            // enable drag and drop
+            this.AllowDrop = true;
+            this.DragEnter += new DragEventHandler(Form1_DragEnter);
+            this.DragDrop += new DragEventHandler(Form1_DragDrop);
+
             // create background worker and it's progress reported            
             this.backgroundWorker = new BackgroundWorker();
             this.backgroundWorker.WorkerReportsProgress = true;
@@ -1153,6 +1158,17 @@ namespace Vendord.Desktop.App
         {
             int i = 0;
             ++i;
+        }
+
+        private void Form1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+
+        private void Form1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files) Console.WriteLine(file);
         }
 
         #region Print
