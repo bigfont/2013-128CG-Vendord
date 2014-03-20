@@ -81,9 +81,12 @@ namespace Vendord.Desktop.App
             this.statusStrip = new StatusStrip();
             this.statusStrip.Dock = DockStyle.Top;
             this.statusStrip.Height = ButtonHeight;
-            this.statusStrip.GripStyle = ToolStripGripStyle.Hidden;
-            this.statusStrip.Items.Add = new ToolStripStatusLabel();
-            this.statusStrip.Items.Add = new ToolStripProgressBar();
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.BackColor = Color.Transparent;
+            this.statusStrip.Items.Add(new ToolStripStatusLabel("Status Label Text"));
+            this.statusStrip.Items.Add(new ToolStripProgressBar("Progress Bar Name") {                  
+                 AutoSize = false
+            });
 
 
             // create main navigation panel
@@ -110,10 +113,10 @@ namespace Vendord.Desktop.App
             // Create Buttons
             Button btnClose;
 
-            this.btnBack = new Button() { Text = "Back" };
+            this.btnBack = ButtonFactory("Back");
             this.btnBack.Click += new EventHandler(this.BtnBack_Click);
 
-            btnClose = new Button() { Text = "Save and Close" };
+            btnClose = ButtonFactory("Save and Close");
             btnClose.Click += new EventHandler(this.BtnClose_Click);
 
             // add to panel - this triggers its layout event            
@@ -155,6 +158,14 @@ namespace Vendord.Desktop.App
         }
 
         #region Utilities
+
+        private Button ButtonFactory(string text)
+        {
+            return new Button() { 
+                Text = text,
+                FlatStyle = FlatStyle.Flat
+            };
+        }
 
         private ListViewItem SelectedListViewItem(ListView listView)
         {
@@ -770,7 +781,7 @@ namespace Vendord.Desktop.App
         {
             Button btnOrders;
 
-            btnOrders = new Button() { Text = "Orders" };
+            btnOrders = ButtonFactory("Orders");
             btnOrders.Click += new EventHandler(this.BtnOrders_Click);
 
             btnOrders.Dock = DockStyle.Top;
@@ -787,13 +798,13 @@ namespace Vendord.Desktop.App
             Button btnViewOrders;
             Button[] buttons;
 
-            btnGetProductsFromITRetail = new Button() { Text = "Get Products from IT Retail" };
+            btnGetProductsFromITRetail = ButtonFactory("Get Products from IT Retail");
             btnGetProductsFromITRetail.Click += new EventHandler(this.BtnGetProductsFromITRetail_Click);
 
-            btnSyncHandheld = new Button() { Text = "Sync Handheld (before and after Scanning)" };
+            btnSyncHandheld = ButtonFactory("Sync Handheld (before and after Scanning)");
             btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
 
-            btnViewOrders = new Button() { Text = "View Orders" };
+            btnViewOrders = ButtonFactory("View Orders"); 
             btnViewOrders.Click += new EventHandler(this.BtnViewOrders_Click);
 
             // add
@@ -826,11 +837,13 @@ namespace Vendord.Desktop.App
             ListView[] listViews;
 
             // create button(s)
-            btnPrintOrder = new Button() { Text = "Print Current Order" };
+            btnPrintOrder = ButtonFactory("Print Current Order");
             btnPrintOrder.Click += new EventHandler(this.BtnPrintOrder_Click);
-            btnCreateItem = new Button() { Text = "Show Product List", Name = UserInputs.BtnCreate };
+            btnCreateItem = ButtonFactory("Show Product List");
+            btnCreateItem.Name = UserInputs.BtnCreate;
             btnCreateItem.Click += new EventHandler(this.BtnCreateItem_Click);
-            btnDeleteItem = new Button() { Text = "Delete Selected", Name = UserInputs.BtnDelete };
+            btnDeleteItem = ButtonFactory("Delete Selected");
+            btnDeleteItem.Name = UserInputs.BtnDelete;
             btnDeleteItem.Click += new EventHandler(this.BtnDeleteItem_Click);
 
             // create listviews
