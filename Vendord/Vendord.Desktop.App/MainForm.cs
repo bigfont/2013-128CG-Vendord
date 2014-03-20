@@ -1126,23 +1126,6 @@ namespace Vendord.Desktop.App
 
         private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            ////Sync sync;
-            ////Sync.SyncResult syncResult;
-            ////sync = new Sync();
-
-            ////Cursor.Current = Cursors.WaitCursor;
-            ////syncResult = sync.PullProductsFromItRetailDatabase();
-            ////Cursor.Current = Cursors.Default;
-
-            ////if (syncResult == Sync.SyncResult.Complete)
-            ////{
-            ////    this.ButtonMessage_Done(sender as Button, "Done");
-            ////}
-            ////else if (syncResult == Sync.SyncResult.Disconnected)
-            ////{
-            ////    this.ButtonMessage_Problem(sender as Button, "Disconnected");
-            ////}
-
             BackgroundWorker worker = sender as BackgroundWorker;
             Sync sync = new Sync();
             sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref totalRecords, ref insertedRecords);
@@ -1170,6 +1153,7 @@ namespace Vendord.Desktop.App
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
+            // Ensure that there is one and only one file
             string errorMessage = null;
             if (files == null || files.Length == 0 || files[0] == null)
             {
@@ -1180,22 +1164,28 @@ namespace Vendord.Desktop.App
                 errorMessage = "Please upload only one file.";
             }
 
+            // Ensure that the file is an Excel file
             string filePath = files[0];
             string fileExtension = Path.GetExtension(filePath);
-            string[] excelExtensions = new string[] { "xls", "xlsx" };
-            if (!excelExtensions.Contains(fileExtension))
+            if (!fileExtension.Equals(".xml"))
             {
-                errorMessage = "Please upload only Microsoft Excel file types.";
+                errorMessage = "Please upload only XML file types.";
             }
 
-            if (errorMessage != null)
+            // Ensure that the background work is free
+            if (this.backgroundWorker.IsBusy)
             {
-                MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                errorMessage = "The system is busy. Please try again in a few moments.";
             }
 
-            if (this.backgroundWorker.IsBusy != true)
+            // Run if appropriate; otherwise show an error message
+            if (errorMessage == null)
             {
                 this.backgroundWorker.RunWorkerAsync(files[0]);
+            }
+            else
+            {
+                MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
