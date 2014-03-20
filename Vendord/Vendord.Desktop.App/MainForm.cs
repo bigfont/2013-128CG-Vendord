@@ -17,6 +17,7 @@ namespace Vendord.Desktop.App
     using System.Windows.Forms;
     using BrightIdeasSoftware;
     using Vendord.SmartDevice.Linked;
+    using System.IO;
 
     public class MainForm : Form
     {
@@ -1144,7 +1145,7 @@ namespace Vendord.Desktop.App
 
             BackgroundWorker worker = sender as BackgroundWorker;
             Sync sync = new Sync();
-            sync.PullProductsFromItRetailDatabase(worker, ref totalRecords, ref insertedRecords);
+            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref totalRecords, ref insertedRecords);
         }
 
         private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1168,7 +1169,34 @@ namespace Vendord.Desktop.App
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) Console.WriteLine(file);
+
+            string errorMessage = null;
+            if (files == null || files.Length == 0 || files[0] == null)
+            {
+                errorMessage = "There is no file to upload.";
+            }
+            else if (files.Length > 1)
+            {
+                errorMessage = "Please upload only one file.";
+            }
+
+            string filePath = files[0];
+            string fileExtension = Path.GetExtension(filePath);
+            string[] excelExtensions = new string[] { "xls", "xlsx" };
+            if (!excelExtensions.Contains(fileExtension))
+            {
+                errorMessage = "Please upload only Microsoft Excel file types.";
+            }
+
+            if (errorMessage != null)
+            {
+                MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            if (this.backgroundWorker.IsBusy != true)
+            {
+                this.backgroundWorker.RunWorkerAsync(files[0]);
+            }
         }
 
         #region Print

@@ -37,12 +37,12 @@ namespace Vendord.Desktop.App
         private string _remoteDatabaseFullPath;
         private string _remoteDatabaseLocalCopyFullPath;
 
-        public SyncResult PullProductsFromItRetailDatabase(BackgroundWorker worker, ref int totalRecords, ref int insertedRecords)
+        public SyncResult PullProductsFromItRetailDatabase(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
         {
             SyncResult result;
             try
             {
-                CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(worker, ref totalRecords, ref insertedRecords);
+                CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(worker, filePath, ref totalRecords, ref insertedRecords);
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -110,9 +110,9 @@ namespace Vendord.Desktop.App
             return result;
         }
 
-        private List<Product> GetProductListFromMsAccessXmlBackup()
+        private List<Product> GetProductListFromMsAccessXmlBackup(string filePath)
         {
-            XElement productsXml = XElement.Load("products.xml");
+            XElement productsXml = XElement.Load(filePath);
             var query =
                 from p in productsXml.Descendants("Products")
                 select new Product()
@@ -127,9 +127,9 @@ namespace Vendord.Desktop.App
             return products;
         }
 
-        private void CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(BackgroundWorker worker, ref int totalRecords, ref int insertedRecords)
+        private void CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
         {
-            List<Product> products = GetProductListFromMsAccessXmlBackup();
+            List<Product> products = GetProductListFromMsAccessXmlBackup(filePath);
 
             insertedRecords = 0;
             totalRecords = products.Count();
