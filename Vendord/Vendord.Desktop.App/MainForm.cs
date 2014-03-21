@@ -195,6 +195,7 @@ namespace Vendord.Desktop.App
 
         private void StopStatusStrip()
         {
+            this.Enabled = true;
             this.statusLabel.Text = DefaultStatusLabelText;
             this.progressBar.Style = ProgressBarStyle.Continuous;
             this.progressBar.MarqueeAnimationSpeed = 0;
@@ -203,6 +204,7 @@ namespace Vendord.Desktop.App
 
         private void StartOrContinueStatusStrip(string message)
         {
+            this.Enabled = false;
             this.statusLabel.Text = message ?? DefaultStatusLabelText;
             this.progressBar.Style = ProgressBarStyle.Marquee;
             this.progressBar.MarqueeAnimationSpeed = 30;
@@ -1064,6 +1066,21 @@ namespace Vendord.Desktop.App
             }
         }
 
+        private void BtnViewOrders_Click(object sender, EventArgs e)
+        {
+            this.UnloadCurrentView();
+            this.LoadCompleteOrdersView();
+        }
+
+        private void BtnSyncHandheld_Click(object sender, EventArgs e)
+        {
+            this.syncHandheldBackgroundWorker = new BackgroundWorker();
+            this.syncHandheldBackgroundWorker.DoWork += new DoWorkEventHandler(SyncHandheldBackgroundWorker_DoWork);
+            this.syncHandheldBackgroundWorker.WorkerReportsProgress = false;
+            this.syncHandheldBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(SyncHandheldBackgroundWorker_RunWorkerCompleted);
+            this.syncHandheldBackgroundWorker.RunWorkerAsync();
+        }
+
         private void ListBox_DoubleClick_AddProductToOrder(object sender, EventArgs e)
         {
             ListViewItem listViewItemVendor;
@@ -1182,33 +1199,31 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void BtnViewOrders_Click(object sender, EventArgs e)
+        private void SyncHandheldBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            this.UnloadCurrentView();
-            this.LoadCompleteOrdersView();
+            UiDispatcher.BeginInvoke((Action)(() =>
+            {
+                this.StartOrContinueStatusStrip("Syncing handheld.");                
+            }));
+
+            Sync sync = new Sync();
+            e.Result = sync.MergeDesktopAndDeviceDatabases();            
         }
 
-        private void BtnSyncHandheld_Click(object sender, EventArgs e)
+        private void SyncHandheldBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Sync sync;
-            Sync.SyncResult syncResult;
-            sync = new Sync();
-
-            this.StartOrContinueStatusStrip("Syncing handheld.");
-
-            Cursor.Current = Cursors.WaitCursor;
-            syncResult = sync.MergeDesktopAndDeviceDatabases();
-            Cursor.Current = Cursors.Default;
-
-            if (syncResult == Sync.SyncResult.Complete)
+            // why don't the button messages run?
+            // do we need to use Dispatcher.Invoke?
+            if (e.Result.ToString().Equals(Sync.SyncResult.Complete.ToString()))
             {
                 this.ButtonMessage_Done(sender as Button, "Done");
             }
-            else if (syncResult == Sync.SyncResult.Disconnected)
+            else if (e.Result.ToString().Equals(Sync.SyncResult.Disconnected.ToString()))
             {
                 this.ButtonMessage_Problem(sender as Button, "Disconnected");
             }
 
+            // this seems to work fine
             this.StopStatusStrip();
         }
 
