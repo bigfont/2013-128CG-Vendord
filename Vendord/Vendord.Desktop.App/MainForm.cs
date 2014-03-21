@@ -54,6 +54,7 @@ namespace Vendord.Desktop.App
         private int insertedRecords;
 
         private BackgroundWorker showProductListBackgroundWorker;
+        private BackgroundWorker syncHandheldBackgroundWorker;
 
         private int listViewItemIndexToPrintNext = 0;
         private Font myFont = new Font(FontFamily.GenericSerif, 12.0F);
@@ -1016,6 +1017,7 @@ namespace Vendord.Desktop.App
                 this.showProductListBackgroundWorker = new BackgroundWorker();
                 this.showProductListBackgroundWorker.DoWork += new DoWorkEventHandler(ShowProductListBackgroundWorker_DoWork);                
                 this.showProductListBackgroundWorker.WorkerReportsProgress = false;
+                this.showProductListBackgroundWorker.RunWorkerCompleted +=new RunWorkerCompletedEventHandler(ShowProductListBackgroundWorker_RunWorkerCompleted);
                 this.showProductListBackgroundWorker.RunWorkerAsync(vendorName);
             }
             else
@@ -1158,13 +1160,13 @@ namespace Vendord.Desktop.App
         {
             this.UpdateListViewVendor();
             this.UpdateListViewOrderProduct();
-            this.UpdateListBoxProduct();
+            ////this.UpdateListBoxProduct(); // this is really slow
         }
 
         private void ListViewVendor_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.UpdateListViewOrderProduct();
-            this.UpdateListBoxProduct();
+            ////this.UpdateListBoxProduct(); // this is really slow
         }
 
         private void ListViewOrderProduct_ItemActivate_EditCasesToOrder(object sender, EventArgs e)
@@ -1192,6 +1194,8 @@ namespace Vendord.Desktop.App
             Sync.SyncResult syncResult;
             sync = new Sync();
 
+            this.StartOrContinueStatusStrip("Syncing handheld.");
+
             Cursor.Current = Cursors.WaitCursor;
             syncResult = sync.MergeDesktopAndDeviceDatabases();
             Cursor.Current = Cursors.Default;
@@ -1204,6 +1208,8 @@ namespace Vendord.Desktop.App
             {
                 this.ButtonMessage_Problem(sender as Button, "Disconnected");
             }
+
+            this.StopStatusStrip();
         }
 
         private void ShowProductListBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -1221,8 +1227,12 @@ namespace Vendord.Desktop.App
             UiDispatcher.Invoke((Action)(() =>
             {                
                 this.mainContent.Controls.Add(listBox);
-                this.StopStatusStrip();        
             }));
+        }
+
+        private void ShowProductListBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            this.StopStatusStrip();                
         }
 
         private void ImportXmlBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
