@@ -33,7 +33,7 @@ namespace Vendord.Desktop.App
         private const double PrintPreviewZoom = 1f; // this is 100%        
         private const char ButtonMessageStartChar = '<';
         private const char ButtonMessageEndChar = '>';
-        private const string DefaultStatusLabelText = "Status:";
+        private const string DefaultStatusLabelText = "Status";
         private const int DefaultStatusMin = 0;
         private const int DefaultStatusMax = 1;
         private const int DefaultStatusValue = 1;
@@ -193,10 +193,10 @@ namespace Vendord.Desktop.App
 
         #region Utilities
 
-        private void StopStatusStrip()
+        private void StopStatusStrip(string message)
         {
             this.Enabled = true;
-            this.statusLabel.Text = DefaultStatusLabelText;
+            this.statusLabel.Text = message == null || message.Length == 0 ? DefaultStatusLabelText : message;
             this.progressBar.Style = ProgressBarStyle.Continuous;
             this.progressBar.MarqueeAnimationSpeed = 0;
             this.progressBar.Value = 0;
@@ -599,7 +599,7 @@ namespace Vendord.Desktop.App
         {
             // create the list box
             ListBox listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect };
-            listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);            
+            listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
 
             return listBox;
         }
@@ -1017,14 +1017,14 @@ namespace Vendord.Desktop.App
                 }
 
                 this.showProductListBackgroundWorker = new BackgroundWorker();
-                this.showProductListBackgroundWorker.DoWork += new DoWorkEventHandler(ShowProductListBackgroundWorker_DoWork);                
+                this.showProductListBackgroundWorker.DoWork += new DoWorkEventHandler(ShowProductListBackgroundWorker_DoWork);
                 this.showProductListBackgroundWorker.WorkerReportsProgress = false;
-                this.showProductListBackgroundWorker.RunWorkerCompleted +=new RunWorkerCompletedEventHandler(ShowProductListBackgroundWorker_RunWorkerCompleted);
+                this.showProductListBackgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ShowProductListBackgroundWorker_RunWorkerCompleted);
                 this.showProductListBackgroundWorker.RunWorkerAsync(vendorName);
             }
             else
             {
-                this.mainContent.Controls.Remove(listBox);            
+                this.mainContent.Controls.Remove(listBox);
             }
         }
 
@@ -1203,28 +1203,17 @@ namespace Vendord.Desktop.App
         {
             UiDispatcher.BeginInvoke((Action)(() =>
             {
-                this.StartOrContinueStatusStrip("Syncing handheld.");                
+                this.StartOrContinueStatusStrip("Syncing handheld.");
             }));
 
             Sync sync = new Sync();
-            e.Result = sync.MergeDesktopAndDeviceDatabases();            
+            e.Result = sync.MergeDesktopAndDeviceDatabases();
         }
 
         private void SyncHandheldBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            // why don't the button messages run?
-            // do we need to use Dispatcher.Invoke?
-            if (e.Result.ToString().Equals(Sync.SyncResult.Complete.ToString()))
-            {
-                this.ButtonMessage_Done(sender as Button, "Done");
-            }
-            else if (e.Result.ToString().Equals(Sync.SyncResult.Disconnected.ToString()))
-            {
-                this.ButtonMessage_Problem(sender as Button, "Disconnected");
-            }
-
             // this seems to work fine
-            this.StopStatusStrip();
+            this.StopStatusStrip(e.Result.ToString());
         }
 
         private void ShowProductListBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -1234,20 +1223,20 @@ namespace Vendord.Desktop.App
                 this.StartOrContinueStatusStrip("Loading products");
             }));
 
-            ListBox listBox = this.CreateListBoxProduct();            
+            ListBox listBox = this.CreateListBoxProduct();
             string vendorName = e.Argument != null ? e.Argument.ToString() : null;
             this.AddDataToListBoxProduct(listBox, vendorName);
             this.SizeListBoxProduct(listBox);
 
             UiDispatcher.Invoke((Action)(() =>
-            {                
+            {
                 this.mainContent.Controls.Add(listBox);
             }));
         }
 
         private void ShowProductListBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.StopStatusStrip();                
+            this.StopStatusStrip(null);
         }
 
         private void ImportXmlBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -1266,7 +1255,7 @@ namespace Vendord.Desktop.App
 
         private void ImportXmlBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.StopStatusStrip();
+            this.StopStatusStrip("Import complete.");
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
