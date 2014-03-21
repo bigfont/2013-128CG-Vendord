@@ -18,6 +18,7 @@ namespace Vendord.Desktop.App
     using System.Windows.Forms;
     using BrightIdeasSoftware;
     using Vendord.SmartDevice.Linked;
+    using System.Windows.Threading;
 
     public class MainForm : Form
     {
@@ -37,6 +38,8 @@ namespace Vendord.Desktop.App
         private const int DefaultStatusMax = 1;
         private const int DefaultStatusValue = 1;
 
+        private Dispatcher UiDispatcher = Dispatcher.CurrentDispatcher;
+
         PrintPreviewDialog printPreview;
         PrintDocument printDocument;
 
@@ -46,9 +49,11 @@ namespace Vendord.Desktop.App
         private Panel mainNavigation;
         private Panel mainContent;
 
-        private BackgroundWorker backgroundWorker;
+        private BackgroundWorker importXmlBackgroundWorker;
         private int totalRecords;
         private int insertedRecords;
+
+        private BackgroundWorker showProductListBackgroundWorker;
 
         private int listViewItemIndexToPrintNext = 0;
         private Font myFont = new Font(FontFamily.GenericSerif, 12.0F);
@@ -62,6 +67,8 @@ namespace Vendord.Desktop.App
 
         public MainForm()
         {
+            Application.EnableVisualStyles();
+
             Control[] controls;
 
             this.Load += new EventHandler(this.MainForm_Load);
@@ -74,27 +81,26 @@ namespace Vendord.Desktop.App
             // enable drag and drop
             this.AllowDrop = true;
             this.DragEnter += new DragEventHandler(this.Form1_DragEnter);
-            this.DragDrop += new DragEventHandler(this.Form1_DragDrop);            
+            this.DragDrop += new DragEventHandler(this.Form1_DragDrop);
 
             // create background worker and it's progress reported            
-            this.backgroundWorker = new BackgroundWorker();
-            this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.DoWork
-                += new DoWorkEventHandler(this.BackgroundWorker_DoWork);
-            this.backgroundWorker.ProgressChanged
-                += new ProgressChangedEventHandler(this.BackgroundWorker_ProgressChanged);
-            this.backgroundWorker.RunWorkerCompleted
-                += new RunWorkerCompletedEventHandler(this.BackgroundWorker_RunWorkerCompleted);
+            this.importXmlBackgroundWorker = new BackgroundWorker();
+            this.importXmlBackgroundWorker.WorkerReportsProgress = true;
+            this.importXmlBackgroundWorker.DoWork
+                += new DoWorkEventHandler(this.ImportXmlBackgroundWorker_DoWork);
+            this.importXmlBackgroundWorker.ProgressChanged
+                += new ProgressChangedEventHandler(this.ImportXmlBackgroundWorker_ProgressChanged);
+            this.importXmlBackgroundWorker.RunWorkerCompleted
+                += new RunWorkerCompletedEventHandler(this.ImportXmlBackgroundWorker_RunWorkerCompleted);
 
             // add a status strip
             this.statusStrip = new StatusStrip();
-            this.statusStrip.Dock = DockStyle.Top;            
+            this.statusStrip.Dock = DockStyle.Top;
             this.statusStrip.SizingGrip = false;
             this.statusStrip.BackColor = Color.Transparent;
             this.statusLabel = new ToolStripStatusLabel(DefaultStatusLabelText);
-            this.progressBar = new ToolStripProgressBar() { AutoSize = false, Dock = DockStyle.Fill };
+            this.progressBar = new ToolStripProgressBar() { AutoSize = false, Dock = DockStyle.Fill, Style = ProgressBarStyle.Marquee, MarqueeAnimationSpeed = 0 };
             this.statusStrip.Items.AddRange(new ToolStripItem[] { this.statusLabel, this.progressBar });
-            this.UpdateStatusStrip(null, null, null, null);
 
             // create main navigation panel
             this.mainNavigation = new Panel();
@@ -151,12 +157,32 @@ namespace Vendord.Desktop.App
 
         private ListView LvOrder
         {
-            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, false)[0]; }
+            get
+            {
+                ListView result = null;
+                List<ListView> listViews
+                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, false);
+                if (listViews != null && listViews.Count > 0)
+                {
+                    result = listViews[0];
+                }
+                return result;
+            }
         }
 
         private ListView LvVendor
         {
-            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, false)[0]; }
+            get
+            {
+                ListView result = null;
+                List<ListView> listViews
+                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, false);
+                if (listViews != null && listViews.Count > 0)
+                {
+                    result = listViews[0];
+                }
+                return result;
+            }
         }
 
         private ListView LvOrderProduct
@@ -166,12 +192,27 @@ namespace Vendord.Desktop.App
 
         #region Utilities
 
+        private void StopStatusStrip()
+        {
+            this.statusLabel.Text = DefaultStatusLabelText;
+            this.progressBar.Style = ProgressBarStyle.Continuous;
+            this.progressBar.MarqueeAnimationSpeed = 0;
+            this.progressBar.Value = 0;
+        }
+
+        private void StartOrContinueStatusStrip(string message)
+        {
+            this.statusLabel.Text = message ?? DefaultStatusLabelText;
+            this.progressBar.Style = ProgressBarStyle.Marquee;
+            this.progressBar.MarqueeAnimationSpeed = 30;
+        }
+
         private Button ButtonFactory(string text)
         {
             Button b = new Button();
             b.Text = text;
             b.FlatStyle = FlatStyle.Flat;
-            b.FlatAppearance.BorderSize = 1;            
+            b.FlatAppearance.BorderSize = 1;
             return b;
         }
 
@@ -314,7 +355,7 @@ namespace Vendord.Desktop.App
                 Document = printDocument,
                 UseAntiAlias = true
             };
-            this.printPreview.PrintPreviewControl.Zoom = PrintPreviewZoom;         
+            this.printPreview.PrintPreviewControl.Zoom = PrintPreviewZoom;
 
             // maximize if PrintPreviewDialog can act as a Form
             if (this.printPreview is Form)
@@ -453,7 +494,7 @@ namespace Vendord.Desktop.App
                     DialogResult result = printDialog.ShowDialog();
                     if (result == DialogResult.OK)
                     {
-                        this.PreviewPrintDocument();                        
+                        this.PreviewPrintDocument();
                     }
                 }
             }
@@ -499,12 +540,20 @@ namespace Vendord.Desktop.App
 
             if (this.LvVendor != null)
             {
+                // get current vendor name
+                string vendorName = null;
+                if (this.SelectedListViewItem(this.LvVendor) != null)
+                {
+                    // the user has selected a vendor
+                    vendorName = this.SelectedListViewItem(this.LvVendor).Text;
+                }
+
                 targetListViewItem = this.SelectedListViewItem(this.LvVendor);
                 currentVendor = targetListViewItem != null ? targetListViewItem.Text : null;
                 if (listBox != null && listBox.Items != null)
                 {
                     listBox.Items.Clear();
-                    this.AddDataToListBoxProduct(listBox, currentVendor);
+                    this.AddDataToListBoxProduct(listBox, vendorName);
                 }
             }
         }
@@ -521,6 +570,18 @@ namespace Vendord.Desktop.App
             return filteredCopy;
         }
 
+        private void SizeListBoxProduct(ListBox listBox)
+        {
+            Graphics graphics = this.CreateGraphics();
+            var maxItemWidth = (
+                from object item in listBox.Items
+                select graphics.MeasureString(item.ToString(), this.Font)
+                    into mySize
+                    select (int)mySize.Width).Concat(new[] { 0 }).Max();
+
+            listBox.Width = maxItemWidth + (SystemInformation.VerticalScrollBarWidth * 3);
+        }
+
         private void AddDataToListBoxProduct(ListBox listBoxProduct, string vendorName)
         {
             List<Product> filteredProducts;
@@ -531,46 +592,13 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void AddListBoxProduct()
+        private ListBox CreateListBoxProduct()
         {
-            ListBox listBox;
-            string currentVendor;
+            // create the list box
+            ListBox listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect };
+            listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);            
 
-            listBox = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
-            currentVendor = null;
-            if (listBox == null)
-            {
-                // there is no list box
-                if (this.SelectedListViewItem(this.LvVendor) != null)
-                {
-                    // the user has selected a vendor
-                    currentVendor = this.SelectedListViewItem(this.LvVendor).Text;
-                }
-
-                // create the list box
-                listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect };
-                listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
-
-                // add data to listbox for the currentVendor.
-                this.AddDataToListBoxProduct(listBox, currentVendor);
-
-                Graphics graphics = this.CreateGraphics();
-                var maxItemWidth = (
-                    from object item in listBox.Items
-                    select graphics.MeasureString(item.ToString(), this.Font)
-                        into mySize
-                        select (int)mySize.Width).Concat(new[] { 0 }).Max();
-
-                listBox.Width = maxItemWidth + (SystemInformation.VerticalScrollBarWidth * 3);
-
-                // add the listbox to the GUI.
-                this.mainContent.Controls.Add(listBox);
-            }
-            else
-            {
-                // there is already a listbox
-                this.mainContent.Controls.Remove(listBox);
-            }
+            return listBox;
         }
 
         private ListView UpdateListViewOrderProduct()
@@ -823,7 +851,7 @@ namespace Vendord.Desktop.App
             btnSyncHandheld = this.ButtonFactory("Sync Handheld (before and after Scanning)");
             btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
 
-            btnViewOrders = this.ButtonFactory("View Orders"); 
+            btnViewOrders = this.ButtonFactory("View Orders");
             btnViewOrders.Click += new EventHandler(this.BtnViewOrders_Click);
 
             // add
@@ -847,7 +875,7 @@ namespace Vendord.Desktop.App
         private void LoadCompleteOrdersView()
         {
             Button btnPrintOrder;
-            Button btnCreateItem;
+            Button btnShowProductList;
             Button btnDeleteItem;
             ListView listViewOrder;
             ListView listViewVendor;
@@ -857,9 +885,9 @@ namespace Vendord.Desktop.App
             // create button(s)
             btnPrintOrder = this.ButtonFactory("Print Current Order");
             btnPrintOrder.Click += new EventHandler(this.BtnPrintOrder_Click);
-            btnCreateItem = this.ButtonFactory("Show Product List");
-            btnCreateItem.Name = UserInputs.BtnCreate;
-            btnCreateItem.Click += new EventHandler(this.BtnCreateItem_Click);
+            btnShowProductList = this.ButtonFactory("Show Product List");
+            btnShowProductList.Name = UserInputs.BtnShowProductList;
+            btnShowProductList.Click += new EventHandler(this.BtnShowProductList_Click);
             btnDeleteItem = this.ButtonFactory("Delete Selected");
             btnDeleteItem.Name = UserInputs.BtnDelete;
             btnDeleteItem.Click += new EventHandler(this.BtnDeleteItem_Click);
@@ -912,9 +940,9 @@ namespace Vendord.Desktop.App
             btnDeleteItem.Height = ButtonHeight;
             this.mainContent.Controls.Add(btnDeleteItem);
 
-            btnCreateItem.Dock = DockStyle.Top;
-            btnCreateItem.Height = ButtonHeight;
-            this.mainContent.Controls.Add(btnCreateItem);
+            btnShowProductList.Dock = DockStyle.Top;
+            btnShowProductList.Height = ButtonHeight;
+            this.mainContent.Controls.Add(btnShowProductList);
 
             this.mainContent.ResumeLayout();
 
@@ -970,9 +998,30 @@ namespace Vendord.Desktop.App
             this.LoadOrdersView();
         }
 
-        private void BtnCreateItem_Click(object sender, EventArgs e)
+        private void BtnShowProductList_Click(object sender, EventArgs e)
         {
-            this.AddListBoxProduct();
+            ListBox listBox
+                = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
+
+            if (listBox == null)
+            {
+                // get current vendor name
+                string vendorName = null;
+                if (this.SelectedListViewItem(this.LvVendor) != null)
+                {
+                    // the user has selected a vendor
+                    vendorName = this.SelectedListViewItem(this.LvVendor).Text;
+                }
+
+                this.showProductListBackgroundWorker = new BackgroundWorker();
+                this.showProductListBackgroundWorker.DoWork += new DoWorkEventHandler(ShowProductListBackgroundWorker_DoWork);                
+                this.showProductListBackgroundWorker.WorkerReportsProgress = false;
+                this.showProductListBackgroundWorker.RunWorkerAsync(vendorName);
+            }
+            else
+            {
+                this.mainContent.Controls.Remove(listBox);            
+            }
         }
 
         private void BtnDeleteItem_Click(object sender, EventArgs e)
@@ -1157,31 +1206,42 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void ShowProductListBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            UiDispatcher.BeginInvoke((Action)(() =>
+            {
+                this.StartOrContinueStatusStrip("Loading products");
+            }));
+
+            ListBox listBox = this.CreateListBoxProduct();            
+            string vendorName = e.Argument != null ? e.Argument.ToString() : null;
+            this.AddDataToListBoxProduct(listBox, vendorName);
+            this.SizeListBoxProduct(listBox);
+
+            UiDispatcher.Invoke((Action)(() =>
+            {                
+                this.mainContent.Controls.Add(listBox);
+                this.StopStatusStrip();        
+            }));
+        }
+
+        private void ImportXmlBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             Sync sync = new Sync();
-            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref this.totalRecords, ref this.insertedRecords);            
+            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref this.totalRecords, ref this.insertedRecords);
         }
 
-        private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void ImportXmlBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat("Updated {0}/{1} products - {2}% complete.", this.insertedRecords, this.totalRecords, e.ProgressPercentage);
-            this.UpdateStatusStrip(builder.ToString(), 0, this.totalRecords, this.insertedRecords);
+            this.StartOrContinueStatusStrip(builder.ToString());
         }
 
-        private void UpdateStatusStrip(string message, int? min, int? max, int? current)
+        private void ImportXmlBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            this.statusLabel.Text = message ?? DefaultStatusLabelText;
-            this.progressBar.Minimum = min ?? DefaultStatusMin;
-            this.progressBar.Maximum = max ?? DefaultStatusMax;
-            this.progressBar.Value = current ?? DefaultStatusValue;
-        }
-
-        private void BackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            this.UpdateStatusStrip(null, null, null, null);
+            this.StopStatusStrip();
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
@@ -1216,7 +1276,7 @@ namespace Vendord.Desktop.App
             }
 
             // Ensure that the background work is free
-            if (this.backgroundWorker.IsBusy)
+            if (this.importXmlBackgroundWorker.IsBusy)
             {
                 errorMessage = "The system is busy. Please try again in a few moments.";
             }
@@ -1224,7 +1284,7 @@ namespace Vendord.Desktop.App
             // Run if appropriate; otherwise show an error message
             if (errorMessage == null)
             {
-                this.backgroundWorker.RunWorkerAsync(files[0]);
+                this.importXmlBackgroundWorker.RunWorkerAsync(files[0]);
             }
             else
             {
@@ -1300,7 +1360,7 @@ namespace Vendord.Desktop.App
             internal const string LvVendor = "LvVendor";
             internal const string LvOrderProduct = "LvOrderProduct";
 
-            internal const string BtnCreate = "BtnCreate";
+            internal const string BtnShowProductList = "BtnCreate";
             internal const string BtnDelete = "BtnDelete";
 
             internal const string LbSelect = "LbSelect";
