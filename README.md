@@ -52,10 +52,13 @@ ClickOnce Deployment of Vendord.Desktop.App
 
 
 - Use AppWiz.cpl to uninstall Vendord
+
 - Uninstall dependencies
+
 	- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center 
 	- Warning - can be very hard - only do this if necessary
 	- Then use AppWiz.cpl to uninstall the following:
+	
 		1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
 		1. MS SQL Server Compact 3.5 SP2 for Devices (not always present)
 		1. MS SQL Server Compact 3.5 SP2
@@ -63,19 +66,19 @@ ClickOnce Deployment of Vendord.Desktop.App
 		1. MS .NET Compact Framework 3.5 (uninstall isn't an option)
 		1. Microsoft Sync Framework 2.1 Core Components (x86)
 		1. Microsoft Sync Framework 2.1 Database Providers (x86)
-- Delete Data in Documents/VENDORD
+		
+- Delete Documents/VENDORD
 
 ### Uninstall from the Device
 
-- Delete the VENDORD ApplicationData directory (warning - will delete data)
-
 - Use AppWiz.cpl to uninstall the following
 
-1 Vendord
-2 SQL Server Compact 3.5 Core *
-3 Microsoft .NET CF 3.5 EN-String Resources
+	1. Vendord
+	1. SQL Server Compact 3.5 Core
+		- If this doesn't uninstall, 
+		- considering deleting the MS SQL Server Compact folder from /Program Files
+	1. Microsoft .NET CF 3.5 EN-String Resources
 
-* If this doesn't uninstall properly, considering deleting the MS SQL Server Compact folder from /Program Files
-
+- Delete the VENDORD ApplicationData directory (warning - will delete data)
 - Delete the Vendord.SmartDevice.App Program Files directory
 
