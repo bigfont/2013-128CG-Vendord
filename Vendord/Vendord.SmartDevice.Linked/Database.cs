@@ -406,66 +406,72 @@ namespace Vendord.SmartDevice.Linked
         {
             IOHelpers.LogSubroutine("CreateTables");
 
-            string createTableQuery;
+            string query;
 
             if (!this.TableExists("tblDepartment"))
             {
-                createTableQuery = @"
+                query = @"
 
                     CREATE TABLE [tblDepartment]
                     (
                        [Id] UNIQUEIDENTIFIER NOT NULL,
                        [Name] NVARCHAR(100),
                        [IsInTrash] BIT
-                    );
+                    )";
+
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
 
                     ALTER TABLE [tblDepartment] 
-                    ADD CONSTRAINT [PK_tblDepartment] PRIMARY KEY ([Id]);
+                    ADD CONSTRAINT [PK_tblDepartment] PRIMARY KEY ([Id])";
 
-                    ";
-
-                this.ExecuteNonQuery(createTableQuery, null);
+                this.ExecuteNonQuery(query, null);
             }
 
             if (!this.TableExists("tblVendor"))
             {
-                createTableQuery = @"
+                query = @"
                     CREATE TABLE [tblVendor]
                     (
                        [Id] UNIQUEIDENTIFIER NOT NULL,
                        [Name] NVARCHAR(100),
                        [IsInTrash] BIT
-                    );
-                    
+                    )";
+
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
+
                     ALTER TABLE [tblVendor] 
-                    ADD CONSTRAINT [PK_tblVendor] PRIMARY KEY ([Id]);
+                    ADD CONSTRAINT [PK_tblVendor] PRIMARY KEY ([Id])";
 
-                    ";
-
-                this.ExecuteNonQuery(createTableQuery, null);
+                this.ExecuteNonQuery(query, null);
             }
 
             if (!this.TableExists("tblOrder"))
             {
-                createTableQuery = @"
+                query = @"
                     CREATE TABLE [tblOrder]
                     (
                        [Id] UNIQUEIDENTIFIER NOT NULL,
                        [Name] NVARCHAR(100),
                        [IsInTrash] BIT
-                    );
+                    )";
+
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
 
                     ALTER TABLE [tblOrder] 
-                    ADD CONSTRAINT [PK_tblOrder] PRIMARY KEY ([Id]);
+                    ADD CONSTRAINT [PK_tblOrder] PRIMARY KEY ([Id])";
 
-                    ";
-
-                this.ExecuteNonQuery(createTableQuery, null);
+                this.ExecuteNonQuery(query, null);
             }
 
             if (!this.TableExists("tblProduct"))
             {
-                createTableQuery = @"
+                query = @"
                     CREATE TABLE [tblProduct]
                     (
                        [Upc] NVARCHAR(100) NOT NULL,
@@ -473,49 +479,69 @@ namespace Vendord.SmartDevice.Linked
                        [IsInTrash] BIT,
                        [VendorId] UNIQUEIDENTIFIER,
                        [DepartmentId] UNIQUEIDENTIFIER
-                    );
+                    )";
 
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
                     ALTER TABLE [tblProduct] 
-                    ADD CONSTRAINT [PK_tblProduct] PRIMARY KEY ([Upc]);
-
-                    ALTER TABLE [tblProduct] 
-                    ADD CONSTRAINT [FK_DepartmentId] FOREIGN KEY ([DepartmentId])
-                       REFERENCES [tblDepartment] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-                    ALTER TABLE [tblProduct] 
-                    ADD CONSTRAINT [FK_VendordId] FOREIGN KEY ([VendorId])
-                       REFERENCES [tblVendor] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
+                    ADD CONSTRAINT [PK_tblProduct] PRIMARY KEY ([Upc])
                     ";
 
-                this.ExecuteNonQuery(createTableQuery, null);
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
+                    ALTER TABLE [tblProduct] 
+                    ADD CONSTRAINT [FK_DepartmentId] FOREIGN KEY ([DepartmentId])
+                       REFERENCES [tblDepartment] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION
+                    ";
+
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
+                    ALTER TABLE [tblProduct] 
+                    ADD CONSTRAINT [FK_VendordId] FOREIGN KEY ([VendorId])
+                       REFERENCES [tblVendor] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION
+                    ";
+
+                this.ExecuteNonQuery(query, null);
             }
 
             if (!this.TableExists("tblOrderProduct"))
             {
-                createTableQuery = @"
+                query = @"
                     CREATE TABLE [tblOrderProduct]
                     (
                        [OrderID] UNIQUEIDENTIFIER NOT NULL,
                        [ProductUPC] NVARCHAR(100) NOT NULL,
                        [CasesToOrder] INT,
                        [IsInTrash] BIT
-                    );
+                    )";
 
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
                     ALTER TABLE [tblOrderProduct] 
-                    ADD CONSTRAINT [PK_OrderProduct] PRIMARY KEY ([OrderID], [ProductUPC]);
-
-                    ALTER TABLE [tblOrderProduct] 
-                    ADD CONSTRAINT [FK_OrderId] FOREIGN KEY ([OrderID])
-                       REFERENCES [tblOrder] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-                    ALTER TABLE [tblOrderProduct]
-                    ADD CONSTRAINT [FK_ProductUpc] FOREIGN KEY ([ProductUPC])
-                       REFERENCES [tblProduct] ([Upc]) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
+                    ADD CONSTRAINT [PK_OrderProduct] PRIMARY KEY ([OrderID], [ProductUPC])
                     ";
 
-                this.ExecuteNonQuery(createTableQuery, null);
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
+                    ALTER TABLE [tblOrderProduct] 
+                    ADD CONSTRAINT [FK_OrderId] FOREIGN KEY ([OrderID])
+                       REFERENCES [tblOrder] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION
+                    ";
+
+                this.ExecuteNonQuery(query, null);
+
+                query = @"
+                    ALTER TABLE [tblOrderProduct]
+                    ADD CONSTRAINT [FK_ProductUpc] FOREIGN KEY ([ProductUPC])
+                       REFERENCES [tblProduct] ([Upc]) ON DELETE NO ACTION ON UPDATE NO ACTION
+                    ";
+
+                this.ExecuteNonQuery(query, null);
             }
         }
     }
