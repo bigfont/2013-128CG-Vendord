@@ -47,7 +47,6 @@
 
 ## Uninstall Vendord.Desktop.App
 
-
 - Use AppWiz.cpl to uninstall Vendord
 
 - Uninstall dependencies
@@ -66,11 +65,11 @@
 		
 - Delete Documents/VENDORD
 
-## ClickOnce Deployment of Install Vendord.SmartDevice.App
+## ClickOnce Deployment of Vendord.SmartDevice.App
 
 - Coming soon.
 
-## Uninstall from the Device
+## Uninstall Vendord.SmartDevice.App
 
 - Use AppWiz.cpl to uninstall the following
 
