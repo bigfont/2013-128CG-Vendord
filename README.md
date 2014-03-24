@@ -16,7 +16,7 @@ ClickOnce Deployment of Vendord.Desktop.App
 	- Close Visual Studio 2008
 
 - Include the new files in BigFont.MVC
-	- BigFont.MVC in Visual Studio 2013
+	- Open BigFont.MVC in Visual Studio 2013
 	- In the solution explorer, expand to \Software\Vendord\Win7\ApplicationFiles
 	- Show all files in the solution explorer.
 	- Right click on the newly published version of Vendord (e.g. Vendord.Desktop.App_1_0_0_64) 
@@ -36,7 +36,7 @@ ClickOnce Deployment of Vendord.Desktop.App
 	```
 	
 - Test the installation package.
-	- Go to manage.windowsazure.com	
+	- Go to http://manage.windowsazure.com	
 	- Websites > bigfont > deployments
 	- Check that the deployment succeeded.
 	- If it did, go to http://bigfont.ca/software/vendord/win7/publish.htm > Install
