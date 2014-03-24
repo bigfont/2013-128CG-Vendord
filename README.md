@@ -1,5 +1,4 @@
-2013-128CG-Vendord
-==================
+# 2013-128CG-Vendord
 
 ClickOnce Deployment of Vendord.Desktop.App
 --
@@ -50,4 +49,5 @@ ClickOnce Deployment of Vendord.Desktop.App
 Uninstall Vendord.Desktop.App
 --
 
-
+- Uninstall with Programs and Features. 
+- Delete Documents/VENDORD (unless you want to keep this history).
