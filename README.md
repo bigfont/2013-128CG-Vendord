@@ -67,7 +67,12 @@
 
 ## ClickOnce Deployment of Vendord.SmartDevice.App
 
-- Coming soon.
+- Connect your device through Windows Mobile Device Center
+- Go to http://www.bigfont.ca/software/vendord/wince6/publish.htm
+- Click Install
+- Accept about twelve security warnings.
+- Accept all default settings.
+- Consider deleting the ProgramFiles > BigFont > Vendord.SmartDevice.Setup folder after install.
 
 ## Uninstall Vendord.SmartDevice.App
 
