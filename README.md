@@ -71,14 +71,18 @@
 
 ## Uninstall Vendord.SmartDevice.App
 
-- Use AppWiz.cpl to uninstall the following
-
-	1. Vendord
-	1. SQL Server Compact 3.5 Core
+- Connect the device.
+- Windows Mobile Device Center will open.
+- Choose connect without setting up.
+- Click programs/services > more > add/remove programs
+	- Vendord
+	- SQL Server Compact 3.5 Core
 		- If this doesn't uninstall, 
 		- considering deleting the MS SQL Server Compact folder from /Program Files
-	1. Microsoft .NET CF 3.5 EN-String Resources
-
-- Delete the VENDORD ApplicationData directory (warning - will delete data)
-- Delete the Vendord.SmartDevice.App Program Files directory
+	- Microsoft .NET CF 3.5 EN-String Resources
+- Uncheck each program that you want to uninstall.
+- Click file management > browse
+- Delete the following:
+	- This PC\WindowsCE\Application Data\VENDORD\
+	- This PC\WindowsCE\Program Files\vendord.smartdevice.app\
 
