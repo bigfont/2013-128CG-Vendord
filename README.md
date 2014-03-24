@@ -60,16 +60,14 @@ ClickOnce Deployment of Vendord.Desktop.App
 
 - Then use AppWiz.cpl to uninstall the following:
 
-	1. MS SQL Server Compact 3.5 SP2 x64 *
-	1. MS SQL Server Compact 3.5 SP2 for Devices *
+	1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
+	1. MS SQL Server Compact 3.5 SP2 for Devices (not always present)
 	1. MS SQL Server Compact 3.5 SP2
 	1. MS SQL Server 2005 Compact Edition
-	1. MS .NET Compact Framework 3.5 ^
+	1. MS .NET Compact Framework 3.5 (uninstall isn't an option)
 	1. Microsoft Sync Framework 2.1 Core Components (x86)
 	1. Microsoft Sync Framework 2.1 Database Providers (x86)
 
-* Not always present.
-^ Uninstall is not an option.
 
 ### Delete Data
 
