@@ -1,7 +1,6 @@
 # 2013-128CG-Vendord
 
-ClickOnce Deployment of Vendord.Desktop.App
---
+## ClickOnce Deployment of Vendord.Desktop.App
 
 - Publish Vendord.Desktop.App
 	- Open Vendord.sln in Visual Studio 2008.
@@ -46,9 +45,7 @@ ClickOnce Deployment of Vendord.Desktop.App
 	- Accept the myriad security prompts
 	- Installation will eventually complete.
 
-# Uninstall Vendord.Desktop.App
-
-## Uninstall from the PC
+## Uninstall Vendord.Desktop.App
 
 
 - Use AppWiz.cpl to uninstall Vendord
@@ -69,7 +66,11 @@ ClickOnce Deployment of Vendord.Desktop.App
 		
 - Delete Documents/VENDORD
 
-### Uninstall from the Device
+## ClickOnce Deployment of Install Vendord.SmartDevice.App
+
+- Coming soon.
+
+## Uninstall from the Device
 
 - Use AppWiz.cpl to uninstall the following
 
