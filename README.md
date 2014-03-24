@@ -72,13 +72,18 @@
 	- Copy the release MSI to C:\Users\Shaun\Documents\GitHub\BigFont\BigFont.MVC\Software\Vendord\WinCe6
 	- Commit and push BigFont.MVC
 
-- Install with ClickOnce	
-	- Connect your device through Windows Mobile Device Center
+- Download the installer to your PC
 	- Go to http://www.bigfont.ca/software/vendord/wince6/publish.htm
 	- Click Install
-	- Accept about twelve security warnings.
-	- Accept all default settings.
-	- Consider deleting the ProgramFiles > BigFont > Vendord.SmartDevice.Setup folder after install.
+	- Run it.
+
+- Install on device
+	- Connect your device through Windows Mobile Device Center
+	- Copy C:\Program Files (x86)\BigFont\Vendord.SmartDevice.Setup from the PC.
+	- Paste it into This PC\WindowsCE\Temp\
+	- Run any CAB files within PC\WindowsCE\Temp\Vendord.SmartDevice.Setup
+	- The installations will complete.
+	- You can then delete all Vendord.SmartDevice.Setup directories from the PC and Device.
 
 ## Uninstall Vendord.SmartDevice.App
 
