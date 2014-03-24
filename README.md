@@ -46,8 +46,32 @@ ClickOnce Deployment of Vendord.Desktop.App
 	- Accept the myriad security prompts
 	- Installation will eventually complete.
 
-Uninstall Vendord.Desktop.App
---
+# Uninstall Vendord.Desktop.App
 
-- Uninstall with Programs and Features. 
-- Delete Documents/VENDORD (unless you want to keep this history).
+## Uninstall from the PC
+
+### Uninstall Vendord
+
+- Use AppWiz.cpl to uninstall Vendord
+
+### Uninstall dependencies
+
+- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center [warning - can be very hard - only do this if necessary]
+
+- Then use AppWiz.cpl to uninstall the following:
+
+	1. MS SQL Server Compact 3.5 SP2 x64 *
+	1. MS SQL Server Compact 3.5 SP2 for Devices *
+	1. MS SQL Server Compact 3.5 SP2
+	1. MS SQL Server 2005 Compact Edition
+	1. MS .NET Compact Framework 3.5 ^
+	1. Microsoft Sync Framework 2.1 Core Components (x86)
+	1. Microsoft Sync Framework 2.1 Database Providers (x86)
+
+* Not always present.
+^ Uninstall is not an option.
+
+### Delete Data
+
+- Delete Documents/VENDORD
+
