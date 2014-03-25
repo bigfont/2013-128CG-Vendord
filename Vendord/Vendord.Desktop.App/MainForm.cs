@@ -37,6 +37,13 @@ namespace Vendord.Desktop.App
         private const int DefaultStatusMin = 0;
         private const int DefaultStatusMax = 1;
         private const int DefaultStatusValue = 1;
+ 
+        private static class Colors
+        {
+            internal static Color AllowDrop = Color.Yellow;
+            internal static Color DragLeave = Color.Yellow;
+            internal static Color DragEnter = Color.YellowGreen;
+        }
 
         private Dispatcher UiDispatcher = Dispatcher.CurrentDispatcher;
 
@@ -62,7 +69,7 @@ namespace Vendord.Desktop.App
 
         private Button btnBack;
 
-        private Back backDelegate;
+        private Back backDelegate;        
 
         private Save saveDelegate; // TODO Assign to saveDelegate when we have something to save on the desktop
 
@@ -78,11 +85,6 @@ namespace Vendord.Desktop.App
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.MinimumSize = new Size(FormWidthMinimum, FormHeightMinimum);
             this.BackColor = Color.White;
-
-            // enable drag and drop
-            this.AllowDrop = true;
-            this.DragEnter += new DragEventHandler(this.Form1_DragEnter);
-            this.DragDrop += new DragEventHandler(this.Form1_DragDrop);
 
             // create background worker and it's progress reported            
             this.importXmlBackgroundWorker = new BackgroundWorker();
@@ -840,19 +842,17 @@ namespace Vendord.Desktop.App
         }
 
         private void LoadOrdersView()
-        {
-            Button btnSyncHandheld;
-            Button btnViewOrders;
-            Button[] buttons;
+        {            
+            this.SuspendLayout();
 
-            btnSyncHandheld = this.ButtonFactory("Sync Handheld (before and after Scanning)");
+            // create buttons
+            Button btnSyncHandheld = this.ButtonFactory("Sync Handheld (before and after Scanning)");
             btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
 
-            btnViewOrders = this.ButtonFactory("View Orders");
+            Button btnViewOrders = this.ButtonFactory("View Orders");
             btnViewOrders.Click += new EventHandler(this.BtnViewOrders_Click);
 
-            // add
-            buttons = new Button[] 
+            Button[] buttons = new Button[] 
             { 
                 btnViewOrders,
                 btnSyncHandheld
@@ -862,8 +862,59 @@ namespace Vendord.Desktop.App
             {
                 b.Dock = DockStyle.Top;
                 b.Height = ButtonHeight;
-                this.mainContent.Controls.Add(b);
             }
+
+            // create upload labels                 
+            Label lblProductUpload = new Label();
+            lblProductUpload.Text = "Drop Product List Here";
+
+            // enable drag and drop
+            lblProductUpload.DragEnter += new DragEventHandler(this.LblProductUpload_DragEnter);
+            lblProductUpload.DragDrop += new DragEventHandler(this.LblProductUpload_DragDrop);
+
+            Label lblVendorUpload = new Label();
+            lblVendorUpload.Text = "Drop Vendor List Here";
+
+            Label[] labels = new Label[]
+            {
+                lblVendorUpload, 
+                lblProductUpload
+            };            
+
+            foreach (Label l in labels)
+            {
+                l.TextAlign = ContentAlignment.MiddleCenter;
+                l.Dock = DockStyle.Fill;
+                l.AllowDrop = true;
+                l.BackColor = Colors.AllowDrop;
+                l.DragLeave += new EventHandler(this.Control_DragLeave);
+                l.DragEnter += new DragEventHandler(this.Control_DragEnter);
+            }
+
+            TableLayoutPanel pnlDragAndDrop = new TableLayoutPanel();
+
+            pnlDragAndDrop.SuspendLayout();
+
+            pnlDragAndDrop.Dock = DockStyle.Fill;
+            pnlDragAndDrop.ColumnCount = 2;
+            pnlDragAndDrop.RowCount = 1;
+            pnlDragAndDrop.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;     
+            pnlDragAndDrop.CellPaint += new TableLayoutCellPaintEventHandler(PnlDragAndDrop_CellPaint);
+
+            for (int i = 0; i < pnlDragAndDrop.ColumnCount * pnlDragAndDrop.RowCount; ++i)
+            {
+                pnlDragAndDrop.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            }
+
+            pnlDragAndDrop.Controls.Add(lblVendorUpload, 0, 0);
+            pnlDragAndDrop.Controls.Add(lblProductUpload, 1, 0);
+
+            // add controls
+            this.mainContent.Controls.Add(pnlDragAndDrop);
+            this.mainContent.Controls.AddRange(buttons);
+
+            pnlDragAndDrop.ResumeLayout();
+            this.ResumeLayout();
 
             // back
             this.DisableBackButton();
@@ -950,6 +1001,11 @@ namespace Vendord.Desktop.App
         #endregion
 
         #region Events
+
+        private void PnlDragAndDrop_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
+        {
+            e.Graphics.DrawLine(Pens.Black, e.CellBounds.Location, new Point(e.CellBounds.Right, e.CellBounds.Top));
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -1249,15 +1305,26 @@ namespace Vendord.Desktop.App
             this.StopStatusStrip("Import complete.");
         }
 
-        private void Form1_DragEnter(object sender, DragEventArgs e)
+        private void Control_DragLeave(object sender, EventArgs e)
+        {
+            (sender as Control).BackColor = Colors.DragLeave;
+        }
+
+        private void Control_DragEnter(object sender, DragEventArgs e)
+        {
+            (sender as Control).BackColor = Colors.DragEnter;
+        }
+
+        private void LblProductUpload_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
+
             }
         }
 
-        private void Form1_DragDrop(object sender, DragEventArgs e)
+        private void LblProductUpload_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
@@ -1375,5 +1442,6 @@ namespace Vendord.Desktop.App
         {
             public string OriginalText { get; set; }
         }
+        
     }
 }
