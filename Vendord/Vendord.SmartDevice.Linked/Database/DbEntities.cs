@@ -320,22 +320,7 @@ namespace Vendord.SmartDevice.Linked
 
         public override List<Product> SelectAll()
         {
-            List<Product> list = new List<Product>();
-            using (SqlCeDataReader reader = SelectAllReader(null))
-            {
-                while (reader.Read())
-                {
-                    Product item = new Product(this.queryExecutor);
-                    item.Name = Convert.ToString(reader["Name"]);
-                    item.Upc = Convert.ToString(reader["Upc"]);
-                    item.Price = Convert.ToDecimal(reader["Price"]);
-                    item.Department.Id = new Guid(reader["DepartmentId"].ToString());
-                    item.Vendor.Id = new Guid(reader["VendorId"].ToString());
-
-                    list.Add(item);
-                }
-            }
-            return list;
+            return SelectAllWithJoin();
         }
 
         public List<Product> SelectAllWithJoin()

@@ -734,8 +734,9 @@ namespace Vendord.Desktop.App
             var vendorNames =
                 from p in db.Products
                 join op in db.OrderProducts on p.Upc equals op.ProductUPC
+                join v in db.Vendors on p.Vendor.Id equals v.Id
                 where op.OrderID == orderID
-                group p by p.Vendor.Name into g
+                group v by v.Name into g
                 select g.Key;
 
             if (vendorNames.Count() > 0)
