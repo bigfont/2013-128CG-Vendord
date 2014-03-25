@@ -44,6 +44,8 @@ namespace Vendord.Desktop.App
             internal static Color AllowDrop = Color.Yellow;
             internal static Color DragLeave = Color.Yellow;
             internal static Color DragEnter = Color.YellowGreen;
+            internal static Color Enabled = Color.GhostWhite;
+            internal static Color Disabled = Color.DarkGray;
         }
 
         private class ImportWorkerArgs
@@ -263,8 +265,23 @@ namespace Vendord.Desktop.App
         {
             Button b = new Button();
             b.Text = text;
+            b.BackColor = Colors.Enabled;
             b.FlatStyle = FlatStyle.Flat;
             b.FlatAppearance.BorderSize = 1;
+
+            b.MouseEnter += new EventHandler((sender, e) => {
+            
+            });
+
+            b.MouseLeave += new EventHandler((sender, e) => { 
+            
+            });
+
+            b.EnabledChanged += new EventHandler((sender, e) => 
+            {
+                Button s = (sender as Button);
+                s.BackColor = s.Enabled ? Colors.Enabled : Colors.Disabled;                
+            });
             return b;
         }
 
