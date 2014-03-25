@@ -14,10 +14,10 @@ namespace DatabaseTests
             DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
 
             Vendor vendor = new Vendor(qe) { Id = 0, Name = "test" };
-            vendor.UpsertIntoDb(db);
+            vendor.UpsertIntoDb();
 
             Department department = new Department(qe) { Id = 0, Name = "test" };
-            department.UpsertIntoDb(db);
+            department.UpsertIntoDb();
 
             Order order = new Order(qe) { Name = "test" };
             order.UpsertIntoDb(db);
