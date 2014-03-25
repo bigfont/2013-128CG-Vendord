@@ -270,18 +270,20 @@ namespace Vendord.Desktop.App
             b.FlatStyle = FlatStyle.Flat;
             b.FlatAppearance.BorderSize = 1;
 
-            b.MouseEnter += new EventHandler((sender, e) => {
-            
+            b.MouseEnter += new EventHandler((sender, e) =>
+            {
+
             });
 
-            b.MouseLeave += new EventHandler((sender, e) => { 
-            
+            b.MouseLeave += new EventHandler((sender, e) =>
+            {
+
             });
 
-            b.EnabledChanged += new EventHandler((sender, e) => 
+            b.EnabledChanged += new EventHandler((sender, e) =>
             {
                 Button s = (sender as Button);
-                s.BackColor = s.Enabled ? Colors.Enabled : Colors.Disabled;                
+                s.BackColor = s.Enabled ? Colors.Enabled : Colors.Disabled;
             });
             return b;
         }
@@ -673,7 +675,7 @@ namespace Vendord.Desktop.App
             foreach (Product product in filteredProducts)
             {
                 listBoxProduct.Items.Add(product);
-            }           
+            }
         }
 
         private ListBox CreateListBoxProduct()
@@ -1179,9 +1181,16 @@ namespace Vendord.Desktop.App
                     break;
 
                 case UserInputs.LvOrder:
-                    this.DeleteSelectedOrder();
-                    this.UpdateListViewOrder();
-                    this.UpdateListViewVendor();
+
+                    DialogResult yesNo = MessageBox.Show("Delete this entire order?", "Confirm delete!", MessageBoxButtons.YesNo);
+                    if (yesNo == DialogResult.Yes)
+                    {
+                        this.DeleteSelectedOrder();
+                        this.UpdateListViewOrder();
+                        this.UpdateListViewVendor();
+                        this.UpdateListViewOrderProduct();
+                    }
+
                     break;
             }
         }
@@ -1242,13 +1251,13 @@ namespace Vendord.Desktop.App
                         if (this.UpdateListViewVendor().Items.Count > 0)
                         {
                             ListViewItem[] matchingItems = this.LvVendor.Items.Find(product.Vendor.Name, false);
-                            if(matchingItems.Length > 0)
+                            if (matchingItems.Length > 0)
                             {
                                 this.LvVendor.SelectedItems.Clear();
                                 listViewItemVendor = matchingItems[0];
                                 listViewItemVendor.Selected = true;
                                 listViewItemVendor.Focused = true;
-                            }                            
+                            }
                         }
 
                         // keep updating ui                        
@@ -1368,17 +1377,17 @@ namespace Vendord.Desktop.App
 
         private void ImportXmlBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker worker = sender as BackgroundWorker;            
+            BackgroundWorker worker = sender as BackgroundWorker;
             ImportWorkerArgs args = e.Argument as ImportWorkerArgs;
 
             Sync sync = new Sync();
             Sync.SyncResult result;
             if (args.Importing == ImportWorkerArgs.ImportType.Product)
-            {                
+            {
                 result = sync.PullProductsFromItRetailXmlBackup(worker, args.FilePath, ref this.totalRecords, ref this.insertedRecords);
             }
             else if (args.Importing == ImportWorkerArgs.ImportType.Vendor)
-            {                
+            {
                 result = sync.PullVendorsFromItRetailXmlBackup(worker, args.FilePath, ref this.totalRecords, ref this.insertedRecords);
             }
         }
@@ -1407,7 +1416,7 @@ namespace Vendord.Desktop.App
                 e.Effect = DragDropEffects.Copy;
                 (sender as Control).BackColor = Colors.DragEnter;
             }
-        }        
+        }
 
         private void LblVendorUpload_DrapDrop(object sender, DragEventArgs e)
         {
