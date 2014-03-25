@@ -22,7 +22,9 @@ namespace DatabaseTests
             Order order = new Order(qe) { Name = "test" };
             order.UpsertIntoDb(db);
 
-            Product product = new Product(qe);
+            Product product = new Product();
+
+            product = new Product(qe);
 
             product.Name = "test";
             product.Price = 10.00m;

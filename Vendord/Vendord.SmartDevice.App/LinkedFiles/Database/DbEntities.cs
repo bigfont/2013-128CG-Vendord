@@ -17,7 +17,10 @@ namespace Vendord.SmartDevice.Linked
     {
         public DbQueryExecutor queryExecutor;
 
-        public DbEntity() { }
+        public DbEntity()
+        { 
+        
+        }
 
         public DbEntity(DbQueryExecutor queryExecutor)
         {
@@ -140,8 +143,6 @@ namespace Vendord.SmartDevice.Linked
 
     public class Department : DbEntity<Department>
     {
-        public Department() : base() { }
-
         public Department(DbQueryExecutor qe) : base(qe) { }
 
         public Guid Id { get; set; }
@@ -201,8 +202,6 @@ namespace Vendord.SmartDevice.Linked
 
     public class Order : DbEntity<Order>
     {
-        public Order() : base() { }
-
         public Order(DbQueryExecutor qe) : base(qe) { }
 
         public Guid Id { get; set; }

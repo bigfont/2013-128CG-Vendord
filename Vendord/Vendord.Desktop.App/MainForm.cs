@@ -280,12 +280,15 @@ namespace Vendord.Desktop.App
             if (selectedListViewOrderItem != null && selectedListViewOrderItem.Tag != null &&
                 selectedListViewOrderProductItem != null && selectedListViewOrderProductItem.Tag != null)
             {
-                orderProduct = new OrderProduct()
+                Database db = new Database();
+                DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
+
+                orderProduct = new OrderProduct(queryExe)
                 {
                     OrderID = new Guid(selectedListViewOrderItem.Tag.ToString()),
                     ProductUPC = selectedListViewOrderProductItem.Tag.ToString()
                 };
-                orderProduct.AddToTrash(new Database());
+                orderProduct.AddToTrash();
             }
 
             return selectedListViewOrderProductItem.Index;
@@ -293,13 +296,14 @@ namespace Vendord.Desktop.App
 
         private void DeleteSelectedOrder()
         {
-            Order order;
+            Database db = new Database();
+            DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
 
-            order = new Order()
+            Order order = new Order(queryExe)
             {
                 Id = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString())
             };
-            order.AddToTrash(new Database());
+            order.AddToTrash();
         }
 
         private void ButtonMessage_Clear(Button b)
@@ -517,14 +521,17 @@ namespace Vendord.Desktop.App
             if (textbox.Text.Length > 0 &&
                 !(textbox.Tag as TagProperties).OriginalText.Equals(textbox.Text))
             {
-                // save the amount to order            
-                orderProduct = new OrderProduct()
+                // save the amount to order     
+                Database db = new Database();
+                DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
+
+                orderProduct = new OrderProduct(queryExe)
                 {
                     OrderID = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString()),
                     ProductUPC = this.SelectedListViewItem(this.LvOrderProduct).Tag.ToString(),
                     CasesToOrder = Convert.ToInt32(textbox.Text)
                 };
-                orderProduct.UpsertIntoDb(new Database());
+                orderProduct.UpsertIntoDb();
 
                 // update the UI - this is a performance hit :-(                
                 this.UpdateListViewOrderProduct();
@@ -567,7 +574,7 @@ namespace Vendord.Desktop.App
             filteredCopy = products.ToList<Product>();
             if (vendorName != null && vendorName.Length > 0)
             {
-                filteredCopy.RemoveAll(p => !p.VendorName.Equals(vendorName));
+                filteredCopy.RemoveAll(p => !p.Vendor.Name.Equals(vendorName));
             }
 
             return filteredCopy;
@@ -728,7 +735,7 @@ namespace Vendord.Desktop.App
                 from p in db.Products
                 join op in db.OrderProducts on p.Upc equals op.ProductUPC
                 where op.OrderID == orderID
-                group p by p.VendorName into g
+                group p by p.Vendor.Name into g
                 select g.Key;
 
             if (vendorNames.Count() > 0)
@@ -1106,19 +1113,22 @@ namespace Vendord.Desktop.App
                         else
                         {
                             // save
-                            orderProduct = new OrderProduct()
+                            Database db = new Database();
+                            DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
+
+                            orderProduct = new OrderProduct(queryExe)
                             {
                                 OrderID = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString()),
                                 ProductUPC = product.Upc,
                                 CasesToOrder = Constants.DefaultCasesToOrder
                             };
-                            orderProduct.UpsertIntoDb(new Database());
+                            orderProduct.UpsertIntoDb();
                         }
 
                         // update ui                        
                         if (this.UpdateListViewVendor().Items.Count > 0)
                         {
-                            listViewItemVendor = this.LvVendor.Items.Find(product.VendorName, false)[0];
+                            listViewItemVendor = this.LvVendor.Items.Find(product.Vendor.Name, false)[0];
                             this.LvVendor.SelectedItems.Clear();
                             listViewItemVendor.Selected = true;
                             listViewItemVendor.Focused = true;

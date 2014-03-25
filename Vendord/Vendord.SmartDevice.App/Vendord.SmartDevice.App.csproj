@@ -65,9 +65,6 @@
     <Compile Include="..\Vendord.SmartDevice.Linked\Constants.cs">
       <Link>LinkedFiles\Constants.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Linked\Database.cs">
-      <Link>LinkedFiles\Database.cs</Link>
-    </Compile>
     <Compile Include="..\Vendord.SmartDevice.Linked\ErrorHandler.cs">
       <Link>LinkedFiles\ErrorHandler.cs</Link>
     </Compile>
@@ -78,6 +75,10 @@
       <Link>LinkedFiles\IOHelpers.cs</Link>
     </Compile>
     <Compile Include="BarcodeAPI.cs" />
+    <Compile Include="LinkedFiles\Database\Database.cs" />
+    <Compile Include="LinkedFiles\Database\DbEntities.cs" />
+    <Compile Include="LinkedFiles\Database\DbQueryExecutor.cs" />
+    <Compile Include="LinkedFiles\Database\DbTableCreator.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

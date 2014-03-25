@@ -38,11 +38,8 @@ namespace Vendord.SmartDevice.App
         // scanning specific fields
         private BarcodeAPI barcodeAPI;
 
-        private Order currentOrder
-            = new Order();
-
-        private Product currentProduct
-            = new Product();
+        private Order currentOrder = null;
+        private Product currentProduct = null;         
 
         public MainForm()
         {
@@ -138,12 +135,9 @@ namespace Vendord.SmartDevice.App
 
         private void DeleteSelectedOrder()
         {
-            Database db;            
-
             if (this.currentOrder != null)
             {
-                db = new Database();
-                this.currentOrder.AddToTrash(db);
+                this.currentOrder.AddToTrash();
                 this.currentOrder = null;
             }
         }
@@ -155,11 +149,14 @@ namespace Vendord.SmartDevice.App
             textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderName, true);
             if (textBoxes != null && textBoxes.Count > 0 && textBoxes.FirstOrDefault().Text.Length > 0)
             {
-                Order newOrder = new Order()
+                Database db = new Database();
+                DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
+
+                Order newOrder = new Order(queryExe)
                 {
                     Name = textBoxes.FirstOrDefault<TextBox>().Text
                 };
-                newOrder.UpsertIntoDb(new Database());
+                newOrder.UpsertIntoDb(db);
                 this.currentOrder = newOrder;
             }
         }
@@ -180,13 +177,16 @@ namespace Vendord.SmartDevice.App
                     targetTextBox.Text.Length > 0 && 
                     targetTextBox.Enabled)
                 {
-                    OrderProduct orderProduct = new OrderProduct()
+                    Database db = new Database();
+                    DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
+
+                    OrderProduct orderProduct = new OrderProduct(queryExe)
                     {
                         OrderID = this.currentOrder.Id,
                         ProductUPC = this.currentProduct.Upc,
                         CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
                     };
-                    orderProduct.UpsertIntoDb(new Database());
+                    orderProduct.UpsertIntoDb();
                 }
             }
         }

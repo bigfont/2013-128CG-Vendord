@@ -120,8 +120,11 @@ namespace Vendord.Desktop.App
                     Upc = (string)p.Element("upc"),
                     Name = (string)p.Element("description"),
                     Price = (decimal?)p.Element("normal_price"),
-                    VendorId = (int?)p.Element("vendor"), 
-                    VendorName = ""
+                    Vendor = new Vendor()
+                    {
+                        Id = new Guid(p.Element("vendor").ToString()),
+                        Name = ""
+                    }
                 };
             List<Product> products = query.ToList<Product>();
             return products;
@@ -137,7 +140,7 @@ namespace Vendord.Desktop.App
 
             foreach (Product p in products)
             {                
-                p.UpsertIntoDb(new Database());
+                p.UpsertIntoDb();
                 insertedRecords++;
 
                 // if five seconds have passed, make the worker report progress

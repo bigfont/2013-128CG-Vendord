@@ -110,8 +110,17 @@
     <Compile Include="..\Vendord.SmartDevice.Linked\Constants.cs">
       <Link>LinkedFiles\Constants.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Linked\Database.cs">
-      <Link>LinkedFiles\Database.cs</Link>
+    <Compile Include="..\Vendord.SmartDevice.Linked\Database\Database.cs">
+      <Link>LinkedFiles\Database\Database.cs</Link>
+    </Compile>
+    <Compile Include="..\Vendord.SmartDevice.Linked\Database\DbEntities.cs">
+      <Link>LinkedFiles\Database\DbEntities.cs</Link>
+    </Compile>
+    <Compile Include="..\Vendord.SmartDevice.Linked\Database\DbQueryExecutor.cs">
+      <Link>LinkedFiles\Database\DbQueryExecutor.cs</Link>
+    </Compile>
+    <Compile Include="..\Vendord.SmartDevice.Linked\Database\DbTableCreator.cs">
+      <Link>LinkedFiles\Database\DbTableCreator.cs</Link>
     </Compile>
     <Compile Include="..\Vendord.SmartDevice.Linked\ErrorHandler.cs">
       <Link>LinkedFiles\ErrorHandler.cs</Link>
