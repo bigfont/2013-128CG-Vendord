@@ -12,6 +12,7 @@ namespace Vendord.SmartDevice.Linked
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Diagnostics;
 
     public abstract class DbEntity<T>
     {
@@ -47,28 +48,10 @@ namespace Vendord.SmartDevice.Linked
             queryExecutor.ExecuteNonQuery(emptyTrashQuery, null);
         }
 
-        public SqlCeDataReader SelectAllReader(string[][] joinColumnToTableColumn)
+        public SqlCeDataReader SelectAllReader()
         {
             StringBuilder query = new StringBuilder();
-            query.AppendFormat(@"SELECT * FROM {0} main ", this.TableName);
-
-            // add joins
-            if (joinColumnToTableColumn != null)
-            {
-                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-                for (int i = 0; i < joinColumnToTableColumn.Length; ++i)
-                {
-                    query.AppendFormat("JOIN {2} {0} ON main.{1} = {0}.{3} ",
-                        alpha[i],
-                        joinColumnToTableColumn[i][0],
-                        joinColumnToTableColumn[i][1],
-                        joinColumnToTableColumn[i][2]);
-                }
-            }
-
-
-            // add where
-            query.Append("WHERE main.IsInTrash IS NULL OR main.IsInTrash = 0");
+            query.AppendFormat(@"SELECT * FROM {0} WHERE IsInTrash IS NULL OR IsInTrash = 0", this.TableName);
             return queryExecutor.ExecuteReader(query.ToString());
         }
 
@@ -115,7 +98,7 @@ namespace Vendord.SmartDevice.Linked
         public override List<Vendor> SelectAll()
         {
             List<Vendor> list = new List<Vendor>();
-            using (SqlCeDataReader reader = SelectAllReader(null))
+            using (SqlCeDataReader reader = SelectAllReader())
             {
                 while (reader.Read())
                 {
@@ -182,7 +165,7 @@ namespace Vendord.SmartDevice.Linked
         public override List<Department> SelectAll()
         {
             List<Department> list = new List<Department>();
-            using (SqlCeDataReader reader = SelectAllReader(null))
+            using (SqlCeDataReader reader = SelectAllReader())
             {
                 while (reader.Read())
                 {
@@ -249,7 +232,7 @@ namespace Vendord.SmartDevice.Linked
         public override List<Order> SelectAll()
         {
             List<Order> list = new List<Order>();
-            using (SqlCeDataReader reader = SelectAllReader(null))
+            using (SqlCeDataReader reader = SelectAllReader())
             {
                 while (reader.Read())
                 {
@@ -338,59 +321,40 @@ namespace Vendord.SmartDevice.Linked
         {
             List<Product> list = new List<Product>();
 
-            string[][] joinColumnToTableColumn = new string[][] 
-            { 
-                new string[] { "VendorId", "tblVendor", "Id" },
-                new string[] { "DepartmentId", "tblDepartment", "Id" },
-            };
+            string query = @"
+                SELECT main.*, v.Name as VendorName, d.Name as DepartmentName
+                FROM tblProduct main 
+                JOIN tblVendor v ON main.VendorId = v.Id 
+                JOIN tblDepartment d ON main.DepartmentId = d.Id 
+                WHERE main.IsInTrash IS NULL OR main.IsInTrash = 0
+            ";            
 
-            using (SqlCeDataReader reader = SelectAllReader(joinColumnToTableColumn))
+            using (SqlCeDataReader reader = queryExecutor.ExecuteReader(query))
             {
                 while (reader.Read())
                 {
-#if DEBUG
-                    // print column names
-                    string[] keys = new string[reader.FieldCount];
-                    for (int i = 0; i < reader.FieldCount; ++i)
-                    {                        
-                        Console.WriteLine(reader.GetName(i));
-                    }
-#endif
-
                     Product item = new Product(this.queryExecutor);
-                    int columnNum = 0;
-
-                    item.Upc = Convert.ToString(reader[columnNum++]);//Upc
-                    item.Name = Convert.ToString(reader[columnNum++]);//Name
-                    item.Price = Convert.ToDecimal(reader[columnNum++]);//Price
-                    columnNum++; //IsInTrash
-
+                    item.Upc = Convert.ToString(reader["Upc"]);
+                    item.Name = Convert.ToString(reader["Name"]);
+                    item.Price = Convert.ToDecimal(reader["Price"]);
                     try
                     {
-                        item.Vendor.Id = Int32.Parse(reader[columnNum++].ToString());
+                        item.Vendor.Id = Int32.Parse(reader["VendorId"].ToString());
                     }
                     catch (Exception)
                     {
                         item.Vendor.Id = null;
                     }
-
                     try
                     {
-                        item.Department.Id = Int32.Parse(reader[columnNum++].ToString());
+                        item.Department.Id = Int32.Parse(reader["DepartmentId"].ToString());
                     }
                     catch (Exception)
                     {
                         item.Department.Id = null;
                     }
-
-                    columnNum++;//Id
-                    item.Vendor.Name = Convert.ToString(reader[columnNum++].ToString());//Name
-                    columnNum++;//IsInTrash
-
-                    columnNum++;//Id
-                    item.Department.Name = Convert.ToString(reader[columnNum++].ToString());//Name
-                    columnNum++;//IsInTrash
-
+                    item.Vendor.Name = Convert.ToString(reader["VendorName"].ToString());
+                    item.Department.Name = Convert.ToString(reader["DepartmentName"].ToString());
                     list.Add(item);
                 }
             }
@@ -459,7 +423,7 @@ namespace Vendord.SmartDevice.Linked
         public override List<OrderProduct> SelectAll()
         {
             List<OrderProduct> list = new List<OrderProduct>();
-            using (SqlCeDataReader reader = SelectAllReader(null))
+            using (SqlCeDataReader reader = SelectAllReader())
             {
                 while (reader.Read())
                 {

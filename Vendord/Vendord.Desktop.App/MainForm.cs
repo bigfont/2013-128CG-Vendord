@@ -662,7 +662,14 @@ namespace Vendord.Desktop.App
         private void AddDataToListBoxProduct(ListBox listBoxProduct, string vendorName)
         {
             List<Product> filteredProducts;
-            filteredProducts = this.FilterProductListOnVendorName((new Database()).Products, vendorName);
+
+            Database db = new Database();
+            DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
+            Product p = new Product();
+            p.queryExecutor = qe;
+            List<Product> products = p.SelectAllWithJoin();
+
+            filteredProducts = this.FilterProductListOnVendorName(products, vendorName);
             foreach (Product product in filteredProducts)
             {
                 listBoxProduct.Items.Add(product);
@@ -1234,10 +1241,14 @@ namespace Vendord.Desktop.App
                         // update ui                        
                         if (this.UpdateListViewVendor().Items.Count > 0)
                         {
-                            listViewItemVendor = this.LvVendor.Items.Find(product.Vendor.Name, false)[0];
-                            this.LvVendor.SelectedItems.Clear();
-                            listViewItemVendor.Selected = true;
-                            listViewItemVendor.Focused = true;
+                            ListViewItem[] matchingItems = this.LvVendor.Items.Find(product.Vendor.Name, false);
+                            if(matchingItems.Length > 0)
+                            {
+                                this.LvVendor.SelectedItems.Clear();
+                                listViewItemVendor = matchingItems[0];
+                                listViewItemVendor.Selected = true;
+                                listViewItemVendor.Focused = true;
+                            }                            
                         }
 
                         // keep updating ui                        
