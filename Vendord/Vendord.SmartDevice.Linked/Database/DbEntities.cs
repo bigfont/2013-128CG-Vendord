@@ -58,10 +58,10 @@ namespace Vendord.SmartDevice.Linked
                 char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
                 for (int i = 0; i < joinColumnToTableColumn.Length; ++i)
                 {
-                    query.AppendFormat("JOIN {2} {0} ON main.{1} = {0}.{3} ", 
-                        alpha[i], 
-                        joinColumnToTableColumn[i][0], 
-                        joinColumnToTableColumn[i][1], 
+                    query.AppendFormat("JOIN {2} {0} ON main.{1} = {0}.{3} ",
+                        alpha[i],
+                        joinColumnToTableColumn[i][0],
+                        joinColumnToTableColumn[i][1],
                         joinColumnToTableColumn[i][2]);
                 }
             }
@@ -83,7 +83,7 @@ namespace Vendord.SmartDevice.Linked
 
         public Vendor(DbQueryExecutor qe) : base(qe) { }
 
-        public Guid Id { get; set; }
+        public int? Id { get; set; }
 
         public string Name { get; set; }
 
@@ -99,19 +99,17 @@ namespace Vendord.SmartDevice.Linked
             queryExecutor.ExecuteNonQuery(trashQuery, null);
         }
 
-        public void UpsertIntoDb(Database db)
+        public void UpsertIntoDb()
         {
             string insertQuery;
 
             insertQuery = string.Format(
-                @"INSERT INTO {0} (Id, Name) VALUES (NEWID(), '{1}');",
+                @"INSERT INTO {0} (Id, Name) VALUES ({1}, '{2}');",
                 this.TableName,
+                this.Id,
                 this.Name);
 
             queryExecutor.ExecuteNonQuery(insertQuery, null);
-
-            // set the Id to the newly generated Id
-            this.Id = db.Vendors.FirstOrDefault<Vendor>(os => os.Name.Equals(this.Name)).Id;
         }
 
         public override List<Vendor> SelectAll()
@@ -121,11 +119,19 @@ namespace Vendord.SmartDevice.Linked
             {
                 while (reader.Read())
                 {
-                    Vendor item = new Vendor(this.queryExecutor)
+                    Vendor item = new Vendor(this.queryExecutor);
+
+                    try
                     {
-                        Id = new Guid(reader["Id"].ToString()),
-                        Name = Convert.ToString(reader["Name"])
-                    };
+                        item.Id = Convert.ToInt32(reader["Id"].ToString());
+                    }
+                    catch (Exception)
+                    {
+                        item.Id = null;
+                    }
+                    
+                    item.Name = Convert.ToString(reader["Name"]);
+
                     list.Add(item);
                 }
             }
@@ -144,7 +150,7 @@ namespace Vendord.SmartDevice.Linked
 
         public Department(DbQueryExecutor qe) : base(qe) { }
 
-        public Guid Id { get; set; }
+        public int? Id { get; set; }
 
         public string Name { get; set; }
 
@@ -153,26 +159,24 @@ namespace Vendord.SmartDevice.Linked
             string trashQuery;
 
             trashQuery = string.Format(
-                @"UPDATE {0} SET IsInTrash = 1 WHERE Id = '{1}'",
+                @"UPDATE {0} SET IsInTrash = 1 WHERE Id = '{1}'",               
                 this.TableName,
                 this.Id);
 
             queryExecutor.ExecuteNonQuery(trashQuery, null);
         }
 
-        public void UpsertIntoDb(Database db)
+        public void UpsertIntoDb()
         {
             string insertQuery;
 
             insertQuery = string.Format(
-                @"INSERT INTO {0} (Id, Name) VALUES (NEWID(), '{1}');",
+                @"INSERT INTO {0} (Id, Name) VALUES ({1}, '{2}');",
                 this.TableName,
+                this.Id,
                 this.Name);
 
             queryExecutor.ExecuteNonQuery(insertQuery, null);
-
-            // set the Id to the newly generated Id
-            this.Id = db.Departments.FirstOrDefault<Department>(os => os.Name.Equals(this.Name)).Id;
         }
 
         public override List<Department> SelectAll()
@@ -182,11 +186,17 @@ namespace Vendord.SmartDevice.Linked
             {
                 while (reader.Read())
                 {
-                    Department item = new Department(this.queryExecutor)
+                    Department item = new Department(this.queryExecutor);
+                    try
                     {
-                        Id = new Guid(reader["Id"].ToString()),
-                        Name = Convert.ToString(reader["Name"])
-                    };
+                        item.Id = Convert.ToInt32(reader["id"]);
+                    }
+                    catch (Exception)
+                    {
+                        item.Id = null;
+                    }
+
+                    Name = Convert.ToString(reader["Name"]);
                     list.Add(item);
                 }
             }
@@ -288,8 +298,8 @@ namespace Vendord.SmartDevice.Linked
                 new SqlCeParameter() { ParameterName = "@Upc", SqlDbType = SqlDbType.NVarChar, Value = this.Upc },
                 new SqlCeParameter() { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = this.Name },
                 new SqlCeParameter() { ParameterName = "@Price", SqlDbType = SqlDbType.Decimal, Value = this.Price },
-                new SqlCeParameter() { ParameterName = "@VendorId", SqlDbType = SqlDbType.UniqueIdentifier, Value = this.Vendor.Id },
-                new SqlCeParameter() { ParameterName = "@DepartmentId", SqlDbType = SqlDbType.UniqueIdentifier, Value = this.Department.Id }
+                new SqlCeParameter() { ParameterName = "@VendorId", SqlDbType = SqlDbType.Int, Value = this.Vendor.Id },
+                new SqlCeParameter() { ParameterName = "@DepartmentId", SqlDbType = SqlDbType.Int, Value = this.Department.Id }
             };
 
             string selectQuery = string.Format(
@@ -300,7 +310,8 @@ namespace Vendord.SmartDevice.Linked
                 @"INSERT INTO {0} (Upc, Name, Price, VendorId, DepartmentId) VALUES (@upc, @name, @price, @vendorId, @departmentId)",
                 this.TableName);
 
-            if (Convert.ToInt16(queryExecutor.ExecuteScalar(selectQuery, parameters)) == 0)
+            object result = queryExecutor.ExecuteScalar(selectQuery, parameters);
+            if (Convert.ToInt16(result.ToString()) == 0)
             {
                 queryExecutor.ExecuteNonQuery(insertQuery, parameters);
             }
@@ -354,13 +365,29 @@ namespace Vendord.SmartDevice.Linked
                     item.Price = Convert.ToDecimal(reader[columnNum++]);//Price
                     columnNum++; //IsInTrash
 
-                    item.Vendor.Id = new Guid(reader[columnNum++].ToString());//VendorId
-                    item.Department.Id = new Guid(reader[columnNum++].ToString());//DepartmentId
-                    item.Vendor.Id = new Guid(reader[columnNum++].ToString());//Id
+                    try
+                    {
+                        item.Vendor.Id = Int32.Parse(reader[columnNum++].ToString());
+                    }
+                    catch (Exception)
+                    {
+                        item.Vendor.Id = null;
+                    }
+
+                    try
+                    {
+                        item.Department.Id = Int32.Parse(reader[columnNum++].ToString());
+                    }
+                    catch (Exception)
+                    {
+                        item.Department.Id = null;
+                    }
+
+                    columnNum++;//Id
                     item.Vendor.Name = Convert.ToString(reader[columnNum++].ToString());//Name
                     columnNum++;//IsInTrash
 
-                    item.Department.Id = new Guid(reader[columnNum++].ToString());//Id
+                    columnNum++;//Id
                     item.Department.Name = Convert.ToString(reader[columnNum++].ToString());//Name
                     columnNum++;//IsInTrash
 

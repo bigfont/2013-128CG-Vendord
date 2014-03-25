@@ -54,7 +54,17 @@ namespace Vendord.SmartDevice.Linked
                 {
                     cmd.Parameters.AddRange(parameters);
                 }
-                rowsAffected = cmd.ExecuteNonQuery();
+
+                try
+                {
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    string m = e.Message;
+                    m = m.ToString();
+                }
+                
                 cmd.Parameters.Clear();
             }
 

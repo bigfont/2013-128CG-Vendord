@@ -47,7 +47,7 @@ namespace Vendord.SmartDevice.Linked
 
                     CREATE TABLE [tblDepartment]
                     (
-                       [Id] UNIQUEIDENTIFIER NOT NULL,
+                       [Id] int NOT NULL,
                        [Name] NVARCHAR(100),
                        [IsInTrash] BIT
                     )";
@@ -60,6 +60,9 @@ namespace Vendord.SmartDevice.Linked
                     ADD CONSTRAINT [PK_tblDepartment] PRIMARY KEY ([Id])";
 
                 queryExecutor.ExecuteNonQuery(query, null);
+
+                query = @"INSERT INTO tblDepartment VALUES (-1, 'No Department', 0)";
+                queryExecutor.ExecuteNonQuery(query, null);
             }
 
             if (!this.TableExists("tblVendor"))
@@ -67,7 +70,7 @@ namespace Vendord.SmartDevice.Linked
                 query = @"
                     CREATE TABLE [tblVendor]
                     (
-                       [Id] UNIQUEIDENTIFIER NOT NULL,
+                       [Id] int NOT NULL,
                        [Name] NVARCHAR(100),
                        [IsInTrash] BIT
                     )";
@@ -79,6 +82,9 @@ namespace Vendord.SmartDevice.Linked
                     ALTER TABLE [tblVendor] 
                     ADD CONSTRAINT [PK_tblVendor] PRIMARY KEY ([Id])";
 
+                queryExecutor.ExecuteNonQuery(query, null);
+
+                query = @"INSERT INTO tblVendor VALUES (-1, 'No Vendor', 0)";
                 queryExecutor.ExecuteNonQuery(query, null);
             }
 
@@ -111,8 +117,8 @@ namespace Vendord.SmartDevice.Linked
                        [Name] NVARCHAR(100),
                        [Price] DECIMAL,
                        [IsInTrash] BIT,
-                       [VendorId] UNIQUEIDENTIFIER,
-                       [DepartmentId] UNIQUEIDENTIFIER
+                       [VendorId] int,
+                       [DepartmentId] int
                     )";
 
                 queryExecutor.ExecuteNonQuery(query, null);

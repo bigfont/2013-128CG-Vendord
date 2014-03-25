@@ -120,12 +120,20 @@ namespace Vendord.Desktop.App
                     Upc = (string)p.Element("upc"),
                     Name = (string)p.Element("description"),
                     Price = (decimal?)p.Element("normal_price"),
+                    Department = new Department()
+                    {
+                        Id = (int?)p.Element("department") ?? -1,
+                        Name = ""
+                    },
                     Vendor = new Vendor()
                     {
-                        Id = new Guid(p.Element("vendor").ToString()),
+                        Id = (int?)p.Element("vendor") ?? -1,
                         Name = ""
                     }
                 };
+
+            int i = query.Count();
+
             List<Product> products = query.ToList<Product>();
             return products;
         }
@@ -138,8 +146,24 @@ namespace Vendord.Desktop.App
             totalRecords = products.Count();
             DateTime progressReportTime = DateTime.MinValue;
 
+            Database db = new Database();
+            DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
+
             foreach (Product p in products)
-            {                
+            {
+                Vendor v = new Vendor();
+                v.queryExecutor = queryExe;
+                v.Id = p.Vendor.Id;
+                v.Name = p.Vendor.Name;
+                v.UpsertIntoDb();
+
+                Department d = new Department();
+                d.queryExecutor = queryExe;
+                d.Id = p.Department.Id;
+                d.Name = p.Department.Name;
+                d.UpsertIntoDb();
+
+                p.queryExecutor = queryExe;
                 p.UpsertIntoDb();
                 insertedRecords++;
 
