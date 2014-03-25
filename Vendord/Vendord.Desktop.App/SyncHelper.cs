@@ -92,8 +92,8 @@ namespace Vendord.Desktop.App
                 var remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(_remoteDatabaseLocalCopyFullPath));
 
                 // Describe the scope
-                var tablesToSync = new[] { "tblOrder", "tblProduct", "tblOrderProduct" };
-                const string scopeName = "OrdersAndProducts";
+                var tablesToSync = new[] { "tblVendor", "tblDepartment", "tblProduct", "tblOrder", "tblOrderProduct" };
+                const string scopeName = "VendordScope_2";
                 var localScopeDesc = DescribeTheScope(tablesToSync, scopeName, localConn);
                 var remoteScopeDesc = DescribeTheScope(tablesToSync, scopeName, remoteConn);
 
@@ -120,8 +120,9 @@ namespace Vendord.Desktop.App
             {
                 IOHelpers.LogException(e);
             }
-            catch (RAPI.RapiException)
+            catch (RAPI.RapiException e)
             {
+                IOHelpers.LogException(e);
             }
 
             return result;
@@ -249,7 +250,7 @@ namespace Vendord.Desktop.App
 
         private void SetRemoteDeviceDatabaseNames(RAPI.RemoteDevice remoteDevice)
         {
-            var rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.ApplicationData);
+            var rapiApplicationData = remoteDevice.GetFolderPath(RAPI.SpecialFolder.MyDocuments);
             var rapiApplicationDataStore = Path.Combine(rapiApplicationData, Constants.ApplicationName);
             _remoteDatabaseFullPath = Path.Combine(rapiApplicationDataStore, Constants.ApplicationDatabaseName);
             _remoteDatabaseLocalCopyFullPath = IOHelpers.AddSuffixToFilePath(Constants.VendordMainDatabaseFullPath,
@@ -293,15 +294,13 @@ namespace Vendord.Desktop.App
         #region MS Sync Framework
 
         private static DbSyncScopeDescription DescribeTheScope(IEnumerable<string> tablesToSync, string scopeName,
-            SqlCeConnection localConn)
+            SqlCeConnection conn)
         {
             // create a scope description object
-            var scopeDesc = new DbSyncScopeDescription { ScopeName = scopeName };
-
-            // connect to the local version of the database
+            var scopeDesc = new DbSyncScopeDescription { ScopeName = scopeName };            
 
             // add each table to the scope without any filtering
-            foreach (var tableDesc in tablesToSync.Select(tableName => SqlCeSyncDescriptionBuilder.GetDescriptionForTable(tableName, localConn)))
+            foreach (var tableDesc in tablesToSync.Select(tableName => SqlCeSyncDescriptionBuilder.GetDescriptionForTable(tableName, conn)))
             {
                 scopeDesc.Tables.Add(tableDesc);
             }

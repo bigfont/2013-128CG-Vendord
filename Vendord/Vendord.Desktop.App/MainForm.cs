@@ -99,6 +99,7 @@ namespace Vendord.Desktop.App
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             this.MinimumSize = new Size(FormWidthMinimum, FormHeightMinimum);
             this.BackColor = Color.White;
+            this.Text = "Country Grocer Salt Spring";
 
             // create background worker and it's progress reported            
             this.importXmlBackgroundWorker = new BackgroundWorker();
