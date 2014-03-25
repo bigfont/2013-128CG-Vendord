@@ -843,8 +843,6 @@ namespace Vendord.Desktop.App
 
         private void LoadOrdersView()
         {            
-            this.SuspendLayout();
-
             // create buttons
             Button btnSyncHandheld = this.ButtonFactory("Sync Handheld (before and after Scanning)");
             btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
@@ -892,29 +890,21 @@ namespace Vendord.Desktop.App
             }
 
             TableLayoutPanel pnlDragAndDrop = new TableLayoutPanel();
-
-            pnlDragAndDrop.SuspendLayout();
-
             pnlDragAndDrop.Dock = DockStyle.Fill;
             pnlDragAndDrop.ColumnCount = 2;
             pnlDragAndDrop.RowCount = 1;
-            pnlDragAndDrop.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;     
-            pnlDragAndDrop.CellPaint += new TableLayoutCellPaintEventHandler(PnlDragAndDrop_CellPaint);
-
+            pnlDragAndDrop.CellBorderStyle = TableLayoutPanelCellBorderStyle.InsetDouble;
+            pnlDragAndDrop.CellPaint += new TableLayoutCellPaintEventHandler(TblLayoutPanel_CellPaint);
             for (int i = 0; i < pnlDragAndDrop.ColumnCount * pnlDragAndDrop.RowCount; ++i)
             {
                 pnlDragAndDrop.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             }
-
             pnlDragAndDrop.Controls.Add(lblVendorUpload, 0, 0);
             pnlDragAndDrop.Controls.Add(lblProductUpload, 1, 0);
 
             // add controls
             this.mainContent.Controls.Add(pnlDragAndDrop);
             this.mainContent.Controls.AddRange(buttons);
-
-            pnlDragAndDrop.ResumeLayout();
-            this.ResumeLayout();
 
             // back
             this.DisableBackButton();
@@ -1002,8 +992,9 @@ namespace Vendord.Desktop.App
 
         #region Events
 
-        private void PnlDragAndDrop_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
+        private void TblLayoutPanel_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
+            // Add a border around each cell
             e.Graphics.DrawLine(Pens.Black, e.CellBounds.Location, new Point(e.CellBounds.Right, e.CellBounds.Top));
         }
 
