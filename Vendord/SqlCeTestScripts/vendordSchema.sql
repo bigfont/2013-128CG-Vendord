@@ -1,0 +1,59 @@
+﻿CREATE TABLE [tblDepartment]
+(
+   [Id] UNIQUEIDENTIFIER NOT NULL,
+   [Name] NVARCHAR(100),
+   [IsInTrash] BIT
+);
+
+CREATE TABLE [tblOrder]
+(
+   [Id] UNIQUEIDENTIFIER NOT NULL,
+   [Name] NVARCHAR(100),
+   [IsInTrash] BIT
+);
+
+CREATE TABLE [tblOrderProduct]
+(
+   [OrderID] UNIQUEIDENTIFIER NOT NULL,
+   [ProductUPC] NVARCHAR(100) NOT NULL,
+   [CasesToOrder] INT,
+   [IsInTrash] BIT
+);
+
+CREATE TABLE [tblProduct]
+(
+   [Upc] NVARCHAR(100) NOT NULL,
+   [Name] NVARCHAR(100),
+   [IsInTrash] BIT,
+   [VendorId] UNIQUEIDENTIFIER,
+   [DepartmentId] UNIQUEIDENTIFIER
+);
+
+CREATE TABLE [tblVendor]
+(
+   [Id] UNIQUEIDENTIFIER NOT NULL,
+   [Name] NVARCHAR(100),
+   [IsInTrash] BIT
+);
+
+ALTER TABLE [tblDepartment] ADD CONSTRAINT [PK__tblDepartment__0000000000000124] PRIMARY KEY ([Id]);
+
+ALTER TABLE [tblOrder] ADD CONSTRAINT [PK__tblOrder__0000000000000118] PRIMARY KEY ([Id]);
+
+ALTER TABLE [tblOrderProduct] ADD CONSTRAINT [PK_OrderProduct] PRIMARY KEY ([OrderID], [ProductUPC]);
+
+ALTER TABLE [tblProduct] ADD CONSTRAINT [PK__tblProduct__0000000000000140] PRIMARY KEY ([Upc]);
+
+ALTER TABLE [tblVendor] ADD CONSTRAINT [PK__tblVendor__0000000000000130] PRIMARY KEY ([Id]);
+
+ALTER TABLE [tblOrderProduct] ADD CONSTRAINT [FK_OrderId] FOREIGN KEY ([OrderID])
+   REFERENCES [tblOrder] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE [tblOrderProduct] ADD CONSTRAINT [FK_ProductUpc] FOREIGN KEY ([ProductUPC])
+   REFERENCES [tblProduct] ([Upc]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE [tblProduct] ADD CONSTRAINT [FK_DepartmentId] FOREIGN KEY ([DepartmentId])
+   REFERENCES [tblDepartment] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+ALTER TABLE [tblProduct] ADD CONSTRAINT [FK_VendordId] FOREIGN KEY ([VendorId])
+   REFERENCES [tblVendor] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION;

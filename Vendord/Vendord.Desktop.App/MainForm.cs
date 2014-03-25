@@ -839,20 +839,6 @@ namespace Vendord.Desktop.App
             this.mainContent.Controls.Clear();
         }
 
-        private void LoadHomeView()
-        {
-            Button btnOrders;
-
-            btnOrders = this.ButtonFactory("Orders");
-            btnOrders.Click += new EventHandler(this.BtnOrders_Click);
-
-            btnOrders.Dock = DockStyle.Top;
-            btnOrders.Height = ButtonHeight;
-            this.mainContent.Controls.Add(btnOrders);
-
-            this.DisableBackButton();
-        }
-
         private void LoadOrdersView()
         {
             Button btnSyncHandheld;
@@ -880,7 +866,7 @@ namespace Vendord.Desktop.App
             }
 
             // back
-            this.EnableBackButton(this.LoadHomeView);
+            this.DisableBackButton();
         }
 
         private void LoadCompleteOrdersView()
@@ -967,7 +953,7 @@ namespace Vendord.Desktop.App
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            this.LoadHomeView();
+            this.LoadOrdersView();
         }
 
         private void MainForm_Closing(object sender, EventArgs e)
@@ -1001,12 +987,6 @@ namespace Vendord.Desktop.App
             {
                 this.backDelegate();
             }
-        }
-
-        private void BtnOrders_Click(object sender, EventArgs e)
-        {
-            this.UnloadCurrentView();
-            this.LoadOrdersView();
         }
 
         private void BtnShowProductList_Click(object sender, EventArgs e)
