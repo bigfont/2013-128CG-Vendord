@@ -206,6 +206,41 @@ namespace Vendord.Desktop.App
 
         #region Utilities
 
+        private bool IsValidXmlFileUpload(string[] files, out string errorMessage)
+        {
+            // Ensure that there is one and only one file
+            errorMessage = null;
+            bool isValid = true;
+            if (files == null || files.Length == 0 || files[0] == null)
+            {
+                isValid = false;
+                errorMessage = "There is no file to upload.";
+            }
+            else if (files.Length > 1)
+            {
+                isValid = false;
+                errorMessage = "Please upload only one file.";
+            }
+
+            // Ensure that the file is an Excel file
+            string filePath = files[0];
+            string fileExtension = Path.GetExtension(filePath);
+            if (!fileExtension.Equals(".xml"))
+            {
+                isValid = false;
+                errorMessage = "Please upload only XML file types.";
+            }
+
+            // Ensure that the background work is free
+            if (this.importXmlBackgroundWorker.IsBusy)
+            {
+                isValid = false;
+                errorMessage = "The system is busy. Please try again in a few moments.";
+            }
+
+            return isValid;
+        }
+
         private void StopStatusStrip(string message)
         {
             this.Enabled = true;
@@ -1290,18 +1325,19 @@ namespace Vendord.Desktop.App
 
         private void ImportXmlBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker worker = sender as BackgroundWorker;
-            Sync sync = new Sync();
+            BackgroundWorker worker = sender as BackgroundWorker;            
             ImportWorkerArgs args = e.Argument as ImportWorkerArgs;
+
+            Sync sync = new Sync();
+            Sync.SyncResult result;
             if (args.Importing == ImportWorkerArgs.ImportType.Product)
-            {
-                sync.PullProductsFromItRetailDatabase(worker, args.FilePath, ref this.totalRecords, ref this.insertedRecords);
+            {                
+                result = sync.PullProductsFromItRetailXmlBackup(worker, args.FilePath, ref this.totalRecords, ref this.insertedRecords);
             }
             else if (args.Importing == ImportWorkerArgs.ImportType.Vendor)
-            {
-
+            {                
+                result = sync.PullVendorsFromItRetailXmlBackup(worker, args.FilePath, ref this.totalRecords, ref this.insertedRecords);
             }
-
         }
 
         private void ImportXmlBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1328,42 +1364,7 @@ namespace Vendord.Desktop.App
                 e.Effect = DragDropEffects.Copy;
                 (sender as Control).BackColor = Colors.DragEnter;
             }
-        }
-
-        private bool IsValidXmlFileUpload(string[] files, out string errorMessage)
-        {
-            // Ensure that there is one and only one file
-            errorMessage = null;
-            bool isValid = true;
-            if (files == null || files.Length == 0 || files[0] == null)
-            {
-                isValid = false;
-                errorMessage = "There is no file to upload.";
-            }
-            else if (files.Length > 1)
-            {
-                isValid = false;
-                errorMessage = "Please upload only one file.";
-            }
-
-            // Ensure that the file is an Excel file
-            string filePath = files[0];
-            string fileExtension = Path.GetExtension(filePath);
-            if (!fileExtension.Equals(".xml"))
-            {
-                isValid = false;
-                errorMessage = "Please upload only XML file types.";
-            }
-
-            // Ensure that the background work is free
-            if (this.importXmlBackgroundWorker.IsBusy)
-            {
-                isValid = false;
-                errorMessage = "The system is busy. Please try again in a few moments.";
-            }
-
-            return isValid;
-        }
+        }        
 
         private void LblVendorUpload_DrapDrop(object sender, DragEventArgs e)
         {

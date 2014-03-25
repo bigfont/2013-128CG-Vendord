@@ -37,12 +37,29 @@ namespace Vendord.Desktop.App
         private string _remoteDatabaseFullPath;
         private string _remoteDatabaseLocalCopyFullPath;
 
-        public SyncResult PullProductsFromItRetailDatabase(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        internal SyncResult PullVendorsFromItRetailXmlBackup(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
         {
             SyncResult result;
             try
             {
-                CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(worker, filePath, ref totalRecords, ref insertedRecords);
+                CopyVendorsFromItRetailXmlBackupFilesToDesktopDb(worker, filePath, ref totalRecords, ref insertedRecords);
+                result = SyncResult.Complete;
+            }
+            catch (SqlException ex)
+            {
+                result = SyncResult.Disconnected;
+                IOHelpers.LogException(ex);
+            }
+
+            return result;
+        }
+
+        public SyncResult PullProductsFromItRetailXmlBackup(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        {
+            SyncResult result;
+            try
+            {
+                CopyProductsFromItRetailXmlBackupFilesToDesktopDb(worker, filePath, ref totalRecords, ref insertedRecords);
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -110,7 +127,25 @@ namespace Vendord.Desktop.App
             return result;
         }
 
-        private List<Product> GetProductListFromMsAccessXmlBackup(string filePath)
+        private List<Vendor> GetVendorListFromXmlBackup(string filePath)
+        {
+            XElement vendorsXml = XElement.Load(filePath);
+            var query =
+                from v in vendorsXml.Descendants("Vendors")
+                select new Vendor()
+                {
+                    Id = Convert.ToInt32(v.Element("vendor_id").Value.ToString().Trim()),
+                    Name = (string)v.Element("name")
+                };
+
+            // for debugging
+            int i = query.Count();
+
+            List<Vendor> vendors = query.ToList<Vendor>();
+            return vendors;
+        }
+
+        private List<Product> GetProductListFromXmlBackup(string filePath)
         {
             XElement productsXml = XElement.Load(filePath);
             var query =
@@ -132,15 +167,50 @@ namespace Vendord.Desktop.App
                     }
                 };
 
+            // for debugging
             int i = query.Count();
 
             List<Product> products = query.ToList<Product>();
             return products;
         }
 
-        private void CopyProductsFromItRetailMsAccessBackupFilesToDesktopDb(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        private void CopyVendorsFromItRetailXmlBackupFilesToDesktopDb(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
         {
-            List<Product> products = GetProductListFromMsAccessXmlBackup(filePath);
+            List<Vendor> vendors = GetVendorListFromXmlBackup(filePath);
+
+            insertedRecords = 0;
+            totalRecords = vendors.Count();
+            DateTime progressReportTime = DateTime.MinValue;
+
+            Database db = new Database();
+            DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
+
+            foreach (Vendor v in vendors)
+            {
+                v.queryExecutor = queryExe;
+
+                if (v.Name.Length == 0)
+                {
+                    v.Name = "Vendor #" + v.Id;
+                }
+
+                v.UpsertIntoDb();
+
+                insertedRecords++;
+
+                // if one seconds have passed, make the worker report progress
+                double timeSinceLastReport = DateTime.Now.Subtract(progressReportTime).TotalSeconds;
+                if (timeSinceLastReport >= 1.0)
+                {
+                    worker.ReportProgress(100 * insertedRecords / totalRecords);
+                    progressReportTime = DateTime.Now;
+                }
+            }
+        }
+
+        private void CopyProductsFromItRetailXmlBackupFilesToDesktopDb(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        {
+            List<Product> products = GetProductListFromXmlBackup(filePath);
 
             insertedRecords = 0;
             totalRecords = products.Count();
@@ -170,7 +240,7 @@ namespace Vendord.Desktop.App
                 // if five seconds have passed, make the worker report progress
                 double timeSinceLastReport = DateTime.Now.Subtract(progressReportTime).TotalSeconds;
                 if (timeSinceLastReport >= 1.0)
-                {                    
+                {
                     worker.ReportProgress(100 * insertedRecords / totalRecords);
                     progressReportTime = DateTime.Now;
                 }
