@@ -37,12 +37,23 @@ namespace Vendord.Desktop.App
         private const int DefaultStatusMin = 0;
         private const int DefaultStatusMax = 1;
         private const int DefaultStatusValue = 1;
- 
+
         private static class Colors
         {
             internal static Color AllowDrop = Color.Yellow;
             internal static Color DragLeave = Color.Yellow;
             internal static Color DragEnter = Color.YellowGreen;
+        }
+
+        private class ImportWorkerArgs
+        {
+            internal enum ImportType
+            {
+                Product,
+                Vendor
+            }
+            internal string FilePath;
+            internal ImportType Importing;
         }
 
         private Dispatcher UiDispatcher = Dispatcher.CurrentDispatcher;
@@ -69,7 +80,7 @@ namespace Vendord.Desktop.App
 
         private Button btnBack;
 
-        private Back backDelegate;        
+        private Back backDelegate;
 
         private Save saveDelegate; // TODO Assign to saveDelegate when we have something to save on the desktop
 
@@ -842,7 +853,7 @@ namespace Vendord.Desktop.App
         }
 
         private void LoadOrdersView()
-        {            
+        {
             // create buttons
             Button btnSyncHandheld = this.ButtonFactory("Sync Handheld (before and after Scanning)");
             btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
@@ -865,19 +876,19 @@ namespace Vendord.Desktop.App
             // create upload labels                 
             Label lblProductUpload = new Label();
             lblProductUpload.Text = "Drop Product List Here";
-
-            // enable drag and drop
-            lblProductUpload.DragEnter += new DragEventHandler(this.LblProductUpload_DragEnter);
+            lblProductUpload.DragEnter += new DragEventHandler(this.Control_DragEnter);
             lblProductUpload.DragDrop += new DragEventHandler(this.LblProductUpload_DragDrop);
 
             Label lblVendorUpload = new Label();
             lblVendorUpload.Text = "Drop Vendor List Here";
+            lblVendorUpload.DragEnter += new DragEventHandler(this.Control_DragEnter);
+            lblVendorUpload.DragDrop += new DragEventHandler(this.LblVendorUpload_DrapDrop);
 
             Label[] labels = new Label[]
             {
                 lblVendorUpload, 
                 lblProductUpload
-            };            
+            };
 
             foreach (Label l in labels)
             {
@@ -1281,7 +1292,16 @@ namespace Vendord.Desktop.App
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             Sync sync = new Sync();
-            sync.PullProductsFromItRetailDatabase(worker, e.Argument.ToString(), ref this.totalRecords, ref this.insertedRecords);
+            ImportWorkerArgs args = e.Argument as ImportWorkerArgs;
+            if (args.Importing == ImportWorkerArgs.ImportType.Product)
+            {
+                sync.PullProductsFromItRetailDatabase(worker, args.FilePath, ref this.totalRecords, ref this.insertedRecords);
+            }
+            else if (args.Importing == ImportWorkerArgs.ImportType.Vendor)
+            {
+
+            }
+
         }
 
         private void ImportXmlBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1303,30 +1323,26 @@ namespace Vendord.Desktop.App
 
         private void Control_DragEnter(object sender, DragEventArgs e)
         {
-            (sender as Control).BackColor = Colors.DragEnter;
-        }
-
-        private void LblProductUpload_DragEnter(object sender, DragEventArgs e)
-        {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 e.Effect = DragDropEffects.Copy;
-
+                (sender as Control).BackColor = Colors.DragEnter;
             }
         }
 
-        private void LblProductUpload_DragDrop(object sender, DragEventArgs e)
+        private bool IsValidXmlFileUpload(string[] files, out string errorMessage)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
             // Ensure that there is one and only one file
-            string errorMessage = null;
+            errorMessage = null;
+            bool isValid = true;
             if (files == null || files.Length == 0 || files[0] == null)
             {
+                isValid = false;
                 errorMessage = "There is no file to upload.";
             }
             else if (files.Length > 1)
             {
+                isValid = false;
                 errorMessage = "Please upload only one file.";
             }
 
@@ -1335,24 +1351,62 @@ namespace Vendord.Desktop.App
             string fileExtension = Path.GetExtension(filePath);
             if (!fileExtension.Equals(".xml"))
             {
+                isValid = false;
                 errorMessage = "Please upload only XML file types.";
             }
 
             // Ensure that the background work is free
             if (this.importXmlBackgroundWorker.IsBusy)
             {
+                isValid = false;
                 errorMessage = "The system is busy. Please try again in a few moments.";
             }
 
-            // Run if appropriate; otherwise show an error message
-            if (errorMessage == null)
+            return isValid;
+        }
+
+        private void LblVendorUpload_DrapDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            string errorMessage;
+            if (IsValidXmlFileUpload(files, out errorMessage))
             {
-                this.importXmlBackgroundWorker.RunWorkerAsync(files[0]);
+                ImportWorkerArgs args = new ImportWorkerArgs()
+                {
+                    FilePath = files[0],
+                    Importing = ImportWorkerArgs.ImportType.Vendor
+                };
+                this.importXmlBackgroundWorker.RunWorkerAsync(args);
             }
             else
             {
                 MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            (sender as Control).BackColor = Colors.AllowDrop;
+        }
+
+        private void LblProductUpload_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            string errorMessage;
+            if (IsValidXmlFileUpload(files, out errorMessage))
+            {
+                ImportWorkerArgs args = new ImportWorkerArgs()
+                {
+                    FilePath = files[0],
+                    Importing = ImportWorkerArgs.ImportType.Product
+                };
+                this.importXmlBackgroundWorker.RunWorkerAsync(args);
+            }
+            else
+            {
+                MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            (sender as Control).BackColor = Colors.AllowDrop;
         }
 
         #region Print
@@ -1433,6 +1487,6 @@ namespace Vendord.Desktop.App
         {
             public string OriginalText { get; set; }
         }
-        
+
     }
 }
