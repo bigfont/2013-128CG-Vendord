@@ -19,6 +19,7 @@ namespace Vendord.Desktop.App
     using BrightIdeasSoftware;
     using Vendord.SmartDevice.Linked;
     using System.Windows.Threading;
+    using System.Runtime.InteropServices;
 
     public class MainForm : Form
     {
@@ -647,7 +648,7 @@ namespace Vendord.Desktop.App
             foreach (Product product in filteredProducts)
             {
                 listBoxProduct.Items.Add(product);
-            }
+            }           
         }
 
         private ListBox CreateListBoxProduct()
@@ -726,6 +727,8 @@ namespace Vendord.Desktop.App
                     this.AddItemToListViewOrderProduct(product, orderProduct.CasesToOrder, listViewOrderProduct);
                 }
             }
+
+            ShowScrollBar(listViewOrderProduct.Handle, (int)SB_VERT, true);
         }
 
         private ListView CreateListViewOrderProduct()
@@ -796,6 +799,8 @@ namespace Vendord.Desktop.App
                     listViewVendor.Items.Add(listViewItem);
                 }
             }
+
+            ShowScrollBar(listViewVendor.Handle, (int)SB_VERT, true);
         }
 
         private ListView CreateListViewVendor()
@@ -840,6 +845,8 @@ namespace Vendord.Desktop.App
                 listViewItem.Name = order.Name;
                 listViewOrder.Items.Add(listViewItem);
             }
+
+            ShowScrollBar(listViewOrder.Handle, (int)SB_VERT, true);
         }
 
         private ListView CreateListViewOrder()
@@ -956,6 +963,13 @@ namespace Vendord.Desktop.App
             this.DisableBackButton();
         }
 
+        [DllImport("user32.dll")]
+        static public extern bool ShowScrollBar(System.IntPtr hWnd, int wBar, bool bShow);
+        private const uint SB_HORZ = 0;
+        private const uint SB_VERT = 1;
+        private const uint ESB_DISABLE_BOTH = 0x3;
+        private const uint ESB_ENABLE_BOTH = 0x0;
+
         private void LoadCompleteOrdersView()
         {
             Button btnPrintOrder;
@@ -1000,9 +1014,9 @@ namespace Vendord.Desktop.App
             {
                 lv.Dock = DockStyle.Left;
                 lv.Width = lv.Columns.Count * ColumnHeaderWidthDefault;
-
                 lv.BorderStyle = BorderStyle.FixedSingle;
                 lv.GridLines = true;
+                lv.Scrollable = false;
 
                 foreach (ColumnHeader h in lv.Columns)
                 {
