@@ -13,34 +13,53 @@ namespace DatabaseTests
             Database db = new Database();
             DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
 
-            Vendor vendor = new Vendor() { Name = "test" };
-            vendor.UpsertIntoDb(db, qe);
+            Vendor vendor = new Vendor(qe) { Name = "test" };
+            vendor.UpsertIntoDb(db);
 
-            Department department = new Department() { Name = "test" };
-            department.UpsertIntoDb(db, qe);
+            Department department = new Department(qe) { Name = "test" };
+            department.UpsertIntoDb(db);
 
-            Order order = new Order() { Name = "test" };
-            order.UpsertIntoDb(db, qe);
+            Order order = new Order(qe) { Name = "test" };
+            order.UpsertIntoDb(db);
 
-            Product product = new Product() 
-            { 
-                Upc = "0000000", 
-                Name = "test", 
-                Price = 10.00m,
-                IsInTrash = 0, 
-                VendorId = vendor.Id,
-                DepartmentId = department.Id
-            };
-            product.UpsertIntoDb(qe);
+            Product product = new Product(qe);
 
-            OrderProduct op = new OrderProduct()
+            product.Name = "test";
+            product.Price = 10.00m;
+            product.IsInTrash = 0;
+            product.Vendor.Id = vendor.Id;
+            product.Department.Id = department.Id;
+
+
+            product.Upc = "1";
+            product.UpsertIntoDb();
+
+            product.Upc = "2";
+            product.UpsertIntoDb();
+
+            OrderProduct orderProduct = new OrderProduct(qe)
             {
                 OrderID = order.Id,
-                ProductUPC = product.Upc,
                 CasesToOrder = 10
             };
-            op.UpsertIntoDb(qe);
-            
+
+            orderProduct.ProductUPC = "1";
+            orderProduct.UpsertIntoDb();
+
+            orderProduct.ProductUPC = "2";
+            orderProduct.UpsertIntoDb();
+
+            Console.WriteLine(vendor.SelectAll().Count());
+            Console.WriteLine(department.SelectAll().Count());
+            Console.WriteLine(order.SelectAll().Count());
+            Console.WriteLine(product.SelectAll().Count());
+            Console.WriteLine(orderProduct.SelectAll().Count());
+
+            List<Product> productsJoinAll = product.SelectAllWithJoin();
+            Console.WriteLine(productsJoinAll.Count());
+
+            Console.ReadLine();
+
         }
     }
 }

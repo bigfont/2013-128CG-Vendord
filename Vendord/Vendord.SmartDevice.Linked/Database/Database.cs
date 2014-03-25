@@ -38,7 +38,7 @@ namespace Vendord.SmartDevice.Linked
         private DbSchemaBuilder schemaBuilder;
 
         private List<Product> _products;
-        private List<Order> _order;
+        private List<Order> _orders;
         private List<OrderProduct> _orderProducts;
         private List<Vendor> _vendors;
         private List<Department> _departments;        
@@ -70,30 +70,13 @@ namespace Vendord.SmartDevice.Linked
         {
             get
             {
-                SqlCeDataReader reader;
-                System.Data.SqlServerCe.SqlCeCommand command;
-
-                if (this._order == null)
+                if (this._orders == null)
                 {
-                    this._order = new List<Order>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
-                    {
-                        conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM tblOrder WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            Order item = new Order()
-                            {
-                                Id = new Guid(reader["Id"].ToString()),
-                                Name = Convert.ToString(reader["Name"])
-                            };
-                            this._order.Add(item);
-                        }
-                    }
+                    Order order = new Order(this.queryExecutor);
+                    this._orders = order.SelectAll();
                 }
 
-                return this._order;
+                return this._orders;
             }
         }
 
@@ -101,30 +84,11 @@ namespace Vendord.SmartDevice.Linked
         {
             get
             {
-                SqlCeDataReader reader;
-                SqlCeCommand command;
-
+                
                 if (this._products == null)
                 {
-                    this._products = new List<Product>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
-                    {
-                        conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM tblProduct", conn);
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            Product item = new Product()
-                            {
-                                Name = Convert.ToString(reader["Name"]),
-                                Upc = Convert.ToString(reader["Upc"]),
-                                Price = Convert.ToDecimal(reader["Price"]),
-                                DepartmentId = new Guid(reader["DepartmentId"].ToString()),
-                                VendorId = new Guid(reader["VendorId"].ToString())
-                            };
-                            this._products.Add(item);
-                        }
-                    }
+                    Product p = new Product(this.queryExecutor);
+                    this._products = p.SelectAll();
                 }
 
                 return this._products;
@@ -137,26 +101,8 @@ namespace Vendord.SmartDevice.Linked
             {
                 if (this._orderProducts == null)
                 {
-                    SqlCeDataReader reader;
-                    SqlCeCommand command;
-
-                    this._orderProducts = new List<OrderProduct>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
-                    {
-                        conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM tblOrderProduct WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            OrderProduct item = new OrderProduct()
-                            {
-                                ProductUPC = reader["ProductUPC"].ToString(),
-                                OrderID = new Guid(reader["OrderID"].ToString()),
-                                CasesToOrder = Convert.ToInt32(reader["CasesToOrder"])
-                            };
-                            this._orderProducts.Add(item);
-                        }
-                    }
+                    OrderProduct op = new OrderProduct(this.queryExecutor);
+                    this._orderProducts = op.SelectAll();
                 }
 
                 return this._orderProducts;
@@ -167,27 +113,10 @@ namespace Vendord.SmartDevice.Linked
         {
             get
             {
-                SqlCeDataReader reader;
-                System.Data.SqlServerCe.SqlCeCommand command;
-
                 if (this._vendors == null)
                 {
-                    this._vendors = new List<Vendor>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
-                    {
-                        conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM tblVendor WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            Vendor item = new Vendor()
-                            {
-                                Id = new Guid(reader["Id"].ToString()),
-                                Name = Convert.ToString(reader["Name"])
-                            };
-                            this._vendors.Add(item);
-                        }
-                    }
+                    Vendor vendor = new Vendor(this.queryExecutor);
+                    this._vendors = vendor.SelectAll();
                 }
 
                 return this._vendors;
@@ -198,27 +127,10 @@ namespace Vendord.SmartDevice.Linked
         {
             get
             {
-                SqlCeDataReader reader;
-                System.Data.SqlServerCe.SqlCeCommand command;
-
                 if (this._departments == null)
                 {
-                    this._departments = new List<Department>();
-                    using (SqlCeConnection conn = new SqlCeConnection(this._connectionString))
-                    {
-                        conn.Open();
-                        command = new SqlCeCommand(@"SELECT * FROM tblDepartment WHERE IsInTrash IS NULL OR IsInTrash = 0", conn);
-                        reader = command.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            Department item = new Department()
-                            {
-                                Id = new Guid(reader["Id"].ToString()),
-                                Name = Convert.ToString(reader["Name"])
-                            };
-                            this._departments.Add(item);
-                        }
-                    }
+                    Department d = new Department(this.queryExecutor);
+                    this._departments = d.SelectAll();
                 }
 
                 return this._departments;
@@ -234,9 +146,9 @@ namespace Vendord.SmartDevice.Linked
 
         public void EmptyTrash()
         {
-            (new Order()).EmptyTrash(this.queryExecutor);
-            (new Product()).EmptyTrash(this.queryExecutor);
-            (new OrderProduct()).EmptyTrash(this.queryExecutor);
+            (new Order(this.queryExecutor)).EmptyTrash();
+            (new Product(this.queryExecutor)).EmptyTrash();
+            (new OrderProduct(this.queryExecutor)).EmptyTrash();
         } 
     }
 }

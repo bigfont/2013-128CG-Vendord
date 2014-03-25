@@ -11,7 +11,7 @@ namespace Vendord.SmartDevice.Linked
     using System.Data.SqlServerCe;
     using System.IO;
     using System.Linq;
-     
+
     public class DbQueryExecutor
     {
         private string _connectionString;
@@ -59,6 +59,17 @@ namespace Vendord.SmartDevice.Linked
             }
 
             return rowsAffected;
+        }
+
+        public SqlCeDataReader ExecuteReader(string query)
+        {
+            SqlCeConnection conn = new SqlCeConnection(this._connectionString);
+            SqlCeDataReader reader;
+            SqlCeCommand command;
+            conn.Open();
+            command = new SqlCeCommand(query, conn);
+            reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+            return reader;
         }
     }
 }
