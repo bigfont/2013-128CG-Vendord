@@ -390,7 +390,11 @@ namespace Vendord.SmartDevice.App
 
         private void LoadScanningErrorView()
         {
-            Label lblMessage = new Label() { Text = "Error: please close and start again." };
+            Label lblMessage = new Label();
+            lblMessage.Text = @"Error. Try one of these options: 
+                    1. go back and restart the order, 
+                    2. close the program and restart the order, 
+                    3. restart the device and restart the order.";            
             lblMessage.Dock = DockStyle.Top;
             this.mainContent.Controls.Add(lblMessage);
         }
@@ -500,6 +504,7 @@ namespace Vendord.SmartDevice.App
             {
                 this.saveDelegate();
             }
+            this.Dispose();
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -608,17 +613,22 @@ namespace Vendord.SmartDevice.App
             // Get ScanData
             ScanData scanData = scanDataCollection.GetFirst;
 
-            this.UnloadCurrentView();
-            this.SaveNewProductOrderAmount();
-
             switch (scanData.Result)
             {
                 case Results.SUCCESS:
+                    // be sure to save the order
+                    // before unloading the current view
+                    // because the current view contains the order amount
+                    this.SaveNewProductOrderAmount();
+                    this.UnloadCurrentView();
                     this.LoadOrderScanningResultView(scanData);
                     break;
 
-                default:
+                case Results.CREATEEVENT_FAILED:
                     this.LoadScanningErrorView();
+                    break;
+
+                default:
                     break;
             }
         }

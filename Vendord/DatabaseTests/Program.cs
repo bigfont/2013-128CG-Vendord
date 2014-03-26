@@ -13,13 +13,13 @@ namespace DatabaseTests
             Database db = new Database();
             DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
 
-            Vendor vendor = new Vendor(qe) { Id = 0, Name = "test" };
+            Vendor vendor = new Vendor(qe) { Id = -2, Name = "Test Vendor" };
             vendor.UpsertIntoDb();
 
-            Department department = new Department(qe) { Id = 0, Name = "test" };
+            Department department = new Department(qe) { Id = -2, Name = "Test Department" };
             department.UpsertIntoDb();
 
-            Order order = new Order(qe) { Name = "test" };
+            Order order = new Order(qe) { Name = "Test Order" };
             order.UpsertIntoDb(db);
 
             Product product = new Product();
@@ -31,11 +31,15 @@ namespace DatabaseTests
             product.IsInTrash = 0;
             product.Vendor.Id = vendor.Id;
             product.Department.Id = department.Id;
-
             product.Upc = "5601028000741";
             product.UpsertIntoDb();
 
-            product.Upc = "2";
+            product.Name = "Smoothies and Juices Book";
+            product.Price = 10.00m;
+            product.IsInTrash = 0;
+            product.Vendor.Id = vendor.Id;
+            product.Department.Id = department.Id;
+            product.Upc = "9780752591483";
             product.UpsertIntoDb();
 
             OrderProduct orderProduct = new OrderProduct(qe)
