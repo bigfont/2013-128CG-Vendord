@@ -405,8 +405,7 @@ namespace Vendord.SmartDevice.App
             // because the country grocer database doesn't use the last digit
             string scannedUpc = scanData.Text;
             string trimmedUpc = scannedUpc.Trim().Substring(0, scannedUpc.Length - 1);
-            long databaseUpc;
-            Int64.TryParse(trimmedUpc, databaseUpc);
+            long databaseUpc = Convert.ToInt64(trimmedUpc);
 
             // populate controls with default values
             Label lblProductUPC = new Label() { Text = "Upc: " };
@@ -423,9 +422,10 @@ namespace Vendord.SmartDevice.App
 
             // get the appropriate product from the database
             Database db = new Database();
-            this.currentProduct = db.Products.FirstOrDefault<Product>(p => p.Upc.Equals(scannedUpc));
+            DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
+            this.currentProduct = (new Product(qe)).SelectOne(databaseUpc);
 
-            lblProductUPC.Text += scannedUpc;
+            lblProductUPC.Text += trimmedUpc;
 
             // if it is in the database
             if (this.currentProduct == null)

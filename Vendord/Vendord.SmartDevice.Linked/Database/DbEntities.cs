@@ -279,6 +279,58 @@ namespace Vendord.SmartDevice.Linked
 
         #endregion
 
+        private Product CreateProductFromReader(SqlCeDataReader reader)
+        {
+            Product product = new Product(this.queryExecutor);
+
+            string colName;
+
+            // upc         
+            colName = "Upc";
+            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Upc = Convert.ToInt64(reader[colName].ToString());
+            }            
+            // name         
+            colName = "Name";
+            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Name = reader[colName].ToString();
+            }
+            // price
+            colName = "Price";
+            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Price = Convert.ToDecimal(reader[colName].ToString());            
+            }
+            // vendor id
+            colName = "VendorId";
+            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Vendor.Id = Convert.ToInt32(reader[colName].ToString());
+            }
+            // department id
+            colName = "DepartmentId";
+            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Department.Id = Convert.ToInt32(reader[colName].ToString());
+            }
+            // vendor name
+            colName = "VendorName";
+            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Vendor.Name = reader[colName].ToString();
+            }
+            // department name
+            colName = "DepartmentName";
+            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Department.Name = reader[colName].ToString();            
+            }
+
+            return product;
+        }
+
         public void UpsertIntoDb()
         {
             // create parameters
@@ -345,6 +397,24 @@ namespace Vendord.SmartDevice.Linked
             return SelectAllWithJoin();
         }
 
+        public Product SelectOne(long upc)
+        {
+            string query = string.Format(
+                @"SELECT * FROM {0} WHERE Upc = {1}",
+                this.TableName, 
+                upc);
+
+            Product product = null;
+            using (SqlCeDataReader reader = this.queryExecutor.ExecuteReader(query))
+            {
+                while (reader.Read())
+                {
+                    product = this.CreateProductFromReader(reader);
+                }
+            }
+            return product;
+        }
+
         public List<Product> SelectAllWithJoin()
         {
             List<Product> list = new List<Product>();
@@ -361,24 +431,8 @@ namespace Vendord.SmartDevice.Linked
             {
                 while (reader.Read())
                 {
-                    Product item = new Product(this.queryExecutor);
-
-                    // upc
-                    item.Upc = Convert.ToInt64(reader["Upc"].ToString());
-                    // name                    
-                    item.Name = reader["Name"].ToString();
-                    // price
-                    item.Price = Convert.ToDecimal(reader["Price"].ToString());
-                    // vendor id
-                    item.Vendor.Id = Convert.ToInt32(reader["VendorId"].ToString());
-                    // department id
-                    item.Department.Id = Convert.ToInt32(reader["DepartmentId"].ToString());
-                    // vendor name
-                    item.Vendor.Name = reader["VendorName"].ToString();
-                    // department name
-                    item.Department.Name = reader["DepartmentName"].ToString();
-                    // add
-                    list.Add(item);
+                    Product product = this.CreateProductFromReader(reader);
+                    list.Add(product);
                 }
             }
             return list;

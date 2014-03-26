@@ -64,11 +64,25 @@ namespace Vendord.SmartDevice.Linked
                     string m = e.Message;
                     m = m.ToString();
                 }
-                
+
                 cmd.Parameters.Clear();
             }
 
             return rowsAffected;
+        }
+
+        public bool ReaderHasColumn(SqlCeDataReader reader, string columnName)
+        {
+            bool colExists = false; // assume false
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                if (reader.GetName(i) == columnName)
+                {
+                    colExists = true;
+                    break;
+                }
+            }
+            return colExists;
         }
 
         public SqlCeDataReader ExecuteReader(string query)
