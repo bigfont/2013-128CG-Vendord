@@ -565,7 +565,7 @@ namespace Vendord.Desktop.App
             Database db = new Database();
             DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
             Product p = new Product();
-            p.queryExecutor = qe;
+            p.QueryExecutor = qe;
             List<Product> products = p.SelectAllWithJoin();
 
             foreach (Product product in db.Products)
@@ -679,15 +679,12 @@ namespace Vendord.Desktop.App
 
         private ListView UpdateListViewVendor()
         {
-            ListViewItem selectedOrder;
-            Guid orderID;
-
             this.LvVendor.Items.Clear();
 
-            selectedOrder = this.SelectedListViewItem(this.LvOrder);
+            ListViewItem selectedOrder = this.SelectedListViewItem(this.LvOrder);            
             if (selectedOrder != null)
             {
-                orderID = new Guid(selectedOrder.Tag.ToString());
+                Guid orderID = new Guid(selectedOrder.Tag.ToString());
                 this.AddDataToListViewVendor(this.LvVendor, orderID);
             }
 
@@ -704,6 +701,7 @@ namespace Vendord.Desktop.App
 
             db = new Database();
 
+            // slow query            
             var vendorNames =
                 from p in db.Products
                 join op in db.OrderProducts on p.Upc equals op.ProductUPC

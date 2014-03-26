@@ -9,20 +9,20 @@ namespace Vendord.SmartDevice.Linked
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SqlServerCe;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Diagnostics;
 
     public abstract class DbEntity<T>
     {
-        public DbQueryExecutor queryExecutor;
-
-        public DbEntity() { }
+        public DbEntity() 
+        { 
+        }
 
         public DbEntity(DbQueryExecutor queryExecutor)
         {
-            this.queryExecutor = queryExecutor;
+            this.QueryExecutor = queryExecutor;
         }
 
         public int? IsInTrash { get; set; }
@@ -38,6 +38,12 @@ namespace Vendord.SmartDevice.Linked
             }
         }
 
+        public DbQueryExecutor QueryExecutor
+        {
+            get;
+            set;
+        }
+
         public void EmptyTrash()
         {
             string emptyTrashQuery;
@@ -45,14 +51,14 @@ namespace Vendord.SmartDevice.Linked
                 @"DELETE {0} WHERE (IsInTrash = 1)",
                 this.TableName);
 
-            queryExecutor.ExecuteNonQuery(emptyTrashQuery, null);
+            this.QueryExecutor.ExecuteNonQuery(emptyTrashQuery, null);
         }
 
         public SqlCeDataReader SelectAllReader()
         {
             StringBuilder query = new StringBuilder();
             query.AppendFormat(@"SELECT * FROM {0} WHERE IsInTrash IS NULL OR IsInTrash = 0", this.TableName);
-            return queryExecutor.ExecuteReader(query.ToString());
+            return this.QueryExecutor.ExecuteReader(query.ToString());
         }
 
         public abstract void AddToTrash();
@@ -62,9 +68,13 @@ namespace Vendord.SmartDevice.Linked
 
     public class Vendor : DbEntity<Vendor>
     {
-        public Vendor() : base() { }
+        public Vendor() : base() 
+        { 
+        }
 
-        public Vendor(DbQueryExecutor qe) : base(qe) { }
+        public Vendor(DbQueryExecutor qe) : base(qe) 
+        { 
+        }
 
         public int? Id { get; set; }
 
@@ -79,7 +89,7 @@ namespace Vendord.SmartDevice.Linked
                 this.TableName,
                 this.Id);
 
-            queryExecutor.ExecuteNonQuery(trashQuery, null);
+            QueryExecutor.ExecuteNonQuery(trashQuery, null);
         }
 
         public void UpsertIntoDb()
@@ -92,7 +102,7 @@ namespace Vendord.SmartDevice.Linked
                 this.Id,
                 this.Name);
 
-            queryExecutor.ExecuteNonQuery(insertQuery, null);
+            QueryExecutor.ExecuteNonQuery(insertQuery, null);
         }
 
         public override List<Vendor> SelectAll()
@@ -102,7 +112,7 @@ namespace Vendord.SmartDevice.Linked
             {
                 while (reader.Read())
                 {
-                    Vendor item = new Vendor(this.queryExecutor);
+                    Vendor item = new Vendor(this.QueryExecutor);
 
                     try
                     {
@@ -118,6 +128,7 @@ namespace Vendord.SmartDevice.Linked
                     list.Add(item);
                 }
             }
+
             return list;
         }
 
@@ -129,9 +140,13 @@ namespace Vendord.SmartDevice.Linked
 
     public class Department : DbEntity<Department>
     {
-        public Department() : base() { }
+        public Department() : base() 
+        { 
+        }
 
-        public Department(DbQueryExecutor qe) : base(qe) { }
+        public Department(DbQueryExecutor qe) : base(qe) 
+        { 
+        }
 
         public int? Id { get; set; }
 
@@ -146,7 +161,7 @@ namespace Vendord.SmartDevice.Linked
                 this.TableName,
                 this.Id);
 
-            queryExecutor.ExecuteNonQuery(trashQuery, null);
+            QueryExecutor.ExecuteNonQuery(trashQuery, null);
         }
 
         public void UpsertIntoDb()
@@ -159,7 +174,7 @@ namespace Vendord.SmartDevice.Linked
                 this.Id,
                 this.Name);
 
-            queryExecutor.ExecuteNonQuery(insertQuery, null);
+            QueryExecutor.ExecuteNonQuery(insertQuery, null);
         }
 
         public override List<Department> SelectAll()
@@ -169,7 +184,7 @@ namespace Vendord.SmartDevice.Linked
             {
                 while (reader.Read())
                 {
-                    Department item = new Department(this.queryExecutor);
+                    Department item = new Department(this.QueryExecutor);
                     try
                     {
                         item.Id = Convert.ToInt32(reader["id"]);
@@ -179,10 +194,11 @@ namespace Vendord.SmartDevice.Linked
                         item.Id = null;
                     }
 
-                    Name = Convert.ToString(reader["Name"]);
+                    this.Name = Convert.ToString(reader["Name"]);
                     list.Add(item);
                 }
             }
+
             return list;
         }
 
@@ -194,9 +210,13 @@ namespace Vendord.SmartDevice.Linked
 
     public class Order : DbEntity<Order>
     {
-        public Order() : base() { }
+        public Order() : base()
+        {
+        }
 
-        public Order(DbQueryExecutor qe) : base(qe) { }
+        public Order(DbQueryExecutor qe) : base(qe) 
+        { 
+        }
 
         public Guid Id { get; set; }
 
@@ -211,7 +231,7 @@ namespace Vendord.SmartDevice.Linked
                 this.TableName,
                 this.Name);
 
-            queryExecutor.ExecuteNonQuery(insertQuery, null);
+            QueryExecutor.ExecuteNonQuery(insertQuery, null);
 
             // set the Id to the newly generated Id
             this.Id = db.Orders.FirstOrDefault<Order>(os => os.Name.Equals(this.Name)).Id;
@@ -226,7 +246,7 @@ namespace Vendord.SmartDevice.Linked
                 this.TableName,
                 this.Id);
 
-            queryExecutor.ExecuteNonQuery(trashQuery, null);
+            QueryExecutor.ExecuteNonQuery(trashQuery, null);
         }
 
         public override List<Order> SelectAll()
@@ -236,7 +256,7 @@ namespace Vendord.SmartDevice.Linked
             {
                 while (reader.Read())
                 {
-                    Order item = new Order(this.queryExecutor)
+                    Order item = new Order(this.QueryExecutor)
                     {
                         Id = new Guid(reader["Id"].ToString()),
                         Name = Convert.ToString(reader["Name"])
@@ -244,6 +264,7 @@ namespace Vendord.SmartDevice.Linked
                     list.Add(item);
                 }
             }
+
             return list;
         }
 
@@ -255,7 +276,9 @@ namespace Vendord.SmartDevice.Linked
 
     public class Product : DbEntity<Product>
     {
-        public Product() : base() { }
+        public Product() : base() 
+        { 
+        }
 
         public Product(DbQueryExecutor qe)
             : base(qe)
@@ -279,58 +302,6 @@ namespace Vendord.SmartDevice.Linked
 
         #endregion
 
-        private Product CreateProductFromReader(SqlCeDataReader reader)
-        {
-            Product product = new Product(this.queryExecutor);
-
-            string colName;
-
-            // upc         
-            colName = "Upc";
-            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
-            {
-                product.Upc = Convert.ToInt64(reader[colName].ToString());
-            }            
-            // name         
-            colName = "Name";
-            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
-            {
-                product.Name = reader[colName].ToString();
-            }
-            // price
-            colName = "Price";
-            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
-            {
-                product.Price = Convert.ToDecimal(reader[colName].ToString());            
-            }
-            // vendor id
-            colName = "VendorId";
-            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
-            {
-                product.Vendor.Id = Convert.ToInt32(reader[colName].ToString());
-            }
-            // department id
-            colName = "DepartmentId";
-            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
-            {
-                product.Department.Id = Convert.ToInt32(reader[colName].ToString());
-            }
-            // vendor name
-            colName = "VendorName";
-            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
-            {
-                product.Vendor.Name = reader[colName].ToString();
-            }
-            // department name
-            colName = "DepartmentName";
-            if (queryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
-            {
-                product.Department.Name = reader[colName].ToString();            
-            }
-
-            return product;
-        }
-
         public void UpsertIntoDb()
         {
             // create parameters
@@ -346,9 +317,10 @@ namespace Vendord.SmartDevice.Linked
 
             // exists
             string selectQuery =
-                string.Format(@"SELECT COUNT(*) FROM {0} WHERE Upc = @Upc",
-                this.TableName);
-            object result = queryExecutor.ExecuteScalar(selectQuery, parameters);
+                string.Format(
+                    @"SELECT COUNT(*) FROM {0} WHERE Upc = @Upc",
+                    this.TableName);
+            object result = QueryExecutor.ExecuteScalar(selectQuery, parameters);
             bool exists = Convert.ToInt16(result.ToString()) > 0;
 
             // upsert
@@ -356,27 +328,26 @@ namespace Vendord.SmartDevice.Linked
             {
                 // update
                 string updateQuery =
-                    string.Format(@"
-                            UPDATE {0} SET
+                    string.Format(
+                        @"UPDATE {0} SET
                             Name = @name, 
                             Price = @price, 
                             VendorId = @vendorId, 
                             DepartmentId = @departmentId
                             WHERE Upc = @Upc",
-                        this.TableName
-                    );
+                        this.TableName);
 
-                this.queryExecutor.ExecuteNonQuery(updateQuery, parameters);
+                this.QueryExecutor.ExecuteNonQuery(updateQuery, parameters);
             }
             else
             {
                 // insert
                 string insertQuery =
-                    string.Format(@"
-                            INSERT INTO {0} (Upc, Name, Price, VendorId, DepartmentId) 
+                    string.Format(
+                        @"INSERT INTO {0} (Upc, Name, Price, VendorId, DepartmentId) 
                             VALUES (@Upc, @name, @price, @vendorId, @departmentId)",
                     this.TableName);
-                this.queryExecutor.ExecuteNonQuery(insertQuery, parameters);
+                this.QueryExecutor.ExecuteNonQuery(insertQuery, parameters);
             }
         }
 
@@ -389,12 +360,12 @@ namespace Vendord.SmartDevice.Linked
                 this.TableName,
                 this.Upc);
 
-            queryExecutor.ExecuteNonQuery(trashQuery, null);
+            QueryExecutor.ExecuteNonQuery(trashQuery, null);
         }
 
         public override List<Product> SelectAll()
         {
-            return SelectAllWithJoin();
+            return this.SelectAllWithJoin();
         }
 
         public Product SelectOne(long upc)
@@ -405,13 +376,14 @@ namespace Vendord.SmartDevice.Linked
                 upc);
 
             Product product = null;
-            using (SqlCeDataReader reader = this.queryExecutor.ExecuteReader(query))
+            using (SqlCeDataReader reader = this.QueryExecutor.ExecuteReader(query))
             {
                 while (reader.Read())
                 {
                     product = this.CreateProductFromReader(reader);
                 }
             }
+
             return product;
         }
 
@@ -427,7 +399,7 @@ namespace Vendord.SmartDevice.Linked
                 WHERE main.IsInTrash IS NULL OR main.IsInTrash = 0
             ";
 
-            using (SqlCeDataReader reader = queryExecutor.ExecuteReader(query))
+            using (SqlCeDataReader reader = QueryExecutor.ExecuteReader(query))
             {
                 while (reader.Read())
                 {
@@ -435,6 +407,7 @@ namespace Vendord.SmartDevice.Linked
                     list.Add(product);
                 }
             }
+
             return list;
         }
 
@@ -442,11 +415,71 @@ namespace Vendord.SmartDevice.Linked
         {
             return this.Name;
         }
+
+        private Product CreateProductFromReader(SqlCeDataReader reader)
+        {
+            Product product = new Product(this.QueryExecutor);
+
+            string colName;
+
+            // upc         
+            colName = "Upc";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Upc = Convert.ToInt64(reader[colName].ToString());
+            }
+
+            // name         
+            colName = "Name";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Name = reader[colName].ToString();
+            }
+
+            // price
+            colName = "Price";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Price = Convert.ToDecimal(reader[colName].ToString());
+            }
+
+            // vendor id
+            colName = "VendorId";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Vendor.Id = Convert.ToInt32(reader[colName].ToString());
+            }
+
+            // department id
+            colName = "DepartmentId";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Department.Id = Convert.ToInt32(reader[colName].ToString());
+            }
+
+            // vendor name
+            colName = "VendorName";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Vendor.Name = reader[colName].ToString();
+            }
+
+            // department name
+            colName = "DepartmentName";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.Department.Name = reader[colName].ToString();
+            }
+
+            return product;
+        }
     }
 
     public class OrderProduct : DbEntity<OrderProduct>
     {
-        public OrderProduct(DbQueryExecutor qe) : base(qe) { }
+        public OrderProduct(DbQueryExecutor qe) : base(qe) 
+        { 
+        }
 
         public Guid OrderID { get; set; }
 
@@ -474,14 +507,14 @@ namespace Vendord.SmartDevice.Linked
                 this.ProductUPC,
                 this.CasesToOrder);
 
-            if (Convert.ToInt16(queryExecutor.ExecuteScalar(selectQuery, null)) == 0)
+            if (Convert.ToInt16(QueryExecutor.ExecuteScalar(selectQuery, null)) == 0)
             {
                 // TODO Add a code contract to ensure that both the order and the product exist in the database before insert
-                queryExecutor.ExecuteNonQuery(insertQuery, null);
+                QueryExecutor.ExecuteNonQuery(insertQuery, null);
             }
             else
             {
-                queryExecutor.ExecuteNonQuery(updateQuery, null);
+                QueryExecutor.ExecuteNonQuery(updateQuery, null);
             }
         }
 
@@ -495,7 +528,7 @@ namespace Vendord.SmartDevice.Linked
                 this.OrderID,
                 this.ProductUPC);
 
-            queryExecutor.ExecuteNonQuery(trashQuery, null);
+            QueryExecutor.ExecuteNonQuery(trashQuery, null);
         }
 
         public override List<OrderProduct> SelectAll()
@@ -505,7 +538,7 @@ namespace Vendord.SmartDevice.Linked
             {
                 while (reader.Read())
                 {
-                    OrderProduct item = new OrderProduct(this.queryExecutor)
+                    OrderProduct item = new OrderProduct(this.QueryExecutor)
                     {
                         OrderID = new Guid(reader["OrderID"].ToString()),
                         ProductUPC = Convert.ToInt64(reader["ProductUPC"].ToString()),
@@ -514,6 +547,7 @@ namespace Vendord.SmartDevice.Linked
                     list.Add(item);
                 }
             }
+
             return list;
         }
     }

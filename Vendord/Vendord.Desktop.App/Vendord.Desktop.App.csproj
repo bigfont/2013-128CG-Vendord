@@ -140,7 +140,6 @@
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PrintUtilities.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />

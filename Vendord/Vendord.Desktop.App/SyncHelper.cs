@@ -196,7 +196,7 @@ namespace Vendord.Desktop.App
 
             foreach (Vendor v in vendors)
             {
-                v.queryExecutor = queryExe;
+                v.QueryExecutor = queryExe;
 
                 if (v.Name.Length == 0)
                 {
@@ -230,19 +230,19 @@ namespace Vendord.Desktop.App
 
             foreach (Product p in products)
             {
-                Vendor v = new Vendor();
-                v.queryExecutor = queryExe;
+                Vendor v = new Vendor();                
+                v.QueryExecutor = queryExe;
                 v.Id = p.Vendor.Id;
                 v.Name = p.Vendor.Name;
                 v.UpsertIntoDb();
 
                 Department d = new Department();
-                d.queryExecutor = queryExe;
+                d.QueryExecutor = queryExe;
                 d.Id = p.Department.Id;
                 d.Name = p.Department.Name;
                 d.UpsertIntoDb();
-                
-                p.queryExecutor = queryExe;
+
+                p.QueryExecutor = queryExe;
                 p.UpsertIntoDb();
                 insertedRecords++;
 
