@@ -1,8 +1,6 @@
-2013-128CG-Vendord
-==================
+# 2013-128CG-Vendord
 
-ClickOnce Deployment of Vendord.Desktop.App
---
+## ClickOnce Deployment of Vendord.Desktop.App
 
 - Publish Vendord.Desktop.App
 	- Open Vendord.sln in Visual Studio 2008.
@@ -17,7 +15,7 @@ ClickOnce Deployment of Vendord.Desktop.App
 	- Close Visual Studio 2008
 
 - Include the new files in BigFont.MVC
-	- BigFont.MVC in Visual Studio 2013
+	- Open BigFont.MVC in Visual Studio 2013
 	- In the solution explorer, expand to \Software\Vendord\Win7\ApplicationFiles
 	- Show all files in the solution explorer.
 	- Right click on the newly published version of Vendord (e.g. Vendord.Desktop.App_1_0_0_64) 
@@ -37,7 +35,7 @@ ClickOnce Deployment of Vendord.Desktop.App
 	```
 	
 - Test the installation package.
-	- Go to manage.windowsazure.com	
+	- Go to http://manage.windowsazure.com	
 	- Websites > bigfont > deployments
 	- Check that the deployment succeeded.
 	- If it did, go to http://bigfont.ca/software/vendord/win7/publish.htm > Install
@@ -47,7 +45,60 @@ ClickOnce Deployment of Vendord.Desktop.App
 	- Accept the myriad security prompts
 	- Installation will eventually complete.
 
-Uninstall Vendord.Desktop.App
---
+## Uninstall Vendord.Desktop.App
 
+- Use AppWiz.cpl to uninstall Vendord
+
+- Uninstall dependencies
+
+	- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center 
+	- Warning - can be very hard - only do this if necessary
+	- Then use AppWiz.cpl to uninstall the following:
+	
+		1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
+		1. MS SQL Server Compact 3.5 SP2 for Devices (not always present)
+		1. MS SQL Server Compact 3.5 SP2
+		1. MS SQL Server 2005 Compact Edition
+		1. MS .NET Compact Framework 3.5 (uninstall isn't an option)
+		1. Microsoft Sync Framework 2.1 Core Components (x86)
+		1. Microsoft Sync Framework 2.1 Database Providers (x86)
+		
+- Delete Documents/VENDORD
+
+## ClickOnce Deployment of Vendord.SmartDevice.App
+
+- Publish Vendord.SmartDevice.Setup
+	- Rebuild Vendord.SmartDevice.Setup
+	- Copy the release MSI to C:\Users\Shaun\Documents\GitHub\BigFont\BigFont.MVC\Software\Vendord\WinCe6
+	- Commit and push BigFont.MVC
+
+- Download the installer to your PC
+	- Go to http://www.bigfont.ca/software/vendord/wince6/publish.htm
+	- Click Install
+	- Run it.
+
+- Install on device
+	- Connect your device through Windows Mobile Device Center
+	- Copy C:\Program Files (x86)\BigFont\Vendord.SmartDevice.Setup from the PC.
+	- Paste it into This PC\WindowsCE\Temp\
+	- Run any CAB files within PC\WindowsCE\Temp\Vendord.SmartDevice.Setup
+	- The installations will complete.
+	- You can then delete all Vendord.SmartDevice.Setup directories from the PC and Device.
+
+## Uninstall Vendord.SmartDevice.App
+
+- Connect the device.
+- Windows Mobile Device Center will open.
+- Choose connect without setting up.
+- Click programs/services > more > add/remove programs
+	- Vendord
+	- SQL Server Compact 3.5 Core
+		- If this doesn't uninstall, 
+		- considering deleting the MS SQL Server Compact folder from /Program Files
+	- Microsoft .NET CF 3.5 EN-String Resources
+- Uncheck each program that you want to uninstall.
+- Click file management > browse
+- Delete the following:
+	- This PC\WindowsCE\Application Data\VENDORD\
+	- This PC\WindowsCE\Program Files\vendord.smartdevice.app\
 
