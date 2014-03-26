@@ -173,39 +173,109 @@ namespace Vendord.Desktop.App
 
         private delegate void Save();
 
+        private ListView _LvOrders;
         private ListView LvOrder
         {
             get
             {
-                ListView result = null;
-                List<ListView> listViews
-                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true);
-                if (listViews != null && listViews.Count > 0)
+                if (_LvOrders == null)
                 {
-                    result = listViews[0];
+                    Control[] controls = this.Controls.Find(ControlNames.LvOrder, true);
+                    if (controls != null && controls.Length > 0)
+                    {
+                        _LvOrders = controls[0] as ListView;
+                    }
                 }
-                return result;
+                return _LvOrders;
+            }
+            set
+            {
+                _LvOrders = value;
             }
         }
 
+        private ListView _LvVendor;
         private ListView LvVendor
         {
             get
             {
-                ListView result = null;
-                List<ListView> listViews
-                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true);
-                if (listViews != null && listViews.Count > 0)
+                if (_LvVendor == null)
                 {
-                    result = listViews[0];
+                    Control[] controls = this.Controls.Find(ControlNames.LvVendor, true);
+                    if (controls != null && controls.Length > 0)
+                    {
+                        _LvVendor = controls[0] as ListView;
+                    }
                 }
-                return result;
+                return _LvVendor;
+            }
+            set
+            {
+                _LvVendor = value;
             }
         }
 
+        private ListView _LvOrderProduct;
         private ListView LvOrderProduct
         {
-            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true)[0]; }
+            get
+            {
+                if (_LvOrderProduct == null)
+                {
+                    Control[] controls = this.Controls.Find(ControlNames.LvOrderProduct, true);
+                    if (controls != null && controls.Length > 0)
+                    {
+                        _LvOrderProduct = controls[0] as ListView;
+                    }
+                }
+                return _LvOrderProduct;
+            }
+            set
+            {
+                _LvOrderProduct = value;
+            }
+        }
+
+        private ListBox _LbProduct;
+        private ListBox LbProduct 
+        {
+            get
+            {
+                if (_LbProduct == null)
+                {
+                    Control[] controls = this.Controls.Find(ControlNames.LbProduct, true);
+                    if (controls != null && controls.Length > 0)
+                    {
+                        _LbProduct = controls[0] as ListBox;
+                    }
+                }
+                return _LbProduct;
+            }
+            set
+            {
+                _LbProduct = value;
+            }
+        }
+
+        private Button _BtnDelete;
+        private Button BtnDelete 
+        {
+            get
+            {
+                if (_BtnDelete == null)
+                {
+                    Control[] controls = this.Controls.Find(ControlNames.BtnDelete, true);
+                    if (controls != null && controls.Length > 0)
+                    {
+                        _BtnDelete = controls[0] as Button;
+                    }
+                }
+                return _BtnDelete;
+            }
+            set
+            {
+                _BtnDelete = value;
+            }
         }
 
         #region Utilities
@@ -621,9 +691,7 @@ namespace Vendord.Desktop.App
         {
             ListBox listBox;
             ListViewItem targetListViewItem;
-            string currentVendor;
-
-            listBox = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
+            string currentVendor;            
 
             if (this.LvVendor != null)
             {
@@ -637,10 +705,10 @@ namespace Vendord.Desktop.App
 
                 targetListViewItem = this.SelectedListViewItem(this.LvVendor);
                 currentVendor = targetListViewItem != null ? targetListViewItem.Text : null;
-                if (listBox != null && listBox.Items != null)
+                if (LbProduct != null && LbProduct.Items != null)
                 {
-                    listBox.Items.Clear();
-                    this.AddDataToListBoxProduct(listBox, vendorName);
+                    LbProduct.Items.Clear();
+                    this.AddDataToListBoxProduct(LbProduct, vendorName);
                 }
             }
         }
@@ -688,7 +756,7 @@ namespace Vendord.Desktop.App
         private ListBox CreateListBoxProduct()
         {
             // create the list box
-            ListBox listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect };
+            ListBox listBox = new ListBox { Dock = DockStyle.Right, Name = ControlNames.LbProduct };
             listBox.Margin = new Padding(25);
             listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
 
@@ -771,7 +839,7 @@ namespace Vendord.Desktop.App
 
             listViewProduct = new ListView()
             {
-                Name = UserInputs.LvOrderProduct,
+                Name = ControlNames.LvOrderProduct,
                 View = View.Details,
                 HideSelection = false,
                 Activation = ItemActivation.Standard,
@@ -841,7 +909,7 @@ namespace Vendord.Desktop.App
 
             listViewVendor = new ListView()
             {
-                Name = UserInputs.LvVendor,
+                Name = ControlNames.LvVendor,
                 View = View.Details,
                 HideSelection = false,
                 Activation = ItemActivation.OneClick,
@@ -886,7 +954,7 @@ namespace Vendord.Desktop.App
 
             listViewOrder = new ListView()
             {
-                Name = UserInputs.LvOrder,
+                Name = ControlNames.LvOrder,
                 View = View.Details,
                 Activation = ItemActivation.OneClick,
                 HideSelection = false,
@@ -1015,10 +1083,10 @@ namespace Vendord.Desktop.App
             btnPrintOrder = this.ButtonFactory("Print Current Order");
             btnPrintOrder.Click += new EventHandler(this.BtnPrintOrder_Click);
             btnShowProductList = this.ButtonFactory("Show Product List");
-            btnShowProductList.Name = UserInputs.BtnShowProductList;
+            btnShowProductList.Name = ControlNames.BtnShowProductList;
             btnShowProductList.Click += new EventHandler(this.BtnShowProductList_Click);
             btnDeleteItem = this.ButtonFactory("Delete Selected");
-            btnDeleteItem.Name = UserInputs.BtnDelete;
+            btnDeleteItem.Name = ControlNames.BtnDelete;
             btnDeleteItem.Click += new EventHandler(this.BtnDeleteItem_Click);
 
             // create listviews
@@ -1166,10 +1234,7 @@ namespace Vendord.Desktop.App
 
         private void BtnShowProductList_Click(object sender, EventArgs e)
         {
-            ListBox listBox
-                = FormHelper.GetControlsByName<ListBox>(this.mainContent, UserInputs.LbSelect, true).FirstOrDefault<ListBox>();
-
-            if (listBox == null)
+            if (LbProduct == null)
             {
                 // get current vendor name
                 string vendorName = null;
@@ -1187,8 +1252,9 @@ namespace Vendord.Desktop.App
             }
             else
             {
-                this.mainContent.Controls.Remove(listBox);
-            }
+                // show or hide
+                LbProduct.Visible = !LbProduct.Visible;            
+            }           
         }
 
         private void BtnDeleteItem_Click(object sender, EventArgs e)
@@ -1198,11 +1264,11 @@ namespace Vendord.Desktop.App
 
             switch ((sender as Button).Tag.ToString())
             {
-                case UserInputs.LvVendor:
+                case ControlNames.LvVendor:
                     MessageBox.Show("You cannot directly delete vendors. Instead, delete all associated vendor products.");
                     break;
 
-                case UserInputs.LvOrderProduct:
+                case ControlNames.LvOrderProduct:
                     deletedItemIndex = this.DeleteSelectedOrderProduct();
                     updatedListView = this.UpdateListViewOrderProduct();
                     if (updatedListView.Items.Count > 0)
@@ -1221,7 +1287,7 @@ namespace Vendord.Desktop.App
 
                     break;
 
-                case UserInputs.LvOrder:
+                case ControlNames.LvOrder:
 
                     DialogResult yesNo = MessageBox.Show("Delete this entire order?", "Confirm delete!", MessageBoxButtons.YesNo);
                     if (yesNo == DialogResult.Yes)
@@ -1345,7 +1411,7 @@ namespace Vendord.Desktop.App
         private void ListViewAny_Enter(object sender, EventArgs e)
         {
             this.ButtonMessage_Generic(
-                FormHelper.GetControlsByName<Button>(this, UserInputs.BtnDelete, true).FirstOrDefault(),
+                BtnDelete,
                 (sender as ListView).Name.Replace("Lv", string.Empty),
                 (sender as ListView).Name);
         }
@@ -1561,7 +1627,7 @@ namespace Vendord.Desktop.App
 
         #endregion
 
-        private class UserInputs
+        private class ControlNames
         {
             internal const string ListViewPrefix = "Lv";
             internal const string ButtonPrefix = "Btn";
@@ -1574,7 +1640,7 @@ namespace Vendord.Desktop.App
             internal const string BtnShowProductList = "BtnCreate";
             internal const string BtnDelete = "BtnDelete";
 
-            internal const string LbSelect = "LbSelect";
+            internal const string LbProduct = "LbSelect";
         }
 
         private class TagProperties

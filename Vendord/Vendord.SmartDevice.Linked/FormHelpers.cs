@@ -33,27 +33,27 @@ namespace Vendord.SmartDevice.Linked
             return result;
         }
 
-        internal static List<T> GetControlsByName<T>(
-            Control controlToSearch, string nameOfControlsToFind, bool searchDescendants)
-            where T : class
-        {
-            List<T> result;
-            result = new List<T>();
-            foreach (Control c in controlToSearch.Controls)
-            {
-                if (c.Name == nameOfControlsToFind && c.GetType() == typeof(T))
-                {
-                    result.Add(c as T);
-                }
+        ////internal static List<T> GetControlsByName<T>(
+        ////    Control controlToSearch, string nameOfControlsToFind, bool searchDescendants)
+        ////    where T : class
+        ////{
+        ////    List<T> result;
+        ////    result = new List<T>();
+        ////    foreach (Control c in controlToSearch.Controls)
+        ////    {
+        ////        if (c.Name == nameOfControlsToFind && c.GetType() == typeof(T))
+        ////        {
+        ////            result.Add(c as T);
+        ////        }
 
-                if (searchDescendants)
-                {
-                    result.AddRange(GetControlsByName<T>(c, nameOfControlsToFind, true));
-                }
-            }
+        ////        if (searchDescendants)
+        ////        {
+        ////            result.AddRange(GetControlsByName<T>(c, nameOfControlsToFind, true));
+        ////        }
+        ////    }
 
-            return result;
-        }        
+        ////    return result;
+        ////}        
 
         internal static bool KeyPressIsDigit(KeyPressEventArgs e)
         {
