@@ -149,11 +149,19 @@ namespace Vendord.Desktop.App
         private List<Product> GetProductListFromXmlBackup(string filePath)
         {
             XElement productsXml = XElement.Load(filePath);
+
+            Func<string, long> tryToGetLong =
+                value =>
+                {
+                    long longValue;
+                    return Int64.TryParse(value, out longValue) ? longValue : -1;
+                };
+
             var query =
                 from p in productsXml.Descendants("Products")
                 select new Product()
                 {
-                    Upc = (string)p.Element("upc"),
+                    Upc = tryToGetLong(p.Element("upc").Value),
                     Name = (string)p.Element("description"),
                     Price = (decimal?)p.Element("normal_price"),
                     Department = new Department()
@@ -233,7 +241,7 @@ namespace Vendord.Desktop.App
                 d.Id = p.Department.Id;
                 d.Name = p.Department.Name;
                 d.UpsertIntoDb();
-
+                
                 p.queryExecutor = queryExe;
                 p.UpsertIntoDb();
                 insertedRecords++;

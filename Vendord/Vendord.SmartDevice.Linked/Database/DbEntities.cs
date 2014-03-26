@@ -112,7 +112,7 @@ namespace Vendord.SmartDevice.Linked
                     {
                         item.Id = null;
                     }
-                    
+
                     item.Name = Convert.ToString(reader["Name"]);
 
                     list.Add(item);
@@ -142,7 +142,7 @@ namespace Vendord.SmartDevice.Linked
             string trashQuery;
 
             trashQuery = string.Format(
-                @"UPDATE {0} SET IsInTrash = 1 WHERE Id = '{1}'",               
+                @"UPDATE {0} SET IsInTrash = 1 WHERE Id = '{1}'",
                 this.TableName,
                 this.Id);
 
@@ -264,7 +264,10 @@ namespace Vendord.SmartDevice.Linked
             Vendor = new Vendor(qe);
         }
 
-        public string Upc { get; set; } // TODO Change Upc into an INTEGER
+        #region Properties
+
+        // int64
+        public long Upc { get; set; }
 
         public string Name { get; set; }
 
@@ -274,29 +277,54 @@ namespace Vendord.SmartDevice.Linked
 
         public Department Department { get; set; }
 
+        #endregion
+
         public void UpsertIntoDb()
         {
+            // create parameters
             var parameters = new SqlCeParameter[]
             {
-                new SqlCeParameter() { ParameterName = "@Upc", SqlDbType = SqlDbType.NVarChar, Value = this.Upc },
+                // BigInt is an int64
+                new SqlCeParameter() { ParameterName = "@Upc", SqlDbType = SqlDbType.BigInt, Value = this.Upc },
                 new SqlCeParameter() { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = this.Name },
                 new SqlCeParameter() { ParameterName = "@Price", SqlDbType = SqlDbType.Decimal, Value = this.Price },
                 new SqlCeParameter() { ParameterName = "@VendorId", SqlDbType = SqlDbType.Int, Value = this.Vendor.Id },
                 new SqlCeParameter() { ParameterName = "@DepartmentId", SqlDbType = SqlDbType.Int, Value = this.Department.Id }
             };
 
-            string selectQuery = string.Format(
-                @"SELECT COUNT(*) FROM {0} WHERE Upc = @upc",
+            // exists
+            string selectQuery =
+                string.Format(@"SELECT COUNT(*) FROM {0} WHERE Upc = @Upc",
                 this.TableName);
-
-            string insertQuery = string.Format(
-                @"INSERT INTO {0} (Upc, Name, Price, VendorId, DepartmentId) VALUES (@upc, @name, @price, @vendorId, @departmentId)",
-                this.TableName);
-
             object result = queryExecutor.ExecuteScalar(selectQuery, parameters);
-            if (Convert.ToInt16(result.ToString()) == 0)
+            bool exists = Convert.ToInt16(result.ToString()) > 0;
+
+            // upsert
+            if (exists)
             {
-                queryExecutor.ExecuteNonQuery(insertQuery, parameters);
+                // update
+                string updateQuery =
+                    string.Format(@"
+                            UPDATE {0} SET
+                            Name = @name, 
+                            Price = @price, 
+                            VendorId = @vendorId, 
+                            DepartmentId = @departmentId
+                            WHERE Upc = @Upc",
+                        this.TableName
+                    );
+
+                this.queryExecutor.ExecuteNonQuery(updateQuery, parameters);
+            }
+            else
+            {
+                // insert
+                string insertQuery =
+                    string.Format(@"
+                            INSERT INTO {0} (Upc, Name, Price, VendorId, DepartmentId) 
+                            VALUES (@Upc, @name, @price, @vendorId, @departmentId)",
+                    this.TableName);
+                this.queryExecutor.ExecuteNonQuery(insertQuery, parameters);
             }
         }
 
@@ -327,34 +355,29 @@ namespace Vendord.SmartDevice.Linked
                 JOIN tblVendor v ON main.VendorId = v.Id 
                 JOIN tblDepartment d ON main.DepartmentId = d.Id 
                 WHERE main.IsInTrash IS NULL OR main.IsInTrash = 0
-            ";            
+            ";
 
             using (SqlCeDataReader reader = queryExecutor.ExecuteReader(query))
             {
                 while (reader.Read())
                 {
                     Product item = new Product(this.queryExecutor);
-                    item.Upc = Convert.ToString(reader["Upc"]);
-                    item.Name = Convert.ToString(reader["Name"]);
-                    item.Price = Convert.ToDecimal(reader["Price"]);
-                    try
-                    {
-                        item.Vendor.Id = Int32.Parse(reader["VendorId"].ToString());
-                    }
-                    catch (Exception)
-                    {
-                        item.Vendor.Id = null;
-                    }
-                    try
-                    {
-                        item.Department.Id = Int32.Parse(reader["DepartmentId"].ToString());
-                    }
-                    catch (Exception)
-                    {
-                        item.Department.Id = null;
-                    }
-                    item.Vendor.Name = Convert.ToString(reader["VendorName"].ToString());
-                    item.Department.Name = Convert.ToString(reader["DepartmentName"].ToString());
+
+                    // upc
+                    item.Upc = Convert.ToInt64(reader["Upc"].ToString());
+                    // name                    
+                    item.Name = reader["Name"].ToString();
+                    // price
+                    item.Price = Convert.ToDecimal(reader["Price"].ToString());
+                    // vendor id
+                    item.Vendor.Id = Convert.ToInt32(reader["VendorId"].ToString());
+                    // department id
+                    item.Department.Id = Convert.ToInt32(reader["DepartmentId"].ToString());
+                    // vendor name
+                    item.Vendor.Name = reader["VendorName"].ToString();
+                    // department name
+                    item.Department.Name = reader["DepartmentName"].ToString();
+                    // add
                     list.Add(item);
                 }
             }
@@ -373,7 +396,8 @@ namespace Vendord.SmartDevice.Linked
 
         public Guid OrderID { get; set; }
 
-        public string ProductUPC { get; set; }
+        // int64
+        public long ProductUPC { get; set; }
 
         public int CasesToOrder { get; set; }
 
@@ -430,7 +454,7 @@ namespace Vendord.SmartDevice.Linked
                     OrderProduct item = new OrderProduct(this.queryExecutor)
                     {
                         OrderID = new Guid(reader["OrderID"].ToString()),
-                        ProductUPC = Convert.ToString(reader["ProductUPC"]),
+                        ProductUPC = Convert.ToInt64(reader["ProductUPC"].ToString()),
                         CasesToOrder = Convert.ToInt16(reader["CasesToOrder"])
                     };
                     list.Add(item);

@@ -9,6 +9,11 @@ namespace DatabaseTests
     class Program
     {
         static void Main(string[] args)
+        {            
+
+        }
+
+        public void GenericTest()
         {
             Database db = new Database();
             DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
@@ -64,7 +69,6 @@ namespace DatabaseTests
             Console.WriteLine(productsJoinAll.Count());
 
             Console.ReadLine();
-
         }
     }
 }

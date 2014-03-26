@@ -113,7 +113,7 @@ namespace Vendord.SmartDevice.Linked
                 query = @"
                     CREATE TABLE [tblProduct]
                     (
-                       [Upc] NVARCHAR(100) NOT NULL,
+                       [Upc] BIGINT NOT NULL,
                        [Name] NVARCHAR(100),
                        [Price] DECIMAL,
                        [IsInTrash] BIT,
@@ -153,7 +153,7 @@ namespace Vendord.SmartDevice.Linked
                     CREATE TABLE [tblOrderProduct]
                     (
                        [OrderID] UNIQUEIDENTIFIER NOT NULL,
-                       [ProductUPC] NVARCHAR(100) NOT NULL,
+                       [ProductUPC] BIGINT NOT NULL,
                        [CasesToOrder] INT,
                        [IsInTrash] BIT
                     )";
