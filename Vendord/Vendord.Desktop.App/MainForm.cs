@@ -679,8 +679,7 @@ namespace Vendord.Desktop.App
             p.queryExecutor = qe;
             List<Product> products = p.SelectAllWithJoin();
 
-            filteredProducts = this.FilterProductListOnVendorName(products, vendorName);
-            foreach (Product product in filteredProducts)
+            foreach (Product product in db.Products)
             {
                 listBoxProduct.Items.Add(product);
             }
