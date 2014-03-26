@@ -19,7 +19,7 @@ namespace Vendord.SmartDevice.App
     using Vendord.SmartDevice.Linked;
 
     public class MainForm : Form
-    {        
+    {
         private const int ButtonHeight = 50;
         private const int NumberOfNavigationButtons = 2;
         private const string TextBack = "Save and Back";
@@ -39,7 +39,7 @@ namespace Vendord.SmartDevice.App
         private BarcodeAPI barcodeAPI;
 
         private Order currentOrder = null;
-        private Product currentProduct = null;         
+        private Product currentProduct = null;
 
         public MainForm()
         {
@@ -57,7 +57,7 @@ namespace Vendord.SmartDevice.App
 
             // create main content panel
             this.mainContent = new Panel();
-            this.mainContent.Dock = DockStyle.Fill;            
+            this.mainContent.Dock = DockStyle.Fill;
 
             // add to form           
             this.SuspendLayout();
@@ -143,7 +143,7 @@ namespace Vendord.SmartDevice.App
         }
 
         private void SaveNewOrder()
-        {            
+        {
             List<TextBox> textBoxes;
 
             textBoxes = FormHelper.GetControlsByName<TextBox>(this, USER_INPUTS.TxtOrderName, true);
@@ -173,8 +173,8 @@ namespace Vendord.SmartDevice.App
                 targetTextBox = textBoxes.FirstOrDefault<TextBox>();
 
                 // note textbox is disabled if the product is not in the database
-                if (targetTextBox != null && 
-                    targetTextBox.Text.Length > 0 && 
+                if (targetTextBox != null &&
+                    targetTextBox.Text.Length > 0 &&
                     targetTextBox.Enabled)
                 {
                     Database db = new Database();
@@ -308,7 +308,7 @@ namespace Vendord.SmartDevice.App
             // colors
             this.SetBackColorForAllChildControls<Control>(this, Color.White, true);
 
-            this.ResumeLayout();        
+            this.ResumeLayout();
 
             // back
             this.DisableBackButton();
@@ -394,17 +394,19 @@ namespace Vendord.SmartDevice.App
             lblMessage.Text = @"Error. Try one of these options: 
                     1. go back and restart the order, 
                     2. close the program and restart the order, 
-                    3. restart the device and restart the order.";            
+                    3. restart the device and restart the order.";
             lblMessage.Dock = DockStyle.Top;
             this.mainContent.Controls.Add(lblMessage);
         }
 
         private void LoadOrderScanningResultView(ScanData scanData)
         {
-            // declare              
-            Control[] controls;
-            OrderProduct orderProduct;
+            // get the upc, and remove the last digit,
+            // because the country grocer database doesn't use the last digit
             string scannedUpc = scanData.Text;
+            string trimmedUpc = scannedUpc.Trim().Substring(0, scannedUpc.Length - 1);
+            long databaseUpc;
+            Int64.TryParse(trimmedUpc, databaseUpc);
 
             // populate controls with default values
             Label lblProductUPC = new Label() { Text = "Upc: " };
@@ -413,10 +415,10 @@ namespace Vendord.SmartDevice.App
             Label lblProductAmount = new Label() { Text = "Cases to Order: " };
             Label lblHelp = new Label() { Text = "Help: " };
 
-            TextBox txtCasesToOrder = new TextBox() 
-            { 
-                Name = USER_INPUTS.TxtCasesToOrder, 
-                Text = Constants.DefaultCasesToOrder.ToString() 
+            TextBox txtCasesToOrder = new TextBox()
+            {
+                Name = USER_INPUTS.TxtCasesToOrder,
+                Text = Constants.DefaultCasesToOrder.ToString()
             };
 
             // get the appropriate product from the database
@@ -427,9 +429,9 @@ namespace Vendord.SmartDevice.App
 
             // if it is in the database
             if (this.currentProduct == null)
-            {                
+            {
                 lblProductName.Text += "This Upc code is not in the database.";
-                txtCasesToOrder.Enabled = false;                                
+                txtCasesToOrder.Enabled = false;
                 lblHelp.Text += "Keep scanning.";
             }
             else
@@ -445,9 +447,9 @@ namespace Vendord.SmartDevice.App
                 txtCasesToOrder.KeyPress += new KeyPressEventHandler(this.TxtClearDefaultValue_KeyPress);
 
                 // check if this product is already in this order
-                orderProduct =
-                    db.OrderProducts.FirstOrDefault<OrderProduct>(op =>
-                    op.OrderID == this.currentOrder.Id && op.ProductUPC == this.currentProduct.Upc);
+                OrderProduct orderProduct =
+                        db.OrderProducts.FirstOrDefault<OrderProduct>(op =>
+                        op.OrderID == this.currentOrder.Id && op.ProductUPC == this.currentProduct.Upc);
                 if (orderProduct != null)
                 {
                     // it is so use it's existing amountToOrder
@@ -456,7 +458,7 @@ namespace Vendord.SmartDevice.App
             }
 
             // add the controls to an array in the order that we want them to display
-            controls = new Control[]
+            Control[] controls = new Control[]
             { 
                 lblProductUPC, 
                 lblProductName, 
@@ -495,8 +497,8 @@ namespace Vendord.SmartDevice.App
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            this.LoadOrdersView();                  
-        }        
+            this.LoadOrdersView();
+        }
 
         private void MainForm_Closing(object sender, EventArgs e)
         {
@@ -546,7 +548,7 @@ namespace Vendord.SmartDevice.App
 
         private void BtnDeleteExistingOrder_Click(object sender, EventArgs e)
         {
-            this.UpdateCurrentOrder();            
+            this.UpdateCurrentOrder();
             if (this.currentOrder != null)
             {
                 this.DeleteSelectedOrder();
