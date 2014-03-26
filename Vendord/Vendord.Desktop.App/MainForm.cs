@@ -586,26 +586,21 @@ namespace Vendord.Desktop.App
 
         private ListView UpdateListViewOrderProduct()
         {
-            ListViewItem selectedListViewOrderItem;
-            ListViewItem selectedListViewVendorItem;
-            Guid orderID;
-            string vendorName;
-
             // clear            
             this.LvOrderProduct.Items.Clear();
 
             // defaults            
-            vendorName = null;
+            string vendorName = null;
 
             // retrieve selected orderID
-            selectedListViewOrderItem = this.SelectedListViewItem(this.LvOrder);
+            ListViewItem selectedListViewOrderItem = this.SelectedListViewItem(this.LvOrder);
             if (selectedListViewOrderItem != null)
             {
-                orderID = new Guid(selectedListViewOrderItem.Tag.ToString());
+                Guid orderID = new Guid(selectedListViewOrderItem.Tag.ToString());
                 if (orderID != null)
                 {
                     // retrieve selected vendorName
-                    selectedListViewVendorItem = this.SelectedListViewItem(this.LvVendor);
+                    ListViewItem selectedListViewVendorItem = this.SelectedListViewItem(this.LvVendor);
                     if (selectedListViewVendorItem != null)
                     {
                         vendorName = selectedListViewVendorItem.Text;
