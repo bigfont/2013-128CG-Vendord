@@ -179,7 +179,7 @@ namespace Vendord.Desktop.App
             {
                 ListView result = null;
                 List<ListView> listViews
-                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, false);
+                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrder, true);
                 if (listViews != null && listViews.Count > 0)
                 {
                     result = listViews[0];
@@ -194,7 +194,7 @@ namespace Vendord.Desktop.App
             {
                 ListView result = null;
                 List<ListView> listViews
-                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, false);
+                    = FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvVendor, true);
                 if (listViews != null && listViews.Count > 0)
                 {
                     result = listViews[0];
@@ -205,7 +205,7 @@ namespace Vendord.Desktop.App
 
         private ListView LvOrderProduct
         {
-            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, false)[0]; }
+            get { return FormHelper.GetControlsByName<ListView>(this.mainContent, UserInputs.LvOrderProduct, true)[0]; }
         }
 
         #region Utilities
@@ -755,7 +755,6 @@ namespace Vendord.Desktop.App
                 }
             }
 
-            ShowScrollBar(listViewOrderProduct.Handle, (int)SB_VERT, true);
         }
 
         private ListView CreateListViewOrderProduct()
@@ -797,7 +796,7 @@ namespace Vendord.Desktop.App
             }
 
             // back
-            this.EnableBackButton(this.LoadOrdersView);
+            this.EnableBackButton(this.LoadOrdersView);            
 
             return this.LvVendor;
         }
@@ -826,8 +825,6 @@ namespace Vendord.Desktop.App
                     listViewVendor.Items.Add(listViewItem);
                 }
             }
-
-            ShowScrollBar(listViewVendor.Handle, (int)SB_VERT, true);
         }
 
         private ListView CreateListViewVendor()
@@ -873,7 +870,6 @@ namespace Vendord.Desktop.App
                 listViewOrder.Items.Add(listViewItem);
             }
 
-            ShowScrollBar(listViewOrder.Handle, (int)SB_VERT, true);
         }
 
         private ListView CreateListViewOrder()
@@ -1042,8 +1038,7 @@ namespace Vendord.Desktop.App
                 lv.Dock = DockStyle.Left;
                 lv.Width = lv.Columns.Count * ColumnHeaderWidthDefault;
                 lv.BorderStyle = BorderStyle.FixedSingle;
-                lv.GridLines = true;
-                lv.Scrollable = false;
+                lv.GridLines = true;                
 
                 foreach (ColumnHeader h in lv.Columns)
                 {
@@ -1053,8 +1048,46 @@ namespace Vendord.Desktop.App
                 // enter occurs on single click, for instance, and probably other ways too.
                 lv.Enter += new EventHandler(this.ListViewAny_Enter);
 
-                this.mainContent.Controls.Add(lv);
             }
+
+            // add list views to panels
+            // starting with panel products
+            Button btnClearVendorFilter = ButtonFactory("Clear Vendor Filter");
+            btnClearVendorFilter.Click += new EventHandler((sender, args) => {
+            
+                this.LvVendor.SelectedIndices.Clear();
+
+            });
+            btnClearVendorFilter.Dock = DockStyle.Top;
+
+            TableLayoutPanel pnlProducts = new TableLayoutPanel();
+            pnlProducts.RowCount = 2;
+            pnlProducts.ColumnCount = 1;
+            pnlProducts.AutoSize = true;
+            pnlProducts.Dock = DockStyle.Left;
+
+            pnlProducts.Controls.Add(btnClearVendorFilter, 0, 0);
+            pnlProducts.Controls.Add(listViewProduct, 0, 1);
+                        
+            this.mainContent.Controls.Add(pnlProducts);
+
+            TableLayoutPanel pnlVendors = new TableLayoutPanel();
+            pnlVendors.RowCount = 1;
+            pnlVendors.ColumnCount = 1;
+            pnlVendors.AutoSize = true;
+            pnlVendors.Dock = DockStyle.Left;
+            pnlVendors.Controls.Add(listViewVendor);
+
+            this.mainContent.Controls.Add(pnlVendors);
+
+            TableLayoutPanel pnlOrders = new TableLayoutPanel();
+            pnlOrders.RowCount = 1;
+            pnlOrders.ColumnCount = 1;
+            pnlOrders.AutoSize = true;
+            pnlOrders.Dock = DockStyle.Left;
+            pnlOrders.Controls.Add(listViewOrder);
+
+            this.mainContent.Controls.Add(pnlOrders);
 
             // add button(s)            
             btnPrintOrder.Dock = DockStyle.Top;
