@@ -682,6 +682,7 @@ namespace Vendord.Desktop.App
         {
             // create the list box
             ListBox listBox = new ListBox { Dock = DockStyle.Right, Name = UserInputs.LbSelect };
+            listBox.Margin = new Padding(25);
             listBox.DoubleClick += new EventHandler(this.ListBox_DoubleClick_AddProductToOrder);
 
             return listBox;
@@ -1395,7 +1396,7 @@ namespace Vendord.Desktop.App
             ListBox listBox = this.CreateListBoxProduct();
             string vendorName = e.Argument != null ? e.Argument.ToString() : null;
             this.AddDataToListBoxProduct(listBox, vendorName);
-            this.SizeListBoxProduct(listBox);
+            this.SizeListBoxProduct(listBox);            
 
             UiDispatcher.Invoke((Action)(() =>
             {

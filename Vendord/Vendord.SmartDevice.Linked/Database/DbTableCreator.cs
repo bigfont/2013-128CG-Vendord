@@ -84,7 +84,7 @@ namespace Vendord.SmartDevice.Linked
 
                 queryExecutor.ExecuteNonQuery(query, null);
 
-                query = @"INSERT INTO tblVendor VALUES (-1, 'No Vendor', 0)";
+                query = @"INSERT INTO tblVendor VALUES (-1, 'No Vendor Specified', 0)";
                 queryExecutor.ExecuteNonQuery(query, null);
             }
 

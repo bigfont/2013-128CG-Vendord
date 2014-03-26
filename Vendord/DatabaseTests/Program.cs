@@ -26,14 +26,13 @@ namespace DatabaseTests
 
             product = new Product(qe);
 
-            product.Name = "test";
+            product.Name = "Renova Pink";
             product.Price = 10.00m;
             product.IsInTrash = 0;
             product.Vendor.Id = vendor.Id;
             product.Department.Id = department.Id;
 
-
-            product.Upc = "1";
+            product.Upc = "5601028000741";
             product.UpsertIntoDb();
 
             product.Upc = "2";

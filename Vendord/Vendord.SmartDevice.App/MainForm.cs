@@ -227,34 +227,6 @@ namespace Vendord.SmartDevice.App
             this.mainContent.Controls.Clear();
         }
 
-        private void LoadHomeView()
-        {
-            Button btnOrders;
-            Button[] buttons;
-
-            btnOrders = new Button() { Text = "Orders" };
-            btnOrders.Click += new EventHandler(this.BtnOrders_Click);
-
-            // style
-            buttons = new Button[] 
-            { 
-                btnOrders 
-            };
-
-            foreach (Button b in buttons)
-            {
-                b.Dock = DockStyle.Top;
-                b.Height = ButtonHeight;
-                this.mainContent.Controls.Add(b);
-            }
-
-            // colors
-            this.SetBackColorForAllChildControls<Control>(this, Color.White, true);
-
-            // back            
-            this.DisableBackButton();
-        }
-
         private void LoadOrdersView()
         {
             ListView listOrders;
@@ -339,7 +311,7 @@ namespace Vendord.SmartDevice.App
             this.ResumeLayout();        
 
             // back
-            this.EnableBackButton(this.LoadHomeView);
+            this.DisableBackButton();
         }
 
         private void LoadCreateNewOrderView()
@@ -386,17 +358,13 @@ namespace Vendord.SmartDevice.App
 
         private void LoadOrderScanningView()
         {
-            Label lblOrderName;
-            Label lblInstructions;
-            Control[] controls;
-
             // only load the order scanning view if we have a selected order.
             if (this.currentOrder != null)
             {
-                lblOrderName = new Label() { Text = "Order Name:" + this.currentOrder.Name };
-                lblInstructions = new Label() { Text = "Start scanning." };
+                Label lblOrderName = new Label() { Text = "Order Name:" + this.currentOrder.Name };
+                Label lblInstructions = new Label() { Text = "Start scanning." };
 
-                controls = new Control[] 
+                Control[] controls = new Control[] 
                 { 
                     lblOrderName, 
                     lblInstructions 
@@ -420,33 +388,52 @@ namespace Vendord.SmartDevice.App
             }
         }
 
+        private void LoadScanningErrorView()
+        {
+            Label lblMessage = new Label() { Text = "Error: please close and start again." };
+            lblMessage.Dock = DockStyle.Top;
+            this.mainContent.Controls.Add(lblMessage);
+        }
+
         private void LoadOrderScanningResultView(ScanData scanData)
         {
-            // declare 
-            Label lblProductUPC, lblProductName, lblProductAmount, lblInstruction;
-            TextBox txtCasesToOrder;
+            // declare              
             Control[] controls;
-            Database db;
             OrderProduct orderProduct;
-            string scannedUpc;
+            string scannedUpc = scanData.Text;
 
             // populate controls with default values
-            lblProductUPC = new Label() { Text = scanData.Text };
-            lblProductName = new Label() { Text = "This Upc code is not in the database." };
-            lblProductAmount = new Label() { Text = "Cases to Order:" };
-            txtCasesToOrder = new TextBox() { Name = USER_INPUTS.TxtCasesToOrder, Enabled = false, Text = Constants.DefaultCasesToOrder.ToString() };
-            lblInstruction = new Label() { Text = "Enter amount. Keep scanning to continue and save." };
+            Label lblProductUPC = new Label() { Text = "Upc: " };
+            Label lblProductName = new Label() { Text = "Name: " };
+            Label lblProductPrice = new Label() { Text = "Price: $" };
+            Label lblProductAmount = new Label() { Text = "Cases to Order: " };
+            Label lblHelp = new Label() { Text = "Help: " };
+
+            TextBox txtCasesToOrder = new TextBox() 
+            { 
+                Name = USER_INPUTS.TxtCasesToOrder, 
+                Text = Constants.DefaultCasesToOrder.ToString() 
+            };
 
             // get the appropriate product from the database
-            db = new Database();
-            scannedUpc = scanData.Text;            
+            Database db = new Database();
             this.currentProduct = db.Products.FirstOrDefault<Product>(p => p.Upc.Equals(scannedUpc));
 
+            lblProductUPC.Text += scannedUpc;
+
             // if it is in the database
-            if (this.currentProduct != null)
+            if (this.currentProduct == null)
+            {                
+                lblProductName.Text += "This Upc code is not in the database.";
+                txtCasesToOrder.Enabled = false;                                
+                lblHelp.Text += "Keep scanning.";
+            }
+            else
             {
                 // set its name
-                lblProductName.Text = this.currentProduct.Name;
+                lblProductName.Text += this.currentProduct.Name;
+                lblProductPrice.Text += this.currentProduct.Price.ToString();
+                lblHelp.Text += "Enter cases to order. Then keep scanning.";
 
                 // enable the textbox for input and setup events
                 txtCasesToOrder.Enabled = true;
@@ -469,9 +456,10 @@ namespace Vendord.SmartDevice.App
             { 
                 lblProductUPC, 
                 lblProductName, 
+                lblProductPrice,
                 lblProductAmount,
                 txtCasesToOrder,
-                lblInstruction
+                lblHelp
             }.Reverse<Control>().ToArray<Control>();
 
             // add the controls to the mainDisplay
@@ -502,8 +490,8 @@ namespace Vendord.SmartDevice.App
         #region Event Handlers
 
         private void MainForm_Load(object sender, EventArgs e)
-        {            
-            this.LoadHomeView();                        
+        {
+            this.LoadOrdersView();                  
         }        
 
         private void MainForm_Closing(object sender, EventArgs e)
@@ -620,15 +608,17 @@ namespace Vendord.SmartDevice.App
             // Get ScanData
             ScanData scanData = scanDataCollection.GetFirst;
 
+            this.UnloadCurrentView();
+            this.SaveNewProductOrderAmount();
+
             switch (scanData.Result)
             {
                 case Results.SUCCESS:
-                    this.SaveNewProductOrderAmount();
-                    this.UnloadCurrentView();
                     this.LoadOrderScanningResultView(scanData);
                     break;
 
                 default:
+                    this.LoadScanningErrorView();
                     break;
             }
         }
