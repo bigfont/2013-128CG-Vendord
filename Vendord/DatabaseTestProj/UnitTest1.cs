@@ -13,11 +13,13 @@ namespace DatabaseTestProj
     [TestClass]
     public class UnitTest1
     {
+        private Database db;
+        private DbQueryExecutor qe;
+
         public UnitTest1()
         {
-            //
-            // TODO: Add constructor logic here
-            //
+            db = new Database();
+            qe = new DbQueryExecutor(db.ConnectionString);
         }
 
         private TestContext testContextInstance;
@@ -61,24 +63,30 @@ namespace DatabaseTestProj
         #endregion
 
         [TestMethod]
-        public void UpsertProduct()
+        public void UpsertVendor()
         {
-            long upc = -00000000001;
-
-            Database db = new Database();
-            DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
-
             Vendor vendor = new Vendor(qe) { Id = -1, Name = "Test Vendor One" };
             vendor.UpsertIntoDb();
 
             vendor = new Vendor(qe) { Id = -2, Name = "Test Vendor Two" };
             vendor.UpsertIntoDb();
+        }
 
+        [TestMethod]
+        public void UpsertDepartment()
+        {
             Department department = new Department(qe) { Id = -1, Name = "Test Department One" };
             department.UpsertIntoDb();
 
             department = new Department(qe) { Id = -2, Name = "Test Department Two" };
             department.UpsertIntoDb();
+        }
+
+        // depends on UpsertVendor
+        [TestMethod]
+        public void UpsertProduct()
+        {
+            long upc = -123456789012;
 
             Product product = new Product();
 
@@ -106,7 +114,6 @@ namespace DatabaseTestProj
 
             result = product.SelectAll().Where<Product>(p => p.Upc.Equals(upc)).FirstOrDefault();
             Assert.AreEqual(product.Name.ToString(), result.Name.ToString());
-
         }
     }
 }
