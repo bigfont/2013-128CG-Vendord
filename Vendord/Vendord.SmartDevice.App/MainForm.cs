@@ -388,17 +388,6 @@ namespace Vendord.SmartDevice.App
             }
         }
 
-        private void LoadScanningErrorView()
-        {
-            Label lblMessage = new Label();
-            lblMessage.Text = @"Error. Try one of these options: 
-                    1. go back and restart the order, 
-                    2. close the program and restart the order, 
-                    3. restart the device and restart the order.";
-            lblMessage.Dock = DockStyle.Top;
-            this.mainContent.Controls.Add(lblMessage);
-        }
-
         private void LoadOrderScanningResultView(ScanData scanData)
         {
             // get the upc, and remove the last digit,
@@ -420,10 +409,17 @@ namespace Vendord.SmartDevice.App
                 Text = Constants.DefaultCasesToOrder.ToString()
             };
 
-            // get the appropriate product from the database
             Database db = new Database();
-            DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
-            this.currentProduct = (new Product(qe)).SelectOne(databaseUpc);
+            try
+            {
+                // get the appropriate product from the database
+                DbQueryExecutor qe = new DbQueryExecutor(db.ConnectionString);
+                this.currentProduct = (new Product(qe)).SelectOne(databaseUpc);
+            }
+            catch (Exception e)
+            {
+                IOHelpers.LogException(e);
+            }
 
             lblProductUPC.Text += trimmedUpc;
 
@@ -489,6 +485,30 @@ namespace Vendord.SmartDevice.App
             this.btnBack.Enabled = true;
             this.backDelegate = this.LoadOrdersView;
             this.saveDelegate = this.SaveNewProductOrderAmount;
+        }
+
+        private void LoadOrderScannerErrorView(string errorCode)
+        {
+            Label lblMessage = new Label();
+            StringBuilder builder = new StringBuilder();
+            char bullet = '\u2022';
+            string[] thingsToTry = new string[] 
+            {
+                "go back and restart the order", 
+                "close the program and restart the order", 
+                "restart the device and restart the order"
+            };
+
+            builder.AppendFormat("Something unexpected happened:{0}", errorCode);
+
+            for (int i = 0; i < thingsToTry.Length; i++)
+            {
+                builder.Append(Environment.NewLine);
+                builder.AppendFormat("{0} {1}", bullet, thingsToTry[i]);
+            }
+
+            lblMessage.Dock = DockStyle.Top;
+            this.mainContent.Controls.Add(lblMessage);
         }
 
         #endregion
@@ -612,26 +632,35 @@ namespace Vendord.SmartDevice.App
 
         private void BarcodeScanner_OnScan(ScanDataCollection scanDataCollection)
         {
-            // Get ScanData
-            ScanData scanData = scanDataCollection.GetFirst;
-
-            switch (scanData.Result)
+            try
             {
-                case Results.SUCCESS:
-                    // be sure to save the order
-                    // before unloading the current view
-                    // because the current view contains the order amount
-                    this.SaveNewProductOrderAmount();
-                    this.UnloadCurrentView();
-                    this.LoadOrderScanningResultView(scanData);
-                    break;
+                // Get ScanData
+                ScanData scanData = scanDataCollection.GetFirst;
 
-                case Results.CREATEEVENT_FAILED:
-                    this.LoadScanningErrorView();
-                    break;
+                switch (scanData.Result)
+                {
+                    case Results.SUCCESS:
+                        // be sure to save the order
+                        // before unloading the current view
+                        // because the current view contains the order amount
+                        IOHelpers.LogSubroutine("SUCCESS");
+                        this.SaveNewProductOrderAmount();
+                        this.UnloadCurrentView();
+                        this.LoadOrderScanningResultView(scanData);
+                        break;
 
-                default:
-                    break;
+                    default:
+                        this.LoadOrderScannerErrorView(scanData.Result.ToString());
+
+                        // enable the scanner again
+                        this.barcodeAPI.Scan();
+
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                IOHelpers.LogException(e);
             }
         }
 

@@ -56,12 +56,13 @@ namespace Vendord.Desktop.App
         private Panel mainNavigation;
         private Panel mainContent;
 
-        private BackgroundWorker importXmlBackgroundWorker;
+        private BackgroundWorker backgroundWorkerImportXml;
         private int totalRecords;
         private int insertedRecords;
 
-        private BackgroundWorker showProductListBackgroundWorker;
-        private BackgroundWorker syncHandheldBackgroundWorker;
+        private BackgroundWorker backgroundWorkerShowProductList;
+        private BackgroundWorker backgroundWorkerSyncProductsVendorsAndDepts;
+        private BackgroundWorker backgroundWorkerSyncOrders;
 
         private int listViewItemIndexToPrintNext = 0;
         private Font myFont = new Font(FontFamily.GenericSerif, 12.0F);
@@ -88,14 +89,14 @@ namespace Vendord.Desktop.App
             this.Text = "Country Grocer Salt Spring";
 
             // create background worker and it's progress reported            
-            this.importXmlBackgroundWorker = new BackgroundWorker();
-            this.importXmlBackgroundWorker.WorkerReportsProgress = true;
-            this.importXmlBackgroundWorker.DoWork
-                += new DoWorkEventHandler(this.ImportXmlBackgroundWorker_DoWork);
-            this.importXmlBackgroundWorker.ProgressChanged
-                += new ProgressChangedEventHandler(this.ImportXmlBackgroundWorker_ProgressChanged);
-            this.importXmlBackgroundWorker.RunWorkerCompleted
-                += new RunWorkerCompletedEventHandler(this.ImportXmlBackgroundWorker_RunWorkerCompleted);
+            this.backgroundWorkerImportXml = new BackgroundWorker();
+            this.backgroundWorkerImportXml.WorkerReportsProgress = true;
+            this.backgroundWorkerImportXml.DoWork
+                += new DoWorkEventHandler(this.BackgroundWorkerImportXml_DoWork);
+            this.backgroundWorkerImportXml.ProgressChanged
+                += new ProgressChangedEventHandler(this.BackgroundWorkerImportXml_ProgressChanged);
+            this.backgroundWorkerImportXml.RunWorkerCompleted
+                += new RunWorkerCompletedEventHandler(this.BackgroundWorkerImportXml_RunWorkerCompleted);
 
             // add a status strip
             this.statusStrip = new StatusStrip();
@@ -297,7 +298,7 @@ namespace Vendord.Desktop.App
             }
 
             // Ensure that the background work is free
-            if (this.importXmlBackgroundWorker.IsBusy)
+            if (this.backgroundWorkerImportXml.IsBusy)
             {
                 isValid = false;
                 errorMessage = "The system is busy. Please try again in a few moments.";
@@ -967,8 +968,11 @@ namespace Vendord.Desktop.App
         private void LoadOrdersView()
         {
             // create buttons
-            Button btnSyncHandheld = this.ButtonFactory("Sync Handheld (before and after Scanning)");
-            btnSyncHandheld.Click += new EventHandler(this.BtnSyncHandheld_Click);
+            Button btnSyncProductsVendorsAndDepts = this.ButtonFactory("Sync Products, Vendors, and Departments (after importing).");
+            btnSyncProductsVendorsAndDepts.Click += new EventHandler(this.BtnSyncProductsVendorsAndDepts_Click);
+
+            Button btnSyncOrders = this.ButtonFactory("Sync Orders (before and after ordering).");
+            btnSyncOrders.Click += new EventHandler(this.BtnSyncOrders_Click);
 
             Button btnViewOrders = this.ButtonFactory("View Orders");
             btnViewOrders.Click += new EventHandler(this.BtnViewOrders_Click);
@@ -976,7 +980,8 @@ namespace Vendord.Desktop.App
             Button[] buttons = new Button[] 
             { 
                 btnViewOrders,
-                btnSyncHandheld
+                btnSyncOrders,
+                btnSyncProductsVendorsAndDepts
             };
 
             foreach (Button b in buttons)
@@ -1207,13 +1212,13 @@ namespace Vendord.Desktop.App
                     vendorName = this.SelectedListViewItem(this.LvVendor).Text;
                 }
 
-                this.showProductListBackgroundWorker = new BackgroundWorker();
-                this.showProductListBackgroundWorker.DoWork +=
-                    new DoWorkEventHandler(this.ShowProductListBackgroundWorker_DoWork);
-                this.showProductListBackgroundWorker.WorkerReportsProgress = false;
-                this.showProductListBackgroundWorker.RunWorkerCompleted +=
-                    new RunWorkerCompletedEventHandler(this.ShowProductListBackgroundWorker_RunWorkerCompleted);
-                this.showProductListBackgroundWorker.RunWorkerAsync(vendorName);
+                this.backgroundWorkerShowProductList = new BackgroundWorker();
+                this.backgroundWorkerShowProductList.DoWork +=
+                    new DoWorkEventHandler(this.BackgroundWorkerShowProductList_DoWork);
+                this.backgroundWorkerShowProductList.WorkerReportsProgress = false;
+                this.backgroundWorkerShowProductList.RunWorkerCompleted +=
+                    new RunWorkerCompletedEventHandler(this.BackgroundWorkerShowProductList_RunWorkerCompleted);
+                this.backgroundWorkerShowProductList.RunWorkerAsync(vendorName);
             }
             else
             {
@@ -1273,15 +1278,26 @@ namespace Vendord.Desktop.App
             this.LoadCompleteOrdersView();
         }
 
-        private void BtnSyncHandheld_Click(object sender, EventArgs e)
+        private void BtnSyncOrders_Click(object sender, EventArgs e)
         {
-            this.syncHandheldBackgroundWorker = new BackgroundWorker();
-            this.syncHandheldBackgroundWorker.DoWork += 
-                new DoWorkEventHandler(this.SyncHandheldBackgroundWorker_DoWork);
-            this.syncHandheldBackgroundWorker.WorkerReportsProgress = false;
-            this.syncHandheldBackgroundWorker.RunWorkerCompleted += 
-                new RunWorkerCompletedEventHandler(this.SyncHandheldBackgroundWorker_RunWorkerCompleted);
-            this.syncHandheldBackgroundWorker.RunWorkerAsync();
+            this.backgroundWorkerSyncOrders = new BackgroundWorker();
+            this.backgroundWorkerSyncOrders.DoWork += 
+                new DoWorkEventHandler(BackgroundWorkerSyncOrders_DoWork);
+            this.backgroundWorkerSyncOrders.WorkerReportsProgress = false;
+            this.backgroundWorkerSyncOrders.RunWorkerCompleted +=
+                new RunWorkerCompletedEventHandler(BackgroundWorkerSyncOrders_RunWorkerCompleted);
+            this.backgroundWorkerSyncOrders.RunWorkerAsync();            
+        }
+
+        private void BtnSyncProductsVendorsAndDepts_Click(object sender, EventArgs e)
+        {
+            this.backgroundWorkerSyncProductsVendorsAndDepts = new BackgroundWorker();
+            this.backgroundWorkerSyncProductsVendorsAndDepts.DoWork += 
+                new DoWorkEventHandler(this.BackgroundWorkerSyncProductsVendorsAndDepts_DoWork);
+            this.backgroundWorkerSyncProductsVendorsAndDepts.WorkerReportsProgress = false;
+            this.backgroundWorkerSyncProductsVendorsAndDepts.RunWorkerCompleted += 
+                new RunWorkerCompletedEventHandler(this.BackgroundWorkerSyncProductsVendorsAndDepts_RunWorkerCompleted);
+            this.backgroundWorkerSyncProductsVendorsAndDepts.RunWorkerAsync();
         }
 
         private void ListBox_DoubleClick_AddProductToOrder(object sender, EventArgs e)
@@ -1409,7 +1425,7 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void SyncHandheldBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorkerSyncOrders_DoWork(object sender, DoWorkEventArgs e)
         {
             this.uiDispatcher.BeginInvoke((Action)(() =>
             {
@@ -1417,16 +1433,39 @@ namespace Vendord.Desktop.App
             }));
 
             Sync sync = new Sync();
-            e.Result = sync.MergeDesktopAndDeviceDatabases();
+
+            var tablesToSync = new[] { "tblOrder", "tblOrderProduct" };
+            const string syncScopeName = "SyncOrders";
+            e.Result = sync.SyncDesktopAndDeviceDatabases(syncScopeName, tablesToSync);
         }
 
-        private void SyncHandheldBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorkerSyncOrders_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // this seems to work fine
             this.StopStatusStrip(e.Result.ToString());
         }
 
-        private void ShowProductListBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorkerSyncProductsVendorsAndDepts_DoWork(object sender, DoWorkEventArgs e)
+        {
+            this.uiDispatcher.BeginInvoke((Action)(() =>
+            {
+                this.StartOrContinueStatusStrip("Syncing handheld.");
+            }));
+
+            Sync sync = new Sync();
+
+            var tablesToSync = new[] { "tblVendor", "tblDepartment", "tblProduct" };
+            const string syncScopeName = "SyncProductsVendorsAndDepts";
+            e.Result = sync.SyncDesktopAndDeviceDatabases(syncScopeName, tablesToSync);
+        }
+
+        private void BackgroundWorkerSyncProductsVendorsAndDepts_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // this seems to work fine
+            this.StopStatusStrip(e.Result.ToString());
+        }
+
+        private void BackgroundWorkerShowProductList_DoWork(object sender, DoWorkEventArgs e)
         {
             this.uiDispatcher.BeginInvoke((Action)(() =>
             {
@@ -1444,12 +1483,12 @@ namespace Vendord.Desktop.App
             }));
         }
 
-        private void ShowProductListBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorkerShowProductList_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.StopStatusStrip(null);
         }
 
-        private void ImportXmlBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorkerImportXml_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             ImportWorkerArgs args = e.Argument as ImportWorkerArgs;
@@ -1466,14 +1505,14 @@ namespace Vendord.Desktop.App
             }
         }
 
-        private void ImportXmlBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BackgroundWorkerImportXml_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat("Updated {0}/{1} products - {2}% complete.", this.insertedRecords, this.totalRecords, e.ProgressPercentage);
             this.StartOrContinueStatusStrip(builder.ToString());
         }
 
-        private void ImportXmlBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorkerImportXml_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             this.StopStatusStrip("Import complete.");
         }
@@ -1504,7 +1543,7 @@ namespace Vendord.Desktop.App
                     FilePath = files[0],
                     Importing = ImportWorkerArgs.ImportType.Vendor
                 };
-                this.importXmlBackgroundWorker.RunWorkerAsync(args);
+                this.backgroundWorkerImportXml.RunWorkerAsync(args);
             }
             else
             {
@@ -1526,7 +1565,7 @@ namespace Vendord.Desktop.App
                     FilePath = files[0],
                     Importing = ImportWorkerArgs.ImportType.Product
                 };
-                this.importXmlBackgroundWorker.RunWorkerAsync(args);
+                this.backgroundWorkerImportXml.RunWorkerAsync(args);
             }
             else
             {

@@ -71,7 +71,7 @@ namespace Vendord.Desktop.App
             return result;
         }
 
-        public SyncResult MergeDesktopAndDeviceDatabases()
+        public SyncResult SyncDesktopAndDeviceDatabases(string scopeName, string[] tablesToSync)
         {
             // assume the worste
             var result = SyncResult.Disconnected;
@@ -91,18 +91,12 @@ namespace Vendord.Desktop.App
                 var localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.VendordMainDatabaseFullPath));
                 var remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(_remoteDatabaseLocalCopyFullPath));
 
-                // Describe the scope
-                var tablesToSync = new[] { "tblVendor", "tblDepartment", "tblProduct", "tblOrder", "tblOrderProduct" };
-                const string scopeName = "VendordScope_2";
-                var localScopeDesc = DescribeTheScope(tablesToSync, scopeName, localConn);
-                var remoteScopeDesc = DescribeTheScope(tablesToSync, scopeName, remoteConn);
-
                 // Provision the nodes
-                ProvisionNode(localScopeDesc, localConn);
-                ProvisionNode(remoteScopeDesc, remoteConn);
+                ProvisionNode(scopeName, tablesToSync, localConn);
+                ProvisionNode(scopeName, tablesToSync, remoteConn);
 
                 // Set sync options
-                var orchestrator = SetSyncOptions(localScopeDesc, localConn, remoteConn);
+                var orchestrator = SetSyncOptions(scopeName, localConn, remoteConn);
 
                 // Sync
                 SyncTheNodes(orchestrator);
@@ -123,6 +117,10 @@ namespace Vendord.Desktop.App
             catch (RAPI.RapiException e)
             {
                 IOHelpers.LogException(e);
+            }
+            finally
+            {
+                remoteDevice.Dispose();
             }
 
             return result;
@@ -230,7 +228,7 @@ namespace Vendord.Desktop.App
 
             foreach (Product p in products)
             {
-                Vendor v = new Vendor();                
+                Vendor v = new Vendor();
                 v.QueryExecutor = queryExe;
                 v.Id = p.Vendor.Id;
                 v.Name = p.Vendor.Name;
@@ -305,7 +303,7 @@ namespace Vendord.Desktop.App
             SqlCeConnection conn)
         {
             // create a scope description object
-            var scopeDesc = new DbSyncScopeDescription { ScopeName = scopeName };            
+            var scopeDesc = new DbSyncScopeDescription { ScopeName = scopeName };
 
             // add each table to the scope without any filtering
             foreach (var tableDesc in tablesToSync.Select(tableName => SqlCeSyncDescriptionBuilder.GetDescriptionForTable(tableName, conn)))
@@ -316,20 +314,24 @@ namespace Vendord.Desktop.App
             return scopeDesc;
         }
 
-        private static void ProvisionNode(DbSyncScopeDescription scopeDesc, SqlCeConnection conn)
+        private static void ProvisionNode(string scopeName, string[] tablesToSync, SqlCeConnection conn)
         {
             var ceConfig = new SqlCeSyncScopeProvisioning(conn);
-            if (ceConfig.ScopeExists(scopeDesc.ScopeName)) return;
-            ceConfig.PopulateFromScopeDescription(scopeDesc);
-            ceConfig.Apply();
+            if (!ceConfig.ScopeExists(scopeName))
+            {
+                DbSyncScopeDescription scopeDesc = DescribeTheScope(tablesToSync, scopeName, conn);
+                ceConfig.SetCreateTableDefault(DbSyncCreationOption.CreateOrUseExisting);
+                ceConfig.PopulateFromScopeDescription(scopeDesc);
+                ceConfig.Apply();
+            }
         }
 
-        private static SyncOrchestrator SetSyncOptions(DbSyncScopeDescription scopeDesc, IDbConnection localConn,
+        private static SyncOrchestrator SetSyncOptions(string scopeName, IDbConnection localConn,
             IDbConnection remoteConn)
         {
-            var localProvider = new SqlCeSyncProvider { ScopeName = scopeDesc.ScopeName, Connection = localConn };
+            var localProvider = new SqlCeSyncProvider { ScopeName = scopeName, Connection = localConn };
 
-            var remoteProvider = new SqlCeSyncProvider { ScopeName = scopeDesc.ScopeName, Connection = remoteConn };
+            var remoteProvider = new SqlCeSyncProvider { ScopeName = scopeName, Connection = remoteConn };
 
             var orchestrator = new SyncOrchestrator
             {
