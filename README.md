@@ -6,16 +6,16 @@
 	- Open Vendord.sln in Visual Studio 2008.
 	- Right Click Vendord.Desktop.App > Publish
 	- Where do you want to publish the application?
-	    - C:\Users\Shaun\Documents\GitHub\BigFont\BigFont.MVC\Software\Vendord\Win7\
-	    - Click Next
+		- C:\Users\Shaun\Documents\GitHub\BigFont\BigFont.MVC\Software\Vendord\Win7\
+		- Click Next
 	- How will users install the application? 
-	    - From a website: 
-	    - http://bigfont.ca/software/vendord/win7/
-	    - Click Next
+		- From a website: 
+		- http://bigfont.ca/software/vendord/win7/
+		- Click Next
   - Will the application be available offline?
-	    - Yes. This app is available online and offline.
-	    - Next   
-	    - Finish
+		- Yes. This app is available online and offline.
+		- Next   
+		- Finish
 	- Close Visual Studio 2008, saving changes.
 
 - Include the new files in BigFont.MVC
@@ -27,7 +27,7 @@
 	- (Also include any other files that are new in this version of Vendord.Desktop.App)	
 	- Close Visual Studio 2013, saving changes.
 
-- Push the new publish files to the Internet
+- Push the new files to the Internet
 	- Open the BigFont website in Git
 	- Run the following commands
 	
@@ -50,12 +50,15 @@
 
 ## Uninstall Vendord.Desktop.App
 
-- Use AppWiz.cpl to uninstall Vendord
+### Uninstall Vendord
 
-- Uninstall dependencies
+		- Open Add/Remove Programs (appwiz.cpl)
+		- Uninstall Vendord
 
-	- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center 
-	- Warning - can be very hard - only do this if necessary
+### Uninstall dependencies
+
+	- Use Microsoft Fixit etc to uninstall Windows Mobile Device Center.
+	- Warning - can be very hard - only do this if necessary.
 	- Then use AppWiz.cpl to uninstall the following:
 	
 		1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
