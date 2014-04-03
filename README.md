@@ -57,7 +57,7 @@
 
 ### Uninstall dependencies
 
-First try with Add/Remove Programs. Then try with [Revo](http://www.revouninstaller.com/).
+First try with Add/Remove Programs then with [Revo](http://www.revouninstaller.com/).
 
 	1. Windows Mobile Device Center
 	1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
