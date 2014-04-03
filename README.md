@@ -63,12 +63,12 @@ First try with Add/Remove Programs then with [Revo](http://www.revouninstaller.c
 1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
 1. MS SQL Server Compact 3.5 SP2 for Devices (not always present)
 1. MS SQL Server Compact 3.5 SP2
-1. MS SQL Server 2005 Compact Edition
-1. MS .NET Compact Framework 3.5 (uninstall isn't an option)
+1. MS SQL Server 2005 Compact Edition (not always present)
+1. MS .NET Compact Framework 3.5 (uninstall sometimes isn't an option)
 1. Microsoft Sync Framework 2.1 Core Components (x86)
 1. Microsoft Sync Framework 2.1 Database Providers (x86)
 
-- Delete Documents/VENDORD
+Delete Documents/VENDORD (unless you want to keep user data).
 
 ## ClickOnce Deployment of Vendord.SmartDevice.App
 
