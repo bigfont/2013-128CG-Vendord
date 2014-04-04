@@ -83,11 +83,6 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ## Install Vendord.SmartDevice.App
 
-### Reset the machine to factory
-
-- Turn of the Windows CE 6.0 Device
-- Then do a cold boot; i.e. hold and release 1 + 9 + Power Button
-
 ### Install SQL Server Compact Editition 3.5
 
 - Download [SQL CE 3.5 for Devices SP1]
@@ -104,6 +99,12 @@ Delete Documents/VENDORD (unless you want to keep user data).
 - Connect the device through Windows Mobile Device Center
 - Right click on Vendord.SmartDevice.App
 - Choose Deploy (or choose Debug to test).
+
+## Uninstall Vendord.SmartDevice.App
+
+- Turn of the Windows CE 6.0 Device
+- Then do a cold boot; i.e. hold and release 1 + 9 + Power Button
+- This will reset the device to factory settings.
 
 <!-- Links -->
 
