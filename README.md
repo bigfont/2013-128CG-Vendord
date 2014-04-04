@@ -93,8 +93,8 @@ Delete Documents/VENDORD (unless you want to keep user data).
 - Download the [SQL CE 3.5 for Devices SP1]
     - It will not work with the [SQL CE for Devices]
     - You must use SP1
-- Then run the downloaded MSI
-- Then go to "C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i\"
+- Run the downloaded MSI
+- Open "C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i\"
 - Copy sqlce.wce5.armv4i.CAB to the device
 - Run it from the device to install.
 
