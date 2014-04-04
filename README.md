@@ -99,8 +99,11 @@ Delete Documents/VENDORD (unless you want to keep user data).
 ### Install Vendord.Device.App
 
 - Open Vendord.sln in Visual Studio 2008
+- Connect the device through Windows Mobile Device Center
+- Right click on Vendord.SmartDevice.App
+- Choose Deploy
 
-
+<!-- Links -->
 
 [.NET Compact Framework 3.5 Redistributable]:
 http://www.microsoft.com/en-ca/download/details.aspx?id=65
