@@ -90,7 +90,7 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ### Install SQL Server Compact Editition 3.5
 
-- Download the [SQL CE 3.5 for Devices SP1]
+- Download [SQL CE 3.5 for Devices SP1]
     - It will not work with the [SQL CE for Devices]
     - You must use SP1
 - Run the downloaded MSI
@@ -103,7 +103,7 @@ Delete Documents/VENDORD (unless you want to keep user data).
 - Open Vendord.sln in Visual Studio 2008
 - Connect the device through Windows Mobile Device Center
 - Right click on Vendord.SmartDevice.App
-- Choose Deploy
+- Choose Deploy (or choose Debug to test).
 
 <!-- Links -->
 
