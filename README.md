@@ -3,7 +3,7 @@
 ## Development Environment
 
 - Visual Studio 2008
-- [.NET Compact Framework 3.5 Redistributable](http://www.microsoft.com/en-ca/download/details.aspx?id=65)
+- [.NET Compact Framework 3.5 Redistributable]
 
 ## ClickOnce Deployment of Vendord.Desktop.App
 
@@ -31,7 +31,7 @@
 - Show all files in the solution explorer.
 - Right click on the newly published version of Vendord (e.g. Vendord.Desktop.App_1_0_0_64) 
 - Choose Include in Project
-- (Also include any other files that are new in this version of Vendord.Desktop.App)	
+- (Also include any other files that are new in this version of Vendord.Desktop.App)
 - Close Visual Studio 2013, saving changes.
 
 ### Push the new files to the Internet
@@ -68,7 +68,7 @@ git push
 
 ### Uninstall dependencies
 
-First try with Add/Remove Programs then with [Revo](http://www.revouninstaller.com/).
+First try with Add/Remove Programs then with [Revo].
 
 1. Windows Mobile Device Center
 1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
@@ -81,50 +81,35 @@ First try with Add/Remove Programs then with [Revo](http://www.revouninstaller.c
 
 Delete Documents/VENDORD (unless you want to keep user data).
 
-## ClickOnce Deployment of Vendord.SmartDevice.App
+## Install Vendord.SmartDevice.App
 
-### Publish Vendord.SmartDevice.Setup
+### Reset the machine to factory
 
-- Rebuild Vendord.SmartDevice.Setup
-- Copy the release MSI to C:\Users\Shaun\Documents\GitHub\BigFont\BigFont.MVC\Software\Vendord\WinCe6
-- Commit and push BigFont.MVC
+- Turn of the Windows CE 6.0 Device
+- Then do a cold boot; i.e. hold and release 1 + 9 + Power Button
 
-### Download and Autmatically Install on The Device
+### Install SQL Server Compact Editition 3.5
 
-- Plug in the device.
-- Connect it to Windows Mobile Device Center.
-- Go to http://www.bigfont.ca/software/vendord/wince6/publish.htm
-- Click Install
-- Run the setup.exe
-- It will install the software on the connected device.
+- Download the [SQL CE for Devices Installer]
+- Then run the downloaded MSI
+- Then go to "C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i\"
+- Copy sqlce.wce5.armv4i.CAB to the device
+- Run it from the device to install.
 
-### Manually Install on Device after Download
+### Install Vendord.Device.App
 
-- Connect your device through Windows Mobile Device Center.
-- Go to File Management > Browse
-- Open "This PC\WindowsCE\Temp"
-- Copy "C:\Program Files (x86)\BigFont\Vendord.SmartDevice.Setup"
-- Through the devices own interface, run any CAB files within the copied Setup folder.
-- The installations will start.
-- Click Okay to accept the default install location.
-- After install, you can the Vendord.SmartDevice.Setup directory from the Device and the PC.
+- Open Vendord.sln in Visual Studio 2008
+- Connect the device through Windows Mobile Device Center
+- Right click on Vendord.SmartDevice.App
+- Choose Deploy
 
-## Uninstall Vendord.SmartDevice.App
+<!-- Links -->
 
-- Connect the device.
-- Windows Mobile Device Center will open.
-- Choose connect without setting up.
-- Click programs/services > more > Add/Remove Programs
-- Uncheck the following programs:
-	- Vendord
-	- SQL Server Compact 3.5 Core
-		- If this doesn't uninstall, 
-		- considering deleting the MS SQL Server Compact folder from \Program Files
-	- Microsoft .NET CF 3.5 EN-String Resources
-	- Click Okay to finish.
-- Go back to the Windows Mobile Device Center device page
-- Click file management > browse
-- Delete the following:
-	- "This PC\WindowsCE\Application Data\VENDORD\"
-	- "This PC\WindowsCE\Program Files\vendord.smartdevice.app\"
+[.NET Compact Framework 3.5 Redistributable]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=65
 
+[Revo]:
+http://www.revouninstaller.com/
+
+[SQL CE for Devices Installer]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=12264

@@ -34,7 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Journal", "Journal", "{1C5C
 		Txt\2013-10-21-DemoWithDerek.txt = Txt\2013-10-21-DemoWithDerek.txt
 		Txt\2013-10-22-InstallWithDerek.txt = Txt\2013-10-22-InstallWithDerek.txt
 		Txt\2013-10-23-Bugs.txt = Txt\2013-10-23-Bugs.txt
-		2014-01-20-Accomplishment.txt = 2014-01-20-Accomplishment.txt
 		YYYY-MM-DD-xxxxx.txt = YYYY-MM-DD-xxxxx.txt
 	EndProjectSection
 EndProject
