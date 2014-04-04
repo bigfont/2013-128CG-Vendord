@@ -83,7 +83,19 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ## Install Vendord.SmartDevice.App
 
-ClickOnce Deployment of the SmartDevice App is a nice to have.
-In the meantime, do it this way.
+### Reset the machine to factory
 
-1. 
+- Turn of the Windows CE 6.0 Device
+- Then do a cold boot; i.e. hold and release 1 + 9 + Power Button
+
+### Install SQL Server Compact Editition 3.5
+
+- Download the installer [here](http://www.microsoft.com/en-ca/download/details.aspx?id=12264)
+
+
+
+
+
+
+
+
