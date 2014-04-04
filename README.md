@@ -98,6 +98,9 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ### Install Vendord.Device.App
 
+- Open Vendord.sln in Visual Studio 2008
+
+
 
 [.NET Compact Framework 3.5 Redistributable]:
 http://www.microsoft.com/en-ca/download/details.aspx?id=65
