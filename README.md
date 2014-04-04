@@ -3,7 +3,7 @@
 ## Development Environment
 
 - Visual Studio 2008
-- [.NET Compact Framework 3.5 Redistributable](http://www.microsoft.com/en-ca/download/details.aspx?id=65)
+- [.NET Compact Framework 3.5 Redistributable]
 
 ## ClickOnce Deployment of Vendord.Desktop.App
 
@@ -31,7 +31,7 @@
 - Show all files in the solution explorer.
 - Right click on the newly published version of Vendord (e.g. Vendord.Desktop.App_1_0_0_64) 
 - Choose Include in Project
-- (Also include any other files that are new in this version of Vendord.Desktop.App)	
+- (Also include any other files that are new in this version of Vendord.Desktop.App)
 - Close Visual Studio 2013, saving changes.
 
 ### Push the new files to the Internet
@@ -68,7 +68,7 @@ git push
 
 ### Uninstall dependencies
 
-First try with Add/Remove Programs then with [Revo](http://www.revouninstaller.com/).
+First try with Add/Remove Programs then with [Revo].
 
 1. Windows Mobile Device Center
 1. MS SQL Server Compact 3.5 SP2 x64 (not always present)
@@ -90,12 +90,20 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ### Install SQL Server Compact Editition 3.5
 
-- Download the installer [here](http://www.microsoft.com/en-ca/download/details.aspx?id=12264)
+- Download the [SQL CE for Devices Installer]
+- Then run the downloaded MSI
+- Then go to "C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i\"
+- Copy sqlce.wce5.armv4i.CAB to the device
+- Run it from the device to install.
+
+### Install Vendord.Device.App
 
 
+[.NET Compact Framework 3.5 Redistributable]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=65
 
+[Revo]:
+http://www.revouninstaller.com/
 
-
-
-
-
+[SQL CE for Devices Installer]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=12264
