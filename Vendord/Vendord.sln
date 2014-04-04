@@ -7,37 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDevice.App", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDevice.Linked", "Vendord.SmartDevice.Linked\Vendord.SmartDevice.Linked.csproj", "{EA738CA8-5ECC-493D-A474-4FCCC2831878}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Txt", "Txt", "{87EBA4DF-90FA-49B3-991C-97A059D89268}"
-	ProjectSection(SolutionItems) = preProject
-		GettingStarted.txt = GettingStarted.txt
-		Txt\HowTo.AddPublishingPrerequisites.txt = Txt\HowTo.AddPublishingPrerequisites.txt
-		Txt\HowTo.Device.Deploy.txt = Txt\HowTo.Device.Deploy.txt
-		Txt\HowTo.SetupMobilePartnership.txt = Txt\HowTo.SetupMobilePartnership.txt
-		Txt\Overview.Deploy-Uninstall-Install.txt = Txt\Overview.Deploy-Uninstall-Install.txt
-		Txt\StyleCop.txt = Txt\StyleCop.txt
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7925C6EB-6002-4319-8FC8-CE59F12BE765}"
 	ProjectSection(SolutionItems) = preProject
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 		Vendord.vsmdi = Vendord.vsmdi
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Journal", "Journal", "{1C5C756E-57E1-4A1E-922E-AFEFBD433855}"
-	ProjectSection(SolutionItems) = preProject
-		Txt\2013-10-10-Bugs.txt = Txt\2013-10-10-Bugs.txt
-		Txt\2013-10-14-DemoWithDerek.txt = Txt\2013-10-14-DemoWithDerek.txt
-		Txt\2013-10-21-DemoWithDerek.txt = Txt\2013-10-21-DemoWithDerek.txt
-		Txt\2013-10-22-InstallWithDerek.txt = Txt\2013-10-22-InstallWithDerek.txt
-		Txt\2013-10-23-Bugs.txt = Txt\2013-10-23-Bugs.txt
-		YYYY-MM-DD-xxxxx.txt = YYYY-MM-DD-xxxxx.txt
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tasks", "Tasks", "{7ED5BC56-84CF-46BC-9E32-C8DB210DB0CC}"
-	ProjectSection(SolutionItems) = preProject
-		Txt\01-Done.txt = Txt\01-Done.txt
-		Txt\02-Done.txt = Txt\02-Done.txt
-		Txt\03-Done.txt = Txt\03-Done.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C0C50489-9F98-424B-8D75-AF13B077ADFB}"
@@ -131,8 +104,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1C5C756E-57E1-4A1E-922E-AFEFBD433855} = {87EBA4DF-90FA-49B3-991C-97A059D89268}
-		{7ED5BC56-84CF-46BC-9E32-C8DB210DB0CC} = {87EBA4DF-90FA-49B3-991C-97A059D89268}
 		{C2F56AF6-1FB1-4AF6-AE8A-9382A4CC658A} = {C0C50489-9F98-424B-8D75-AF13B077ADFB}
 	EndGlobalSection
 EndGlobal
