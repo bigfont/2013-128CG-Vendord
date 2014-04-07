@@ -61,7 +61,10 @@ git push
 - Known Issues
     - Installing Windows Mobile Device Center (WMDC) hangs
     - Workaround: On your PC, locate this folder C:\Windows\WindowsMobile
-    - Run setup from there.
+    - Run setup.exe from there.
+    - Then download and install WMDC 6.1 Update
+        - [Microsoft Windows Mobile Device Center 6.1 for Windows Vista (32-bit)]
+        - [Microsoft Windows Mobile Device Center 6.1 Driver for Windows Vista (64-bit)]
     - Once WMDC installs, re-run the Vendord setup.exe
 
 ## Uninstall Vendord.Desktop.App
@@ -99,12 +102,14 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ### Install Vendord.Device.App
 
+- Install the prerequisites first (previous heading).
 - Connect the device through Windows Mobile Device Center
 - Open Vendord.sln in Visual Studio 2008
     - You will need to have installed [.NET Compact Framework 3.5 Redistributable]
 - Expand the solution explorer (Ctrl + Alt + l)
 - Right click on Vendord.SmartDevice.App
 - Choose Deploy (or choose Debug to test).
+- Find the EXE in My Device > Program Files > vendor 
 
 ## Uninstall Vendord.SmartDevice.App
 
@@ -127,3 +132,11 @@ http://www.microsoft.com/en-ca/download/details.aspx?id=12264
 
 [SQL CE 3.5 for Devices SP1]:
 http://www.microsoft.com/en-us/download/details.aspx?id=17020
+
+[Microsoft Windows Mobile Device Center 6.1 for Windows Vista (32-bit)]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=14
+
+[Microsoft Windows Mobile Device Center 6.1 Driver for Windows Vista (64-bit)]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=3182
+
+
