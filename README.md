@@ -76,11 +76,10 @@ git push
 First try with Add/Remove Programs then with [Revo].
 
 1. Windows Mobile Device Center
+1. Microsoft SQL Server Compact 3.5 SP2
 1. Microsoft SQL Server Compact 3.5 SP2 x64 (not always present)
 1. Microsoft SQL Server Compact 3.5 SP2 for Devices (not always present)
-1. Microsoft SQL Server Compact 3.5 SP2
 1. Microsoft SQL Server 2005 Compact Edition (not always present)
-1. Microsoft .NET Compact Framework 3.5 (this may be for the dev environment)
 1. Microsoft Sync Framework 2.1 Database Providers (x86)
 1. Microsoft Sync Framework 2.1 Core Components (x86)
 
@@ -107,8 +106,10 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ## Uninstall Vendord.SmartDevice.App
 
-- Turn of the Windows CE 6.0 Device
-- Then do a cold boot; i.e. hold and release 1 + 9 + Power Button
+- Turn off the Windows CE 6.0 Device
+- i.e. press the Power Button for 5 secs
+- Then do a cold boot
+- i.e. hold and release 1 + 9 + Power Button
 - This will reset the device to factory settings.
 
 <!-- Links -->
