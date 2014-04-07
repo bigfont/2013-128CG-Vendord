@@ -47,7 +47,7 @@ git push
 
 ### Test the installation package.
 
-- Go to http://manage.windowsazure.com	
+- Go to http://manage.windowsazure.com
 - Websites > bigfont > deployments
 - Check that the deployment succeeded.
 - If it did, go to http://bigfont.ca/software/vendord/win7/publish.htm > Install
@@ -58,6 +58,8 @@ git push
 - Accept the myriad security prompts
 - Installation will eventually complete and Vendord will open.
 - The whole process takes about five minutes on my computer.
+- Known Issues
+    - Installing Windows Mobile Device Center hangs    
 
 ## Uninstall Vendord.Desktop.App
 
