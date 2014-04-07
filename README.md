@@ -59,7 +59,10 @@ git push
 - Installation will eventually complete and Vendord will open.
 - The whole process takes about five minutes on my computer.
 - Known Issues
-    - Installing Windows Mobile Device Center hangs    
+    - Installing Windows Mobile Device Center hangs
+    - Workaround: On your PC, locate this folder 
+    - C:\Windows\WindowsMobile\setup.exe
+    - Try running setup from there.
 
 ## Uninstall Vendord.Desktop.App
 
