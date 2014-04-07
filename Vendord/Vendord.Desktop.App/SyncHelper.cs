@@ -18,8 +18,6 @@ using Vendord.SmartDevice.Linked;
 
 namespace Vendord.Desktop.App
 {
-    // Full Edition
-    // Compact Edition
     using RAPI = System.Devices;
     using System.Data.OleDb;
     using System.Xml.Linq;
@@ -80,11 +78,13 @@ namespace Vendord.Desktop.App
             var mgr = new RAPI.RemoteDeviceManager();
             var remoteDevice = mgr.Devices.FirstConnectedDevice;
             if (remoteDevice == null || remoteDevice.Status != RAPI.DeviceStatus.Connected) return result;
+
             // we assume that we have a connected device now but sometimes it disconnected
             try
             {
                 // Get the remote database
                 SetRemoteDeviceDatabaseNames(remoteDevice);
+                
                 CopyDatabaseFromDeviceToDesktop(remoteDevice);
 
                 // Instantiate the connections
@@ -274,7 +274,9 @@ namespace Vendord.Desktop.App
             }
             else
             {
-                RAPI.RemoteFile.Create(remoteDevice, _remoteDatabaseFullPath);
+                // nope so create a new one locally
+                Database db = new Database(_remoteDatabaseLocalCopyFullPath);
+                ////RAPI.RemoteFile.Create(remoteDevice, _remoteDatabaseFullPath);
             }
         }
 

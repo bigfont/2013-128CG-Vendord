@@ -73,8 +73,8 @@
     <Compile Include="..\Vendord.SmartDevice.Linked\Database\DbQueryExecutor.cs">
       <Link>LinkedFiles\Database\DbQueryExecutor.cs</Link>
     </Compile>
-    <Compile Include="..\Vendord.SmartDevice.Linked\Database\DbTableCreator.cs">
-      <Link>LinkedFiles\Database\DbTableCreator.cs</Link>
+    <Compile Include="..\Vendord.SmartDevice.Linked\Database\DbSchemaBuilder.cs">
+      <Link>LinkedFiles\Database\DbSchemaBuilder.cs</Link>
     </Compile>
     <Compile Include="..\Vendord.SmartDevice.Linked\ErrorHandler.cs">
       <Link>LinkedFiles\ErrorHandler.cs</Link>

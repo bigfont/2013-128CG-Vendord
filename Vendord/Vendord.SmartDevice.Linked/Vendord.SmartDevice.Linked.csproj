@@ -74,7 +74,7 @@
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Database\DbQueryExecutor.cs" />
-    <Compile Include="Database\DbTableCreator.cs" />
+    <Compile Include="Database\DbSchemaBuilder.cs" />
     <Compile Include="Database\Database.cs" />
     <Compile Include="ErrorHandler.cs" />
     <Compile Include="FormHelpers.cs" />

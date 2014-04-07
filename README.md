@@ -97,8 +97,8 @@ Delete Documents/VENDORD (unless you want to keep user data).
     - You must use SP1
 - Run the downloaded MSI
 - Open "C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i\"
-- Copy sqlce.wce5.armv4i.CAB to the device
-- Run it from the device to install.
+- Copy sqlce.wce5.armv4i.CAB to the device via WMDC > File Management
+- Run the CAB *from the device* to install it.
 
 ### Install Vendord.Device.App
 
@@ -118,6 +118,13 @@ Delete Documents/VENDORD (unless you want to keep user data).
 - Then do a cold boot
 - i.e. hold and release 1 + 9 + Power Button
 - This will reset the device to factory settings.
+
+## Use Vendord
+
+1. Import and sync products, vendors, and departments
+1. Create an order and start scanning
+1. Sync orders
+1. View, modify, and print orders
 
 <!-- Links -->
 
