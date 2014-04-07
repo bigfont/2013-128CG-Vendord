@@ -1434,9 +1434,8 @@ namespace Vendord.Desktop.App
 
             Sync sync = new Sync();
 
-            var tablesToSync = new[] { "tblOrder", "tblOrderProduct" };
             const string syncScopeName = "SyncOrders";
-            e.Result = sync.SyncDesktopAndDeviceDatabases(syncScopeName, tablesToSync);
+            e.Result = sync.SyncDesktopAndDeviceDatabases(syncScopeName);
         }
 
         private void BackgroundWorkerSyncOrders_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1454,9 +1453,8 @@ namespace Vendord.Desktop.App
 
             Sync sync = new Sync();
 
-            var tablesToSync = new[] { "tblVendor", "tblDepartment", "tblProduct" };
             const string syncScopeName = "SyncProductsVendorsAndDepts";
-            e.Result = sync.SyncDesktopAndDeviceDatabases(syncScopeName, tablesToSync);
+            e.Result = sync.SyncDesktopAndDeviceDatabases(syncScopeName);
         }
 
         private void BackgroundWorkerSyncProductsVendorsAndDepts_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1508,7 +1506,7 @@ namespace Vendord.Desktop.App
         private void BackgroundWorkerImportXml_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat("Updated {0}/{1} products - {2}% complete.", this.insertedRecords, this.totalRecords, e.ProgressPercentage);
+            builder.AppendFormat("Updated {0}/{1} items - {2}% complete.", this.insertedRecords, this.totalRecords, e.ProgressPercentage);
             this.StartOrContinueStatusStrip(builder.ToString());
         }
 

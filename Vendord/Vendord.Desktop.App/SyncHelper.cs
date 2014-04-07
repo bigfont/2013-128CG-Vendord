@@ -28,6 +28,7 @@ namespace Vendord.Desktop.App
         // rapi       
         public enum SyncResult
         {
+            NoRemoteDatabase,
             Disconnected,
             Complete
         }
@@ -69,7 +70,7 @@ namespace Vendord.Desktop.App
             return result;
         }
 
-        public SyncResult SyncDesktopAndDeviceDatabases(string scopeName, string[] tablesToSync)
+        public SyncResult SyncDesktopAndDeviceDatabases(string scopeName)
         {
             // assume the worste
             var result = SyncResult.Disconnected;
@@ -84,31 +85,34 @@ namespace Vendord.Desktop.App
             {
                 // Get the remote database
                 SetRemoteDeviceDatabaseNames(remoteDevice);
-                
-                CopyDatabaseFromDeviceToDesktop(remoteDevice);
+                if (TryCopyDatabaseFromDeviceToDesktop(remoteDevice))
+                {
+                    // Instantiate the connections
+                    var localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.VendordMainDatabaseFullPath));
+                    var remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(_remoteDatabaseLocalCopyFullPath));
 
-                // Instantiate the connections
-                var localConn = new SqlCeConnection(Database.GenerateSqlCeConnString(Constants.VendordMainDatabaseFullPath));
-                var remoteConn = new SqlCeConnection(Database.GenerateSqlCeConnString(_remoteDatabaseLocalCopyFullPath));
+                    // Provision the nodes
+                    AddAllScopesToAllNodes(localConn, remoteConn);
 
-                // Provision the nodes
-                ProvisionNode(scopeName, tablesToSync, localConn);
-                ProvisionNode(scopeName, tablesToSync, remoteConn);
+                    // Set sync options
+                    var orchestrator = SetSyncOptions(scopeName, localConn, remoteConn);
 
-                // Set sync options
-                var orchestrator = SetSyncOptions(scopeName, localConn, remoteConn);
+                    // Sync
+                    SyncTheNodes(orchestrator);
 
-                // Sync
-                SyncTheNodes(orchestrator);
+                    // Clean up
+                    remoteConn.Close();
+                    localConn.Close();
+                    CleanUpDatabases();
+                    CopyDatabaseBackToDevice(remoteDevice);
 
-                // Clean up
-                remoteConn.Close();
-                localConn.Close();
-                CleanUpDatabases();
-                CopyDatabaseBackToDevice(remoteDevice);
-
-                // success!
-                result = SyncResult.Complete;
+                    // success!
+                    result = SyncResult.Complete;
+                }
+                else
+                {
+                    result = SyncResult.NoRemoteDatabase;
+                }
             }
             catch (InvalidOperationException e)
             {
@@ -263,21 +267,20 @@ namespace Vendord.Desktop.App
                 Constants.RemoteCopyFlag);
         }
 
-        private void CopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
+        private bool TryCopyDatabaseFromDeviceToDesktop(RAPI.RemoteDevice remoteDevice)
         {
+            bool result = false;
+
             // does the device have a database
             if (RAPI.RemoteFile.Exists(remoteDevice, _remoteDatabaseFullPath))
             {
                 // yup, so copy it to the desktop
                 RAPI.RemoteFile.CopyFileFromDevice(remoteDevice, _remoteDatabaseFullPath, _remoteDatabaseLocalCopyFullPath,
                     true);
+                result = true;
             }
-            else
-            {
-                // nope so create a new one locally
-                Database db = new Database(_remoteDatabaseLocalCopyFullPath);
-                ////RAPI.RemoteFile.Create(remoteDevice, _remoteDatabaseFullPath);
-            }
+
+            return result;
         }
 
         private void CleanUpDatabases()
@@ -291,11 +294,9 @@ namespace Vendord.Desktop.App
 
         private void CopyDatabaseBackToDevice(RAPI.RemoteDevice remoteDevice)
         {
-            if (File.Exists(_remoteDatabaseLocalCopyFullPath) &
-                RAPI.RemoteFile.Exists(remoteDevice, _remoteDatabaseFullPath))
+            if (File.Exists(_remoteDatabaseLocalCopyFullPath))
             {
-                RAPI.RemoteFile.CopyFileToDevice(remoteDevice, _remoteDatabaseLocalCopyFullPath, _remoteDatabaseFullPath,
-                    true);
+                RAPI.RemoteFile.CopyFileToDevice(remoteDevice, _remoteDatabaseLocalCopyFullPath, _remoteDatabaseFullPath, true);
             }
         }
 
@@ -314,6 +315,21 @@ namespace Vendord.Desktop.App
             }
 
             return scopeDesc;
+        }
+
+        private static void AddAllScopesToAllNodes(SqlCeConnection localConn, SqlCeConnection remoteConn)
+        {
+            var orderTables = new[] { "tblOrder", "tblOrderProduct" };
+            var orderScopeName = "SyncOrders";
+
+            ProvisionNode(orderScopeName, orderTables, localConn);
+            ProvisionNode(orderScopeName, orderTables, remoteConn);
+
+            var importTables = new[] { "tblVendor", "tblDepartment", "tblProduct" };
+            var importScopeName = "SyncProductsVendorsAndDepts";
+
+            ProvisionNode(importScopeName, importTables, localConn);
+            ProvisionNode(importScopeName, importTables, remoteConn);
         }
 
         private static void ProvisionNode(string scopeName, string[] tablesToSync, SqlCeConnection conn)
