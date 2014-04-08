@@ -2,24 +2,13 @@
 
 ## Programs and Features
 
-### Development Environment
-
 - Visual Studio 2008
-- [Microsoft .NET Compact Framework 3.5 Redistributable]
-- Compact View 1.4.3.0
-
-### Sync Framework and SQL Compact Edition
-
-- Microsoft Sync Framework 2.1 Core Components (x86)
-- Microsoft Sync Framework 2.1 Database Providers (x86)
-- Microsoft SQL Server Compact 3.5 SP2 (x86)
-- Microsoft SQL Server Compact 3.5 SP2 (x64)
-- Microsoft SQL Server Compact 3.5 SP2 for Devices
-
-### Widows MObile Device Center
-
-- Windows Mobile Device Center
-- Windows Mobile Device Center Driver Update
+- [.NET Compact Framework 3.5 Redistributable]
+- [Compact View 1.4.3.0]
+- [Microsoft Sync Framework 2.1 Redistributable]
+- [Microsoft SQL Server Compact 3.5 Service Pack 2 for Windows Desktop]    
+- [Microsoft SQL Server Compact 3.5 Service Pack 2 for Windows Mobile]
+- [Microsoft Windows Mobile Device Center 6.1 for Windows Vista (32-bit)]
 
 ## ClickOnce Deployment of Vendord.Desktop.App
 
@@ -95,10 +84,10 @@ git push
 First try with Add/Remove Programs then with [Revo].
 
 1. Windows Mobile Device Center
+1. Windows Mobile Device Center Driver Update
 1. Microsoft SQL Server Compact 3.5 SP2
-1. Microsoft SQL Server Compact 3.5 SP2 x64 (not always present)
-1. Microsoft SQL Server Compact 3.5 SP2 for Devices (not always present)
-1. Microsoft SQL Server 2005 Compact Edition (not always present)
+1. Microsoft SQL Server Compact 3.5 SP2 x64
+1. Microsoft SQL Server Compact 3.5 SP2 for Devices
 1. Microsoft Sync Framework 2.1 Database Providers (x86)
 1. Microsoft Sync Framework 2.1 Core Components (x86)
 
@@ -108,9 +97,7 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 ### Install SQL Server Compact Editition 3.5
 
-- Download [SQL CE 3.5 for Devices SP1]
-    - It will not work with the [SQL CE for Devices]
-    - You must use SP1
+- Download [Microsoft SQL Server Compact 3.5 Service Pack 2 for Windows Mobile]
 - Run the downloaded MSI
 - Open "C:\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Devices\wce500\armv4i\"
 - Copy sqlce.wce5.armv4i.CAB to the device via WMDC > File Management
@@ -144,22 +131,30 @@ Delete Documents/VENDORD (unless you want to keep user data).
 
 <!-- Links -->
 
-[.NET Compact Framework 3.5 Redistributable]:
-http://www.microsoft.com/en-ca/download/details.aspx?id=65
-
 [Revo]:
 http://www.revouninstaller.com/
-
-[SQL CE for Devices]:
-http://www.microsoft.com/en-ca/download/details.aspx?id=12264
-
-[SQL CE 3.5 for Devices SP1]:
-http://www.microsoft.com/en-us/download/details.aspx?id=17020
 
 [Microsoft Windows Mobile Device Center 6.1 for Windows Vista (32-bit)]:
 http://www.microsoft.com/en-ca/download/details.aspx?id=14
 
 [Microsoft Windows Mobile Device Center 6.1 Driver for Windows Vista (64-bit)]:
 http://www.microsoft.com/en-ca/download/details.aspx?id=3182
+
+[.NET Compact Framework 3.5 Redistributable]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=65
+
+[Compact View 1.4.3.0]:
+http://sourceforge.net/projects/compactview/
+
+[Microsoft Sync Framework 2.1 Redistributable]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=19502
+
+[Microsoft SQL Server Compact 3.5 Service Pack 2 for Windows Desktop]:
+http://www.microsoft.com/en-ca/download/details.aspx?id=5783
+
+[Microsoft SQL Server Compact 3.5 Service Pack 2 for Windows Mobile]:
+http://www.microsoft.com/en-us/download/details.aspx?id=8831
+
+
 
 
