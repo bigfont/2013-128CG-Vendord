@@ -154,7 +154,3 @@ http://www.microsoft.com/en-ca/download/details.aspx?id=5783
 
 [Microsoft SQL Server Compact 3.5 Service Pack 2 for Windows Mobile]:
 http://www.microsoft.com/en-us/download/details.aspx?id=8831
-
-
-
-
