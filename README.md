@@ -1,9 +1,25 @@
 # 2013-128CG-Vendord
 
-## Development Environment
+## Programs and Features
+
+### Development Environment
 
 - Visual Studio 2008
-- [.NET Compact Framework 3.5 Redistributable]
+- [Microsoft .NET Compact Framework 3.5 Redistributable]
+- Compact View 1.4.3.0
+
+### Sync Framework and SQL Compact Edition
+
+- Microsoft Sync Framework 2.1 Core Components (x86)
+- Microsoft Sync Framework 2.1 Database Providers (x86)
+- Microsoft SQL Server Compact 3.5 SP2 (x86)
+- Microsoft SQL Server Compact 3.5 SP2 (x64)
+- Microsoft SQL Server Compact 3.5 SP2 for Devices
+
+### Widows MObile Device Center
+
+- Windows Mobile Device Center
+- Windows Mobile Device Center Driver Update
 
 ## ClickOnce Deployment of Vendord.Desktop.App
 
