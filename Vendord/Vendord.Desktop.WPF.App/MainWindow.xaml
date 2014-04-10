@@ -20,6 +20,8 @@
                 Grid.Column="0"
                 Style="{StaticResource MainBorderStyle}">
                 <HeaderedContentControl 
+                    Content="{Binding Path=Commands}"
+                    ContentTemplate="{StaticResource CommandsTemplate}"
                     Header="Control Panel" 
                     Style="{StaticResource MainHCCStyle}" />
             </Border>
