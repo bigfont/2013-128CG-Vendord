@@ -17,6 +17,14 @@ This resource dictionary is used by the MainWindow.
     </DataTemplate>
 
     <!-- 
+  This template applies an AllOrdersView to an instance 
+  of the AllOrdersViewModel class shown in the main window.
+  -->
+    <DataTemplate DataType="{x:Type vm:AllProductsViewModel}">
+        <vw:AllProductsView />
+    </DataTemplate>
+
+    <!-- 
   This style configures both of the main content areas in the main window.
   -->
     <Style x:Key="MainHCCStyle" TargetType="{x:Type HeaderedContentControl}">

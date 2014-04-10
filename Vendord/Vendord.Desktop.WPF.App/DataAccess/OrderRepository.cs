@@ -27,10 +27,9 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         /// <summary>
         /// Creates a new repository of orders.
         /// </summary>
-        /// <param name="orderDataFile">The relative path to an XML resource file that contains order data.</param>
-        public OrderRepository(string orderDataFile)
+        public OrderRepository()
         {
-            _orders = LoadOrders(orderDataFile);
+            _orders = LoadOrders();
         }
 
         #endregion // Constructor
@@ -50,7 +49,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
 
         #region Private Helpers
 
-        static List<Order> LoadOrders(string orderDataFile)
+        static List<Order> LoadOrders()
         {
             List<Order> orders = new List<Order>();
 

@@ -40,8 +40,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         void CreateAllOrders()
         {
             List<OrderViewModel> all =
-                (from cust in _orderRepository.GetOrders()
-                 select new OrderViewModel(cust, _orderRepository)).ToList();
+                (from ord in _orderRepository.GetOrders()
+                 select new OrderViewModel(ord, _orderRepository)).ToList();
 
             this.AllOrders = new ObservableCollection<OrderViewModel>(all);
         }
@@ -61,8 +61,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         protected override void OnDispose()
         {
-            foreach (OrderViewModel custVM in this.AllOrders)
-                custVM.Dispose();
+            foreach (OrderViewModel ordVM in this.AllOrders)
+                ordVM.Dispose();
 
             this.AllOrders.Clear();
         }

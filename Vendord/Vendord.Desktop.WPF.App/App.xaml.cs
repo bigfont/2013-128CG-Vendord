@@ -22,8 +22,7 @@ namespace Vendord.Desktop.WPF.App
 
             // Create the ViewModel to which 
             // the main window binds.
-            string path = "Data/orders.xml";
-            var viewModel = new MainWindowViewModel(path);
+            var viewModel = new MainWindowViewModel();
 
             // When the ViewModel asks to be closed, 
             // close the window.

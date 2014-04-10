@@ -70,6 +70,15 @@ namespace Vendord.Desktop.WPF.App.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Products.
+        /// </summary>
+        internal static string MainWindowViewModel_Command_Products {
+            get {
+                return ResourceManager.GetString("MainWindowViewModel_Command_Products", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sync.
         /// </summary>
         internal static string MainWindowViewModel_Command_Sync {

@@ -121,6 +121,10 @@
     <value>Orders</value>
     <comment>Display name for the command that allows users to perform order related actions.</comment>
   </data>
+  <data name="MainWindowViewModel_Command_Products" xml:space="preserve">
+    <value>Products</value>
+    <comment>Display name for the command that allows users to perform product related actions.</comment>
+  </data>
   <data name="MainWindowViewModel_Command_Sync" xml:space="preserve">
     <value>Sync</value>
     <comment>Display name for the command that allows the user to perform sync actions.</comment>
