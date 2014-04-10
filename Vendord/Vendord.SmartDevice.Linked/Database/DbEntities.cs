@@ -292,6 +292,8 @@ namespace Vendord.SmartDevice.Linked
         // int64
         public long Upc { get; set; }
 
+        public long CertCode { get; set; }
+
         public string Name { get; set; }
 
         public decimal? Price { get; set; }
@@ -309,6 +311,7 @@ namespace Vendord.SmartDevice.Linked
             {
                 // BigInt is an int64
                 new SqlCeParameter() { ParameterName = "@Upc", SqlDbType = SqlDbType.BigInt, Value = this.Upc },
+                new SqlCeParameter() { ParameterName = "@CertCode", SqlDbType = SqlDbType.BigInt, Value = this.CertCode },
                 new SqlCeParameter() { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = this.Name },
                 new SqlCeParameter() { ParameterName = "@Price", SqlDbType = SqlDbType.Decimal, Value = this.Price },
                 new SqlCeParameter() { ParameterName = "@VendorId", SqlDbType = SqlDbType.Int, Value = this.Vendor.Id },
@@ -330,10 +333,11 @@ namespace Vendord.SmartDevice.Linked
                 string updateQuery =
                     string.Format(
                         @"UPDATE {0} SET
-                            Name = @name, 
-                            Price = @price, 
-                            VendorId = @vendorId, 
-                            DepartmentId = @departmentId
+                            CertCode = @CertCode
+                            Name = @Name, 
+                            Price = @Price, 
+                            VendorId = @VendorId, 
+                            DepartmentId = @DepartmentId
                             WHERE Upc = @Upc",
                         this.TableName);
 
@@ -344,8 +348,8 @@ namespace Vendord.SmartDevice.Linked
                 // insert
                 string insertQuery =
                     string.Format(
-                        @"INSERT INTO {0} (Upc, Name, Price, VendorId, DepartmentId) 
-                            VALUES (@Upc, @name, @price, @vendorId, @departmentId)",
+                        @"INSERT INTO {0} (Upc, CertCode, Name, Price, VendorId, DepartmentId) 
+                            VALUES (@Upc, @CertCode, @Name, @Price, @VendorId, @DepartmentId)",
                     this.TableName);
                 this.QueryExecutor.ExecuteNonQuery(insertQuery, parameters);
             }
@@ -427,6 +431,13 @@ namespace Vendord.SmartDevice.Linked
             if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
             {
                 product.Upc = Convert.ToInt64(reader[colName].ToString());
+            }
+
+            // cert code
+            colName = "CertCode";
+            if (QueryExecutor.ReaderHasColumn(reader, colName) && reader[colName] != null)
+            {
+                product.CertCode = Convert.ToInt64(reader[colName].ToString());
             }
 
             // name         

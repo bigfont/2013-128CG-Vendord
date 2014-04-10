@@ -114,8 +114,9 @@ namespace Vendord.SmartDevice.Linked
                     CREATE TABLE [tblProduct]
                     (
                        [Upc] BIGINT NOT NULL,
+                       [CertCode] BIGINT,
                        [Name] NVARCHAR(100),
-                       [Price] DECIMAL,
+                       [Price] DECIMAL(5,2),
                        [IsInTrash] BIT,
                        [VendorId] int,
                        [DepartmentId] int

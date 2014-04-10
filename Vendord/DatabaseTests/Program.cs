@@ -31,6 +31,7 @@ namespace DatabaseTests
 
             product = new Product(qe);
 
+            product.CertCode = 000;
             product.Name = "Renova Pink";
             product.Price = 10.00m;
             product.IsInTrash = 0;
@@ -39,6 +40,7 @@ namespace DatabaseTests
             product.Upc = "5601028000741";
             product.UpsertIntoDb();
 
+            product.CertCode = 001;
             product.Name = "Smoothies and Juices Book";
             product.Price = 10.00m;
             product.IsInTrash = 0;

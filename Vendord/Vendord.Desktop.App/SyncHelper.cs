@@ -152,36 +152,73 @@ namespace Vendord.Desktop.App
         {
             XElement productsXml = XElement.Load(filePath);
 
-            Func<string, long> tryToGetLong =
+            Func<string, long> parseLong =
                 value =>
                 {
                     long longValue;
                     return Int64.TryParse(value, out longValue) ? longValue : -1;
                 };
 
-            var query =
-                from p in productsXml.Descendants("Products")
-                select new Product()
+            Func<string, decimal> parseDecimal =
+                value =>
                 {
-                    Upc = tryToGetLong(p.Element("upc").Value),
-                    Name = (string)p.Element("description"),
-                    Price = (decimal?)p.Element("normal_price"),
-                    Department = new Department()
-                    {
-                        Id = (int?)p.Element("department") ?? -1,
-                        Name = ""
-                    },
-                    Vendor = new Vendor()
-                    {
-                        Id = (int?)p.Element("vendor") ?? -1,
-                        Name = ""
-                    }
+                    decimal decimalValue;
+                    return Decimal.TryParse(value, out decimalValue) ? decimalValue : -1m;
                 };
 
-            // for debugging
-            int i = query.Count();
+            Func<string, int> parseInt =
+                value =>
+                {
+                    int intValue;
+                    return Int32.TryParse(value, out intValue) ? intValue : -1;
+                };
 
-            List<Product> products = query.ToList<Product>();
+            Func<XElement, string, string> getXElementValue =
+                (xElem, key) =>
+                {
+                    string result = string.Empty;
+                    if (xElem != null && xElem.Element(key) != null && xElem.Element(key).Value != null)
+                    {
+                        result = xElem.Element(key).Value;
+                    }
+                    return result;
+                };
+
+            List<Product> products = new List<Product>();
+
+            string normalPrice = string.Empty;
+
+            try
+            {
+                var query = from p
+                        in productsXml.Descendants("Products")
+                        select p;
+
+                foreach (XElement elem in query)
+                {
+                    Product p = new Product();
+                    p.Upc = parseLong(getXElementValue(elem, "upc"));
+                    p.CertCode = parseLong(getXElementValue(elem, "cert_code"));
+                    p.Name = getXElementValue(elem, "description");
+                    p.Price = parseDecimal(getXElementValue(elem, "normal_price"));
+                    p.Department = new Department()
+                    {
+                        Id = parseInt(getXElementValue(elem, "department")),
+                        Name = string.Empty
+                    };
+                    p.Vendor = new Vendor()
+                    {
+                        Id = parseInt(getXElementValue(elem, "vendor")),
+                        Name = string.Empty
+                    };
+                    products.Add(p);
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = ex.Message;
+            }
+
             return products;
         }
 

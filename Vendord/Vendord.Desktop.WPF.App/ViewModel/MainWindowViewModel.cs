@@ -59,11 +59,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             return new List<CommandViewModel>
             {
                 new CommandViewModel(
-                    Strings.MainWindowViewModel_Command_ViewAllCustomers,
+                    Strings.MainWindowViewModel_Command_Sync,
                     new RelayCommand(param => this.ShowAllCustomers())),
 
                 new CommandViewModel(
-                    Strings.MainWindowViewModel_Command_CreateNewCustomer,
+                    Strings.MainWindowViewModel_Command_Orders,
                     new RelayCommand(param => this.CreateNewCustomer()))
             };
         }
