@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 namespace Vendord.Desktop.WPF.App.View
 {
     /// <summary>
-    /// Interaction logic for AllCustomersView.xaml
+    /// Interaction logic for AllOrdersView.xaml
     /// </summary>
-    public partial class AllCustomersView : UserControl
+    public partial class AllOrdersView : UserControl
     {
-        public AllCustomersView()
+        public AllOrdersView()
         {
             InitializeComponent();
         }

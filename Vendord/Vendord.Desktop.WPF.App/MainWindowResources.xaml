@@ -9,11 +9,11 @@ This resource dictionary is used by the MainWindow.
   >
 
     <!-- 
-  This template applies an AllCustomersView to an instance 
-  of the AllCustomersViewModel class shown in the main window.
+  This template applies an AllOrdersView to an instance 
+  of the AllOrdersViewModel class shown in the main window.
   -->
-    <DataTemplate DataType="{x:Type vm:AllCustomersViewModel}">
-        <vw:AllCustomersView />
+    <DataTemplate DataType="{x:Type vm:AllOrdersViewModel}">
+        <vw:AllOrdersView />
     </DataTemplate>
 
     <!-- 

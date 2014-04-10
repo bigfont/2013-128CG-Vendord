@@ -20,18 +20,18 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Fields
 
         ReadOnlyCollection<CommandViewModel> _commands;
-        readonly CustomerRepository _customerRepository;
+        readonly OrderRepository _orderRepository;
         ObservableCollection<WorkspaceViewModel> _workspaces;
 
         #endregion // Fields
 
         #region Constructor
 
-        public MainWindowViewModel(string customerDataFile)
+        public MainWindowViewModel(string orderDataFile)
         {
             base.DisplayName = Strings.MainWindowViewModel_DisplayName;
 
-            _customerRepository = new CustomerRepository(customerDataFile);
+            _orderRepository = new OrderRepository(orderDataFile);
         }
 
         #endregion // Constructor
@@ -61,11 +61,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             {
                 new CommandViewModel(
                     Strings.MainWindowViewModel_Command_Sync,
-                    new RelayCommand(param => this.ShowAllCustomers())),
+                    new RelayCommand(param => this.ShowSyncOptions())),
 
                 new CommandViewModel(
                     Strings.MainWindowViewModel_Command_Orders,
-                    new RelayCommand(param => this.CreateNewCustomer()))
+                    new RelayCommand(param => this.ShowAllOrders()))
             };
         }
 
@@ -112,23 +112,20 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region Private Helpers
 
-        void CreateNewCustomer()
+        void ShowSyncOptions()
         {
-            ////Customer newCustomer = Customer.CreateNewCustomer();
-            ////CustomerViewModel workspace = new CustomerViewModel(newCustomer, _customerRepository);
-            ////this.Workspaces.Add(workspace);
-            ////this.SetActiveWorkspace(workspace);
+
         }
 
-        void ShowAllCustomers()
+        void ShowAllOrders()
         {
-            AllCustomersViewModel workspace =
-                this.Workspaces.FirstOrDefault(vm => vm is AllCustomersViewModel)
-                as AllCustomersViewModel;
+            AllOrdersViewModel workspace =
+                this.Workspaces.FirstOrDefault(vm => vm is AllOrdersViewModel)
+                as AllOrdersViewModel;
 
             if (workspace == null)
             {
-                workspace = new AllCustomersViewModel(_customerRepository);
+                workspace = new AllOrdersViewModel(_orderRepository);
                 this.Workspaces.Add(workspace);
             }
 
