@@ -4,7 +4,17 @@ This resource dictionary is used by the MainWindow.
 <ResourceDictionary
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:vm="clr-namespace:Vendord.Desktop.WPF.App.ViewModel"
+  xmlns:vw="clr-namespace:Vendord.Desktop.WPF.App.View"
   >
+
+    <!-- 
+  This template applies an AllCustomersView to an instance 
+  of the AllCustomersViewModel class shown in the main window.
+  -->
+    <DataTemplate DataType="{x:Type vm:AllCustomersViewModel}">
+        <vw:AllCustomersView />
+    </DataTemplate>
 
     <!-- 
   This style configures both of the main content areas in the main window.

@@ -833,11 +833,6 @@ namespace Vendord.Desktop.App
 
         private void AddTheListView(PrintPageEventArgs e, ref Point myPoint)
         {
-            // columns
-            string productUpc;
-            string productName;
-            string casesToOrder;
-
             int upcColumnWidth = Convert.ToInt16(e.MarginBounds.Width * 0.25);
             int nameColumnWidth = Convert.ToInt16(e.MarginBounds.Width * 0.60);
             int casesToOrderColumnWidth = Convert.ToInt16(e.MarginBounds.Width * 0.15);
@@ -848,6 +843,9 @@ namespace Vendord.Desktop.App
             this.NewLine(e, this.myFont, ref myPoint);
 
             e.Graphics.DrawString("Upc", this.myFont, this.myFontBrush, myPoint);
+            this.EndColumn(e, upcColumnWidth, ref myPoint);
+
+            e.Graphics.DrawString("Product Code", this.myFont, this.myFontBrush, myPoint);
             this.EndColumn(e, upcColumnWidth, ref myPoint);
 
             e.Graphics.DrawString("Name", this.myFont, this.myFontBrush, myPoint);
@@ -862,15 +860,24 @@ namespace Vendord.Desktop.App
             {
                 // new line
                 this.NewLine(e, this.myFont, ref myPoint);
-                productUpc = item.Tag.ToString();
+
+                // upc
+                var productUpc = item.Tag.ToString();
                 e.Graphics.DrawString(productUpc, this.myFont, this.myFontBrush, myPoint);
                 this.EndColumn(e, upcColumnWidth, ref myPoint);
 
-                productName = item.Text;
+                // product code
+                var productCode = string.Empty; // todo
+                e.Graphics.DrawString(productCode, this.myFont, this.myFontBrush, myPoint);
+                this.EndColumn(e, upcColumnWidth, ref myPoint);
+
+                // name
+                var productName = item.Text;
                 e.Graphics.DrawString(productName, this.myFont, this.myFontBrush, myPoint);
                 this.EndColumn(e, nameColumnWidth, ref myPoint);
 
-                casesToOrder = item.SubItems[1].Text.ToString(); // HACK - Magic Number.
+                // cases
+                var casesToOrder = item.SubItems[1].Text.ToString(); // HACK - Magic Number.
                 e.Graphics.DrawString(casesToOrder, this.myFont, this.myFontBrush, myPoint);
 
                 // no need to end the column

@@ -8,6 +8,7 @@ using System.Windows.Data;
 using System.ComponentModel;
 using System.Diagnostics;
 using Vendord.Desktop.WPF.App.Properties;
+using Vendord.Desktop.WPF.App.DataAccess;
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
@@ -19,7 +20,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Fields
 
         ReadOnlyCollection<CommandViewModel> _commands;
-        ////readonly CustomerRepository _customerRepository;
+        readonly CustomerRepository _customerRepository;
         ObservableCollection<WorkspaceViewModel> _workspaces;
 
         #endregion // Fields
@@ -30,7 +31,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         {
             base.DisplayName = Strings.MainWindowViewModel_DisplayName;
 
-            ////_customerRepository = new CustomerRepository(customerDataFile);
+            _customerRepository = new CustomerRepository(customerDataFile);
         }
 
         #endregion // Constructor
@@ -121,17 +122,17 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         void ShowAllCustomers()
         {
-            ////AllCustomersViewModel workspace =
-            ////    this.Workspaces.FirstOrDefault(vm => vm is AllCustomersViewModel)
-            ////    as AllCustomersViewModel;
+            AllCustomersViewModel workspace =
+                this.Workspaces.FirstOrDefault(vm => vm is AllCustomersViewModel)
+                as AllCustomersViewModel;
 
-            ////if (workspace == null)
-            ////{
-            ////    workspace = new AllCustomersViewModel(_customerRepository);
-            ////    this.Workspaces.Add(workspace);
-            ////}
+            if (workspace == null)
+            {
+                workspace = new AllCustomersViewModel(_customerRepository);
+                this.Workspaces.Add(workspace);
+            }
 
-            ////this.SetActiveWorkspace(workspace);
+            this.SetActiveWorkspace(workspace);
         }
 
         void SetActiveWorkspace(WorkspaceViewModel workspace)

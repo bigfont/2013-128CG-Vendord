@@ -61,6 +61,114 @@ namespace Vendord.Desktop.WPF.App.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Customers.
+        /// </summary>
+        internal static string AllCustomersViewModel_DisplayName {
+            get {
+                return ResourceManager.GetString("AllCustomersViewModel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Companies have no last name.
+        /// </summary>
+        internal static string Customer_Error_CompanyHasNoLastName {
+            get {
+                return ResourceManager.GetString("Customer_Error_CompanyHasNoLastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail address is invalid.
+        /// </summary>
+        internal static string Customer_Error_InvalidEmail {
+            get {
+                return ResourceManager.GetString("Customer_Error_InvalidEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail address is missing.
+        /// </summary>
+        internal static string Customer_Error_MissingEmail {
+            get {
+                return ResourceManager.GetString("Customer_Error_MissingEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to First name is missing.
+        /// </summary>
+        internal static string Customer_Error_MissingFirstName {
+            get {
+                return ResourceManager.GetString("Customer_Error_MissingFirstName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Last name is missing.
+        /// </summary>
+        internal static string Customer_Error_MissingLastName {
+            get {
+                return ResourceManager.GetString("Customer_Error_MissingLastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Company.
+        /// </summary>
+        internal static string CustomerViewModel_CustomerTypeOption_Company {
+            get {
+                return ResourceManager.GetString("CustomerViewModel_CustomerTypeOption_Company", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (Not Specified).
+        /// </summary>
+        internal static string CustomerViewModel_CustomerTypeOption_NotSpecified {
+            get {
+                return ResourceManager.GetString("CustomerViewModel_CustomerTypeOption_NotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Person.
+        /// </summary>
+        internal static string CustomerViewModel_CustomerTypeOption_Person {
+            get {
+                return ResourceManager.GetString("CustomerViewModel_CustomerTypeOption_Person", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Customer.
+        /// </summary>
+        internal static string CustomerViewModel_DisplayName {
+            get {
+                return ResourceManager.GetString("CustomerViewModel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Customer type must be selected.
+        /// </summary>
+        internal static string CustomerViewModel_Error_MissingCustomerType {
+            get {
+                return ResourceManager.GetString("CustomerViewModel_Error_MissingCustomerType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot save an invalid customer..
+        /// </summary>
+        internal static string CustomerViewModel_Exception_CannotSave {
+            get {
+                return ResourceManager.GetString("CustomerViewModel_Exception_CannotSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Orders.
         /// </summary>
         internal static string MainWindowViewModel_Command_Orders {
