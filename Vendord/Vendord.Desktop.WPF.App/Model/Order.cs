@@ -24,11 +24,11 @@ namespace Vendord.Desktop.WPF.App.Model
         }
 
         public static Order CreateOrder(
-            string lastName)
+            string name)
         {
             return new Order
             {
-                LastName = lastName
+                Name = name
             };
         }
 
@@ -43,7 +43,7 @@ namespace Vendord.Desktop.WPF.App.Model
         /// <summary>
         /// Gets/sets the order's last name.
         /// </summary>
-        public string LastName { get; set; }
+        public string Name { get; set; }
 
         #endregion // State Properties
     }

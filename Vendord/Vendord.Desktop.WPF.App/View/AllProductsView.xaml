@@ -10,7 +10,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" 
-                                    DisplayMemberBinding="{Binding Path=LastName}" />
+                                    DisplayMemberBinding="{Binding Path=Name}" />
                 </GridView>
             </ListView.View>
         </ListView>

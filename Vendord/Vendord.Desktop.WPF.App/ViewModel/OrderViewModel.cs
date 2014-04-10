@@ -40,17 +40,17 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region Order Properties
 
-        public string LastName
+        public string Name
         {
-            get { return _order.LastName; }
+            get { return _order.Name; }
             set
             {
-                if (value == _order.LastName)
+                if (value == _order.Name)
                     return;
 
-                _order.LastName = value;
+                _order.Name = value;
 
-                base.OnPropertyChanged("LastName");
+                base.OnPropertyChanged("Name");
             }
         }
 

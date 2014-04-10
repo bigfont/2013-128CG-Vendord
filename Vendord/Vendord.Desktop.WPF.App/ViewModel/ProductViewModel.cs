@@ -34,17 +34,17 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region Product Properties
 
-        public string LastName
+        public string Name
         {
-            get { return _product.LastName; }
+            get { return _product.Name; }
             set
             {
-                if (value == _product.LastName)
+                if (value == _product.Name)
                     return;
 
-                _product.LastName = value;
+                _product.Name = value;
 
-                base.OnPropertyChanged("LastName");
+                base.OnPropertyChanged("Name");
             }
         }
 
