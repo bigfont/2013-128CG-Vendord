@@ -35,8 +35,32 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region Product Properties
 
-        public string Upc { get; set; }
-        public string Name { get; set; }
+        public long Upc 
+        {
+            get { return _product.Upc; }
+            set
+            {
+                if (value == _product.Upc)
+                    return;
+
+                _product.Upc = value;
+
+                base.OnPropertyChanged("Upc");
+            }
+        }
+        public string Name 
+        {
+            get { return _product.Name; }
+            set
+            {
+                if (value == _product.Name)
+                    return;
+
+                _product.Name = value;
+
+                base.OnPropertyChanged("Name");
+            }
+        }
 
         #endregion // Product Properties
 
