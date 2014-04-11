@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlCeRepairUtility", "SqlCe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MVVMDemoApp", "MVVMDemoApp", "{F7A10ECB-FFD7-4D8B-8AA8-59D0E821166E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "..\..\2014-102MS-Monitoring\MVVMDemoApp\DemoApp\DemoApp.csproj", "{26CFD5D4-94BD-40F3-BABA-E5FC7B6DB623}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "..\HelpfulStuff\MVVMDemoApp\DemoApp\DemoApp.csproj", "{26CFD5D4-94BD-40F3-BABA-E5FC7B6DB623}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
