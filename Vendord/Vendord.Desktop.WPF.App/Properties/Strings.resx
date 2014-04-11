@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AllOrderProductsViewModel_DisplayName" xml:space="preserve">
+    <value>Order Products</value>
+  </data>
+  <data name="AllOrdersViewModel_DisplayName" xml:space="preserve">
+    <value>Orders</value>
+  </data>
+  <data name="AllProductsViewModel_DisplayName" xml:space="preserve">
+    <value>Products</value>
+  </data>
+  <data name="MainWindowViewModel_Command_OrderProducts" xml:space="preserve">
+    <value>Order Products</value>
+  </data>
   <data name="MainWindowViewModel_Command_Orders" xml:space="preserve">
     <value>Orders</value>
     <comment>Display name for the command that allows users to perform order related actions.</comment>

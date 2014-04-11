@@ -13,6 +13,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         readonly Product _product;
         readonly ProductRepository _productRepository;
+        bool _isSelected;
 
         #endregion // Fields
 
@@ -34,20 +35,30 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region Product Properties
 
-        public string Name
+        public string Upc { get; set; }
+        public string Name { get; set; }
+
+        #endregion // Product Properties
+
+        #region Presentation Properties
+
+        /// <summary>
+        /// Gets/sets whether this customer is selected in the UI.
+        /// </summary>
+        public bool IsSelected
         {
-            get { return _product.Name; }
+            get { return _isSelected; }
             set
             {
-                if (value == _product.Name)
+                if (value == _isSelected)
                     return;
 
-                _product.Name = value;
+                _isSelected = value;
 
-                base.OnPropertyChanged("Name");
+                base.OnPropertyChanged("IsSelected");
             }
         }
 
-        #endregion // Order Properties
+        #endregion
     }
 }

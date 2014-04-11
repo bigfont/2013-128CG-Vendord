@@ -24,10 +24,12 @@ namespace Vendord.Desktop.WPF.App.Model
         }
 
         public static Product CreateProduct(
+            long upc,
             string name)
         {
             return new Product
             {
+                Upc = upc,
                 Name = name
             };
         }
@@ -40,10 +42,8 @@ namespace Vendord.Desktop.WPF.App.Model
 
         #region State Properties
 
-        /// <summary>
-        /// Gets/sets the order's last name.
-        /// </summary>
-        public string Name { get; set; }
+        public long Upc { get; set; }
+        public string Name { get; set; }        
 
         #endregion // State Properties
     }

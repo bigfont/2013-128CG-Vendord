@@ -8,20 +8,16 @@ This resource dictionary is used by the MainWindow.
   xmlns:vw="clr-namespace:Vendord.Desktop.WPF.App.View"
   >
 
-    <!-- 
-  This template applies an AllOrdersView to an instance 
-  of the AllOrdersViewModel class shown in the main window.
-  -->
     <DataTemplate DataType="{x:Type vm:AllOrdersViewModel}">
         <vw:AllOrdersView />
     </DataTemplate>
 
-    <!-- 
-  This template applies an AllOrdersView to an instance 
-  of the AllOrdersViewModel class shown in the main window.
-  -->
     <DataTemplate DataType="{x:Type vm:AllProductsViewModel}">
         <vw:AllProductsView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type vm:AllOrderProductsViewModel}">
+        <vw:AllOrderProductsView />
     </DataTemplate>
 
     <!-- 

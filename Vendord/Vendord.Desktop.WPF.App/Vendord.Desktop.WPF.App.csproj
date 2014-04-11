@@ -41,6 +41,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Microsoft SQL Server Compact Edition\v3.5\Desktop\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -72,6 +74,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindowResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AllOrderProductsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -114,9 +120,11 @@
     <Compile Include="..\Vendord.SmartDevice.Linked\IOHelpers.cs">
       <Link>Linked\IOHelpers.cs</Link>
     </Compile>
+    <Compile Include="DataAccess\OrderProductRepository.cs" />
     <Compile Include="DataAccess\ProductRepository.cs" />
     <Compile Include="DataAccess\OrderRepository.cs" />
     <Compile Include="Model\Order.cs" />
+    <Compile Include="Model\OrderProduct.cs" />
     <Compile Include="Model\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -132,14 +140,19 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="ViewModel\AllOrderProductsViewModel.cs" />
     <Compile Include="ViewModel\AllOrdersViewModel.cs" />
     <Compile Include="ViewModel\AllProductsViewModel.cs" />
     <Compile Include="ViewModel\CommandViewModel.cs" />
+    <Compile Include="ViewModel\OrderProductViewModel.cs" />
     <Compile Include="ViewModel\OrderViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\ProductViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="ViewModel\WorkspaceViewModel.cs" />
+    <Compile Include="View\AllOrderProductsView.xaml.cs">
+      <DependentUpon>AllOrderProductsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\AllOrdersView.xaml.cs">
       <DependentUpon>AllOrdersView.xaml</DependentUpon>
     </Compile>

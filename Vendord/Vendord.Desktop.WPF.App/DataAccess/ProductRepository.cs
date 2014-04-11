@@ -56,7 +56,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
             foreach (var p in db.Products)
             {
-                var product = Product.CreateProduct(p.Name);
+                var product = Product.CreateProduct(p.Upc, p.Name);
                 products.Add(product);
             }
 

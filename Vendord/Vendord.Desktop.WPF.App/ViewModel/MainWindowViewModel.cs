@@ -22,6 +22,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         ReadOnlyCollection<CommandViewModel> _commands;
         readonly OrderRepository _orderRepository;
         readonly ProductRepository _productRepository;
+        readonly OrderProductRepository _orderProductRepository;
         ObservableCollection<WorkspaceViewModel> _workspaces;
 
         #endregion // Fields
@@ -34,6 +35,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             _orderRepository = new OrderRepository();
             _productRepository = new ProductRepository();
+            _orderProductRepository = new OrderProductRepository();
         }
 
         #endregion // Constructor
@@ -71,7 +73,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
                 new CommandViewModel(
                     Strings.MainWindowViewModel_Command_Products,
-                    new RelayCommand(param => this.ShowAllProducts()))
+                    new RelayCommand(param => this.ShowAllProducts())),
+
+                new CommandViewModel(
+                    Strings.MainWindowViewModel_Command_OrderProducts,
+                    new RelayCommand(param => this.ShowAllOrderProducts()))
             };
         }
 
@@ -147,6 +153,21 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             if (workspace == null)
             {
                 workspace = new AllProductsViewModel(_productRepository);
+                this.Workspaces.Add(workspace);
+            }
+
+            this.SetActiveWorkspace(workspace);
+        }
+
+        void ShowAllOrderProducts()
+        {
+            AllOrderProductsViewModel workspace =
+                this.Workspaces.FirstOrDefault(vm => vm is AllOrderProductsViewModel)
+                as AllOrderProductsViewModel;
+
+            if (workspace == null)
+            {
+                workspace = new AllOrderProductsViewModel(_orderProductRepository);
                 this.Workspaces.Add(workspace);
             }
 

@@ -33,6 +33,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             _orderRepository = orderRepository;
 
+            base.DisplayName = Strings.AllOrdersViewModel_DisplayName;
+
             // Populate the AllOrders collection with OrderViewModels.
             this.CreateAllOrders();
         }

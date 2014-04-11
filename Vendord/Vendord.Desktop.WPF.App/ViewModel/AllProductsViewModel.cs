@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Vendord.Desktop.WPF.App.DataAccess;
 using System.Collections.ObjectModel;
+using Vendord.Desktop.WPF.App.Properties;
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
@@ -23,6 +24,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 throw new ArgumentNullException("productRepository");
 
             _productRepository = productRepository;
+
+            base.DisplayName = Strings.AllProductsViewModel_DisplayName;
 
             // Populate the AllProducts collection with OrderViewModels.
             this.CreateAllProducts();

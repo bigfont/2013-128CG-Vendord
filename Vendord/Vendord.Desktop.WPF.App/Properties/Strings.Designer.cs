@@ -61,6 +61,42 @@ namespace Vendord.Desktop.WPF.App.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order Products.
+        /// </summary>
+        internal static string AllOrderProductsViewModel_DisplayName {
+            get {
+                return ResourceManager.GetString("AllOrderProductsViewModel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Orders.
+        /// </summary>
+        internal static string AllOrdersViewModel_DisplayName {
+            get {
+                return ResourceManager.GetString("AllOrdersViewModel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Products.
+        /// </summary>
+        internal static string AllProductsViewModel_DisplayName {
+            get {
+                return ResourceManager.GetString("AllProductsViewModel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order Products.
+        /// </summary>
+        internal static string MainWindowViewModel_Command_OrderProducts {
+            get {
+                return ResourceManager.GetString("MainWindowViewModel_Command_OrderProducts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Orders.
         /// </summary>
         internal static string MainWindowViewModel_Command_Orders {
