@@ -46,7 +46,9 @@ namespace Vendord.Desktop.WPF.App.Model
         /// </summary>
         public string Name { get; set; }
 
-        public Dictionary<Vendor, Product> VendorProductsDictionary { get; set; }
+        public List<Vendor> Vendors { get; set; }
+
+        public Dictionary<Vendor, Product> VendorProducts { get; set; }
 
         #endregion // State Properties
     }

@@ -20,9 +20,9 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Fields
 
         ReadOnlyCollection<CommandViewModel> _commands;
-        readonly OrderRepository _orderRepository;
+        readonly Repository _orderRepository;
         readonly ProductRepository _productRepository;
-        readonly OrderProductRepository _orderProductRepository;
+        readonly Repository _repository;
         ObservableCollection<WorkspaceViewModel> _workspaces;
 
         #endregion // Fields
@@ -33,9 +33,9 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         {
             base.DisplayName = Strings.MainWindowViewModel_DisplayName;
 
-            _orderRepository = new OrderRepository();
+            _orderRepository = new Repository();
             _productRepository = new ProductRepository();
-            _orderProductRepository = new OrderProductRepository();
+            _repository = new Repository();
         }
 
         #endregion // Constructor
@@ -167,7 +167,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             if (workspace == null)
             {
-                workspace = new AllOrderProductsViewModel(_orderProductRepository);
+                workspace = new AllOrderProductsViewModel(_repository);
                 this.Workspaces.Add(workspace);
             }
 

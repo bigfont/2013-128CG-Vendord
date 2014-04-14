@@ -18,22 +18,22 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Fields
 
         readonly Order _order;
-        readonly OrderRepository _orderRepository;
+        readonly Repository _orderRepository;
 
         #endregion // Fields
 
         #region Constructor
 
-        public OrderViewModel(Order order, OrderRepository orderRepository)
+        public OrderViewModel(Order order, Repository repository)
         {
             if (order == null)
                 throw new ArgumentNullException("order");
 
-            if (orderRepository == null)
-                throw new ArgumentNullException("orderRepository");
+            if (repository == null)
+                throw new ArgumentNullException("repository");
 
             _order = order;
-            _orderRepository = orderRepository;
+            _orderRepository = repository;
         }
 
         #endregion // Constructor

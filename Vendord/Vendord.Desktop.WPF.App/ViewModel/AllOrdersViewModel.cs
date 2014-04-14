@@ -13,25 +13,25 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     /// <summary>
     /// Represents a container of OrderViewModel objects
     /// that has support for staying synchronized with the
-    /// OrderRepository.  This class also provides information
+    /// Repository.  This class also provides information
     /// related to multiple selected orders.
     /// </summary>
     public class AllOrdersViewModel : WorkspaceViewModel
     {
         #region Fields
 
-        readonly OrderRepository _orderRepository;
+        readonly Repository _repository;
 
         #endregion // Fields
 
         #region Constructor
 
-        public AllOrdersViewModel(OrderRepository orderRepository)
+        public AllOrdersViewModel(Repository repository)
         {
-            if (orderRepository == null)
-                throw new ArgumentNullException("orderRepository");
+            if (repository == null)
+                throw new ArgumentNullException("repository");
 
-            _orderRepository = orderRepository;
+            _repository = repository;
 
             base.DisplayName = Strings.AllOrdersViewModel_DisplayName;
 
@@ -42,8 +42,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         void CreateAllOrders()
         {
             List<OrderViewModel> all =
-                (from ord in _orderRepository.GetOrders()
-                 select new OrderViewModel(ord, _orderRepository)).ToList();
+                (from ord in _repository.GetOrders()
+                 select new OrderViewModel(ord, _repository)).ToList();
 
             this.AllOrders = new ObservableCollection<OrderViewModel>(all);
         }
