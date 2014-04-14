@@ -6,6 +6,7 @@ using System.ComponentModel;
 using Vendord.Desktop.WPF.App.Properties;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace Vendord.Desktop.WPF.App.Model
 {
@@ -44,6 +45,8 @@ namespace Vendord.Desktop.WPF.App.Model
         /// Gets/sets the order's last name.
         /// </summary>
         public string Name { get; set; }
+
+        public Dictionary<Vendor, Product> VendorProductsDictionary { get; set; }
 
         #endregion // State Properties
     }
