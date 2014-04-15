@@ -152,17 +152,24 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 {
                     _SelectedVendor = value;
 
-                    // filter
-                    ListCollectionView list = OrderProductsView as ListCollectionView;
-                    list.Filter = new Predicate<object>(x => (x as OrderProductViewModel).Product.VendorId == (SelectedVendor as VendorViewModel).Id);
-                    OrderProductsView.Refresh();
-                    // end filter
+                    FilterProductsOnVendor();                    
 
                     base.OnPropertyChanged("SelectedVendor");
                 }
             }
         }
 
-        #endregion // Order Properties        
+        #endregion // Order Properties       
+ 
+        #region Private Helpers
+
+        void FilterProductsOnVendor()
+        {
+            ListCollectionView list = OrderProductsView as ListCollectionView;
+            list.Filter = new Predicate<object>(x => (x as OrderProductViewModel).Product.VendorId == (SelectedVendor as VendorViewModel).Id);
+            OrderProductsView.Refresh();
+        }
+
+        #endregion
     }
 }
