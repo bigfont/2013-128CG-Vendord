@@ -24,8 +24,9 @@
             </ListView.View>
         </ListView>
         <ListView 
-            ItemsSource="{Binding SelectedOrder.OrderVendors}" >
-            <ListView.View>
+            ItemsSource="{Binding SelectedOrder.OrderVendors}"
+            SelectedItem="{Binding SelectedOrder.SelectedVendor}">
+            <ListView.View>                
                 <GridView>
                     <GridViewColumn 
                         Header="Name" 
@@ -34,7 +35,7 @@
             </ListView.View>
         </ListView>
         <ListView             
-            ItemsSource="{Binding SelectedOrder.OrderProducts}" >
+            ItemsSource="{Binding SelectedOrder.OrderProductsView}" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn 

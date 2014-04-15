@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.ComponentModel;
 using Vendord.Desktop.WPF.App.Properties;
 using System.Collections.ObjectModel;
+using System.Windows.Data;
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
@@ -38,6 +39,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             CreateOrderProducts();
             CreateOrderVendors();
+
+            OrderProductsView = CollectionViewSource.GetDefaultView(OrderProducts);
         }
 
         void CreateOrderProducts()
@@ -48,7 +51,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 select new OrderProductViewModel(op, _repository);
 
             this.OrderProducts = new ObservableCollection<OrderProductViewModel>(query.ToList());
-        }
+        }        
         
         void CreateOrderVendors()
         {
@@ -130,6 +133,32 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 {
                     _OrderVendors = value;
                     base.OnPropertyChanged("OrderVendors");
+                }
+            }
+        }
+
+        public ICollectionView OrderProductsView { get; set; }
+
+        object _SelectedVendor;
+        public object SelectedVendor
+        {
+            get
+            {
+                return _SelectedVendor;
+            }
+            set
+            {
+                if (_SelectedVendor != value)
+                {
+                    _SelectedVendor = value;
+
+                    // filter
+                    ListCollectionView list = OrderProductsView as ListCollectionView;
+                    list.Filter = new Predicate<object>(x => (x as OrderProductViewModel).Product.VendorId == (SelectedVendor as VendorViewModel).Id);
+                    OrderProductsView.Refresh();
+                    // end filter
+
+                    base.OnPropertyChanged("SelectedVendor");
                 }
             }
         }

@@ -40,6 +40,20 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region Order Properties
 
+        public int? Id
+        {
+            get { return _vendor.Id; }
+            set
+            {
+                if (value == _vendor.Id)
+                    return;
+
+                _vendor.Id = value;
+
+                base.OnPropertyChanged("Id");
+            }
+        }
+
         public string Name
         {
             get { return _vendor.Name; }
