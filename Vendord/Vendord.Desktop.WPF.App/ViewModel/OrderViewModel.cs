@@ -34,11 +34,52 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             _order = order;
             _repository = repository;
+
+            CreateOrderProducts();
+            CreateOrderVendors();
+        }
+
+        void CreateOrderProducts()
+        {
+            var query =
+                from o in _repository.GetOrders()
+                join op in _repository.GetOrderProducts()
+                on o.Id equals op.OrderId
+                select new OrderProductViewModel(op, _repository);
+
+            this.OrderProducts = query.ToList<OrderProductViewModel>();
+        }
+
+        void CreateOrderVendors()
+        {
+            var productViewModels =
+                from op in OrderProducts
+                select op.Product;
+
+            var vendorViewModels =
+                from p in productViewModels
+                select p.Vendor;
+
+            this.OrderVendors = vendorViewModels.ToList();
         }
 
         #endregion // Constructor
 
         #region Order Properties
+
+        public Guid Id
+        {
+            get { return _order.Id; }
+            set
+            {
+                if (value == _order.Id)
+                    return;
+
+                _order.Id = value;
+
+                base.OnPropertyChanged("Id");
+            }
+        }
 
         public string Name
         {
@@ -54,34 +95,10 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
-        public List<OrderProduct> OrderProducts
-        {
-            get { return _order.OrderProducts; }
-            set
-            {
-                if (value == _order.OrderProducts)
-                    return;
+        public List<OrderProductViewModel> OrderProducts { get; private set; }
 
-                _order.OrderProducts = value;
+        public List<VendorViewModel> OrderVendors { get; private set; }
 
-                base.OnPropertyChanged("OrderProducts");
-            }
-        }
-
-        public List<Vendor> Vendors
-        {
-            get { return _order.Vendors; }
-            set
-            {
-                if (value == _order.Vendors)
-                    return;
-
-                _order.Vendors = value;
-
-                base.OnPropertyChanged("Vendors");
-            }
-        }
-
-        #endregion // Order Properties
+        #endregion // Order Properties        
     }
 }

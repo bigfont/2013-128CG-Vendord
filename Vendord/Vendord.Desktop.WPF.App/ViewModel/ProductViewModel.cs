@@ -29,13 +29,25 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             _product = product;
             _repository = repository;
+
+            this.CreateVendor();
+        }
+
+        void CreateVendor()
+        {
+            var query =
+                from v in _repository.GetVendors()
+                where v.Id == this.VendorId
+                select new VendorViewModel(v, _repository);
+
+            this.Vendor = query.FirstOrDefault();
         }
 
         #endregion // Constructor
 
         #region Product Properties
 
-        public long Upc 
+        public long Upc
         {
             get { return _product.Upc; }
             set
@@ -48,7 +60,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 base.OnPropertyChanged("Upc");
             }
         }
-        public string Name 
+        public string Name
         {
             get { return _product.Name; }
             set
@@ -61,6 +73,21 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 base.OnPropertyChanged("Name");
             }
         }
+        public int? VendorId
+        {
+            get { return _product.VendorId; }
+            set
+            {
+                if (value == _product.VendorId)
+                    return;
+
+                _product.VendorId = value;
+
+                base.OnPropertyChanged("VendorId");
+            }
+        }
+
+        public VendorViewModel Vendor { get; private set; }
 
         #endregion // Product Properties
 

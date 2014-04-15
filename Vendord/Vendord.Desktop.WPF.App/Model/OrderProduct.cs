@@ -14,12 +14,13 @@ namespace Vendord.Desktop.WPF.App.Model
             return new OrderProduct();
         }
 
-        public static OrderProduct CreateOrderProduct(Guid orderId, long productUpc)
+        public static OrderProduct CreateOrderProduct(Guid orderId, long productUpc, int casesToOrder)
         {
             return new OrderProduct
             {
                 OrderId = orderId,
-                ProductUpc = productUpc
+                ProductUpc = productUpc,
+                CasesToOrder = casesToOrder
             };
         }
 
@@ -34,6 +35,8 @@ namespace Vendord.Desktop.WPF.App.Model
         public Guid OrderId { get; set; }
 
         public long ProductUpc { get; set; }
+
+        public int CasesToOrder { get; set; }
 
         #endregion // State Properties
     }

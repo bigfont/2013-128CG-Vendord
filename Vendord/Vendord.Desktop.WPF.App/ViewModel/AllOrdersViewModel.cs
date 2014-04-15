@@ -42,7 +42,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         void CreateAllOrders()
         {
             List<OrderViewModel> all =
-                (from ord in _repository.GetOrdersIncludeProducts()
+                (from ord in _repository.GetOrders()
                  select new OrderViewModel(ord, _repository)).ToList();
 
             this.AllOrders = new ObservableCollection<OrderViewModel>(all);

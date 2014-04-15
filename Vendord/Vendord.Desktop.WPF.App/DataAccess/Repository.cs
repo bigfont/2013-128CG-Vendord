@@ -50,17 +50,6 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             return new List<Order>(_orders);
         }
 
-        public List<Order> GetOrdersIncludeProducts()
-        {
-            var groupJoinQuerySelectObj =
-                from o in _orders
-                join op in _orderProducts
-                on o.Id equals op.OrderId into gj
-                select Order.CreateOrder(o.Id, o.Name, gj.ToList<OrderProduct>());
-
-            return groupJoinQuerySelectObj.ToList<Order>();
-        }
-
         /// <summary>
         /// Returns a shallow-copied list of all orderProducts in the repository.
         /// </summary>
@@ -77,6 +66,14 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             return new List<Product>(_products);
         }
 
+        /// <summary>
+        /// Returns a shallow-copied list of all vendors in the repository.
+        /// </summary>
+        public List<Vendor> GetVendors()
+        {
+            return new List<Vendor>(_vendors);
+        }
+
         #endregion // Public Interface
 
         #region Private Helpers
@@ -88,7 +85,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
             foreach (var o in db.Orders)
             {
-                var order = Order.CreateOrder(o.Id, o.Name, null);
+                var order = Order.CreateOrder(o.Id, o.Name);
                 orders.Add(order);
             }
 
@@ -102,7 +99,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
             foreach (var op in db.OrderProducts)
             {
-                var orderProduct = OrderProduct.CreateOrderProduct(op.OrderId, op.ProductUPC);
+                var orderProduct = OrderProduct.CreateOrderProduct(op.OrderId, op.ProductUPC, op.CasesToOrder);
                 orderProducts.Add(orderProduct);
             }
 
@@ -116,7 +113,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
             foreach (var v in db.Vendors)
             {
-                var vendor = Vendor.CreateVendor(v.Name);
+                var vendor = Vendor.CreateVendor(v.Id, v.Name);
                 vendors.Add(vendor);
             }
 
@@ -130,7 +127,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
             foreach (var p in db.Products)
             {
-                var product = Product.CreateProduct(p.Upc, p.Name);
+                var product = Product.CreateProduct(p.Upc, p.Name, p.Vendor.Id);
                 products.Add(product);
             }
 

@@ -15,11 +15,12 @@ namespace Vendord.Desktop.WPF.App.Model
         }
 
         public static Vendor CreateVendor(
-            string name)
+            int? id, string name)
         {
             return new Vendor
             {
-                Name = name
+                Id = id,
+                Name = name                
             };
         }
 
@@ -32,7 +33,12 @@ namespace Vendord.Desktop.WPF.App.Model
         #region State Properties
 
         /// <summary>
-        /// Gets/sets the Vendor's last name.
+        /// Gets/sets the Vendor's Id.
+        /// </summary>
+        public int? Id { get; set; }        
+
+        /// <summary>
+        /// Gets/sets the Vendor's name.
         /// </summary>
         public string Name { get; set; }        
 

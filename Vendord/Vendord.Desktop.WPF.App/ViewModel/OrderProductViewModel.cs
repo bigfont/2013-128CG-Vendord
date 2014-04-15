@@ -28,6 +28,18 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             _orderProduct = orderProduct;
             _repository = repository;
+
+            CreateProduct();
+        }
+
+        void CreateProduct()
+        {
+            var query =
+                from p in _repository.GetProducts()
+                where p.Upc == this._orderProduct.ProductUpc
+                select new ProductViewModel(p, _repository);
+
+            this.Product = query.FirstOrDefault();
         }
 
         #endregion // Constructor
@@ -47,6 +59,36 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 base.OnPropertyChanged("OrderId");
             }
         }
+
+        public long ProductUpc
+        {
+            get { return _orderProduct.ProductUpc; }
+            set
+            {
+                if (value == _orderProduct.ProductUpc)
+                    return;
+
+                _orderProduct.ProductUpc = value;
+
+                base.OnPropertyChanged("ProductUpc");
+            }
+        }
+
+        public int CasesToOrder
+        {
+            get { return _orderProduct.CasesToOrder; }
+            set
+            {
+                if (value == _orderProduct.CasesToOrder)
+                    return;
+
+                _orderProduct.CasesToOrder = value;
+
+                base.OnPropertyChanged("CasesToOrder");
+            }
+        }
+
+        public ProductViewModel Product { get; private set; }
 
         #endregion // OrderProduct Properties
     }
