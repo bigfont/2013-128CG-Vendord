@@ -23,10 +23,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.Sync", "Vendord.Syn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.Sync.Tests", "Vendord.Sync.Tests\Vendord.Sync.Tests.csproj", "{41A27CC8-B7F5-4197-8417-1A275E257BC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.Printer", "Vendord.Printer\Vendord.Printer.csproj", "{B398ABFF-96BD-44CC-936E-7F8C303ED14B}"
+EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = Vendord1.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -150,6 +149,20 @@ Global
 		{41A27CC8-B7F5-4197-8417-1A275E257BC3}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
 		{41A27CC8-B7F5-4197-8417-1A275E257BC3}.Release|Win32.ActiveCfg = Release|Any CPU
 		{41A27CC8-B7F5-4197-8417-1A275E257BC3}.Release|x86.ActiveCfg = Release|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Debug|Pocket PC 2003 (ARMV4).ActiveCfg = Debug|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Release|Pocket PC 2003 (ARMV4).ActiveCfg = Release|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Release|Win32.ActiveCfg = Release|Any CPU
+		{B398ABFF-96BD-44CC-936E-7F8C303ED14B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

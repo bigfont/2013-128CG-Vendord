@@ -22,11 +22,25 @@
             <Border 
                 Grid.Column="0"
                 Style="{StaticResource MainBorderStyle}">
-                <HeaderedContentControl 
-                    Content="{Binding Path=Commands}"
-                    ContentTemplate="{StaticResource CommandsTemplate}"
-                    Header="Control Panel" 
-                    Style="{StaticResource MainHCCStyle}" />
+
+                <StackPanel>
+
+                    <HeaderedContentControl 
+                        Content="{Binding Path=Commands}"
+                        ContentTemplate="{StaticResource CommandsTemplate}"
+                        Header="Control Panel" 
+                        Style="{StaticResource MainHCCStyle}" />
+
+                    <!--<HeaderedContentControl                         
+                        Content="{Binding Path=Workspaces.CurrentItem.Commands}"
+                        ContentTemplate="{StaticResource CommandsTemplate}"
+                        Header="Control Panel" 
+                        Style="{StaticResource MainHCCStyle}" />-->
+                    
+                    <Label Content="Hello"></Label>
+                    <Label Content="{Binding Workspaces.CurrentItem.Commands}"></Label>
+
+                </StackPanel>
             </Border>
 
             <Border         
