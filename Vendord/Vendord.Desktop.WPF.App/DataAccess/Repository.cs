@@ -12,7 +12,7 @@ using System.Windows;
 namespace Vendord.Desktop.WPF.App.DataAccess
 {
     /// <summary>
-    /// Represents a source of orders in the application.
+    /// Represents a source of order related data in the application.
     /// </summary>
     public class Repository
     {
@@ -20,6 +20,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
 
         readonly List<Order> _orders;
         readonly List<OrderProduct> _orderProducts;
+        readonly List<Product> _products;
         readonly List<Vendor> _vendors;
 
         #endregion // Fields
@@ -27,13 +28,14 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         #region Constructor
 
         /// <summary>
-        /// Creates a new repository of orders.
+        /// Creates a new repository.
         /// </summary>
         public Repository()
         {
             _orders = LoadOrders();
             _orderProducts = LoadOrderProducts();
             _vendors = LoadVendors();
+            _products = LoadProducts();
         }
 
         #endregion // Constructor
@@ -50,44 +52,11 @@ namespace Vendord.Desktop.WPF.App.DataAccess
 
         public List<Order> GetOrdersIncludeProducts()
         {
-            Guid guid = new Guid("12345678-1234-1234-1234-123456789012");
-
-            List<Order> orders = new List<Order>() 
-            {
-	            Order.CreateOrder(guid, "one", null)
-            };
-            List<OrderProduct> orderProducts = new List<OrderProduct>()
-            {
-	            OrderProduct.CreateOrderProduct(guid),
-	            OrderProduct.CreateOrderProduct(guid)
-            };
-            var groupJoinQuery =
+            var groupJoinQuerySelectObj =
                 from o in _orders
                 join op in _orderProducts
                 on o.Id equals op.OrderId into gj
-                select new { o, gj };
-
-            foreach (var joinResult in groupJoinQuery)
-            {
-                if (joinResult.gj != null)
-                {
-                    Console.WriteLine("gj is not null");
-                }
-            }
-
-            var groupJoinQuerySelectObj =
-                from o in orders
-                join op in orderProducts
-                on o.Id equals op.OrderId into gj
                 select Order.CreateOrder(o.Id, o.Name, gj.ToList<OrderProduct>());
-
-            foreach (Order order in groupJoinQuerySelectObj)
-            {
-                if (order.OrderProducts != null)
-                {
-                    Console.WriteLine("OrderItems is not null.");
-                }
-            }
 
             return groupJoinQuerySelectObj.ToList<Order>();
         }
@@ -98,6 +67,14 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         public List<OrderProduct> GetOrderProducts()
         {
             return new List<OrderProduct>(_orderProducts);
+        }
+
+        /// <summary>
+        /// Returns a shallow-copied list of all products in the repository.
+        /// </summary>
+        public List<Product> GetProducts()
+        {
+            return new List<Product>(_products);
         }
 
         #endregion // Public Interface
@@ -125,7 +102,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
             foreach (var op in db.OrderProducts)
             {
-                var orderProduct = OrderProduct.CreateOrderProduct(op.OrderId);
+                var orderProduct = OrderProduct.CreateOrderProduct(op.OrderId, op.ProductUPC);
                 orderProducts.Add(orderProduct);
             }
 
@@ -144,6 +121,20 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             }
 
             return vendors;
+        }
+
+        static List<Product> LoadProducts()
+        {
+            List<Product> products = new List<Product>();
+
+            Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
+            foreach (var p in db.Products)
+            {
+                var product = Product.CreateProduct(p.Upc, p.Name);
+                products.Add(product);
+            }
+
+            return products;
         }
 
         #endregion // Private Helpers

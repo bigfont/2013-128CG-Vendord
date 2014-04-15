@@ -12,23 +12,23 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Fields
 
         readonly Product _product;
-        readonly ProductRepository _productRepository;
+        readonly Repository _repository;
         bool _isSelected;
 
         #endregion // Fields
 
         #region Constructor
 
-        public ProductViewModel(Product product, ProductRepository productRepository)
+        public ProductViewModel(Product product, Repository repository)
         {
             if (product == null)
                 throw new ArgumentNullException("product");
 
-            if (productRepository == null)
-                throw new ArgumentNullException("productRepository");
+            if (repository == null)
+                throw new ArgumentNullException("repository");
 
             _product = product;
-            _productRepository = productRepository;
+            _repository = repository;
         }
 
         #endregion // Constructor

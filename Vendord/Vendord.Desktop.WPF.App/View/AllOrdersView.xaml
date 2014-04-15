@@ -20,13 +20,13 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListBox
+        <!--<ListBox
             ItemsSource="{Binding SelectedOrder, Converter={ StaticResource SelectedItemToItemsSource }}"         
             DisplayMemberPath="Name">
-        </ListBox>
+        </ListBox>-->
         <ListBox
             ItemsSource="{Binding SelectedOrder.OrderProducts }"            
-            DisplayMemberPath="OrderId">
+            DisplayMemberPath="ProductUpc">
         </ListBox>
     </DockPanel>
 </UserControl>

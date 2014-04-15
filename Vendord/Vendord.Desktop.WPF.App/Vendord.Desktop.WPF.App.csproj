@@ -120,7 +120,6 @@
     <Compile Include="..\Vendord.SmartDevice.Linked\IOHelpers.cs">
       <Link>Linked\IOHelpers.cs</Link>
     </Compile>
-    <Compile Include="DataAccess\ProductRepository.cs" />
     <Compile Include="DataAccess\Repository.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderProduct.cs" />

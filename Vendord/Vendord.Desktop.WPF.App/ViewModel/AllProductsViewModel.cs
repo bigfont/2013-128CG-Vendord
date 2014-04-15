@@ -12,18 +12,18 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     {
          #region Fields
 
-        readonly ProductRepository _productRepository;
+        readonly Repository _repository;
 
         #endregion // Fields
 
         #region Constructor
 
-        public AllProductsViewModel(ProductRepository productRepository)
+        public AllProductsViewModel(Repository repository)
         {
-            if (productRepository == null)
-                throw new ArgumentNullException("productRepository");
+            if (repository == null)
+                throw new ArgumentNullException("repository");
 
-            _productRepository = productRepository;
+            _repository = repository;
 
             base.DisplayName = Strings.AllProductsViewModel_DisplayName;
 
@@ -34,8 +34,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         void CreateAllProducts()
         {
             List<ProductViewModel> all =
-                (from prod in _productRepository.GetProducts()
-                 select new ProductViewModel(prod, _productRepository)).ToList();
+                (from prod in _repository.GetProducts()
+                 select new ProductViewModel(prod, _repository)).ToList();
 
             this.AllProducts = new ObservableCollection<ProductViewModel>(all);
         }
