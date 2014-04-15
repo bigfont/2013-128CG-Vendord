@@ -24,8 +24,7 @@
             </ListView.View>
         </ListView>
         <ListView 
-            DataContext="{Binding SelectedOrder, Converter={ StaticResource SelectedItemToItemsSource }}"
-            ItemsSource="{Binding OrderVendors}" >
+            ItemsSource="{Binding SelectedOrder.OrderVendors}" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
@@ -34,9 +33,8 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView 
-            DataContext="{Binding SelectedOrder, Converter={ StaticResource SelectedItemToItemsSource }}"
-            ItemsSource="{Binding OrderProducts}" >
+        <ListView             
+            ItemsSource="{Binding SelectedOrder.OrderProducts}" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn 

@@ -7,6 +7,7 @@ using Vendord.Desktop.WPF.App.Model;
 using System.Windows.Input;
 using System.ComponentModel;
 using Vendord.Desktop.WPF.App.Properties;
+using System.Collections.ObjectModel;
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
@@ -42,25 +43,29 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         void CreateOrderProducts()
         {
             var query =
-                from o in _repository.GetOrders()
-                join op in _repository.GetOrderProducts()
-                on o.Id equals op.OrderId
+                from op in _repository.GetOrderProducts()
+                where op.OrderId == this.Id                
                 select new OrderProductViewModel(op, _repository);
 
-            this.OrderProducts = query.ToList<OrderProductViewModel>();
+            this.OrderProducts = new ObservableCollection<OrderProductViewModel>(query.ToList());
         }
-
+        
         void CreateOrderVendors()
         {
             var productViewModels =
-                from op in OrderProducts
+                from op in this.OrderProducts
                 select op.Product;
 
             var vendorViewModels =
                 from p in productViewModels
                 select p.Vendor;
 
-            this.OrderVendors = vendorViewModels.ToList();
+            var distinct =
+                from v in vendorViewModels
+                group v by v.Name into g
+                select g.FirstOrDefault();
+
+            this.OrderVendors = new ObservableCollection<VendorViewModel>(distinct.ToList());
         }
 
         #endregion // Constructor
@@ -95,9 +100,39 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
-        public List<OrderProductViewModel> OrderProducts { get; private set; }
+        ObservableCollection<OrderProductViewModel> _OrderProducts;
+        public ObservableCollection<OrderProductViewModel> OrderProducts
+        {
+            get
+            {
+                return _OrderProducts;
+            }
+            set
+            {
+                if (_OrderProducts != value)
+                {
+                    _OrderProducts = value;
+                    base.OnPropertyChanged("OrderProducts");
+                }
+            }
+        }
 
-        public List<VendorViewModel> OrderVendors { get; private set; }
+        ObservableCollection<VendorViewModel> _OrderVendors;
+        public ObservableCollection<VendorViewModel> OrderVendors
+        {
+            get
+            {
+                return _OrderVendors;
+            }
+            set
+            {
+                if (_OrderVendors != value)
+                {
+                    _OrderVendors = value;
+                    base.OnPropertyChanged("OrderVendors");
+                }
+            }
+        }
 
         #endregion // Order Properties        
     }
