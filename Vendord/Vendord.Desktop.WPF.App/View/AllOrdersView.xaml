@@ -7,7 +7,6 @@
     <UserControl.Resources>
         <helpers:SelectedItemToItemsSource x:Key="SelectedItemToItemsSource" />
     </UserControl.Resources>
-
     <DockPanel>
         <ListView 
           ItemsSource="{Binding AllOrders}"

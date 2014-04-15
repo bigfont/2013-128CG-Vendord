@@ -133,6 +133,15 @@ namespace Vendord.Desktop.WPF.App.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sync.
+        /// </summary>
+        internal static string SyncCommandsViewModel_DisplayName {
+            get {
+                return ResourceManager.GetString("SyncCommandsViewModel_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import Products.
         /// </summary>
         internal static string SyncCommandsViewModel_ImportXmlProducts {

@@ -69,11 +69,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
                 new CommandViewModel(
                     Strings.MainWindowViewModel_Command_Products,
-                    new RelayCommand(param => this.ShowAllProducts())),
-
-                new CommandViewModel(
-                    Strings.MainWindowViewModel_Command_OrderProducts,
-                    new RelayCommand(param => this.ShowAllOrderProducts()))
+                    new RelayCommand(param => this.ShowAllProducts()))
             };
         }
 
@@ -159,21 +155,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             if (workspace == null)
             {
                 workspace = new AllProductsViewModel(_repository);
-                this.Workspaces.Add(workspace);
-            }
-
-            this.SetActiveWorkspace(workspace);
-        }
-
-        void ShowAllOrderProducts()
-        {
-            AllOrderProductsViewModel workspace =
-                this.Workspaces.FirstOrDefault(vm => vm is AllOrderProductsViewModel)
-                as AllOrderProductsViewModel;
-
-            if (workspace == null)
-            {
-                workspace = new AllOrderProductsViewModel(_repository);
                 this.Workspaces.Add(workspace);
             }
 

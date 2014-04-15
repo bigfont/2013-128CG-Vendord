@@ -145,6 +145,9 @@
     <value>Country Grocer Salt Spring</value>
     <comment>Title of the main window</comment>
   </data>
+  <data name="SyncCommandsViewModel_DisplayName" xml:space="preserve">
+    <value>Sync</value>
+  </data>
   <data name="SyncCommandsViewModel_ImportXmlProducts" xml:space="preserve">
     <value>Import Products</value>
   </data>

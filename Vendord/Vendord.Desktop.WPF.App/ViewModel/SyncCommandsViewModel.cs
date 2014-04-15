@@ -31,7 +31,12 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
-        List<CommandViewModel> CreateCommands()
+        public SyncCommandsViewModel()
+        {
+            base.DisplayName = Strings.SyncCommandsViewModel_DisplayName;
+        }
+
+        private List<CommandViewModel> CreateCommands()
         {
             return new List<CommandViewModel>
             {
