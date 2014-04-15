@@ -14,10 +14,10 @@
             <ListView.View>                
                 <GridView>                    
                     <GridViewColumn 
-                        Header="Id" 
+                        Header="Order Id" 
                         DisplayMemberBinding="{Binding Id}" />
                     <GridViewColumn 
-                        Header="Name" 
+                        Header="Order Name" 
                         DisplayMemberBinding="{Binding Name}" />
                 </GridView>
             </ListView.View>
@@ -28,7 +28,7 @@
             <ListView.View>                
                 <GridView>
                     <GridViewColumn 
-                        Header="Name" 
+                        Header="Vendor Name" 
                         DisplayMemberBinding="{Binding Name}" />
                 </GridView>
             </ListView.View>
@@ -38,10 +38,10 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn 
-                        Header="Name" 
+                        Header="Product Name" 
                         DisplayMemberBinding="{Binding Product.Name}" />
                     <GridViewColumn 
-                        Header="Cases" 
+                        Header="Cases to Order" 
                         DisplayMemberBinding="{Binding CasesToOrder}" />
                 </GridView>
             </ListView.View>
