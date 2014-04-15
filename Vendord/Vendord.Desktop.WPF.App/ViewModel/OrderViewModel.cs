@@ -18,7 +18,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Fields
 
         readonly Order _order;
-        readonly Repository _orderRepository;
+        readonly Repository _repository;
 
         #endregion // Fields
 
@@ -33,7 +33,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 throw new ArgumentNullException("repository");
 
             _order = order;
-            _orderRepository = repository;
+            _repository = repository;
         }
 
         #endregion // Constructor
@@ -51,6 +51,34 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 _order.Name = value;
 
                 base.OnPropertyChanged("Name");
+            }
+        }
+
+        public List<OrderProduct> OrderProducts
+        {
+            get { return _order.OrderProducts; }
+            set
+            {
+                if (value == _order.OrderProducts)
+                    return;
+
+                _order.OrderProducts = value;
+
+                base.OnPropertyChanged("OrderProducts");
+            }
+        }
+
+        public List<Vendor> Vendors
+        {
+            get { return _order.Vendors; }
+            set
+            {
+                if (value == _order.Vendors)
+                    return;
+
+                _order.Vendors = value;
+
+                base.OnPropertyChanged("Vendors");
             }
         }
 

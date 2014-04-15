@@ -492,7 +492,7 @@ namespace Vendord.SmartDevice.Linked
         { 
         }
 
-        public Guid OrderID { get; set; }
+        public Guid OrderId { get; set; }
 
         // int64
         public long ProductUPC { get; set; }
@@ -502,19 +502,19 @@ namespace Vendord.SmartDevice.Linked
         public void UpsertIntoDb()
         {
             string selectQuery = string.Format(
-                @"SELECT COUNT(*) FROM " + this.TableName + " WHERE OrderID = '{0}' AND ProductUPC = '{1}';",
-                this.OrderID,
+                @"SELECT COUNT(*) FROM " + this.TableName + " WHERE OrderId = '{0}' AND ProductUPC = '{1}';",
+                this.OrderId,
                 this.ProductUPC);
 
             string insertQuery = string.Format(
-                @"INSERT INTO " + this.TableName + " (OrderID, ProductUPC, CasesToOrder) VALUES ('{0}', '{1}', {2});",
-                this.OrderID,
+                @"INSERT INTO " + this.TableName + " (OrderId, ProductUPC, CasesToOrder) VALUES ('{0}', '{1}', {2});",
+                this.OrderId,
                 this.ProductUPC,
                 this.CasesToOrder);
 
             string updateQuery = string.Format(
-                @"UPDATE " + this.TableName + " SET CasesToOrder = {2}, IsInTrash = 0 WHERE OrderID = '{0}' AND ProductUPC = '{1}';",
-                this.OrderID,
+                @"UPDATE " + this.TableName + " SET CasesToOrder = {2}, IsInTrash = 0 WHERE OrderId = '{0}' AND ProductUPC = '{1}';",
+                this.OrderId,
                 this.ProductUPC,
                 this.CasesToOrder);
 
@@ -534,9 +534,9 @@ namespace Vendord.SmartDevice.Linked
             string trashQuery;
 
             trashQuery = string.Format(
-                @"UPDATE {0} SET IsInTrash = 1 WHERE OrderID = '{1}' AND ProductUPC = '{2}'",
+                @"UPDATE {0} SET IsInTrash = 1 WHERE OrderId = '{1}' AND ProductUPC = '{2}'",
                 this.TableName,
-                this.OrderID,
+                this.OrderId,
                 this.ProductUPC);
 
             QueryExecutor.ExecuteNonQuery(trashQuery, null);
@@ -551,7 +551,7 @@ namespace Vendord.SmartDevice.Linked
                 {
                     OrderProduct item = new OrderProduct(this.QueryExecutor)
                     {
-                        OrderID = new Guid(reader["OrderID"].ToString()),
+                        OrderId = new Guid(reader["OrderId"].ToString()),
                         ProductUPC = Convert.ToInt64(reader["ProductUPC"].ToString()),
                         CasesToOrder = Convert.ToInt16(reader["CasesToOrder"])
                     };

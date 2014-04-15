@@ -34,17 +34,17 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region OrderProduct Properties
 
-        public Guid OrderID
+        public Guid OrderId
         {
-            get { return _orderProduct.OrderID; }
+            get { return _orderProduct.OrderId; }
             set
             {
-                if (value == _orderProduct.OrderID)
+                if (value == _orderProduct.OrderId)
                     return;
 
-                _orderProduct.OrderID = value;
+                _orderProduct.OrderId = value;
 
-                base.OnPropertyChanged("OrderID");
+                base.OnPropertyChanged("OrderId");
             }
         }
 

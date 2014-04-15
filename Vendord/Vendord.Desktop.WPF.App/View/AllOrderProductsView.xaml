@@ -9,8 +9,8 @@
           ItemsSource="{Binding}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="OrderID" 
-                                    DisplayMemberBinding="{Binding Path=OrderID}" />
+                    <GridViewColumn Header="OrderId" 
+                                    DisplayMemberBinding="{Binding Path=OrderId}" />
                 </GridView>
             </ListView.View>
         </ListView>

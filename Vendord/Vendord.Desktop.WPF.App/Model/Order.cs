@@ -24,13 +24,13 @@ namespace Vendord.Desktop.WPF.App.Model
             return new Order();
         }
 
-        public static Order CreateOrder(
-            string name)
+        public static Order CreateOrder(Guid id, string name, List<OrderProduct> orderProducts)
         {
-            return new Order
-            {
-                Name = name
-            };
+            Order order = new Order();
+            order.Id = id;
+            order.Name = name;
+            order.OrderProducts = orderProducts;
+            return order;
         }
 
         protected Order()
@@ -41,15 +41,17 @@ namespace Vendord.Desktop.WPF.App.Model
 
         #region State Properties
 
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Gets/sets the order's last name.
         /// </summary>
         public string Name { get; set; }
 
-        public List<Vendor> Vendors { get; set; }
+        public List<OrderProduct> OrderProducts { get; set; }
 
-        public Dictionary<Vendor, Product> VendorProducts { get; set; }
+        public List<Vendor> Vendors { get; set; }        
 
-        #endregion // State Properties
+        #endregion // State Properties        
     }
 }

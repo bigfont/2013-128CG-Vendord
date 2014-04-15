@@ -153,7 +153,7 @@ namespace Vendord.SmartDevice.Linked
                 query = @"
                     CREATE TABLE [tblOrderProduct]
                     (
-                       [OrderID] UNIQUEIDENTIFIER NOT NULL,
+                       [OrderId] UNIQUEIDENTIFIER NOT NULL,
                        [ProductUPC] BIGINT NOT NULL,
                        [CasesToOrder] INT,
                        [IsInTrash] BIT
@@ -163,14 +163,14 @@ namespace Vendord.SmartDevice.Linked
 
                 query = @"
                     ALTER TABLE [tblOrderProduct] 
-                    ADD CONSTRAINT [PK_OrderProduct] PRIMARY KEY ([OrderID], [ProductUPC])
+                    ADD CONSTRAINT [PK_OrderProduct] PRIMARY KEY ([OrderId], [ProductUPC])
                     ";
 
                 queryExecutor.ExecuteNonQuery(query, null);
 
                 query = @"
                     ALTER TABLE [tblOrderProduct] 
-                    ADD CONSTRAINT [FK_OrderId] FOREIGN KEY ([OrderID])
+                    ADD CONSTRAINT [FK_OrderId] FOREIGN KEY ([OrderId])
                        REFERENCES [tblOrder] ([Id]) ON DELETE NO ACTION ON UPDATE NO ACTION
                     ";
 

@@ -20,6 +20,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
 
         readonly List<Order> _orders;
         readonly List<OrderProduct> _orderProducts;
+        readonly List<Vendor> _vendors;
 
         #endregion // Fields
 
@@ -32,6 +33,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         {
             _orders = LoadOrders();
             _orderProducts = LoadOrderProducts();
+            _vendors = LoadVendors();
         }
 
         #endregion // Constructor
@@ -44,6 +46,50 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         public List<Order> GetOrders()
         {
             return new List<Order>(_orders);
+        }
+
+        public List<Order> GetOrdersIncludeProducts()
+        {
+            Guid guid = new Guid("12345678-1234-1234-1234-123456789012");
+
+            List<Order> orders = new List<Order>() 
+            {
+	            Order.CreateOrder(guid, "one", null)
+            };
+            List<OrderProduct> orderProducts = new List<OrderProduct>()
+            {
+	            OrderProduct.CreateOrderProduct(guid),
+	            OrderProduct.CreateOrderProduct(guid)
+            };
+            var groupJoinQuery =
+                from o in _orders
+                join op in _orderProducts
+                on o.Id equals op.OrderId into gj
+                select new { o, gj };
+
+            foreach (var joinResult in groupJoinQuery)
+            {
+                if (joinResult.gj != null)
+                {
+                    Console.WriteLine("gj is not null");
+                }
+            }
+
+            var groupJoinQuerySelectObj =
+                from o in orders
+                join op in orderProducts
+                on o.Id equals op.OrderId into gj
+                select Order.CreateOrder(o.Id, o.Name, gj.ToList<OrderProduct>());
+
+            foreach (Order order in groupJoinQuerySelectObj)
+            {
+                if (order.OrderProducts != null)
+                {
+                    Console.WriteLine("OrderItems is not null.");
+                }
+            }
+
+            return groupJoinQuerySelectObj.ToList<Order>();
         }
 
         /// <summary>
@@ -62,10 +108,10 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         {
             List<Order> orders = new List<Order>();
 
-            Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();            
-            foreach(var o in db.Orders)
+            Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
+            foreach (var o in db.Orders)
             {
-                var order = Order.CreateOrder(o.Name);
+                var order = Order.CreateOrder(o.Id, o.Name, null);
                 orders.Add(order);
             }
 
@@ -79,11 +125,25 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
             foreach (var op in db.OrderProducts)
             {
-                var orderProduct = OrderProduct.CreateOrderProduct(op.OrderID);
+                var orderProduct = OrderProduct.CreateOrderProduct(op.OrderId);
                 orderProducts.Add(orderProduct);
             }
 
             return orderProducts;
+        }
+
+        static List<Vendor> LoadVendors()
+        {
+            List<Vendor> vendors = new List<Vendor>();
+
+            Vendord.SmartDevice.Linked.Database db = new Vendord.SmartDevice.Linked.Database();
+            foreach (var v in db.Vendors)
+            {
+                var vendor = Vendor.CreateVendor(v.Name);
+                vendors.Add(vendor);
+            }
+
+            return vendors;
         }
 
         #endregion // Private Helpers

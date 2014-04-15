@@ -410,7 +410,7 @@ namespace Vendord.Desktop.App
 
                 orderProduct = new OrderProduct(queryExe)
                 {
-                    OrderID = new Guid(selectedListViewOrderItem.Tag.ToString()),
+                    OrderId = new Guid(selectedListViewOrderItem.Tag.ToString()),
                     ProductUPC = productUpc
                 };
                 orderProduct.AddToTrash();
@@ -499,7 +499,7 @@ namespace Vendord.Desktop.App
 
                 orderProduct = new OrderProduct(queryExe)
                 {
-                    OrderID = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString()),
+                    OrderId = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString()),
                     ProductUPC = productUpc,
                     CasesToOrder = Convert.ToInt32(textbox.Text)
                 };
@@ -641,7 +641,7 @@ namespace Vendord.Desktop.App
             if (orderID != Guid.Empty)
             {
                 db = new Database();
-                foreach (OrderProduct orderProduct in db.OrderProducts.Where(i => i.OrderID == orderID))
+                foreach (OrderProduct orderProduct in db.OrderProducts.Where(i => i.OrderId == orderID))
                 {
                     product = filteredProducts.FirstOrDefault(p => p.Upc == orderProduct.ProductUPC);
                     this.AddItemToListViewOrderProduct(product, orderProduct.CasesToOrder, listViewOrderProduct);
@@ -702,7 +702,7 @@ namespace Vendord.Desktop.App
                 from p in db.Products
                 join op in db.OrderProducts on p.Upc equals op.ProductUPC
                 join v in db.Vendors on p.Vendor.Id equals v.Id
-                where op.OrderID == orderID
+                where op.OrderId == orderID
                 group v by v.Name into g
                 select g.Key;
 
@@ -1337,7 +1337,7 @@ namespace Vendord.Desktop.App
 
                             orderProduct = new OrderProduct(queryExe)
                             {
-                                OrderID = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString()),
+                                OrderId = new Guid(this.SelectedListViewItem(this.LvOrder).Tag.ToString()),
                                 ProductUPC = product.Upc,
                                 CasesToOrder = Constants.DefaultCasesToOrder
                             };

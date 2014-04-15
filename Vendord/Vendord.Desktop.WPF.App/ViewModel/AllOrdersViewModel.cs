@@ -42,7 +42,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         void CreateAllOrders()
         {
             List<OrderViewModel> all =
-                (from ord in _repository.GetOrders()
+                (from ord in _repository.GetOrdersIncludeProducts()
                  select new OrderViewModel(ord, _repository)).ToList();
 
             this.AllOrders = new ObservableCollection<OrderViewModel>(all);
@@ -55,7 +55,24 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         /// <summary>
         /// Returns a collection of all the OrderViewModel objects.
         /// </summary>
-        public ObservableCollection<OrderViewModel> AllOrders { get; private set; }
+        public ObservableCollection<OrderViewModel> AllOrders { get; private set; }        
+
+        object _SelectedOrder;
+        public object SelectedOrder
+        {
+            get
+            {
+                return _SelectedOrder;
+            }
+            set
+            {
+                if (_SelectedOrder != value)
+                {
+                    _SelectedOrder = value;
+                    base.OnPropertyChanged("SelectedOrder");
+                }
+            }
+        }
 
         #endregion // Public Interface
 

@@ -182,7 +182,7 @@ namespace Vendord.SmartDevice.App
 
                     OrderProduct orderProduct = new OrderProduct(queryExe)
                     {
-                        OrderID = this.currentOrder.Id,
+                        OrderId = this.currentOrder.Id,
                         ProductUPC = this.currentProduct.Upc,
                         CasesToOrder = Convert.ToInt32(textBoxes.FirstOrDefault<TextBox>().Text)
                     };
@@ -445,7 +445,7 @@ namespace Vendord.SmartDevice.App
                 // check if this product is already in this order
                 OrderProduct orderProduct =
                         db.OrderProducts.FirstOrDefault<OrderProduct>(op =>
-                        op.OrderID == this.currentOrder.Id && op.ProductUPC == this.currentProduct.Upc);
+                        op.OrderId == this.currentOrder.Id && op.ProductUPC == this.currentProduct.Upc);
                 if (orderProduct != null)
                 {
                     // it is so use it's existing amountToOrder
