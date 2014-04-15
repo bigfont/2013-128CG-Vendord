@@ -25,8 +25,8 @@
             DisplayMemberPath="Name">
         </ListBox>
         <ListBox
-            ItemsSource="{Binding SelectedOrder.OrderProducts, Converter={ StaticResource SelectedItemToItemsSource }}"            
-            DisplayMemberPath="Name">
+            ItemsSource="{Binding SelectedOrder.OrderProducts }"            
+            DisplayMemberPath="OrderId">
         </ListBox>
     </DockPanel>
 </UserControl>
