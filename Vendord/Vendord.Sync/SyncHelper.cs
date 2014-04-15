@@ -31,7 +31,7 @@ namespace Vendord.Sync
         private string _remoteDatabaseFullPath;
         private string _remoteDatabaseLocalCopyFullPath;
 
-        internal SyncResult PullVendorsFromItRetailXmlBackup(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        public SyncResult PullVendorsFromItRetailXmlBackup(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
         {
             SyncResult result;
             try
@@ -223,7 +223,7 @@ namespace Vendord.Sync
 
             insertedRecords = 0;
             totalRecords = vendors.Count();
-            DateTime progressReportTime = DateTime.MinValue;
+            DateTime lastProgressReportTime = DateTime.MinValue;
 
             Database db = new Database();
             DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
@@ -238,16 +238,9 @@ namespace Vendord.Sync
                 }
 
                 v.UpsertIntoDb();
-
                 insertedRecords++;
 
-                // if one seconds have passed, make the worker report progress
-                double timeSinceLastReport = DateTime.Now.Subtract(progressReportTime).TotalSeconds;
-                if (timeSinceLastReport >= 1.0)
-                {
-                    worker.ReportProgress(100 * insertedRecords / totalRecords);
-                    progressReportTime = DateTime.Now;
-                }
+                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime);  
             }
         }
 
@@ -257,7 +250,7 @@ namespace Vendord.Sync
 
             insertedRecords = 0;
             totalRecords = products.Count();
-            DateTime progressReportTime = DateTime.MinValue;
+            DateTime lastProgressReportTime = DateTime.MinValue;
 
             Database db = new Database();
             DbQueryExecutor queryExe = new DbQueryExecutor(db.ConnectionString);
@@ -280,14 +273,22 @@ namespace Vendord.Sync
                 p.UpsertIntoDb();
                 insertedRecords++;
 
-                // if five seconds have passed, make the worker report progress
-                double timeSinceLastReport = DateTime.Now.Subtract(progressReportTime).TotalSeconds;
+                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime);    
+            }
+        }
+
+        private void ReportWorkerProgress(BackgroundWorker worker, ref int insertedRecords, ref int totalRecords, ref DateTime lastProgressReportTime)
+        {
+            // if five seconds have passed, make the worker report progress
+            if (worker != null)
+            {
+                double timeSinceLastReport = DateTime.Now.Subtract(lastProgressReportTime).TotalSeconds;
                 if (timeSinceLastReport >= 1.0)
                 {
                     worker.ReportProgress(100 * insertedRecords / totalRecords);
-                    progressReportTime = DateTime.Now;
+                    lastProgressReportTime = DateTime.Now;
                 }
-            }
+            }  
         }
 
         private void SetRemoteDeviceDatabaseNames(RAPI.RemoteDevice remoteDevice)

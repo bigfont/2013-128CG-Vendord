@@ -94,15 +94,44 @@ namespace Vendord.SmartDevice.Linked
 
         public void UpsertIntoDb()
         {
-            string insertQuery;
+            // create parameters
+            var parameters = new SqlCeParameter[]
+            {
+                new SqlCeParameter() { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = this.Id },                
+                new SqlCeParameter() { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = this.Name }                
+            };
 
-            insertQuery = string.Format(
-                @"INSERT INTO {0} (Id, Name) VALUES ({1}, '{2}');",
-                this.TableName,
-                this.Id,
-                this.Name);
+            // exists
+            string selectQuery =
+                string.Format(
+                    @"SELECT COUNT(*) FROM {0} WHERE Id = @Id",
+                    this.TableName);
+            object result = QueryExecutor.ExecuteScalar(selectQuery, parameters);
+            bool exists = Convert.ToInt16(result.ToString()) > 0;
 
-            QueryExecutor.ExecuteNonQuery(insertQuery, null);
+            // upsert
+            if (exists)
+            {
+                // update
+                string updateQuery =
+                    string.Format(
+                        @"UPDATE {0} SET
+                            Name = @Name                            
+                            WHERE Id = @Id",
+                        this.TableName);
+
+                this.QueryExecutor.ExecuteNonQuery(updateQuery, parameters);
+            }
+            else
+            {
+                // insert
+                string insertQuery =
+                    string.Format(
+                        @"INSERT INTO {0} (Id, Name) 
+                            VALUES (@Id, @Name)",
+                    this.TableName);
+                this.QueryExecutor.ExecuteNonQuery(insertQuery, parameters);
+            }            
         }
 
         public override List<Vendor> SelectAll()
@@ -166,15 +195,44 @@ namespace Vendord.SmartDevice.Linked
 
         public void UpsertIntoDb()
         {
-            string insertQuery;
+            // create parameters
+            var parameters = new SqlCeParameter[]
+            {
+                new SqlCeParameter() { ParameterName = "@Id", SqlDbType = SqlDbType.Int, Value = this.Id },                
+                new SqlCeParameter() { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = this.Name }                
+            };
 
-            insertQuery = string.Format(
-                @"INSERT INTO {0} (Id, Name) VALUES ({1}, '{2}');",
-                this.TableName,
-                this.Id,
-                this.Name);
+            // exists
+            string selectQuery =
+                string.Format(
+                    @"SELECT COUNT(*) FROM {0} WHERE Id = @Id",
+                    this.TableName);
+            object result = QueryExecutor.ExecuteScalar(selectQuery, parameters);
+            bool exists = Convert.ToInt16(result.ToString()) > 0;
 
-            QueryExecutor.ExecuteNonQuery(insertQuery, null);
+            // upsert
+            if (exists)
+            {
+                // update
+                string updateQuery =
+                    string.Format(
+                        @"UPDATE {0} SET
+                            Name = @Name                            
+                            WHERE Id = @Id",
+                        this.TableName);
+
+                this.QueryExecutor.ExecuteNonQuery(updateQuery, parameters);
+            }
+            else
+            {
+                // insert
+                string insertQuery =
+                    string.Format(
+                        @"INSERT INTO {0} (Id, Name) 
+                            VALUES (@Id, @Name)",
+                    this.TableName);
+                this.QueryExecutor.ExecuteNonQuery(insertQuery, parameters);
+            }   
         }
 
         public override List<Department> SelectAll()
@@ -224,14 +282,44 @@ namespace Vendord.SmartDevice.Linked
 
         public void UpsertIntoDb(Database db)
         {
-            string insertQuery;
+            // create parameters
+            var parameters = new SqlCeParameter[]
+            {
+                new SqlCeParameter() { ParameterName = "@Id", SqlDbType = SqlDbType.UniqueIdentifier, Value = this.Id },                
+                new SqlCeParameter() { ParameterName = "@Name", SqlDbType = SqlDbType.NVarChar, Value = this.Name }                
+            };
 
-            insertQuery = string.Format(
-                @"INSERT INTO {0} (Id, Name) VALUES (NEWID(), '{1}');",
-                this.TableName,
-                this.Name);
+            // exists
+            string selectQuery =
+                string.Format(
+                    @"SELECT COUNT(*) FROM {0} WHERE Id = @Id",
+                    this.TableName);
+            object result = QueryExecutor.ExecuteScalar(selectQuery, parameters);
+            bool exists = Convert.ToInt16(result.ToString()) > 0;
 
-            QueryExecutor.ExecuteNonQuery(insertQuery, null);
+            // upsert
+            if (exists)
+            {
+                // update
+                string updateQuery =
+                    string.Format(
+                        @"UPDATE {0} SET
+                            Name = @Name                            
+                            WHERE Id = @Id",
+                        this.TableName);
+
+                this.QueryExecutor.ExecuteNonQuery(updateQuery, parameters);
+            }
+            else
+            {
+                // insert
+                string insertQuery =
+                    string.Format(
+                        @"INSERT INTO {0} (Id, Name) 
+                            VALUES (NEWID(), @Name)",
+                    this.TableName);
+                this.QueryExecutor.ExecuteNonQuery(insertQuery, parameters);
+            }  
 
             // set the Id to the newly generated Id
             this.Id = db.Orders.FirstOrDefault<Order>(os => os.Name.Equals(this.Name)).Id;
@@ -333,7 +421,7 @@ namespace Vendord.SmartDevice.Linked
                 string updateQuery =
                     string.Format(
                         @"UPDATE {0} SET
-                            CertCode = @CertCode
+                            CertCode = @CertCode,
                             Name = @Name, 
                             Price = @Price, 
                             VendorId = @VendorId, 

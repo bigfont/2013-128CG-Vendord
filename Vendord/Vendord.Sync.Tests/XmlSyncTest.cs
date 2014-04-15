@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel;
 
 namespace Vendord.Sync.Tests
 {
@@ -10,9 +11,9 @@ namespace Vendord.Sync.Tests
     /// Summary description for UnitTest1
     /// </summary>
     [TestClass]
-    public class UnitTest1
+    public class XmlSyncTest
     {
-        public UnitTest1()
+        public XmlSyncTest()
         {
             //
             // TODO: Add constructor logic here
@@ -60,11 +61,27 @@ namespace Vendord.Sync.Tests
         #endregion
 
         [TestMethod]
-        public void TestMethod1()
+        public void PullProducts()
         {
-            //
-            // TODO: Add test logic	here
-            //
+            Sync sync = new Sync();
+
+            string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-products-small.xml";
+            int totalRecords = 0;
+            int insertedRecords = 0;
+            Sync.SyncResult result = sync.PullProductsFromItRetailXmlBackup(null, filePath, ref totalRecords, ref insertedRecords);
+            Assert.AreEqual(result, Sync.SyncResult.Complete);
+        }
+
+        [TestMethod]
+        public void PullVendors()
+        {
+            Sync sync = new Sync();
+
+            string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-vendors.xml";
+            int totalRecords = 0;
+            int insertedRecords = 0;
+            Sync.SyncResult result = sync.PullVendorsFromItRetailXmlBackup(null, filePath, ref totalRecords, ref insertedRecords);
+            Assert.AreEqual(result, Sync.SyncResult.Complete);
         }
     }
 }
