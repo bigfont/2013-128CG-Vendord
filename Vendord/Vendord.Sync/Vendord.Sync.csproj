@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,6 +48,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Microsoft.Synchronization.Data.SqlServerCe.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.DebuggerVisualizers, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="RAPI2, Version=2.0.0.16389, Culture=neutral, PublicKeyToken=88b5324cd51dc3c4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\RAPI2.dll</HintPath>
@@ -59,6 +61,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -94,8 +97,12 @@
     <Compile Include="..\Vendord.SmartDevice.Linked\IOHelpers.cs">
       <Link>LinkedFiles\IOHelpers.cs</Link>
     </Compile>
+    <Compile Include="ScopeNames.cs" />
+    <Compile Include="MsSyncFramework.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SyncHelper.cs" />
+    <Compile Include="DbSync.cs" />
+    <Compile Include="SyncResult.cs" />
+    <Compile Include="XmlSync.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

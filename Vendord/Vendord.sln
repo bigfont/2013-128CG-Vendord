@@ -9,7 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vendord.SmartDevice.Linked"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7925C6EB-6002-4319-8FC8-CE59F12BE765}"
 	ProjectSection(SolutionItems) = preProject
-		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 		Vendord.vsmdi = Vendord.vsmdi
 		Vendord1.vsmdi = Vendord1.vsmdi
 	EndProjectSection

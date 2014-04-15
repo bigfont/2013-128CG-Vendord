@@ -131,5 +131,41 @@ namespace Vendord.Desktop.WPF.App.Properties {
                 return ResourceManager.GetString("MainWindowViewModel_DisplayName", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Products.
+        /// </summary>
+        internal static string SyncCommandsViewModel_ImportXmlProducts {
+            get {
+                return ResourceManager.GetString("SyncCommandsViewModel_ImportXmlProducts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Vendors.
+        /// </summary>
+        internal static string SyncCommandsViewModel_ImportXmlVendors {
+            get {
+                return ResourceManager.GetString("SyncCommandsViewModel_ImportXmlVendors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync Orders.
+        /// </summary>
+        internal static string SyncCommandsViewModel_SyncDbOrders {
+            get {
+                return ResourceManager.GetString("SyncCommandsViewModel_SyncDbOrders", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync Products, Vendors, and Departments.
+        /// </summary>
+        internal static string SyncCommandsViewModel_SyncDbProductsVendorsDepartments {
+            get {
+                return ResourceManager.GetString("SyncCommandsViewModel_SyncDbProductsVendorsDepartments", resourceCulture);
+            }
+        }
     }
 }
