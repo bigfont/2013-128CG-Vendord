@@ -12,12 +12,13 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     using Vendord.Sync;
     using System.ComponentModel;
     using System.IO;
+    using Vendord.Desktop.WPF.App.BackgroundWorkers;
 
     class SyncCommandsViewModel : WorkspaceViewModel
     {
         ReadOnlyCollection<CommandViewModel> _commands;
         private int _currentProgress;
-        private string _recentlyImportedItems;
+        private ObservableCollection<string> _recentlyImportedItems;
 
         /// <summary>
         /// Returns a read-only list of commands 
@@ -49,15 +50,15 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
-        public string RecentlyImportedItems
+        public ObservableCollection<string> RecentlyImportedItems
         {
-            get 
+            get
             {
                 if (this._recentlyImportedItems == null)
                 {
-                    this._recentlyImportedItems = string.Empty;
+                    this._recentlyImportedItems = new ObservableCollection<string>();
                 }
-                return this._recentlyImportedItems; 
+                return this._recentlyImportedItems;
             }
             private set
             {
@@ -96,56 +97,41 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             };
         }
 
+        private void ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (e != null)
+            {
+                if (e.ProgressPercentage > 0)
+                {
+                    CurrentProgress = e.ProgressPercentage;
+                }
+                if (e.UserState != null)
+                {
+                    string message = Environment.NewLine + e.UserState.ToString();
+                    AddToRecentlyImportedItems(message);
+                }
+            }
+        }
+
         private void ImportXmlProducts()
         {
             try
             {
-                ProgressChangedEventHandler progressChanged = new ProgressChangedEventHandler((s, e) =>
-                {
-                    ProgressChangedEventArgs args = e as ProgressChangedEventArgs;
-                    if (args != null)
-                    {
-                        if(args.ProgressPercentage > 0)
-                        {
-                            CurrentProgress = args.ProgressPercentage;
-                        }
-                        if (args.UserState != null)
-                        {                            
-                            string message = Environment.NewLine + args.UserState.ToString();
-                            RecentlyImportedItems = RecentlyImportedItems.Insert(0, message);
-                        }                        
-                    }
-                    
-                });
-
-                XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(progressChanged);
+                XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(ProgressChanged);
                 bw.Run();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debugger.Break();
             }
-        }        
+        }
 
         private void ImportXmlVendors()
         {
-            XmlSync sync = new XmlSync();
-            BackgroundWorker worker = null;
-#if ImportTestData
-            string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-vendors-small.xml";
-#else
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\vendors.xml");
-#endif
-            int totalRecords = 0;
-            int insertedRecords = 0;
             try
             {
-                SyncResult result =
-                    sync.PullVendorsFromItRetailXmlBackup(
-                        worker,
-                        filePath,
-                        ref totalRecords,
-                        ref insertedRecords);
+                XmlVendorsBackgroundWorker bw = new XmlVendorsBackgroundWorker(ProgressChanged);
+                bw.Run();
             }
             catch (Exception ex)
             {
@@ -178,43 +164,19 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 System.Diagnostics.Debugger.Break();
             }
         }
-    }
 
-    public class XmlProductsBackgroundWorker
-    {
-        private static BackgroundWorker bWorker;
+        #region Private Helpers
 
-        public XmlProductsBackgroundWorker(ProgressChangedEventHandler ProgressChanged)
+        private const int maxRecentlyImportedItems = 20;
+        private void AddToRecentlyImportedItems(string s)
         {
-            bWorker = new BackgroundWorker();
-            bWorker.WorkerReportsProgress = true;
-            bWorker.DoWork += new DoWorkEventHandler(DoWork);
-            bWorker.ProgressChanged += ProgressChanged;
+            if (RecentlyImportedItems.Count() > maxRecentlyImportedItems)
+            {
+                RecentlyImportedItems.RemoveAt(0);
+            }
+            RecentlyImportedItems.Add(s);
         }
 
-        public void Run()
-        {
-            bWorker.RunWorkerAsync();
-            bWorker.ReportProgress(5);
-        }
-
-        private void DoWork(object sender, DoWorkEventArgs e)
-        {
-            XmlSync sync = new XmlSync();
-            BackgroundWorker worker = sender as BackgroundWorker;
-#if ImportTestData
-            string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-products-small.xml";
-#else
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\products.xml");
-#endif
-            int totalRecords = 0;
-            int insertedRecords = 0;
-
-            SyncResult result = sync.PullProductsFromItRetailXmlBackup(
-                worker,
-                filePath,
-                ref totalRecords,
-                ref insertedRecords);
-        }
+        #endregion
     }
 }

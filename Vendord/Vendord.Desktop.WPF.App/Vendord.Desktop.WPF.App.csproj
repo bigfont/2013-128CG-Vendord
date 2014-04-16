@@ -137,7 +137,12 @@
     <Compile Include="..\Vendord.SmartDevice.Linked\IOHelpers.cs">
       <Link>Linked\IOHelpers.cs</Link>
     </Compile>
+    <Compile Include="BackgroundWorkers\BackgroundWorkerWrapper.cs" />
+    <Compile Include="BackgroundWorkers\SyncDbOrdersBackgroundWorker.cs" />
+    <Compile Include="BackgroundWorkers\SyncDbProductsVendorsDepartmentsBackgroundWorker.cs" />
+    <Compile Include="BackgroundWorkers\XmlVendorsBackgroundWorker.cs" />
     <Compile Include="DataAccess\Repository.cs" />
+    <Compile Include="BackgroundWorkers\XmlProductsBackgroundWorker.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderProduct.cs" />
     <Compile Include="Model\Product.cs" />
