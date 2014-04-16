@@ -13,11 +13,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     using System.ComponentModel;
     using System.IO;
 
-    class SyncCommandsViewModel : List<CommandViewModel>
+    class SyncCommandsViewModel : WorkspaceViewModel
     {
         ReadOnlyCollection<CommandViewModel> _commands;
-
-        public virtual string DisplayName { get; protected set; }
+        private int _currentProgress;
+        private string _recentlyImportedItems;
 
         /// <summary>
         /// Returns a read-only list of commands 
@@ -36,10 +36,42 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
+        public int CurrentProgress
+        {
+            get { return this._currentProgress; }
+            private set
+            {
+                if (this._currentProgress != value)
+                {
+                    this._currentProgress = value;
+                    this.OnPropertyChanged("CurrentProgress");
+                }
+            }
+        }
+
+        public string RecentlyImportedItems
+        {
+            get 
+            {
+                if (this._recentlyImportedItems == null)
+                {
+                    this._recentlyImportedItems = string.Empty;
+                }
+                return this._recentlyImportedItems; 
+            }
+            private set
+            {
+                if (this._recentlyImportedItems != value)
+                {
+                    this._recentlyImportedItems = value;
+                    this.OnPropertyChanged("RecentlyImportedItems");
+                }
+            }
+        }
+
         public SyncCommandsViewModel()
         {
             DisplayName = "Sync";
-            this.AddRange(CreateCommands());
         }
 
         private List<CommandViewModel> CreateCommands()
@@ -66,29 +98,34 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         private void ImportXmlProducts()
         {
-            XmlSync sync = new XmlSync();
-            BackgroundWorker worker = null;
-#if ImportTestData
-            string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-products-small.xml";
-#else
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\products.xml");
-#endif
-            int totalRecords = 0;
-            int insertedRecords = 0;
             try
             {
-                SyncResult result =
-                    sync.PullProductsFromItRetailXmlBackup(
-                        worker,
-                        filePath,
-                        ref totalRecords,
-                        ref insertedRecords);
+                ProgressChangedEventHandler progressChanged = new ProgressChangedEventHandler((s, e) =>
+                {
+                    ProgressChangedEventArgs args = e as ProgressChangedEventArgs;
+                    if (args != null)
+                    {
+                        if(args.ProgressPercentage > 0)
+                        {
+                            CurrentProgress = args.ProgressPercentage;
+                        }
+                        if (args.UserState != null)
+                        {                            
+                            string message = Environment.NewLine + args.UserState.ToString();
+                            RecentlyImportedItems = RecentlyImportedItems.Insert(0, message);
+                        }                        
+                    }
+                    
+                });
+
+                XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(progressChanged);
+                bw.Run();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debugger.Break();
             }
-        }
+        }        
 
         private void ImportXmlVendors()
         {
@@ -140,6 +177,44 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             {
                 System.Diagnostics.Debugger.Break();
             }
+        }
+    }
+
+    public class XmlProductsBackgroundWorker
+    {
+        private static BackgroundWorker bWorker;
+
+        public XmlProductsBackgroundWorker(ProgressChangedEventHandler ProgressChanged)
+        {
+            bWorker = new BackgroundWorker();
+            bWorker.WorkerReportsProgress = true;
+            bWorker.DoWork += new DoWorkEventHandler(DoWork);
+            bWorker.ProgressChanged += ProgressChanged;
+        }
+
+        public void Run()
+        {
+            bWorker.RunWorkerAsync();
+            bWorker.ReportProgress(5);
+        }
+
+        private void DoWork(object sender, DoWorkEventArgs e)
+        {
+            XmlSync sync = new XmlSync();
+            BackgroundWorker worker = sender as BackgroundWorker;
+#if ImportTestData
+            string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-products-small.xml";
+#else
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\products.xml");
+#endif
+            int totalRecords = 0;
+            int insertedRecords = 0;
+
+            SyncResult result = sync.PullProductsFromItRetailXmlBackup(
+                worker,
+                filePath,
+                ref totalRecords,
+                ref insertedRecords);
         }
     }
 }

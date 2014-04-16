@@ -160,7 +160,7 @@ namespace Vendord.Sync
                 v.UpsertIntoDb();
                 insertedRecords++;
 
-                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime);
+                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime, v.Name);
             }
         }
 
@@ -177,6 +177,8 @@ namespace Vendord.Sync
 
             foreach (Product p in products)
             {
+                System.Diagnostics.Debug.WriteLine("Importing product" + p.Name);
+
                 Vendor v = new Vendor();
                 v.QueryExecutor = queryExe;
                 v.Id = p.Vendor.Id;
@@ -193,21 +195,20 @@ namespace Vendord.Sync
                 p.UpsertIntoDb();
                 insertedRecords++;
 
-                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime);
+                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime, p.Name);
             }
         }
 
-        private void ReportWorkerProgress(BackgroundWorker worker, ref int insertedRecords, ref int totalRecords, ref DateTime lastProgressReportTime)
+        private void ReportWorkerProgress(BackgroundWorker worker, ref int insertedRecords, ref int totalRecords, ref DateTime lastProgressReportTime, string importedItem)
         {
             // if five seconds have passed, make the worker report progress
             if (worker != null)
             {
                 double timeSinceLastReport = DateTime.Now.Subtract(lastProgressReportTime).TotalSeconds;
-                if (timeSinceLastReport >= 1.0)
-                {
-                    worker.ReportProgress(100 * insertedRecords / totalRecords);
-                    lastProgressReportTime = DateTime.Now;
-                }
+                int percentComplete = 100 * insertedRecords / totalRecords;
+                string message = string.Format("Importing {0} - Item {1} of {2}", importedItem, insertedRecords, totalRecords);
+                worker.ReportProgress(percentComplete, message);
+                lastProgressReportTime = DateTime.Now;
             }
         }
     }

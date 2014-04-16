@@ -98,6 +98,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\SyncCommandsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Resource Include="View\AllOrdersViewResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -165,6 +169,9 @@
     <Compile Include="ViewModel\WorkspaceViewModel.cs" />
     <Compile Include="View\AllOrdersView.xaml.cs">
       <DependentUpon>AllOrdersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SyncCommandsView.xaml.cs">
+      <DependentUpon>SyncCommandsView.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>

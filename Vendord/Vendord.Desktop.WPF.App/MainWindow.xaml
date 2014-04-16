@@ -36,7 +36,7 @@
                         Content="{Binding Path=SubCommands}"
                         ContentTemplate="{StaticResource CommandsTemplate}"
                         Header="{Binding Path=SubCommandSet}" 
-                        Style="{StaticResource MainHCCStyle}" />
+                        Style="{StaticResource MainHCCStyle}" />                                       
 
                 </StackPanel>
             </Border>

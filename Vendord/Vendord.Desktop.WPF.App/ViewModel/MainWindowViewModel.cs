@@ -145,8 +145,18 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         void ShowSyncOptions()
         {
-            SyncCommandsViewModel commands = new SyncCommandsViewModel();
-            SetActiveSubCommands(commands.DisplayName, commands);
+            SyncCommandsViewModel workspace =
+                this.Workspaces.FirstOrDefault(vm => vm is SyncCommandsViewModel)
+                as SyncCommandsViewModel;
+
+            if (workspace == null)
+            {
+                workspace = new SyncCommandsViewModel();
+                this.Workspaces.Add(workspace);
+            }
+
+            this.SetActiveWorkspace(workspace);
+            SetActiveSubCommands(workspace.DisplayName, workspace.Commands.ToList());
         }
 
         void ShowAllOrders()
