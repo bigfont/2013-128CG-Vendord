@@ -133,15 +133,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         private void SyncDbProductsVendorsDepartments()
         {
-            DbSync sync = new DbSync();
-            try
-            {
-                SyncResult result = sync.SyncDesktopAndDeviceDatabases(ScopeName.SyncProductsVendorsAndDepts);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debugger.Break();
-            }
+            SyncDbProductsVendorsDepartmentsBackgroundWorker bw = new SyncDbProductsVendorsDepartmentsBackgroundWorker(this.ProgressChanged);
+            bw.Run();
         }
 
         #region Private Helpers
