@@ -160,7 +160,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         }
 
         #endregion // Order Properties       
- 
+
         #region Private Helpers
 
         void FilterProductsOnVendor()

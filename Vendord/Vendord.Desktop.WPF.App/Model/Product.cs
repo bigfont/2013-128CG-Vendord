@@ -25,12 +25,14 @@ namespace Vendord.Desktop.WPF.App.Model
 
         public static Product CreateProduct(
             long upc,
+            long certCode,
             string name, 
             int? vendorId)
         {
             return new Product
             {
                 Upc = upc,
+                CertCode = certCode,
                 Name = name,
                 VendorId = vendorId
             };
@@ -45,6 +47,7 @@ namespace Vendord.Desktop.WPF.App.Model
         #region State Properties
 
         public long Upc { get; set; }
+        public long CertCode { get; set; }
         public string Name { get; set; }
         public int? VendorId { get; set; }
 

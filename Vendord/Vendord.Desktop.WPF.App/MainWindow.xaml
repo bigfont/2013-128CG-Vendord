@@ -31,14 +31,12 @@
                         Header="Control Panel" 
                         Style="{StaticResource MainHCCStyle}" />
 
-                    <!--<HeaderedContentControl                         
-                        Content="{Binding Path=Workspaces.CurrentItem.Commands}"
+                    <!--Todo Make this a bit prettier-->
+                    <HeaderedContentControl 
+                        Content="{Binding Workspaces.CurrentItem.Commands}"
                         ContentTemplate="{StaticResource CommandsTemplate}"
-                        Header="Control Panel" 
-                        Style="{StaticResource MainHCCStyle}" />-->
-                    
-                    <Label Content="Hello"></Label>
-                    <Label Content="{Binding Workspaces.CurrentItem.Commands}"></Label>
+                        Header="{Binding Workspaces.CurrentItem.DisplayName}" 
+                        Style="{StaticResource MainHCCStyle}" />
 
                 </StackPanel>
             </Border>

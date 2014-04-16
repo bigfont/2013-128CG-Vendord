@@ -79,6 +79,24 @@ namespace Vendord.Desktop.WPF.App.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Print Order for All Vendors.
+        /// </summary>
+        internal static string AllOrderViewModel_Command_PrintOrderForAllVendors {
+            get {
+                return ResourceManager.GetString("AllOrderViewModel_Command_PrintOrderForAllVendors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print Order for Selected Vendor.
+        /// </summary>
+        internal static string AllOrderViewModel_Command_PrintOrderForSelectedVendor {
+            get {
+                return ResourceManager.GetString("AllOrderViewModel_Command_PrintOrderForSelectedVendor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Products.
         /// </summary>
         internal static string AllProductsViewModel_DisplayName {
@@ -133,47 +151,47 @@ namespace Vendord.Desktop.WPF.App.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sync.
-        /// </summary>
-        internal static string SyncCommandsViewModel_DisplayName {
-            get {
-                return ResourceManager.GetString("SyncCommandsViewModel_DisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Import Products.
         /// </summary>
-        internal static string SyncCommandsViewModel_ImportXmlProducts {
+        internal static string SyncCommandsViewModel_Command_ImportXmlProducts {
             get {
-                return ResourceManager.GetString("SyncCommandsViewModel_ImportXmlProducts", resourceCulture);
+                return ResourceManager.GetString("SyncCommandsViewModel_Command_ImportXmlProducts", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Import Vendors.
         /// </summary>
-        internal static string SyncCommandsViewModel_ImportXmlVendors {
+        internal static string SyncCommandsViewModel_Command_ImportXmlVendors {
             get {
-                return ResourceManager.GetString("SyncCommandsViewModel_ImportXmlVendors", resourceCulture);
+                return ResourceManager.GetString("SyncCommandsViewModel_Command_ImportXmlVendors", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sync Orders.
         /// </summary>
-        internal static string SyncCommandsViewModel_SyncDbOrders {
+        internal static string SyncCommandsViewModel_Command_SyncDbOrders {
             get {
-                return ResourceManager.GetString("SyncCommandsViewModel_SyncDbOrders", resourceCulture);
+                return ResourceManager.GetString("SyncCommandsViewModel_Command_SyncDbOrders", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Sync Products, Vendors, and Departments.
         /// </summary>
-        internal static string SyncCommandsViewModel_SyncDbProductsVendorsDepartments {
+        internal static string SyncCommandsViewModel_Command_SyncDbProductsVendorsDepartments {
             get {
-                return ResourceManager.GetString("SyncCommandsViewModel_SyncDbProductsVendorsDepartments", resourceCulture);
+                return ResourceManager.GetString("SyncCommandsViewModel_Command_SyncDbProductsVendorsDepartments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync.
+        /// </summary>
+        internal static string SyncCommandsViewModel_DisplayName {
+            get {
+                return ResourceManager.GetString("SyncCommandsViewModel_DisplayName", resourceCulture);
             }
         }
     }

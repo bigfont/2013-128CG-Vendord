@@ -7,6 +7,7 @@ using Vendord.Desktop.WPF.App.DataAccess;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using Vendord.Desktop.WPF.App.Properties;
+using Vendord.Printer;
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
@@ -21,6 +22,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Fields
 
         readonly Repository _repository;
+        ReadOnlyCollection<CommandViewModel> _commands;
 
         #endregion // Fields
 
@@ -49,6 +51,74 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         }
 
         #endregion // Constructor
+
+        #region Commands
+
+        /// <summary>
+        /// Returns a read-only list of commands 
+        /// that the UI can display and execute.
+        /// </summary>
+        public ReadOnlyCollection<CommandViewModel> Commands
+        {
+            get
+            {
+                if (_commands == null)
+                {
+                    List<CommandViewModel> cmds = this.CreateCommands();
+                    _commands = new ReadOnlyCollection<CommandViewModel>(cmds);
+                }
+                return _commands;
+            }
+        }
+
+        List<CommandViewModel> CreateCommands()
+        {
+            return new List<CommandViewModel>
+            {
+                new CommandViewModel(
+                    Strings.AllOrderViewModel_Command_PrintOrderForSelectedVendor,
+                    new RelayCommand(param => this.PrintOrderForSelectedVendor())),
+
+                new CommandViewModel(
+                    Strings.AllOrderViewModel_Command_PrintOrderForAllVendors,
+                    new RelayCommand(param => this.PrintOrderForAllVendors()))
+            };
+        }
+
+        private object PrintOrderForAllVendors()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void PrintOrderForSelectedVendor()
+        {
+            OrderViewModel selectedOrderVm = (OrderViewModel)SelectedOrder;
+            VendorViewModel selectedVendorVm = (VendorViewModel)(selectedOrderVm.SelectedVendor);
+            
+            // create printable order products list from order products list
+            var printableOrderProducts = selectedOrderVm.OrderProducts.Select(op => {
+                PrintableOrderProduct pop = new PrintableOrderProduct();
+                pop.Upc = op.Product.Upc;
+                pop.CertCode = op.Product.CertCode;
+                pop.ProductName = op.Product.Name;
+                pop.CasesToOrder = op.CasesToOrder;
+                return pop;
+            });
+
+            // create printable order
+            PrintableOrder pOrder = new PrintableOrder();
+            pOrder.To = selectedVendorVm.Name;
+            pOrder.From = "Country Grocer Salt Spring";
+            pOrder.Department = "(Coming soon)";
+            pOrder.Date = DateTime.Now;
+            pOrder.PrintableOrderProducts = printableOrderProducts.ToList();
+
+            // print
+            TxtPrinter txtPrinter = new TxtPrinter();
+            txtPrinter.PrintOrderForOneVendor(pOrder);
+        }
+
+        #endregion // Commands
 
         #region Public Interface
 

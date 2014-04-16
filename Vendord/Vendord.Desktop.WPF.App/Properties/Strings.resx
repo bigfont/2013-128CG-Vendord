@@ -123,6 +123,12 @@
   <data name="AllOrdersViewModel_DisplayName" xml:space="preserve">
     <value>Orders</value>
   </data>
+  <data name="AllOrderViewModel_Command_PrintOrderForAllVendors" xml:space="preserve">
+    <value>Print Order for All Vendors</value>
+  </data>
+  <data name="AllOrderViewModel_Command_PrintOrderForSelectedVendor" xml:space="preserve">
+    <value>Print Order for Selected Vendor</value>
+  </data>
   <data name="AllProductsViewModel_DisplayName" xml:space="preserve">
     <value>Products</value>
   </data>
@@ -145,19 +151,19 @@
     <value>Country Grocer Salt Spring</value>
     <comment>Title of the main window</comment>
   </data>
-  <data name="SyncCommandsViewModel_DisplayName" xml:space="preserve">
-    <value>Sync</value>
-  </data>
-  <data name="SyncCommandsViewModel_ImportXmlProducts" xml:space="preserve">
+  <data name="SyncCommandsViewModel_Command_ImportXmlProducts" xml:space="preserve">
     <value>Import Products</value>
   </data>
-  <data name="SyncCommandsViewModel_ImportXmlVendors" xml:space="preserve">
+  <data name="SyncCommandsViewModel_Command_ImportXmlVendors" xml:space="preserve">
     <value>Import Vendors</value>
   </data>
-  <data name="SyncCommandsViewModel_SyncDbOrders" xml:space="preserve">
+  <data name="SyncCommandsViewModel_Command_SyncDbOrders" xml:space="preserve">
     <value>Sync Orders</value>
   </data>
-  <data name="SyncCommandsViewModel_SyncDbProductsVendorsDepartments" xml:space="preserve">
+  <data name="SyncCommandsViewModel_Command_SyncDbProductsVendorsDepartments" xml:space="preserve">
     <value>Sync Products, Vendors, and Departments</value>
+  </data>
+  <data name="SyncCommandsViewModel_DisplayName" xml:space="preserve">
+    <value>Sync</value>
   </data>
 </root>

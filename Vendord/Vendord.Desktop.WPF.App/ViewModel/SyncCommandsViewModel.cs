@@ -41,19 +41,19 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             return new List<CommandViewModel>
             {
                 new CommandViewModel(
-                    Strings.SyncCommandsViewModel_ImportXmlProducts,
+                    Strings.SyncCommandsViewModel_Command_ImportXmlProducts,
                     new RelayCommand(param => this.ImportXmlProducts())),
 
                 new CommandViewModel(
-                    Strings.SyncCommandsViewModel_ImportXmlVendors,
+                    Strings.SyncCommandsViewModel_Command_ImportXmlVendors,
                     new RelayCommand(param => this.ImportXmlVendors())),
 
                 new CommandViewModel(
-                    Strings.SyncCommandsViewModel_SyncDbOrders,
+                    Strings.SyncCommandsViewModel_Command_SyncDbOrders,
                     new RelayCommand(param => this.SyncDbOrders())),
 
                 new CommandViewModel(
-                    Strings.SyncCommandsViewModel_SyncDbProductsVendorsDepartments,
+                    Strings.SyncCommandsViewModel_Command_SyncDbProductsVendorsDepartments,
                     new RelayCommand(param => this.SyncDbProductsVendorsDepartments()))
             };
         }

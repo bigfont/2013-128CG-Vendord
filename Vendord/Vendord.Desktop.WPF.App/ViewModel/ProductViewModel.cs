@@ -60,6 +60,19 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 base.OnPropertyChanged("Upc");
             }
         }
+        public long CertCode
+        {
+            get { return _product.CertCode; }
+            set
+            {
+                if (value == _product.CertCode)
+                    return;
+
+                _product.CertCode = value;
+
+                base.OnPropertyChanged("CertCode");
+            }
+        }
         public string Name
         {
             get { return _product.Name; }
