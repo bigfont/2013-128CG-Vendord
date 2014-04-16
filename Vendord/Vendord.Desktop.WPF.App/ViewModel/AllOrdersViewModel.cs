@@ -112,9 +112,14 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             return pOrder;
         }
 
-        private object PrintOrderForAllVendors()
+        private void PrintOrderForAllVendors()
         {
-            throw new NotImplementedException();
+            OrderViewModel selectedOrderVm = (OrderViewModel)SelectedOrder;
+            selectedOrderVm.OrderVendors.ToList().ForEach(v => {
+                selectedOrderVm.SelectedVendor = v;
+                PrintOrderForSelectedVendor();
+                System.Threading.Thread.Sleep(500);
+            });
         }
 
         private void PrintOrderForSelectedVendor()
@@ -122,11 +127,13 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             OrderViewModel selectedOrderVm = (OrderViewModel)SelectedOrder;
             VendorViewModel selectedVendorVm = (VendorViewModel)(selectedOrderVm.SelectedVendor);
 
+            // filter on selected vendor
             List<OrderProductViewModel> filteredOrderProductVms =
                 selectedOrderVm.OrderProducts
                 .Where(op => op.Product.VendorId == selectedVendorVm.Id)
                 .ToList();
 
+            // create order
             var pOrderProducts = MakePrintableOrderProductList(filteredOrderProductVms);
             var pOrder = MakePrintableOrder(
                 selectedVendorVm.Name, 
