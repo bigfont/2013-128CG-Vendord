@@ -13,9 +13,9 @@
     <DockPanel>
         <Grid Margin="4">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="10" />
+            <Grid.ColumnDefinitions>                
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="10" />                
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
