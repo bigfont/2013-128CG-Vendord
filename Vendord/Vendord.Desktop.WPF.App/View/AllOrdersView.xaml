@@ -5,14 +5,19 @@
     xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     xmlns:helpers="clr-namespace:Vendord.Desktop.WPF.App.Helpers" >
     <UserControl.Resources>
-        <helpers:SelectedItemToItemsSource x:Key="SelectedItemToItemsSource" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="AllOrdersViewResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <helpers:SelectedItemToItemsSource x:Key="SelectedItemToItemsSource" />
+        </ResourceDictionary>
     </UserControl.Resources>
     <DockPanel>
         <ListView 
           ItemsSource="{Binding AllOrders}"
           SelectedItem="{Binding SelectedOrder}">
-            <ListView.View>                
-                <GridView>                    
+            <ListView.View>
+                <GridView>
                     <GridViewColumn 
                         Header="Order Id" 
                         DisplayMemberBinding="{Binding Id}" />
@@ -25,7 +30,7 @@
         <ListView 
             ItemsSource="{Binding SelectedOrder.OrderVendors}"
             SelectedItem="{Binding SelectedOrder.SelectedVendor}">
-            <ListView.View>                
+            <ListView.View>
                 <GridView>
                     <GridViewColumn 
                         Header="Vendor Name" 
