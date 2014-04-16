@@ -21,6 +21,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         ReadOnlyCollection<CommandViewModel> _commands;
         readonly Repository _repository;
+        ObservableCollection<CommandViewModel> _subCommands;
         ObservableCollection<WorkspaceViewModel> _workspaces;
 
         #endregion // Fields
@@ -52,6 +53,36 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                     _commands = new ReadOnlyCollection<CommandViewModel>(cmds);
                 }
                 return _commands;
+            }
+        }
+
+        public ObservableCollection<CommandViewModel> SubCommands
+        {
+            get
+            {
+                if (_subCommands == null)
+                {
+                    _subCommands = new ObservableCollection<CommandViewModel>();
+                    ////_subCommands.CollectionChanged += this.OnSubCommandsChanged;
+                }
+                return _subCommands;
+            }
+        }
+
+        object _subCommandSet;
+        public object SubCommandSet
+        {
+            get
+            {
+                return _subCommandSet;
+            }
+            set
+            {
+                if (_subCommandSet != value)
+                {
+                    _subCommandSet = value;
+                    base.OnPropertyChanged("SubCommandSet");
+                }
             }
         }
 
@@ -114,17 +145,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         void ShowSyncOptions()
         {
-            SyncCommandsViewModel workspace =
-                this.Workspaces.FirstOrDefault(vm => vm is SyncCommandsViewModel)
-                as SyncCommandsViewModel;
-
-            if (workspace == null)
-            {
-                workspace = new SyncCommandsViewModel();
-                this.Workspaces.Add(workspace);
-            }
-
-            this.SetActiveWorkspace(workspace);
+            SyncCommandsViewModel commands = new SyncCommandsViewModel();
+            SetActiveSubCommands(commands.DisplayName, commands);
         }
 
         void ShowAllOrders()
@@ -140,7 +162,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
 
             this.SetActiveWorkspace(workspace);
-        }        
+            this.SetActiveSubCommands(workspace.DisplayName, workspace.Commands.ToList());
+        }
 
         void SetActiveWorkspace(WorkspaceViewModel workspace)
         {
@@ -149,6 +172,16 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             ICollectionView collectionView = CollectionViewSource.GetDefaultView(this.Workspaces);
             if (collectionView != null)
                 collectionView.MoveCurrentTo(workspace);
+        }
+
+        void SetActiveSubCommands(string commandSet, List<CommandViewModel> commands)
+        {
+            SubCommands.Clear();
+            SubCommandSet = commandSet;
+            commands.ForEach(c =>
+            {
+                SubCommands.Add(c);
+            });
         }
 
         #endregion // Private Helpers

@@ -10,9 +10,11 @@ using System.ComponentModel;
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
-    class SyncCommandsViewModel : WorkspaceViewModel
+    class SyncCommandsViewModel : List<CommandViewModel>
     {
         ReadOnlyCollection<CommandViewModel> _commands;
+
+        public virtual string DisplayName { get; protected set; }
 
         /// <summary>
         /// Returns a read-only list of commands 
@@ -33,7 +35,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         public SyncCommandsViewModel()
         {
-            base.DisplayName = Strings.SyncCommandsViewModel_DisplayName;
+            DisplayName = "Sync";
+            this.AddRange(CreateCommands());
         }
 
         private List<CommandViewModel> CreateCommands()

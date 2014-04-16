@@ -33,9 +33,9 @@
 
                     <!--Todo Make this a bit prettier-->
                     <HeaderedContentControl 
-                        Content="{Binding Workspaces.CurrentItem.Commands}"
+                        Content="{Binding Path=SubCommands}"
                         ContentTemplate="{StaticResource CommandsTemplate}"
-                        Header="{Binding Workspaces.CurrentItem.DisplayName}" 
+                        Header="{Binding Path=SubCommandSet}" 
                         Style="{StaticResource MainHCCStyle}" />
 
                 </StackPanel>

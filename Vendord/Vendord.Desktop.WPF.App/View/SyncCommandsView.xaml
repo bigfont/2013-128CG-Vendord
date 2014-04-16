@@ -1,4 +1,0 @@
-﻿<UserControl x:Class="Vendord.Desktop.WPF.App.View.SyncCommandsView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-</UserControl>
