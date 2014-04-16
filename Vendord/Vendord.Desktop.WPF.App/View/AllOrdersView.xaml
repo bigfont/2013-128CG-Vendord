@@ -10,6 +10,12 @@
                 <ResourceDictionary Source="AllOrdersViewResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <helpers:SelectedItemToItemsSource x:Key="SelectedItemToItemsSource" />
+            <!--Todo Move these Styles into the AllOrdersViewResources.xaml Dictionary-->
+            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"/>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <DockPanel>
@@ -34,7 +40,7 @@
                 <GridView>
                     <GridViewColumn 
                         Header="Vendor Name" 
-                        DisplayMemberBinding="{Binding Name}" />
+                        DisplayMemberBinding="{Binding Name}"/>
                 </GridView>
             </ListView.View>
         </ListView>
