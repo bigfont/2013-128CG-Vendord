@@ -85,49 +85,29 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             };
         }
 
-        private List<PrintableOrderProduct> MakePrintableOrderProductList(IEnumerable<OrderProductViewModel> orderProductVms)
-        {
-            var query = orderProductVms
-                .Select(op =>
-                {
-                    PrintableOrderProduct pop = new PrintableOrderProduct();
-                    pop.Upc = op.Product.Upc;
-                    pop.CertCode = op.Product.CertCode;
-                    pop.ProductName = op.Product.Name;
-                    pop.CasesToOrder = op.CasesToOrder;
-                    return pop;
-                });
-
-            return query.ToList();
-        }
-
-        private PrintableOrder MakePrintableOrder(string to, string from, string department, DateTime date, IEnumerable<PrintableOrderProduct> pOrderProducts)
-        {
-            PrintableOrder pOrder = new PrintableOrder();
-            pOrder.To = to;
-            pOrder.From = from;
-            pOrder.Department = department;
-            pOrder.Date = date;
-            pOrder.PrintableOrderProducts = pOrderProducts.ToList();
-            return pOrder;
-        }
-
         private void PrintOrderForAllVendors()
         {
             OrderViewModel selectedOrderVm = (OrderViewModel)SelectedOrder;
-            selectedOrderVm.OrderVendors.ToList().ForEach(v => {
+
+            // iterate vendors 
+            selectedOrderVm.OrderVendors.ToList().ForEach(v =>
+            {
+                // set selected vendor
                 selectedOrderVm.SelectedVendor = v;
+                // print selected vendor
                 PrintOrderForSelectedVendor();
+                // wait until I/O completes, otherwise we print duplicate orders
                 System.Threading.Thread.Sleep(500);
             });
         }
 
         private void PrintOrderForSelectedVendor()
         {
+            // get the selected order and vendor
             OrderViewModel selectedOrderVm = (OrderViewModel)SelectedOrder;
             VendorViewModel selectedVendorVm = (VendorViewModel)(selectedOrderVm.SelectedVendor);
 
-            // filter on selected vendor
+            // filter order products on selected vendor
             List<OrderProductViewModel> filteredOrderProductVms =
                 selectedOrderVm.OrderProducts
                 .Where(op => op.Product.VendorId == selectedVendorVm.Id)
@@ -136,10 +116,10 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             // create order
             var pOrderProducts = MakePrintableOrderProductList(filteredOrderProductVms);
             var pOrder = MakePrintableOrder(
-                selectedVendorVm.Name, 
-                "Country Grocer Salt Spring", 
-                "(Coming soon)", 
-                DateTime.Now, 
+                selectedVendorVm.Name,
+                "Country Grocer Salt Spring",
+                "(Coming soon)",
+                DateTime.Now,
                 pOrderProducts);
 
             // print
@@ -185,5 +165,36 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         }
 
         #endregion // Base Class Overrides
+
+        #region Print Helpers
+
+        private List<PrintableOrderProduct> MakePrintableOrderProductList(IEnumerable<OrderProductViewModel> orderProductVms)
+        {
+            var query = orderProductVms
+                .Select(op =>
+                {
+                    PrintableOrderProduct pop = new PrintableOrderProduct();
+                    pop.Upc = op.Product.Upc;
+                    pop.CertCode = op.Product.CertCode;
+                    pop.ProductName = op.Product.Name;
+                    pop.CasesToOrder = op.CasesToOrder;
+                    return pop;
+                });
+
+            return query.ToList();
+        }
+
+        private PrintableOrder MakePrintableOrder(string to, string from, string department, DateTime date, IEnumerable<PrintableOrderProduct> pOrderProducts)
+        {
+            PrintableOrder pOrder = new PrintableOrder();
+            pOrder.To = to;
+            pOrder.From = from;
+            pOrder.Department = department;
+            pOrder.Date = date;
+            pOrder.PrintableOrderProducts = pOrderProducts.ToList();
+            return pOrder;
+        }
+
+        #endregion
     }
 }
