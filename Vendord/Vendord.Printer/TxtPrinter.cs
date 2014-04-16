@@ -7,9 +7,9 @@ using System.IO;
 
 namespace Vendord.Printer
 {
-    public class TxtPrinter
+    public static class TxtPrinter
     {
-        public void PrintOrderForOneVendor(PrintableOrder pOrder)
+        public static void PrintOrderForOneVendor(PrintableOrder pOrder)
         {
             string filePath = CreateTimestampedFilePath("order");
             using (FileStream fs = File.Create(filePath))
@@ -38,7 +38,7 @@ namespace Vendord.Printer
 
         #region Generic Helpers
 
-        private string CreateTimestampedFilePath(string prefix)
+        private static string CreateTimestampedFilePath(string prefix)
         {
             string friendlyDateTime = DateTime.Now.ToString("yyyy-MMMM-dd-HH-mm-ss");
             string fileName = string.Format("{0}-{1}.txt", prefix, friendlyDateTime);
@@ -51,13 +51,13 @@ namespace Vendord.Printer
             return filePath;
         }
 
-        private void AppendText(FileStream fs, string value)
+        private static void AppendText(FileStream fs, string value)
         {
             byte[] info = new UTF8Encoding(true).GetBytes(value);
             fs.Write(info, 0, info.Length);
         }
 
-        private void AppendLine(FileStream fs)
+        private static void AppendLine(FileStream fs)
         {
             AppendText(fs, "\r\n");
         }

@@ -85,6 +85,33 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             };
         }
 
+        private List<PrintableOrderProduct> MakePrintableOrderProductList(IEnumerable<OrderProductViewModel> orderProductVms)
+        {
+            var query = orderProductVms
+                .Select(op =>
+                {
+                    PrintableOrderProduct pop = new PrintableOrderProduct();
+                    pop.Upc = op.Product.Upc;
+                    pop.CertCode = op.Product.CertCode;
+                    pop.ProductName = op.Product.Name;
+                    pop.CasesToOrder = op.CasesToOrder;
+                    return pop;
+                });
+
+            return query.ToList();
+        }
+
+        private PrintableOrder MakePrintableOrder(string to, string from, string department, DateTime date, IEnumerable<PrintableOrderProduct> pOrderProducts)
+        {
+            PrintableOrder pOrder = new PrintableOrder();
+            pOrder.To = to;
+            pOrder.From = from;
+            pOrder.Department = department;
+            pOrder.Date = date;
+            pOrder.PrintableOrderProducts = pOrderProducts.ToList();
+            return pOrder;
+        }
+
         private object PrintOrderForAllVendors()
         {
             throw new NotImplementedException();
@@ -94,28 +121,17 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         {
             OrderViewModel selectedOrderVm = (OrderViewModel)SelectedOrder;
             VendorViewModel selectedVendorVm = (VendorViewModel)(selectedOrderVm.SelectedVendor);
-            
-            // create printable order products list from order products list
-            var printableOrderProducts = selectedOrderVm.OrderProducts.Select(op => {
-                PrintableOrderProduct pop = new PrintableOrderProduct();
-                pop.Upc = op.Product.Upc;
-                pop.CertCode = op.Product.CertCode;
-                pop.ProductName = op.Product.Name;
-                pop.CasesToOrder = op.CasesToOrder;
-                return pop;
-            });
 
-            // create printable order
-            PrintableOrder pOrder = new PrintableOrder();
-            pOrder.To = selectedVendorVm.Name;
-            pOrder.From = "Country Grocer Salt Spring";
-            pOrder.Department = "(Coming soon)";
-            pOrder.Date = DateTime.Now;
-            pOrder.PrintableOrderProducts = printableOrderProducts.ToList();
+            List<OrderProductViewModel> filteredOrderProductVms =
+                selectedOrderVm.OrderProducts
+                .Where(op => op.Product.VendorId == selectedVendorVm.Id)
+                .ToList();
+
+            var pOrderProducts = MakePrintableOrderProductList(filteredOrderProductVms);
+            var pOrder = MakePrintableOrder(selectedVendorVm.Name, "Country Grocer Salt Spring", "(Coming soon)", DateTime.Now, pOrderProducts);
 
             // print
-            TxtPrinter txtPrinter = new TxtPrinter();
-            txtPrinter.PrintOrderForOneVendor(pOrder);
+            TxtPrinter.PrintOrderForOneVendor(pOrder);
         }
 
         #endregion // Commands
@@ -125,7 +141,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         /// <summary>
         /// Returns a collection of all the OrderViewModel objects.
         /// </summary>
-        public ObservableCollection<OrderViewModel> AllOrders { get; private set; }        
+        public ObservableCollection<OrderViewModel> AllOrders { get; private set; }
 
         object _SelectedOrder;
         public object SelectedOrder
@@ -156,6 +172,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             this.AllOrders.Clear();
         }
 
-        #endregion // Base Class Overrides     
+        #endregion // Base Class Overrides
     }
 }
