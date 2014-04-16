@@ -13,9 +13,11 @@ namespace Vendord.SmartDevice.App
 
     public class BarcodeAPI
     {
+        public bool IsScanning { get; set; }
+
         private const int ScanTimeoutMilliseconds = 5 * 60 * 1000; // five minutes in milliseconds.
 
-        private Barcode2 myScannerAPI = null;
+        private Barcode2 myScannerAPI = null;        
 
         public BarcodeAPI(Barcode2.OnStatusHandler statusHandler, Barcode2.OnScanHandler scanHandler)
         {
@@ -40,11 +42,14 @@ namespace Vendord.SmartDevice.App
                 // if ScanCancel is called.
                 // Triggers include the hardware trigger AND/OR a software trigger.                
                 this.myScannerAPI.Scan(ScanTimeoutMilliseconds);
+                this.IsScanning = true;
             }
         }
 
         public void StopScan()
         {
+            this.myScannerAPI.ScanCancel();
+            this.IsScanning = false;
         }
 
         private void ConfigureTheScannerAPI()

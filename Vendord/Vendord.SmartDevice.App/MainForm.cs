@@ -224,6 +224,12 @@ namespace Vendord.SmartDevice.App
 
         private void UnloadCurrentView()
         {
+            // stop scanning
+            if (this.barcodeAPI != null && this.barcodeAPI.IsScanning)
+            {
+                this.barcodeAPI.StopScan();
+            }
+            // clear controls
             this.mainContent.Controls.Clear();
         }
 

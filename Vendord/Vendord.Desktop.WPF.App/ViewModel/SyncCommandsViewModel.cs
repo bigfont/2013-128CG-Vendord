@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Input;
-using System.Collections.ObjectModel;
-using Vendord.Desktop.WPF.App.Properties;
-using Vendord.Sync;
-using System.ComponentModel;
+﻿////#define ImportTestData
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Windows.Input;
+    using System.Collections.ObjectModel;
+    using Vendord.Desktop.WPF.App.Properties;
+    using Vendord.Sync;
+    using System.ComponentModel;
+    using System.IO;
+
     class SyncCommandsViewModel : List<CommandViewModel>
     {
         ReadOnlyCollection<CommandViewModel> _commands;
@@ -65,7 +68,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         {
             XmlSync sync = new XmlSync();
             BackgroundWorker worker = null;
+#if ImportTestData
             string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-products-small.xml";
+#else
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\products.xml");
+#endif
             int totalRecords = 0;
             int insertedRecords = 0;
             try
@@ -87,7 +94,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         {
             XmlSync sync = new XmlSync();
             BackgroundWorker worker = null;
+#if ImportTestData
             string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-vendors-small.xml";
+#else
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\vendors.xml");
+#endif
             int totalRecords = 0;
             int insertedRecords = 0;
             try
