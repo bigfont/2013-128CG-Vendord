@@ -128,7 +128,12 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 .ToList();
 
             var pOrderProducts = MakePrintableOrderProductList(filteredOrderProductVms);
-            var pOrder = MakePrintableOrder(selectedVendorVm.Name, "Country Grocer Salt Spring", "(Coming soon)", DateTime.Now, pOrderProducts);
+            var pOrder = MakePrintableOrder(
+                selectedVendorVm.Name, 
+                "Country Grocer Salt Spring", 
+                "(Coming soon)", 
+                DateTime.Now, 
+                pOrderProducts);
 
             // print
             TxtPrinter.PrintOrderForOneVendor(pOrder);
