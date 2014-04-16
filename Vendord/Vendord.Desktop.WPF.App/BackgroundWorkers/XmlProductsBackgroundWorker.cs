@@ -24,14 +24,9 @@
 #else
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\products.xml");
 #endif
-            int totalRecords = 0;
-            int insertedRecords = 0;
-
             SyncResult result = sync.PullProductsFromItRetailXmlBackup(
                 worker,
-                filePath,
-                ref totalRecords,
-                ref insertedRecords);
+                filePath);
         }
     }
 }

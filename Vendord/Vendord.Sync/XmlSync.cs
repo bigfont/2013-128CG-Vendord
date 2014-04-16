@@ -11,12 +11,12 @@ namespace Vendord.Sync
 {
     public class XmlSync
     {
-        public SyncResult PullVendorsFromItRetailXmlBackup(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        public SyncResult PullVendorsFromItRetailXmlBackup(BackgroundWorker worker, string filePath)
         {
             SyncResult result;
             try
             {
-                CopyVendorsFromItRetailXmlBackupFilesToDesktopDb(worker, filePath, ref totalRecords, ref insertedRecords);
+                CopyVendorsFromItRetailXmlBackupFilesToDesktopDb(worker, filePath);
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -28,12 +28,12 @@ namespace Vendord.Sync
             return result;
         }
 
-        public SyncResult PullProductsFromItRetailXmlBackup(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        public SyncResult PullProductsFromItRetailXmlBackup(BackgroundWorker worker, string filePath)
         {
             SyncResult result;
             try
             {
-                CopyProductsFromItRetailXmlBackupFilesToDesktopDb(worker, filePath, ref totalRecords, ref insertedRecords);
+                CopyProductsFromItRetailXmlBackupFilesToDesktopDb(worker, filePath);
                 result = SyncResult.Complete;
             }
             catch (SqlException ex)
@@ -137,12 +137,12 @@ namespace Vendord.Sync
             return products;
         }
 
-        private void CopyVendorsFromItRetailXmlBackupFilesToDesktopDb(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        private void CopyVendorsFromItRetailXmlBackupFilesToDesktopDb(BackgroundWorker worker, string filePath)
         {
             List<Vendor> vendors = GetVendorListFromXmlBackup(filePath);
 
-            insertedRecords = 0;
-            totalRecords = vendors.Count();
+            int insertedRecords = 0;
+            int totalRecords = vendors.Count();
             DateTime lastProgressReportTime = DateTime.MinValue;
 
             Database db = new Database();
@@ -160,16 +160,16 @@ namespace Vendord.Sync
                 v.UpsertIntoDb();
                 insertedRecords++;
 
-                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime, v.Name);
+                ReportWorkerProgress(worker, insertedRecords, totalRecords, lastProgressReportTime, v.Name);
             }
         }
 
-        private void CopyProductsFromItRetailXmlBackupFilesToDesktopDb(BackgroundWorker worker, string filePath, ref int totalRecords, ref int insertedRecords)
+        private void CopyProductsFromItRetailXmlBackupFilesToDesktopDb(BackgroundWorker worker, string filePath)
         {
             List<Product> products = GetProductListFromXmlBackup(filePath);
 
-            insertedRecords = 0;
-            totalRecords = products.Count();
+            int insertedRecords = 0;
+            int totalRecords = products.Count();
             DateTime lastProgressReportTime = DateTime.MinValue;
 
             Database db = new Database();
@@ -195,11 +195,11 @@ namespace Vendord.Sync
                 p.UpsertIntoDb();
                 insertedRecords++;
 
-                ReportWorkerProgress(worker, ref insertedRecords, ref totalRecords, ref lastProgressReportTime, p.Name);
+                ReportWorkerProgress(worker, insertedRecords, totalRecords, lastProgressReportTime, p.Name);
             }
         }
 
-        private void ReportWorkerProgress(BackgroundWorker worker, ref int insertedRecords, ref int totalRecords, ref DateTime lastProgressReportTime, string importedItem)
+        private void ReportWorkerProgress(BackgroundWorker worker, int insertedRecords, int totalRecords, DateTime lastProgressReportTime, string importedItem)
         {
             // if five seconds have passed, make the worker report progress
             if (worker != null)

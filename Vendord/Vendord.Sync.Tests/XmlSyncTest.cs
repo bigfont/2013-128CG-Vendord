@@ -64,12 +64,8 @@ namespace Vendord.Sync.Tests
         public void PullProducts()
         {
             XmlSync sync = new XmlSync();
-
             string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-products-small.xml";
-            int totalRecords = 0;
-            int insertedRecords = 0;
-            SyncResult result = sync.PullProductsFromItRetailXmlBackup(null, filePath, ref totalRecords, ref insertedRecords);
-
+            SyncResult result = sync.PullProductsFromItRetailXmlBackup(null, filePath);
             Assert.AreEqual(SyncResult.Complete, result);
         }
 
@@ -79,9 +75,7 @@ namespace Vendord.Sync.Tests
             XmlSync sync = new XmlSync();
 
             string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-vendors.xml";
-            int totalRecords = 0;
-            int insertedRecords = 0;
-            SyncResult result = sync.PullVendorsFromItRetailXmlBackup(null, filePath, ref totalRecords, ref insertedRecords);
+            SyncResult result = sync.PullVendorsFromItRetailXmlBackup(null, filePath);
 
             Assert.AreEqual(SyncResult.Complete, result);            
         }
