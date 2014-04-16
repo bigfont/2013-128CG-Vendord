@@ -115,41 +115,20 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         private void ImportXmlProducts()
         {
-            try
-            {
-                XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(ProgressChanged);
-                bw.Run();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debugger.Break();
-            }
+            XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(ProgressChanged);
+            bw.Run();
         }
 
         private void ImportXmlVendors()
         {
-            try
-            {
-                XmlVendorsBackgroundWorker bw = new XmlVendorsBackgroundWorker(ProgressChanged);
-                bw.Run();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debugger.Break();
-            }
+            XmlVendorsBackgroundWorker bw = new XmlVendorsBackgroundWorker(ProgressChanged);
+            bw.Run();
         }
 
         private void SyncDbOrders()
         {
-            DbSync sync = new DbSync();
-            try
-            {
-                SyncResult result = sync.SyncDesktopAndDeviceDatabases(ScopeName.SyncOrders);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debugger.Break();
-            }
+            SyncDbOrdersBackgroundWorker bw = new SyncDbOrdersBackgroundWorker(this.ProgressChanged);
+            bw.Run();
         }
 
         private void SyncDbProductsVendorsDepartments()
