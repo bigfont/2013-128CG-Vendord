@@ -62,15 +62,15 @@ namespace Vendord.Sync.Tests
         [TestMethod]
         public void SyncOrders()
         {
-            DbSync sync = new DbSync();
-            SyncResult result = sync.SyncDesktopAndDeviceDatabases(ScopeName.SyncOrders);
+            ////DbSync sync = new DbSync();
+            ////SyncResult result = sync.SyncDesktopAndDeviceDatabases(ScopeName.SyncOrders);
         }
 
         [TestMethod]
         public void SyncProductsVendorsAndDepts()
         {
-            DbSync sync = new DbSync();
-            SyncResult result = sync.SyncDesktopAndDeviceDatabases(ScopeName.SyncProductsVendorsAndDepts);
+            ////DbSync sync = new DbSync();
+            ////SyncResult result = sync.SyncDesktopAndDeviceDatabases(ScopeName.SyncProductsVendorsAndDepts);
         }
     }
 }

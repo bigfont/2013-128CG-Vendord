@@ -113,33 +113,55 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
+        private void RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            string message;
+            if (e.Cancelled)
+            {
+                message = "Cancelled";
+            }
+            else if (e.Error != null)
+            {
+                message = e.Error.Message;
+            }
+            else if (e.Result != null)
+            {
+                message = e.Result.ToString();
+            }
+            else
+            {
+                message = "Complete";
+            }
+            AddToRecentlyImportedItems(message);
+        }
+
         private void ImportXmlProducts()
         {
-            XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(ProgressChanged);
+            XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void ImportXmlVendors()
         {
-            XmlVendorsBackgroundWorker bw = new XmlVendorsBackgroundWorker(ProgressChanged);
+            XmlVendorsBackgroundWorker bw = new XmlVendorsBackgroundWorker(ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void SyncDbOrders()
         {
-            SyncDbOrdersBackgroundWorker bw = new SyncDbOrdersBackgroundWorker(this.ProgressChanged);
+            SyncDbOrdersBackgroundWorker bw = new SyncDbOrdersBackgroundWorker(this.ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void SyncDbProductsVendorsDepartments()
         {
-            SyncDbProductsVendorsDepartmentsBackgroundWorker bw = new SyncDbProductsVendorsDepartmentsBackgroundWorker(this.ProgressChanged);
+            SyncDbProductsVendorsDepartmentsBackgroundWorker bw = new SyncDbProductsVendorsDepartmentsBackgroundWorker(this.ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         #region Private Helpers
 
-        private const int maxRecentlyImportedItems = 20;
+        private const int maxRecentlyImportedItems = 15;
         private void AddToRecentlyImportedItems(string s)
         {
             if (RecentlyImportedItems.Count() > maxRecentlyImportedItems)

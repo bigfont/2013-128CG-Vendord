@@ -25,7 +25,7 @@ namespace Vendord.Sync
         private string _remoteDatabaseFullPath;
         private string _remoteDatabaseLocalCopyFullPath;
 
-        public SyncResult SyncDesktopAndDeviceDatabases(ScopeName scopeName)
+        public SyncResult SyncDesktopAndDeviceDatabases(ScopeName scopeName, EventHandler<SyncStagedProgressEventArgs> progressChanged)
         {
             // assume the worste
             var result = SyncResult.Disconnected;
@@ -52,7 +52,7 @@ namespace Vendord.Sync
                     SyncFrameworkWrapper.AddAllScopesToAllNodes(localConn, remoteConn);
 
                     // Set sync options
-                    var orchestrator = SyncFrameworkWrapper.SetSyncOptions(scopeName, localConn, remoteConn);
+                    var orchestrator = SyncFrameworkWrapper.SetSyncOptions(scopeName, localConn, remoteConn, progressChanged);
 
                     // Sync
                     SyncFrameworkWrapper.SyncTheNodes(orchestrator);

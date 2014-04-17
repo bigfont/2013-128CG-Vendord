@@ -7,13 +7,17 @@
     using System.ComponentModel;
     public abstract class BackgroundWorkerWrapper
     {
-        public static BackgroundWorker bWorker;
+        public BackgroundWorker bWorker;
 
-        public BackgroundWorkerWrapper(ProgressChangedEventHandler ProgressChanged)
+        public BackgroundWorkerWrapper(
+            ProgressChangedEventHandler ProgressChanged,
+            RunWorkerCompletedEventHandler RunWorkerCompleted)
         {
             bWorker = new BackgroundWorker();
             bWorker.WorkerReportsProgress = true;
+            bWorker.WorkerSupportsCancellation = true;
             bWorker.ProgressChanged += ProgressChanged;
+            bWorker.RunWorkerCompleted += RunWorkerCompleted;
             bWorker.DoWork += new DoWorkEventHandler(DoWork);
         }
 

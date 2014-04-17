@@ -10,8 +10,8 @@
 
     public class XmlVendorsBackgroundWorker : BackgroundWorkerWrapper
     {
-        public XmlVendorsBackgroundWorker(ProgressChangedEventHandler ProgressChanged)
-            : base(ProgressChanged)
+        public XmlVendorsBackgroundWorker(ProgressChangedEventHandler progressChanged, RunWorkerCompletedEventHandler workerCompleted)
+            : base(progressChanged, workerCompleted)
         {
         }
 

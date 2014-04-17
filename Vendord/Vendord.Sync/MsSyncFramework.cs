@@ -27,8 +27,11 @@ namespace Vendord.Sync
             ProvisionNode(importScopeName, importTables, remoteConn);
         }
 
-        public static SyncOrchestrator SetSyncOptions(ScopeName scopeName, IDbConnection localConn,
-            IDbConnection remoteConn)
+        public static SyncOrchestrator SetSyncOptions(
+            ScopeName scopeName, 
+            IDbConnection localConn,
+            IDbConnection remoteConn, 
+            EventHandler<SyncStagedProgressEventArgs> progressChanged)
         {
             var localProvider = new SqlCeSyncProvider { ScopeName = scopeName.ToString(), Connection = localConn };
 
@@ -40,6 +43,8 @@ namespace Vendord.Sync
                 RemoteProvider = remoteProvider,
                 Direction = SyncDirectionOrder.DownloadAndUpload
             };
+
+            orchestrator.SessionProgress += progressChanged;
 
             return orchestrator;
         }
