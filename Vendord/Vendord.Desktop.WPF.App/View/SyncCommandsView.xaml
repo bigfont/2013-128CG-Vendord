@@ -2,7 +2,20 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
-        <ItemsControl ItemsSource="{Binding RecentlyImportedItems}">
-        </ItemsControl>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0">
+            <ItemsControl>
+                <Label Content="Percent Complete:" />
+                <Label Content="{Binding CurrentProgress}" />
+            </ItemsControl>            
+        </Border>
+        <Border Grid.Row="2">
+            <ItemsControl ItemsSource="{Binding RecentlyImportedItems}">
+            </ItemsControl>
+        </Border>
     </Grid>
 </UserControl>

@@ -107,7 +107,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 }
                 if (e.UserState != null)
                 {
-                    string message = Environment.NewLine + e.UserState.ToString();
+                    string message = e.UserState.ToString();
                     AddToRecentlyImportedItems(message);
                 }
             }
@@ -162,13 +162,14 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #region Private Helpers
 
         private const int maxRecentlyImportedItems = 15;
-        private void AddToRecentlyImportedItems(string s)
+        private void AddToRecentlyImportedItems(string message)
         {
+            message += Environment.NewLine;
             if (RecentlyImportedItems.Count() > maxRecentlyImportedItems)
             {
                 RecentlyImportedItems.RemoveAt(0);
             }
-            RecentlyImportedItems.Add(s);
+            RecentlyImportedItems.Add(message);
         }
 
         #endregion

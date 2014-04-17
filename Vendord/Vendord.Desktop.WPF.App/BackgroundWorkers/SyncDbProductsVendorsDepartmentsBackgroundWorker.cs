@@ -18,23 +18,26 @@
 
         public void SyncStagedProgress(object sender, SyncStagedProgressEventArgs e)
         {
-            this.bWorker.ReportProgress(0, "Hello World");
+            uint percComplete = e.CompletedWork * 100 / e.TotalWork;
+            string message = e.ReportingProvider.ToString() + " " + e.Stage.ToString();
+            this.bWorker.ReportProgress(Convert.ToInt16(percComplete), message);
         }
 
         protected override void DoWork(object sender, DoWorkEventArgs e)
         {
-            DbSync sync = new DbSync();
             try
             {
-                SyncResult result = sync.SyncDesktopAndDeviceDatabases(
+                DbSync sync = new DbSync();
+
+                SyncResult syncResult = sync.SyncDesktopAndDeviceDatabases(
                     ScopeName.SyncProductsVendorsAndDepts,
                     new EventHandler<SyncStagedProgressEventArgs>(SyncStagedProgress));
 
-                this.bWorker.ReportProgress(0, result.ToString());
+                e.Result = syncResult.ToString();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debugger.Break();
+                e.Result = ex.Message;
             }
         }
     }

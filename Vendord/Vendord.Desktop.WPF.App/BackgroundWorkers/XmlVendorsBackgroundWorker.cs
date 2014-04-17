@@ -17,23 +17,26 @@
 
         protected override void DoWork(object sender, DoWorkEventArgs e)
         {
-            XmlSync sync = new XmlSync();
-            BackgroundWorker worker = sender as BackgroundWorker;
+            try
+            {
+                XmlSync sync = new XmlSync();
+                BackgroundWorker worker = sender as BackgroundWorker;
 #if ImportTestData
             string filePath = @"C:\Users\Shaun\SkyDrive\Documents\Work\BigFont\Clients\2013-124CG\DataToImport\my-vendors-small.xml";
 #else
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\vendors.xml");
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"Vendord\DataToImport\vendors.xml");
 #endif
-            try
-            {
-                SyncResult result =
+
+                SyncResult syncResult =
                     sync.PullVendorsFromItRetailXmlBackup(
                         worker,
                         filePath);
+
+                e.Result = syncResult.ToString();
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debugger.Break();
+                e.Result = ex.Message;
             }
         }
     }
