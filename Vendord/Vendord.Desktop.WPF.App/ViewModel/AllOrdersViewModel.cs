@@ -23,6 +23,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         readonly Repository _repository;
         ReadOnlyCollection<CommandViewModel> _commands;
+        ObservableCollection<OrderViewModel> _allOrders;
 
         #endregion // Fields
 
@@ -36,16 +37,21 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             _repository = repository;
 
             base.DisplayName = Strings.AllOrdersViewModel_DisplayName;
-
-            // Populate the AllOrders collection with OrderViewModels.
+            
             this.CreateAllOrders();
         }
 
         void CreateAllOrders()
         {
+            _repository.GetOrders().CollectionChanged += new NotifyCollectionChangedEventHandler((s, e) => {
+
+                CreateAllOrders();
+
+            });
+
             List<OrderViewModel> all =
                 (from ord in _repository.GetOrders()
-                 select new OrderViewModel(ord, _repository)).ToList();
+                 select new OrderViewModel(ord, _repository)).ToList();            
 
             this.AllOrders = new ObservableCollection<OrderViewModel>(all);
         }
