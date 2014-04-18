@@ -111,6 +111,11 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             });
         }
 
+        public void ReloadDepartments()
+        { 
+            // todo
+        }
+
         #endregion // Public Interface
 
         #region Private Helpers
@@ -169,7 +174,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
             }
 
             return products;
-        }
+        }        
 
         #endregion // Private Helpers
     }

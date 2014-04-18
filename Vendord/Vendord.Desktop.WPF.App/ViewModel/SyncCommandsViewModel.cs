@@ -158,7 +158,25 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             {
                 case SyncTargets.DbOrders:
                     {
-                        _repository.ReloadOrders();
+                        _repository.ReloadOrderProducts();
+                        _repository.ReloadOrders();                        
+                        break;
+                    }
+                case SyncTargets.DbProductsVendorsDepartments:
+                    {
+                        _repository.ReloadProducts();
+                        _repository.ReloadVendors();
+                        _repository.ReloadDepartments();
+                        break;
+                    }
+                case SyncTargets.XmlProducts:
+                    {
+                        _repository.ReloadProducts();
+                        break;
+                    }
+                case SyncTargets.XmlVendors:
+                    {
+                        _repository.ReloadVendors();
                         break;
                     }
                 default:
