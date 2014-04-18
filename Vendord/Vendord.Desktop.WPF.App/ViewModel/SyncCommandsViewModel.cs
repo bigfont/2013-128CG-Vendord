@@ -17,8 +17,17 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
     class SyncCommandsViewModel : WorkspaceViewModel
     {
-        readonly Repository _repository;
-        ReadOnlyCollection<CommandViewModel> _commands;
+        private enum SyncTargets
+        {
+            XmlProducts,
+            XmlVendors,
+            DbOrders,
+            DbProductsVendorsDepartments
+        }
+
+        private SyncTargets _currentlySyncing;
+        private readonly Repository _repository;
+        private ReadOnlyCollection<CommandViewModel> _commands;
         private int _currentProgress;
         private ObservableCollection<string> _recentlyImportedItems;
 
@@ -140,32 +149,49 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 message = "Complete";
             }
             AddToRecentlyImportedItems(message);
+            RefreshRepository();
+        }
 
-            // todo determine what reprository class to update
-            // rather than updating them all
-            _repository.ReloadOrders();
+        private void RefreshRepository()
+        {
+            switch (_currentlySyncing)
+            {
+                case SyncTargets.DbOrders:
+                    {
+                        _repository.ReloadOrders();
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
         }
 
         private void ImportXmlProducts()
         {
+            _currentlySyncing = SyncTargets.XmlProducts;
             XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void ImportXmlVendors()
         {
+            _currentlySyncing = SyncTargets.XmlVendors;
             XmlVendorsBackgroundWorker bw = new XmlVendorsBackgroundWorker(ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void SyncDbOrders()
         {
+            _currentlySyncing = SyncTargets.DbOrders;
             SyncDbOrdersBackgroundWorker bw = new SyncDbOrdersBackgroundWorker(this.ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void SyncDbProductsVendorsDepartments()
         {
+            _currentlySyncing = SyncTargets.DbProductsVendorsDepartments;
             SyncDbProductsVendorsDepartmentsBackgroundWorker bw = new SyncDbProductsVendorsDepartmentsBackgroundWorker(this.ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }

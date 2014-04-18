@@ -20,9 +20,9 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         #region Fields
 
         readonly ObservableCollection<Order> _orders;
-        readonly List<OrderProduct> _orderProducts;
-        readonly List<Product> _products;
-        readonly List<Vendor> _vendors;
+        readonly ObservableCollection<OrderProduct> _orderProducts;
+        readonly ObservableCollection<Product> _products;
+        readonly ObservableCollection<Vendor> _vendors;
 
         #endregion // Fields
 
@@ -34,9 +34,9 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         public Repository()
         {
             _orders = new ObservableCollection<Order>(LoadOrders());
-            _orderProducts = LoadOrderProducts();
-            _vendors = LoadVendors();
-            _products = LoadProducts();
+            _orderProducts = new ObservableCollection<OrderProduct>(LoadOrderProducts());
+            _vendors = new ObservableCollection<Vendor>(LoadVendors());
+            _products = new ObservableCollection<Product>(LoadProducts());
         }
 
         #endregion // Constructor
@@ -54,32 +54,60 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         /// <summary>
         /// Returns a shallow-copied list of all orderProducts in the repository.
         /// </summary>
-        public List<OrderProduct> GetOrderProducts()
+        public ObservableCollection<OrderProduct> GetOrderProducts()
         {
-            return new List<OrderProduct>(_orderProducts);
+            return _orderProducts;
         }
 
         /// <summary>
         /// Returns a shallow-copied list of all products in the repository.
         /// </summary>
-        public List<Product> GetProducts()
+        public ObservableCollection<Product> GetProducts()
         {
-            return new List<Product>(_products);
+            return _products;
         }
 
         /// <summary>
         /// Returns a shallow-copied list of all vendors in the repository.
         /// </summary>
-        public List<Vendor> GetVendors()
+        public ObservableCollection<Vendor> GetVendors()
         {
-            return new List<Vendor>(_vendors);
+            return _vendors;
         }
 
         public void ReloadOrders()
         {
             _orders.Clear();
-            Repository.LoadOrders().ForEach((o) => {
+            Repository.LoadOrders().ForEach((o) =>
+            {
                 _orders.Add(o);
+            });
+        }
+
+        public void ReloadOrderProducts()
+        {
+            _orderProducts.Clear();
+            Repository.LoadOrderProducts().ForEach((o) =>
+            {
+                _orderProducts.Add(o);
+            });
+        }
+
+        public void ReloadVendors()
+        {
+            _vendors.Clear();
+            Repository.LoadVendors().ForEach((o) =>
+            {
+                _vendors.Add(o);
+            });
+        }
+
+        public void ReloadProducts()
+        {
+            _products.Clear();
+            Repository.LoadProducts().ForEach((o) =>
+            {
+                _products.Add(o);
             });
         }
 

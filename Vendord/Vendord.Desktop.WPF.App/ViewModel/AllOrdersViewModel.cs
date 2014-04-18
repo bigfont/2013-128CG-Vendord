@@ -43,10 +43,9 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         void CreateAllOrders()
         {
+            // call this method again when the collection changes
             _repository.GetOrders().CollectionChanged += new NotifyCollectionChangedEventHandler((s, e) => {
-
                 CreateAllOrders();
-
             });
 
             List<OrderViewModel> all =

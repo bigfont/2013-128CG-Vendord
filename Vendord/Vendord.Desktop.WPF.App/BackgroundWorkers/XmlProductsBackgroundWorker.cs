@@ -30,7 +30,8 @@
                     worker,
                     filePath);
 
-                e.Result = syncResult.ToString();
+                // what can we pass here?
+                e.Result = syncResult.ToString();                         
             }
             catch (Exception ex)
             {
