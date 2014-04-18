@@ -17,19 +17,36 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
     class SyncCommandsViewModel : WorkspaceViewModel
     {
-        private enum SyncTargets
+        public enum SyncTargets
         {
+            NotSyncing,
             XmlProducts,
             XmlVendors,
             DbOrders,
             DbProductsVendorsDepartments
         }
 
-        private SyncTargets _currentlySyncing;
+        private bool _syncInProgress = false;
+        private SyncTargets _currentSyncTarget = SyncTargets.NotSyncing;
         private readonly Repository _repository;
         private ReadOnlyCollection<CommandViewModel> _commands;
-        private int _currentProgress;
         private ObservableCollection<string> _recentlyImportedItems;
+
+        public bool SyncInProgress
+        {
+            get
+            {
+                return _syncInProgress;
+            }
+            set
+            {
+                if (_syncInProgress != value)
+                {
+                    _syncInProgress = value;
+                    base.OnPropertyChanged("SyncInProgress");
+                }
+            }
+        }
 
         /// <summary>
         /// Returns a read-only list of commands 
@@ -45,19 +62,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                     _commands = new ReadOnlyCollection<CommandViewModel>(cmds);
                 }
                 return _commands;
-            }
-        }
-
-        public int CurrentProgress
-        {
-            get { return this._currentProgress; }
-            private set
-            {
-                if (this._currentProgress != value)
-                {
-                    this._currentProgress = value;
-                    this.OnPropertyChanged("CurrentProgress");
-                }
             }
         }
 
@@ -117,10 +121,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         {
             if (e != null)
             {
-                if (e.ProgressPercentage > 0)
-                {
-                    CurrentProgress = e.ProgressPercentage;
-                }
                 if (e.UserState != null)
                 {
                     string message = e.UserState.ToString();
@@ -148,13 +148,27 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             {
                 message = "Complete";
             }
+
             AddToRecentlyImportedItems(message);
             RefreshRepository();
+            EndSync();
+        }
+
+        private void StartSync(SyncTargets currentSyncTarget)
+        {
+            _currentSyncTarget = currentSyncTarget;
+            SyncInProgress = true;
+        }
+
+        private void EndSync()
+        {            
+            _currentSyncTarget = SyncTargets.NotSyncing;
+            SyncInProgress = false;
         }
 
         private void RefreshRepository()
         {
-            switch (_currentlySyncing)
+            switch (_currentSyncTarget)
             {
                 case SyncTargets.DbOrders:
                     {
@@ -188,28 +202,28 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         private void ImportXmlProducts()
         {
-            _currentlySyncing = SyncTargets.XmlProducts;
+            StartSync(SyncTargets.XmlProducts);
             XmlProductsBackgroundWorker bw = new XmlProductsBackgroundWorker(ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void ImportXmlVendors()
         {
-            _currentlySyncing = SyncTargets.XmlVendors;
+            StartSync(SyncTargets.XmlVendors);
             XmlVendorsBackgroundWorker bw = new XmlVendorsBackgroundWorker(ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void SyncDbOrders()
         {
-            _currentlySyncing = SyncTargets.DbOrders;
+            StartSync(SyncTargets.DbOrders);
             SyncDbOrdersBackgroundWorker bw = new SyncDbOrdersBackgroundWorker(this.ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }
 
         private void SyncDbProductsVendorsDepartments()
         {
-            _currentlySyncing = SyncTargets.DbProductsVendorsDepartments;
+            StartSync(SyncTargets.DbProductsVendorsDepartments);
             SyncDbProductsVendorsDepartmentsBackgroundWorker bw = new SyncDbProductsVendorsDepartmentsBackgroundWorker(this.ProgressChanged, RunWorkerCompleted);
             bw.Run();
         }

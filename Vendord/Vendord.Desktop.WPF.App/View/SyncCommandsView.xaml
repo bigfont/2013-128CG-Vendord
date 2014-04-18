@@ -2,20 +2,22 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="10"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Border Grid.Row="0">
-            <ItemsControl>
-                <Label Content="Percent Complete:" />
-                <Label Content="{Binding CurrentProgress}" />
-            </ItemsControl>            
-        </Border>
-        <Border Grid.Row="2">
-            <ItemsControl ItemsSource="{Binding RecentlyImportedItems}">
-            </ItemsControl>
-        </Border>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*"></ColumnDefinition>
+            <ColumnDefinition Width="0.5*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <Border Margin="0 25">
+                <ProgressBar                     
+                    IsIndeterminate="{Binding SyncInProgress}"
+                    Orientation="Horizontal"
+                    Height="25">
+                </ProgressBar>
+            </Border>
+            <Border>
+                <ItemsControl ItemsSource="{Binding RecentlyImportedItems}">
+                </ItemsControl>
+            </Border>
+        </StackPanel>
     </Grid>
 </UserControl>
