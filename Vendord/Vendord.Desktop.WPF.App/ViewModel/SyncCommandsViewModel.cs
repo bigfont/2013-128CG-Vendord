@@ -13,9 +13,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     using System.ComponentModel;
     using System.IO;
     using Vendord.Desktop.WPF.App.BackgroundWorkers;
+    using Vendord.Desktop.WPF.App.DataAccess;
 
     class SyncCommandsViewModel : WorkspaceViewModel
     {
+        readonly Repository _repository;
         ReadOnlyCollection<CommandViewModel> _commands;
         private int _currentProgress;
         private ObservableCollection<string> _recentlyImportedItems;
@@ -70,8 +72,13 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
-        public SyncCommandsViewModel()
+        public SyncCommandsViewModel(Repository repository)
         {
+            if (repository == null)
+                throw new ArgumentNullException("repository");
+
+            this._repository = repository;
+
             DisplayName = "Sync";
         }
 
@@ -133,6 +140,10 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 message = "Complete";
             }
             AddToRecentlyImportedItems(message);
+
+            // todo determine what reprository class to update
+            // rather than updating them all
+            _repository.ReloadOrders();
         }
 
         private void ImportXmlProducts()

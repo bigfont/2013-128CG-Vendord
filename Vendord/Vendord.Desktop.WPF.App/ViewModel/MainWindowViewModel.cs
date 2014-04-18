@@ -151,7 +151,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             if (workspace == null)
             {
-                workspace = new SyncCommandsViewModel();
+                workspace = new SyncCommandsViewModel(this._repository);
                 this.Workspaces.Add(workspace);
             }
 
@@ -167,7 +167,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             if (workspace == null)
             {
-                workspace = new AllOrdersViewModel(_repository);
+                workspace = new AllOrdersViewModel(this._repository);
                 this.Workspaces.Add(workspace);
             }
 
