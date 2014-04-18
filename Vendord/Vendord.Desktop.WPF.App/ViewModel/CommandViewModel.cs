@@ -11,6 +11,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     /// </summary>
     public class CommandViewModel : ViewModelBase
     {
+        private bool _isEnabled;
+
         public CommandViewModel(string displayName, ICommand command)
         {
             if (command == null)
@@ -18,8 +20,25 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
             base.DisplayName = displayName;
             this.Command = command;
+            this.IsEnabled = true;
         }
 
         public ICommand Command { get; private set; }
+
+        public bool IsEnabled
+        {
+            get
+            {
+                return _isEnabled;
+            }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    base.OnPropertyChanged("IsEnabled");
+                }
+            }
+        }
     }
 }

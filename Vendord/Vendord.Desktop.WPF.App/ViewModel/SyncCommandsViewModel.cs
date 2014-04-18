@@ -154,16 +154,26 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             EndSync();
         }
 
+        private void EnableCommands(bool enabled)
+        {
+            Commands.ToList().ForEach((c) =>
+            {
+                c.IsEnabled = enabled;
+            });
+        }
+
         private void StartSync(SyncTargets currentSyncTarget)
         {
             _currentSyncTarget = currentSyncTarget;
             SyncInProgress = true;
+            EnableCommands(false);
         }
 
         private void EndSync()
         {            
             _currentSyncTarget = SyncTargets.NotSyncing;
             SyncInProgress = false;
+            EnableCommands(true);
         }
 
         private void RefreshRepository()
@@ -230,10 +240,9 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         #region Private Helpers
 
-        private const int maxRecentlyImportedItems = 15;
+        private const int maxRecentlyImportedItems = 30;
         private void AddToRecentlyImportedItems(string message)
         {
-            message += Environment.NewLine;
             if (RecentlyImportedItems.Count() > maxRecentlyImportedItems)
             {
                 RecentlyImportedItems.RemoveAt(0);
