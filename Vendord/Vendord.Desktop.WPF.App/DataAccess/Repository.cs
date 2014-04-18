@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using System.Xml;
 using System.Windows.Resources;
 using System.Windows;
+using System.Collections.ObjectModel;
 
 namespace Vendord.Desktop.WPF.App.DataAccess
 {
@@ -18,7 +19,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
     {
         #region Fields
 
-        readonly List<Order> _orders;
+        readonly ObservableCollection<Order> _orders;
         readonly List<OrderProduct> _orderProducts;
         readonly List<Product> _products;
         readonly List<Vendor> _vendors;
@@ -32,7 +33,7 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         /// </summary>
         public Repository()
         {
-            _orders = LoadOrders();
+            _orders = new ObservableCollection<Order>(LoadOrders());
             _orderProducts = LoadOrderProducts();
             _vendors = LoadVendors();
             _products = LoadProducts();
@@ -45,9 +46,9 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         /// <summary>
         /// Returns a shallow-copied list of all orders in the repository.
         /// </summary>
-        public List<Order> GetOrders()
+        public ObservableCollection<Order> GetOrders()
         {
-            return new List<Order>(_orders);
+            return _orders;
         }
 
         /// <summary>
@@ -72,6 +73,14 @@ namespace Vendord.Desktop.WPF.App.DataAccess
         public List<Vendor> GetVendors()
         {
             return new List<Vendor>(_vendors);
+        }
+
+        public void ReloadOrders()
+        {
+            _orders.Clear();
+            Repository.LoadOrders().ForEach((o) => {
+                _orders.Add(o);
+            });
         }
 
         #endregion // Public Interface
