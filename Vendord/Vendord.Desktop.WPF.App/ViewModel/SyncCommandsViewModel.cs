@@ -26,24 +26,23 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             DbProductsVendorsDepartments
         }
 
-        private bool _syncInProgress = false;
         private SyncTargets _currentSyncTarget = SyncTargets.NotSyncing;
         private readonly Repository _repository;
         private ReadOnlyCollection<CommandViewModel> _commands;
         private ObservableCollection<string> _recentlyImportedItems;
 
-        public bool SyncInProgress
+        public SyncTargets CurrentSyncTarget
         {
             get
             {
-                return _syncInProgress;
+                return _currentSyncTarget;
             }
             set
             {
-                if (_syncInProgress != value)
+                if (_currentSyncTarget != value)
                 {
-                    _syncInProgress = value;
-                    base.OnPropertyChanged("SyncInProgress");
+                    _currentSyncTarget = value;
+                    base.OnPropertyChanged("CurrentSyncTarget");
                 }
             }
         }
@@ -164,21 +163,19 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         private void StartSync(SyncTargets currentSyncTarget)
         {
-            _currentSyncTarget = currentSyncTarget;
-            SyncInProgress = true;
+            CurrentSyncTarget = currentSyncTarget;
             EnableCommands(false);
         }
 
         private void EndSync()
-        {            
-            _currentSyncTarget = SyncTargets.NotSyncing;
-            SyncInProgress = false;
+        {
+            CurrentSyncTarget = SyncTargets.NotSyncing;
             EnableCommands(true);
         }
 
         private void RefreshRepository()
         {
-            switch (_currentSyncTarget)
+            switch (CurrentSyncTarget)
             {
                 case SyncTargets.DbOrders:
                     {

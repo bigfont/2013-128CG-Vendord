@@ -6,12 +6,22 @@
             <ColumnDefinition Width="0.5*"></ColumnDefinition>
             <ColumnDefinition Width="0.5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
+
         <StackPanel Grid.Column="0">
             <Border Margin="0 25">
                 <ProgressBar                     
-                    IsIndeterminate="{Binding SyncInProgress}"
                     Orientation="Horizontal"
                     Height="25">
+                    <ProgressBar.Style>
+                        <Style TargetType="ProgressBar">
+                            <Setter Property="IsIndeterminate" Value="True"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentSyncTarget,StringFormat={}{0}}" Value="NotSyncing">
+                                    <Setter Property="IsIndeterminate" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ProgressBar.Style>
                 </ProgressBar>
             </Border>
             <Border>
