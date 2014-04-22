@@ -28,7 +28,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         private SyncTargets _currentSyncTarget = SyncTargets.NotSyncing;
         private readonly Repository _repository;
-        private ReadOnlyCollection<CommandViewModel> _commands;
         private ObservableCollection<string> _recentlyImportedItems;
 
         public SyncTargets CurrentSyncTarget
@@ -44,23 +43,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                     _currentSyncTarget = value;
                     base.OnPropertyChanged("CurrentSyncTarget");
                 }
-            }
-        }
-
-        /// <summary>
-        /// Returns a read-only list of commands 
-        /// that the UI can display and execute.
-        /// </summary>
-        public ReadOnlyCollection<CommandViewModel> Commands
-        {
-            get
-            {
-                if (_commands == null)
-                {
-                    List<CommandViewModel> cmds = this.CreateCommands();
-                    _commands = new ReadOnlyCollection<CommandViewModel>(cmds);
-                }
-                return _commands;
             }
         }
 
@@ -94,7 +76,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             DisplayName = "Sync";
         }
 
-        private List<CommandViewModel> CreateCommands()
+        protected override List<CommandViewModel> CreateCommands()
         {
             return new List<CommandViewModel>
             {
@@ -151,14 +133,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             AddToRecentlyImportedItems(message);
             RefreshRepository();
             EndSync();
-        }
-
-        private void EnableCommands(bool enabled)
-        {
-            Commands.ToList().ForEach((c) =>
-            {
-                c.IsEnabled = enabled;
-            });
         }
 
         private void StartSync(SyncTargets currentSyncTarget)

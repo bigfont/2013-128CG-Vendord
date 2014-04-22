@@ -13,7 +13,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     /// <summary>
     /// A UI-friendly wrapper for a Vendor object.
     /// </summary>
-    public class VendorViewModel : WorkspaceViewModel
+    public class VendorViewModel : ViewModelBase
     {
         #region Fields
 

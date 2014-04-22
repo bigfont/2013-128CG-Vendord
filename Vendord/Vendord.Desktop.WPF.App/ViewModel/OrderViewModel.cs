@@ -15,7 +15,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     /// <summary>
     /// A UI-friendly wrapper for a Order object.
     /// </summary>
-    public class OrderViewModel : WorkspaceViewModel
+    public class OrderViewModel : ViewModelBase
     {
         #region Fields
 

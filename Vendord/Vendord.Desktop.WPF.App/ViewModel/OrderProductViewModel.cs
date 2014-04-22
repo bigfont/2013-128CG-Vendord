@@ -7,7 +7,7 @@ using Vendord.Desktop.WPF.App.DataAccess;
 
 namespace Vendord.Desktop.WPF.App.ViewModel
 {
-    public class OrderProductViewModel : WorkspaceViewModel
+    public class OrderProductViewModel : ViewModelBase
     {
         #region Fields
 

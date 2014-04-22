@@ -86,7 +86,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             }
         }
 
-        List<CommandViewModel> CreateCommands()
+        protected override List<CommandViewModel> CreateCommands()
         {
             return new List<CommandViewModel>
             {

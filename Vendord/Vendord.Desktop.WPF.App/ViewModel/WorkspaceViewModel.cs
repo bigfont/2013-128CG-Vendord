@@ -19,6 +19,8 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         RelayCommand _closeCommand;
 
+        private ReadOnlyCollection<CommandViewModel> _commands;
+
         #endregion // Fields
 
         #region Constructor
@@ -63,5 +65,32 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         }
 
         #endregion // RequestClose [event]
+
+        /// <summary>
+        /// Returns a read-only list of commands 
+        /// that the UI can display and execute.
+        /// </summary>
+        public ReadOnlyCollection<CommandViewModel> Commands
+        {
+            get
+            {
+                if (_commands == null)
+                {
+                    List<CommandViewModel> cmds = this.CreateCommands();
+                    _commands = new ReadOnlyCollection<CommandViewModel>(cmds);
+                }
+                return _commands;
+            }
+        }
+
+        protected abstract List<CommandViewModel> CreateCommands();
+
+        protected void EnableCommands(bool enabled)
+        {
+            Commands.ToList().ForEach((c) =>
+            {
+                c.IsEnabled = enabled;
+            });
+        }
     }
 }
