@@ -76,32 +76,30 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             DisplayName = "Sync";
         }
 
-        public bool IsNotCurrentlySyncing(object obj)
-        {
-            return CurrentSyncTarget == SyncTargets.NotSyncing;
-        }
-
         protected override List<CommandViewModel> CreateCommands()
         {
-            Predicate<object> enableCommand = this.IsNotCurrentlySyncing;
+            Predicate<object> canExecuteSyncCommand = (x) =>
+            {
+                return this.CurrentSyncTarget == SyncTargets.NotSyncing;
+            };
 
             return new List<CommandViewModel>
             {
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_ImportXmlProducts,
-                    new RelayCommand(param => this.ImportXmlProducts(), enableCommand)),
+                    new RelayCommand(param => this.ImportXmlProducts(), canExecuteSyncCommand)),
 
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_ImportXmlVendors,
-                    new RelayCommand(param => this.ImportXmlVendors(), enableCommand)),
+                    new RelayCommand(param => this.ImportXmlVendors(), canExecuteSyncCommand)),
 
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_SyncDbOrders,
-                    new RelayCommand(param => this.SyncDbOrders(), enableCommand)),
+                    new RelayCommand(param => this.SyncDbOrders(), canExecuteSyncCommand)),
 
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_SyncDbProductsVendorsDepartments,
-                    new RelayCommand(param => this.SyncDbProductsVendorsDepartments(), enableCommand))
+                    new RelayCommand(param => this.SyncDbProductsVendorsDepartments(), canExecuteSyncCommand))
             };
         }
 
@@ -159,7 +157,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 case SyncTargets.DbOrders:
                     {
                         _repository.ReloadOrderProducts();
-                        _repository.ReloadOrders();                        
+                        _repository.ReloadOrders();
                         break;
                     }
                 case SyncTargets.DbProductsVendorsDepartments:

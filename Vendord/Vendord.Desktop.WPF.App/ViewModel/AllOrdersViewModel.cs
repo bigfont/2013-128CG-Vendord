@@ -138,15 +138,21 @@ namespace Vendord.Desktop.WPF.App.ViewModel
 
         protected override List<CommandViewModel> CreateCommands()
         {
+            Predicate<object> canExecutePrintOrder = (x) => { return this.SelectedOrder != null; };
+
+            Predicate<object> canExecutePrintOrderForVendor =  (x) => {
+                return this.SelectedOrder != null && (this.SelectedOrder as OrderViewModel).SelectedVendor != null;
+            };
+
             return new List<CommandViewModel>
             {
                 new CommandViewModel(
                     Strings.AllOrderViewModel_Command_PrintOrderForSelectedVendor,
-                    new RelayCommand(param => this.PrintOrderForSelectedVendor())),
+                    new RelayCommand(param => this.PrintOrderForSelectedVendor(), canExecutePrintOrder)),
 
                 new CommandViewModel(
                     Strings.AllOrderViewModel_Command_PrintOrderForAllVendors,
-                    new RelayCommand(param => this.PrintOrderForAllVendors()))
+                    new RelayCommand(param => this.PrintOrderForAllVendors(), canExecutePrintOrderForVendor))
             };
         }
 
