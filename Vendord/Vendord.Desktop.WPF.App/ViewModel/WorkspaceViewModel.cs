@@ -84,13 +84,5 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         }
 
         protected abstract List<CommandViewModel> CreateCommands();
-
-        protected void EnableCommands(bool enabled)
-        {
-            Commands.ToList().ForEach((c) =>
-            {
-                c.IsEnabled = enabled;
-            });
-        }
     }
 }

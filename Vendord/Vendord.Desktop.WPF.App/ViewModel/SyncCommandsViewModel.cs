@@ -76,25 +76,32 @@ namespace Vendord.Desktop.WPF.App.ViewModel
             DisplayName = "Sync";
         }
 
+        public bool IsNotCurrentlySyncing(object obj)
+        {
+            return CurrentSyncTarget == SyncTargets.NotSyncing;
+        }
+
         protected override List<CommandViewModel> CreateCommands()
         {
+            Predicate<object> enableCommand = this.IsNotCurrentlySyncing;
+
             return new List<CommandViewModel>
             {
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_ImportXmlProducts,
-                    new RelayCommand(param => this.ImportXmlProducts())),
+                    new RelayCommand(param => this.ImportXmlProducts(), enableCommand)),
 
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_ImportXmlVendors,
-                    new RelayCommand(param => this.ImportXmlVendors())),
+                    new RelayCommand(param => this.ImportXmlVendors(), enableCommand)),
 
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_SyncDbOrders,
-                    new RelayCommand(param => this.SyncDbOrders())),
+                    new RelayCommand(param => this.SyncDbOrders(), enableCommand)),
 
                 new CommandViewModel(
                     Strings.SyncCommandsViewModel_Command_SyncDbProductsVendorsDepartments,
-                    new RelayCommand(param => this.SyncDbProductsVendorsDepartments()))
+                    new RelayCommand(param => this.SyncDbProductsVendorsDepartments(), enableCommand))
             };
         }
 
@@ -138,13 +145,11 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         private void StartSync(SyncTargets currentSyncTarget)
         {
             CurrentSyncTarget = currentSyncTarget;
-            EnableCommands(false);
         }
 
         private void EndSync()
         {
             CurrentSyncTarget = SyncTargets.NotSyncing;
-            EnableCommands(true);
         }
 
         private void RefreshRepository()

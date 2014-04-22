@@ -21,9 +21,7 @@ namespace Vendord.Desktop.WPF.App.ViewModel
     {
         #region Fields
 
-        readonly Repository _repository;
-        ReadOnlyCollection<CommandViewModel> _commands;
-        ObservableCollection<OrderViewModel> _allOrders;
+        readonly Repository _repository;        
 
         #endregion // Fields
 
@@ -58,37 +56,6 @@ namespace Vendord.Desktop.WPF.App.ViewModel
         #endregion // Constructor
 
         #region Commands
-
-        /// <summary>
-        /// Returns a read-only list of commands 
-        /// that the UI can display and execute.
-        /// </summary>
-        public ReadOnlyCollection<CommandViewModel> Commands
-        {
-            get
-            {
-                if (_commands == null)
-                {
-                    List<CommandViewModel> cmds = this.CreateCommands();
-                    _commands = new ReadOnlyCollection<CommandViewModel>(cmds);
-                }
-                return _commands;
-            }
-        }
-
-        protected override List<CommandViewModel> CreateCommands()
-        {
-            return new List<CommandViewModel>
-            {
-                new CommandViewModel(
-                    Strings.AllOrderViewModel_Command_PrintOrderForSelectedVendor,
-                    new RelayCommand(param => this.PrintOrderForSelectedVendor())),
-
-                new CommandViewModel(
-                    Strings.AllOrderViewModel_Command_PrintOrderForAllVendors,
-                    new RelayCommand(param => this.PrintOrderForAllVendors()))
-            };
-        }
 
         private void PrintOrderForAllVendors()
         {
@@ -167,6 +134,20 @@ namespace Vendord.Desktop.WPF.App.ViewModel
                 ordVM.Dispose();
 
             this.AllOrders.Clear();
+        }
+
+        protected override List<CommandViewModel> CreateCommands()
+        {
+            return new List<CommandViewModel>
+            {
+                new CommandViewModel(
+                    Strings.AllOrderViewModel_Command_PrintOrderForSelectedVendor,
+                    new RelayCommand(param => this.PrintOrderForSelectedVendor())),
+
+                new CommandViewModel(
+                    Strings.AllOrderViewModel_Command_PrintOrderForAllVendors,
+                    new RelayCommand(param => this.PrintOrderForAllVendors()))
+            };
         }
 
         #endregion // Base Class Overrides
